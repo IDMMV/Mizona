@@ -1,19 +1,11 @@
-# MiZona Enterprise V8 - Etapa 6
+# MiZona Enterprise V8 - Etapa 8 Marketplace Modular
 
-Proyecto modular inicial preparado para GitHub Pages y Vercel.
+Incluye las etapas anteriores y agrega el módulo Marketplace Local:
 
-## Incluye
-- Mi Panel
-- Mi Comunidad
-- MiZona Chat
-- MiZona Transfer
-- Beneficios y Oportunidades
-- Seguridad escolar
-- Centro de Control
-- Módulos futuros preparados
+- Explorar productos y servicios de la zona.
+- Publicar venta, alquiler, servicio o escolar.
+- Mis publicaciones.
+- Seguridad, reportes y verificación.
+- Preparado para MiZona Chat y Supabase.
 
-## Regla de storage
-Chats escolares, archivos adjuntos y enlaces Transfer vencen en 7 días.
-
-## Siguiente etapa
-Etapa 7: Negocios.
+Subir todo el contenido descomprimido a GitHub Pages/Vercel.
