@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8",
-  "version": "8.0.0-sprint1",
+  "name": "mizona-enterprise-v8-sprint3",
+  "version": "8.3.0",
   "private": true,
   "type": "module",
   "scripts": {
