@@ -1,9 +1,27 @@
-# MiZona V8 Etapa 12 - IA MiZona
+# MiZona Enterprise V8 - Sprint 1 Foundation
 
-Incluye el módulo visual de IA para:
-- resolver necesidades del usuario,
-- clasificar consultas,
-- apoyar colegios, negocios y administración,
-- preparar futuras integraciones con IA real.
+## Incluye
+- React + Vite
+- Layout principal
+- Sidebar modular
+- Navbar
+- Rutas internas sin librerías externas
+- Login / Registro / Recuperación visual
+- Perfil
+- Centro de Control base
+- Estados de módulos: activo, beta, mantenimiento, desactivado
+- Preparado para Supabase
 
-Sube todo el contenido a GitHub reemplazando la etapa anterior.
+## Instalación
+```bash
+npm install
+npm run dev
+```
+
+## Build
+```bash
+npm run build
+```
+
+## Configuración Supabase
+Copia `.env.example` como `.env` y coloca tus credenciales.
