@@ -27,7 +27,7 @@
       <div class="hero"><h2>👋 Bienvenido a MiZona</h2><p>Primero resolvemos problemas reales: comunidad, colegios, comités, chat seguro y módulos listos para activar.</p></div>
       <div class="grid">
         <div class="card span8"><h3>📍 Radar de hoy</h3><div class="item"><div class="ico">🏫</div><div><b>Colegio San Martín</b><br><span class="muted">2 comunicados pendientes y 1 evento esta semana.</span></div></div><div class="item"><div class="ico">💬</div><div><b>Aula Chat</b><br><span class="muted">Mensajes y archivos escolares vencen en 7 días.</span></div></div><div class="item"><div class="ico">🚧</div><div><b>Módulos futuros preparados</b><br><span class="muted">Beneficios, negocios, marketplace, ride y CampusHugo pueden activarse desde el administrador.</span></div></div></div>
-        <div class="card span4"><h3>⚡ Accesos rápidos</h3><div class="quick"><button onclick="openPanel('comunidad')">Mi Comunidad</button><button onclick="openPanel('chat')">MiZona Chat</button><button onclick="openPanel('admin')">Admin</button><button onclick="openPanel('seguridad')">Seguridad</button></div></div>
+        <div class="card span4"><h3>⚡ Accesos rápidos</h3><div class="quick"><button onclick="openPanel('comunidad')">Mi Comunidad</button><button onclick="openPanel('chat')">MiZona Chat</button><button onclick="openPanel('transfer')">Transfer</button><button onclick="openPanel('admin')">Admin</button><button onclick="openPanel('seguridad')">Seguridad</button></div></div>
         <div class="card span12"><h3>🧩 Estado de módulos</h3><div id="moduleSummary" class="grid"></div></div>
       </div>
     </section>
@@ -44,8 +44,51 @@
     <section id="chat" class="panel">
       <div class="hero"><h2>💬 MiZona Chat</h2><p>Identidad por usuario único. Chat escolar controlado. Sin chat entre colegios en la fase inicial.</p></div>
       <div class="chat">
-        <div class="chat-list"><h3>Conversaciones</h3><div class="item"><div class="ico">🏫</div><div><b>5° A - San Martín</b><br><span class="muted">Aula Chat</span></div></div><div class="item"><div class="ico">👤</div><div><b>@PEDRO_2026</b><br><span class="muted">Conexión aceptada</span></div></div><div class="item"><div class="ico">📦</div><div><b>MiZona Transfer</b><br><span class="muted">2 archivos activos</span></div></div></div>
+        <div class="chat-list"><h3>Conversaciones</h3><div class="item"><div class="ico">🏫</div><div><b>5° A - San Martín</b><br><span class="muted">Aula Chat</span></div></div><div class="item"><div class="ico">👤</div><div><b>@PEDRO_2026</b><br><span class="muted">Conexión aceptada</span></div></div><div class="item" onclick="openPanel('transfer')" style="cursor:pointer"><div class="ico">📤</div><div><b>MiZona Transfer</b><br><span class="muted">2 archivos activos · abrir módulo</span></div></div></div>
         <div class="chat-room"><h3>5° A - Aula Chat</h3><div class="notice">Los mensajes y archivos se eliminan automáticamente después de 7 días.</div><div class="bubble">¿Quién tiene el trabajo de ciencias?</div><div class="bubble me">Lo subí por MiZona Transfer. Vence en 7 días.</div><div class="bubble">Gracias. También enviaré las imágenes.</div><div style="display:flex;gap:8px;margin-top:20px"><input placeholder="Escribe un mensaje..." style="flex:1;border:1px solid var(--line);border-radius:14px;padding:12px"><button class="btn primary">Enviar</button><button class="btn gray">Adjuntar</button></div></div>
+      </div>
+    </section>
+
+
+    <section id="transfer" class="panel">
+      <div class="hero"><h2>📤 MiZona Transfer</h2><p>Envío temporal de archivos escolares pesados sin saturar el chat ni Supabase. Todo vence en 7 días.</p></div>
+      <div class="grid">
+        <div class="card span4">
+          <h3>Subir archivo temporal</h3>
+          <div class="form">
+            <select><option>Colegio San Martín · 5° A</option><option>Grupo: Trabajo de ciencias</option><option>Profesor: Matemática</option></select>
+            <input type="file">
+            <textarea placeholder="Mensaje opcional para quienes recibirán el archivo"></textarea>
+            <select><option>Vigencia: 7 días</option><option>Vigencia: 3 días</option><option>Vigencia: 24 horas</option></select>
+            <button class="btn primary" onclick="alert('Demo: aquí se generará un enlace temporal cuando conectemos Supabase Storage.')">Generar enlace temporal</button>
+          </div>
+          <p class="muted" style="font-size:13px;margin-top:12px">En fase real: Supabase Storage + limpieza automática programada.</p>
+        </div>
+        <div class="card span8">
+          <h3>Archivos activos</h3>
+          <table class="table">
+            <tr><th>Archivo</th><th>Destino</th><th>Tamaño</th><th>Vence</th><th>Estado</th></tr>
+            <tr><td>Trabajo_Ciencias_5A.pdf</td><td>5° A</td><td>8.4 MB</td><td>6 días</td><td><span class="status"><span class="dot"></span>Activo</span></td></tr>
+            <tr><td>Fotos_Actividad_Deportiva.zip</td><td>Grupo deporte</td><td>24 MB</td><td>2 días</td><td><span class="status"><span class="dot warn"></span>Por vencer</span></td></tr>
+            <tr><td>Presentacion_Historia.pptx</td><td>Profesor</td><td>12 MB</td><td>Hoy</td><td><span class="status"><span class="dot warn"></span>Vence hoy</span></td></tr>
+          </table>
+        </div>
+        <div class="card span6">
+          <h3>Reglas de almacenamiento</h3>
+          <ul>
+            <li>Duración máxima inicial: 7 días.</li>
+            <li>Archivos pesados no se guardan dentro del chat.</li>
+            <li>El enlace vence automáticamente.</li>
+            <li>El colegio podrá definir límites por plan.</li>
+            <li>El administrador verá consumo de storage.</li>
+          </ul>
+        </div>
+        <div class="card span6">
+          <h3>Uso escolar recomendado</h3>
+          <div class="item"><div class="ico">📚</div><div><b>Tareas y trabajos</b><br><span class="muted">PDF, Word, Excel, PowerPoint e imágenes.</span></div></div>
+          <div class="item"><div class="ico">👥</div><div><b>Grupos de trabajo</b><br><span class="muted">Los alumnos comparten archivos dentro de su salón.</span></div></div>
+          <div class="item"><div class="ico">🧹</div><div><b>Limpieza automática</b><br><span class="muted">Evita saturar el almacenamiento gratuito.</span></div></div>
+        </div>
       </div>
     </section>
 
@@ -60,12 +103,13 @@
     </section>
   </main>
 </div>
-<div class="footerbar"><button onclick="openPanel('inicio')">🏠<br>Inicio</button><button onclick="openPanel('comunidad')">🏫<br>Comunidad</button><button onclick="openPanel('chat')">💬<br>Chat</button><button onclick="openPanel('admin')">⚙<br>Admin</button></div>
+<div class="footerbar"><button onclick="openPanel('inicio')">🏠<br>Inicio</button><button onclick="openPanel('comunidad')">🏫<br>Comunidad</button><button onclick="openPanel('chat')">💬<br>Chat</button><button onclick="openPanel('transfer')">📤<br>Transfer</button><button onclick="openPanel('admin')">⚙<br>Admin</button></div>
 <script>
 const modules=[
  {id:'inicio',name:'Inicio',icon:'🏠',state:'on'},
  {id:'comunidad',name:'Mi Comunidad',icon:'🏫',state:'on'},
  {id:'chat',name:'MiZona Chat',icon:'💬',state:'beta'},
+ {id:'transfer',name:'MiZona Transfer',icon:'📤',state:'beta'},
  {id:'seguridad',name:'Seguridad',icon:'🛡',state:'on'},
  {id:'admin',name:'Centro de Control',icon:'⚙',state:'on'},
  {id:'beneficios',name:'Beneficios',icon:'🎁',state:'off'},
