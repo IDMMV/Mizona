@@ -90,3 +90,45 @@ function createMarketPost(){
  alert('Publicación agregada al prototipo. En producción pasará por reglas de seguridad y moderación.');
 }
 renderMarket();
+
+
+// Etapa 9 - CampusHugo
+const lessons=[
+ {title:'Excel 1: conocer la hoja de cálculo',cat:'Excel',time:'8 min',status:'Disponible'},
+ {title:'Excel 2: fórmulas básicas',cat:'Excel',time:'12 min',status:'Disponible'},
+ {title:'CV rápido para postular',cat:'Empleabilidad',time:'10 min',status:'Nuevo'},
+ {title:'Cómo calcular ganancia de un producto',cat:'Negocio',time:'9 min',status:'Recomendado'},
+ {title:'Cómo evitar estafas digitales',cat:'Seguridad',time:'7 min',status:'Importante'}
+];
+function renderLessons(){
+ const box=document.getElementById('lessonList'); if(!box)return;
+ box.innerHTML=lessons.map(l=>`<div class="item"><div class="icon">📚</div><div><b>${l.title}</b><div class="muted">${l.cat} · ${l.time}</div></div><span class="pill ${l.status==='Disponible'?'ok':l.status==='Importante'?'danger':'warn'}">${l.status}</span></div>`).join('');
+}
+function switchCampusTab(name,btn){
+ document.querySelectorAll('.campus-tab').forEach(t=>t.classList.remove('active'));
+ document.getElementById('campus-'+name)?.classList.add('active');
+ document.querySelectorAll('#campus .tab').forEach(t=>t.classList.remove('active'));
+ btn?.classList.add('active');
+}
+function createLesson(){
+ const title=document.getElementById('lessonTitle')?.value.trim()||'Nueva clase';
+ const cat=document.getElementById('lessonCat')?.value||'Excel';
+ lessons.unshift({title,cat,time:'5 min',status:'Nuevo'});
+ renderLessons();
+ switchCampusTab('clases',document.querySelectorAll('#campus .tab')[1]);
+}
+renderLessons();
+
+// Etapa 10 - MiZona Business
+function switchBusinessTab(name,btn){
+ document.querySelectorAll('.business-tab').forEach(t=>t.classList.remove('active'));
+ document.getElementById('business-'+name)?.classList.add('active');
+ document.querySelectorAll('#business .tab').forEach(t=>t.classList.remove('active'));
+ btn?.classList.add('active');
+}
+function addSale(){
+ const product=document.getElementById('saleProduct')?.value.trim()||'Venta rápida';
+ const amount=document.getElementById('saleAmount')?.value.trim()||'0';
+ const box=document.getElementById('salesList'); if(!box)return;
+ box.insertAdjacentHTML('afterbegin',`<div class="item"><div class="icon">🧾</div><div><b>${product}</b><div class="muted">S/${amount} · registrado ahora</div></div><span class="pill ok">Pagado</span></div>`);
+}

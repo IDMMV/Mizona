@@ -1,11 +1,12 @@
-# MiZona Enterprise V8 - Etapa 8 Marketplace Modular
+# MiZona V8 - Etapa 10 Business Modular
 
-Incluye las etapas anteriores y agrega el módulo Marketplace Local:
+Incluye todo lo anterior y agrega el módulo MiZona Business:
+- Panel del negocio.
+- Caja y ventas.
+- Productos e inventario.
+- Cocina/pedidos.
+- Clientes.
+- Reportes.
+- Planes y activación desde Centro de Control.
 
-- Explorar productos y servicios de la zona.
-- Publicar venta, alquiler, servicio o escolar.
-- Mis publicaciones.
-- Seguridad, reportes y verificación.
-- Preparado para MiZona Chat y Supabase.
-
-Subir todo el contenido descomprimido a GitHub Pages/Vercel.
+Estado: prototipo visual modular preparado para Supabase.

@@ -28,3 +28,13 @@ textarea.input{resize:vertical;font-family:inherit}.input+ .input,.input+select,
 .quick-filters .btn{justify-content:center;width:100%}
 .price{font-weight:900;color:#047857;font-size:18px}.market-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 @media(max-width:760px){.quick-filters{grid-template-columns:1fr}.market-meta{gap:6px}.price{font-size:16px}}
+
+
+/* Etapa 9 - CampusHugo */
+.campus-hero{background:linear-gradient(135deg,#0ea5e9,#22c55e)}
+.campus-tab{display:none}.campus-tab.active{display:block}
+.progress{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:12px 0}
+.progress span{display:block;height:100%;background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:999px}
+#lessonList .item{align-items:flex-start}
+.business-tab{display:none}.business-tab.active{display:block}
+.price{font-weight:900;color:#0f766e}
