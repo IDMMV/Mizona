@@ -132,3 +132,52 @@ function addSale(){
  const box=document.getElementById('salesList'); if(!box)return;
  box.insertAdjacentHTML('afterbegin',`<div class="item"><div class="icon">🧾</div><div><b>${product}</b><div class="muted">S/${amount} · registrado ahora</div></div><span class="pill ok">Pagado</span></div>`);
 }
+
+
+// Etapa 11 - MiZona Ride
+const drivers=[
+ {name:'@CARLOS_RIDE',type:'Auto',zone:'Pachacútec',dist:'600 m',rating:'4.8',status:'Disponible'},
+ {name:'@MOTO_LUIS',type:'Moto',zone:'Ventanilla',dist:'900 m',rating:'4.7',status:'Disponible'},
+ {name:'@ANA_DELIVERY',type:'Delivery',zone:'Mi Perú',dist:'1.4 km',rating:'4.9',status:'Ocupado'},
+ {name:'@TAXI_SEGURO',type:'Taxi local',zone:'Callao',dist:'2.1 km',rating:'4.6',status:'Disponible'}
+];
+function renderDrivers(){
+ const box=document.getElementById('driverList'); if(!box)return;
+ box.innerHTML=drivers.map(d=>`<div class="item"><div class="icon">${d.type==='Moto'?'🏍':d.type==='Delivery'?'📦':'🚕'}</div><div><b>${d.name}</b><div class="muted">${d.type} · ${d.zone} · ${d.dist} · ⭐ ${d.rating}</div></div><span class="pill ${d.status==='Disponible'?'ok':'warn'}">${d.status}</span></div>`).join('');
+}
+function switchRideTab(name,btn){
+ document.querySelectorAll('.ride-tab').forEach(t=>t.classList.remove('active'));
+ document.getElementById('ride-'+name)?.classList.add('active');
+ document.querySelectorAll('#ride .tab').forEach(t=>t.classList.remove('active'));
+ btn?.classList.add('active');
+}
+function simulateRide(){
+ const o=document.getElementById('rideOrigen')?.value||'Origen actual';
+ const d=document.getElementById('rideDestino')?.value||'Destino';
+ const t=document.getElementById('rideTipo')?.value||'Auto';
+ const box=document.getElementById('rideResult'); if(!box)return;
+ box.innerHTML=`<div class="ride-route"><b>Solicitud demo creada</b><br>${o} → ${d}<br>Tipo: ${t}<br>Tarifa estimada: S/ 8 - S/ 14<br><small>En producción se calculará por distancia, zona, horario y disponibilidad.</small></div>`;
+}
+renderDrivers();
+
+
+// Etapa 12 - IA MiZona
+function askIA(text){
+  const input=document.getElementById('iaPrompt');
+  const prompt=(text || input?.value || '').trim();
+  if(!prompt) return;
+  const messages=document.getElementById('iaMessages');
+  const classifier=document.getElementById('iaClassifier');
+  const lower=prompt.toLowerCase();
+  let tipo='Necesidad general', icon='🔎', destino='Mi Panel';
+  let respuesta='Te recomiendo revisar el Radar de MiZona y las oportunidades cercanas.';
+  if(/hambre|pollo|menú|menu|comer|restaurante|pizza|hamburguesa/.test(lower)){tipo='Alimentación y ahorro'; icon='🍗'; destino='Beneficios / Negocios'; respuesta='Encontré una necesidad de comida. Te mostraría restaurantes cercanos, promociones activas y cupones disponibles.';}
+  else if(/trabajo|empleo|chamba|práctica|practica/.test(lower)){tipo='Empleo'; icon='💼'; destino='Beneficios / Empleos'; respuesta='Encontré una necesidad laboral. Te mostraría empleos cercanos, requisitos y opciones de capacitación en CampusHugo.';}
+  else if(/tarea|colegio|curso|aprender|excel|matemática|matematica/.test(lower)){tipo='Educación'; icon='📚'; destino='Mi Comunidad / CampusHugo'; respuesta='Encontré una necesidad educativa. Te mostraría Aula Chat, archivos escolares, cursos y apoyo de CampusHugo.';}
+  else if(/gasfitero|electricista|reparar|técnico|tecnico|servicio/.test(lower)){tipo='Servicio local'; icon='🛠'; destino='Servicios / Negocios'; respuesta='Encontré una necesidad de servicio. Te mostraría profesionales cercanos, reputación y contacto por MiZona Chat.';}
+  else if(/promoción|promocion|oferta|descuento|barato|ahorrar/.test(lower)){tipo='Ahorro'; icon='💰'; destino='Beneficios'; respuesta='Encontré una necesidad de ahorro. Te mostraría ofertas, cupones, precios bajos y oportunidades vigentes.';}
+  if(messages){messages.insertAdjacentHTML('beforeend',`<div class="bubble user">${prompt}</div><div class="bubble bot"><b>${icon} ${tipo}</b><br>${respuesta}<br><span class="muted">Destino sugerido: ${destino}</span></div>`)}
+  if(classifier){classifier.insertAdjacentHTML('afterbegin',`<div class="item"><div class="icon">${icon}</div><div><b>${tipo}</b><div class="muted">Consulta: ${prompt} · módulo: ${destino}</div></div><span class="pill ok">Clasificado</span></div>`)}
+  if(input && !text) input.value='';
+}
+window.askIA=askIA;

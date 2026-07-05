@@ -38,3 +38,12 @@ textarea.input{resize:vertical;font-family:inherit}.input+ .input,.input+select,
 #lessonList .item{align-items:flex-start}
 .business-tab{display:none}.business-tab.active{display:block}
 .price{font-weight:900;color:#0f766e}
+
+
+/* Etapa 11 - MiZona Ride */
+.ride-hero{background:linear-gradient(135deg,#0f172a,#2563eb)}
+.ride-tab{display:none}.ride-tab.active{display:block}
+.ride-list .item{align-items:flex-start}
+.ride-route{background:#eff6ff;border:1px solid #bfdbfe;border-radius:16px;padding:14px;margin-top:12px;color:#1e3a8a}
+
+.chatbox{background:#f8fafc;border:1px solid #e5e7eb;border-radius:18px;padding:14px;min-height:260px;max-height:380px;overflow:auto;margin-bottom:12px}.bubble{padding:11px 13px;border-radius:16px;margin:8px 0;max-width:88%;line-height:1.45}.bubble.bot{background:#fff;border:1px solid #e5e7eb}.bubble.user{background:#2563eb;color:#fff;margin-left:auto}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chips button{border:0;border-radius:999px;background:#eef2ff;color:#1e3a8a;padding:9px 12px;font-weight:700;cursor:pointer}.solo{padding:24px;max-width:1100px;margin:auto}

@@ -1,12 +1,9 @@
-# MiZona V8 - Etapa 10 Business Modular
+# MiZona V8 Etapa 12 - IA MiZona
 
-Incluye todo lo anterior y agrega el módulo MiZona Business:
-- Panel del negocio.
-- Caja y ventas.
-- Productos e inventario.
-- Cocina/pedidos.
-- Clientes.
-- Reportes.
-- Planes y activación desde Centro de Control.
+Incluye el módulo visual de IA para:
+- resolver necesidades del usuario,
+- clasificar consultas,
+- apoyar colegios, negocios y administración,
+- preparar futuras integraciones con IA real.
 
-Estado: prototipo visual modular preparado para Supabase.
+Sube todo el contenido a GitHub reemplazando la etapa anterior.
