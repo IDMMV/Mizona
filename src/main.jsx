@@ -21,13 +21,16 @@ import Notifications from './pages/Notifications';
 import LocalLab from './pages/LocalLab';
 import AccessDenied from './pages/AccessDenied';
 import { Blueprint } from './pages/Placeholders';
+import Committees from './pages/Committees';
+import { canAccessModule } from './lib/permissions';
 
 function App() {
   const [page, setPage] = useState('panel');
-  const { backendConnected, isAdmin } = useApp();
+  const { backendConnected, isAdmin, profile } = useApp();
   const pages = {
     panel: <Panel setPage={setPage}/>,
     community: <Community setPage={setPage}/>,
+    committees: <Committees setPage={setPage}/>,
     school: <SchoolPage setPage={setPage}/>,
     chat: <Chat setPage={setPage}/>,
     notifications: <Notifications setPage={setPage}/>,
@@ -45,7 +48,8 @@ function App() {
     blueprint: <Blueprint/>
   };
 
-  return <Shell page={page} setPage={setPage}>{pages[page] || pages.panel}</Shell>;
+  const denied = !canAccessModule(profile, page);
+  return <Shell page={denied ? 'panel' : page} setPage={setPage}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</Shell>;
 }
 
 createRoot(document.getElementById('root')).render(

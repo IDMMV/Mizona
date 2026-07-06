@@ -6,9 +6,9 @@ export default function AccessDenied({ setPage }) {
     <Card title="Acceso restringido" icon="🛡️">
       <div className="accessDeniedContent">
         <ShieldAlert size={54}/>
-        <h2>Este módulo requiere rol administrador</h2>
-        <p>La sesión actual no tiene permiso para abrir el Centro de Control. Los permisos se verifican con el perfil guardado en Supabase.</p>
-        <button className="primary" onClick={() => setPage('settings')}>Ir a Mi Cuenta</button>
+        <h2>Este módulo no está disponible para este perfil</h2>
+        <p>MiZona oculta módulos de adultos, administración, negocios y comités cuando el perfil activo es estudiantil. Cambia a un perfil adulto o administrador desde el Laboratorio local.</p>
+        <button className="primary" onClick={() => setPage('localLab')}>Ir al Laboratorio local</button>
       </div>
     </Card>
   </div>;

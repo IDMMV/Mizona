@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Bell, CloudOff, Menu, Search, User, Wifi, X } from 'lucide-react';
 import { statusLabel } from '../data/modules';
 import { useApp } from '../context/AppContext';
+import { canAccessModule } from '../lib/permissions';
 
 export default function Shell({ page, setPage, children }) {
   const [open, setOpen] = useState(false);
@@ -9,9 +10,8 @@ export default function Shell({ page, setPage, children }) {
 
   const visibleModules = useMemo(() => moduleConfig.filter(module => {
     if (module.visible === false) return false;
-    if (module.id === 'admin' && !isAdmin) return false;
-    return true;
-  }), [moduleConfig, isAdmin]);
+    return canAccessModule(profile, module.id);
+  }), [moduleConfig, profile]);
 
   return <div className="app">
     <aside className={`sidebar ${open ? 'open' : ''}`}>
@@ -29,7 +29,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 18 · CampusHugo multiusuario local</span><div className="bar"><i style={{ width: '99%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 18.1 · Roles seguros y portal de comités</span><div className="bar"><i style={{ width: '99%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">
