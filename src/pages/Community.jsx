@@ -24,6 +24,22 @@ import {
   subscribeCommunity,
   uploadCommunityDocument
 } from '../lib/community';
+import {
+  createLocalAnnouncement,
+  createLocalCommunity,
+  createLocalEvent,
+  createLocalRoom,
+  leaveLocalCommunity,
+  listLocalCommunities,
+  listLocalMemberships,
+  loadLocalCommunityBundle,
+  openLocalCommunityDocument,
+  requestLocalJoin,
+  reviewLocalCommunity,
+  reviewLocalMembership,
+  subscribeLocalCommunity,
+  uploadLocalCommunityDocument
+} from '../lib/localCommunity';
 
 const TYPE_META = {
   school: { label: 'Colegio', icon: '🏫' },
@@ -175,8 +191,8 @@ export default function Community({ setPage, autoSelectType = null }) {
     setError('');
     try {
       if (!backendConnected || !hasSupabase) {
-        setCommunities(DEMO_COMMUNITIES);
-        setMemberships([{ community_id: 'demo-school', user_id: 'demo', role: 'owner', status: 'active' }]);
+        setCommunities(listLocalCommunities());
+        setMemberships(listLocalMemberships(user?.id));
         return;
       }
       const [communityRows, membershipRows] = await Promise.all([
@@ -196,8 +212,8 @@ export default function Community({ setPage, autoSelectType = null }) {
     if (!communityId) return;
     if (!silent) setDetailLoading(true);
     try {
-      if (!backendConnected || !hasSupabase || String(communityId).startsWith('demo-')) {
-        setBundle(DEMO_BUNDLE);
+      if (!backendConnected || !hasSupabase) {
+        setBundle(loadLocalCommunityBundle(communityId));
         return;
       }
       const membership = memberships.find(item => item.community_id === communityId);
@@ -226,7 +242,15 @@ export default function Community({ setPage, autoSelectType = null }) {
       return undefined;
     }
     loadDetail(selectedId);
-    if (!backendConnected || String(selectedId).startsWith('demo-')) return undefined;
+    if (!backendConnected || !hasSupabase) {
+      return subscribeLocalCommunity(() => {
+        window.clearTimeout(refreshTimer.current);
+        refreshTimer.current = window.setTimeout(() => {
+          loadBase(true);
+          loadDetail(selectedId, true);
+        }, 120);
+      });
+    }
     return subscribeCommunity(selectedId, () => {
       window.clearTimeout(refreshTimer.current);
       refreshTimer.current = window.setTimeout(() => {
@@ -284,30 +308,35 @@ export default function Community({ setPage, autoSelectType = null }) {
       setShowJoinCode={setShowJoinCode}
       onBack={() => { setSelectedId(null); setBundle(EMPTY_BUNDLE); }}
       onJoin={(code = null) => execute('join', async () => {
-        if (!backendConnected || String(selected.id).startsWith('demo-')) throw new Error('Conecta Supabase para guardar una membresía real.');
-        const status = await requestCommunityJoin(selected.id, code);
+        const status = (!backendConnected || !hasSupabase)
+          ? requestLocalJoin(selected.id, code)
+          : await requestCommunityJoin(selected.id, code);
         setShowJoinCode(false);
         if (status === 'pending') setMessage('Solicitud enviada. El administrador debe aprobarla.');
         else setMessage('Ya eres miembro activo de esta comunidad.');
       })}
-      onLeave={() => execute('leave', () => leaveCommunity(selected.id), 'Saliste de la comunidad.')}
-      onCreateAnnouncement={values => execute('announcement', () => createAnnouncement(selected.id, user.id, values), 'Comunicado publicado.')}
-      onCreateEvent={values => execute('event', () => createCommunityEvent(selected.id, user.id, values), 'Evento publicado.')}
-      onCreateRoom={values => execute('room', () => createSchoolRoom(selected.id, user.id, values), 'Aula creada.')}
-      onUploadDocument={(file, values) => execute('document', () => uploadCommunityDocument(selected.id, user.id, file, values), 'Documento subido.')}
+      onLeave={() => execute('leave', () => (!backendConnected || !hasSupabase) ? leaveLocalCommunity(selected.id) : leaveCommunity(selected.id), 'Saliste de la comunidad.')}
+      onCreateAnnouncement={values => execute('announcement', () => (!backendConnected || !hasSupabase) ? createLocalAnnouncement(selected.id, values) : createAnnouncement(selected.id, user.id, values), 'Comunicado publicado.')}
+      onCreateEvent={values => execute('event', () => (!backendConnected || !hasSupabase) ? createLocalEvent(selected.id, values) : createCommunityEvent(selected.id, user.id, values), 'Evento publicado.')}
+      onCreateRoom={values => execute('room', () => (!backendConnected || !hasSupabase) ? createLocalRoom(selected.id, values) : createSchoolRoom(selected.id, user.id, values), 'Aula creada con chat escolar.')}
+      onUploadDocument={(file, values) => execute('document', () => (!backendConnected || !hasSupabase) ? uploadLocalCommunityDocument(selected.id, file, values) : uploadCommunityDocument(selected.id, user.id, file, values), 'Documento subido.')}
       onDownloadDocument={async document => {
-        if (!document.storage_path) return;
         setBusy(`download-${document.id}`);
         try {
-          const url = await createDocumentSignedUrl(document.storage_path);
-          window.open(url, '_blank', 'noopener,noreferrer');
+          if (!backendConnected || !hasSupabase) {
+            await openLocalCommunityDocument(document);
+          } else {
+            if (!document.storage_path) throw new Error('El archivo no tiene una ruta disponible.');
+            const url = await createDocumentSignedUrl(document.storage_path);
+            window.open(url, '_blank', 'noopener,noreferrer');
+          }
         } catch (requestError) {
           setError(requestError.message || 'No se pudo abrir el documento.');
         } finally {
           setBusy('');
         }
       }}
-      onReviewMember={(member, status, role) => execute(`member-${member.user_id}`, () => reviewMembership(selected.id, member.user_id, status, role), 'Membresía actualizada.')}
+      onReviewMember={(member, status, role) => execute(`member-${member.user_id}`, () => (!backendConnected || !hasSupabase) ? reviewLocalMembership(selected.id, member.user_id, status, role) : reviewMembership(selected.id, member.user_id, status, role), 'Membresía actualizada.')}
     />;
   }
 
@@ -317,9 +346,9 @@ export default function Community({ setPage, autoSelectType = null }) {
   return <div className="page communityRealPage">
     <div className="pageTitle communityPageTitle">
       <div>
-        <span className="eyebrow">ETAPA 11 · DATOS REALES</span>
+        <span className="eyebrow">ETAPA 15 · MULTIUSUARIO LOCAL</span>
         <h1>Mi Comunidad</h1>
-        <p className="muted">Crea, solicita, administra y conecta colegios, comités, clubes y organizaciones.</p>
+        <p className="muted">Prueba comunidades completas entre perfiles locales, sin depender de Supabase.</p>
       </div>
       <div className="titleActions">
         <button className="ghost" onClick={() => loadBase()} disabled={loading}><RefreshCw size={17}/> Actualizar</button>
@@ -329,11 +358,11 @@ export default function Community({ setPage, autoSelectType = null }) {
             return;
           }
           setShowCreate(true);
-        }}><Plus size={18}/> Solicitar comunidad</button>
+        }}><Plus size={18}/> Crear comunidad</button>
       </div>
     </div>
 
-    {!backendConnected && <div className="communityDemoNotice"><AlertCircle size={18}/><div><b>Modo demostración</b><span>La interfaz funciona, pero debes configurar Supabase y ejecutar el SQL de la Etapa 11 para guardar comunidades reales.</span></div></div>}
+    {!backendConnected && <div className="communityDemoNotice localReady"><ShieldCheck size={18}/><div><b>Comunidad multiusuario local activa</b><span>Comunidades, miembros, solicitudes, comunicados, eventos, aulas y documentos se guardan en este navegador y se comparten entre pestañas.</span></div></div>}
     {error && <InlineAlert type="error" text={error} onClose={() => setError('')}/>}
     {message && <InlineAlert type="success" text={message} onClose={() => setMessage('')}/>}
 
@@ -365,7 +394,7 @@ export default function Community({ setPage, autoSelectType = null }) {
         isAdmin={isAdmin}
         busy={busy}
         onOpen={() => openCommunity(item)}
-        onReview={status => execute(`review-${item.id}`, () => reviewCommunity(item.id, status), status === 'active' ? 'Comunidad aprobada.' : 'Comunidad rechazada.')}
+        onReview={status => execute(`review-${item.id}`, () => (!backendConnected || !hasSupabase) ? reviewLocalCommunity(item.id, status) : reviewCommunity(item.id, status), status === 'active' ? 'Comunidad aprobada.' : 'Comunidad rechazada.')}
       />)}
     </div>}
 
@@ -374,8 +403,7 @@ export default function Community({ setPage, autoSelectType = null }) {
       onClose={() => setShowCreate(false)}
       onSubmit={async values => {
         const ok = await execute('create', async () => {
-          if (!backendConnected) throw new Error('Configura Supabase para crear una comunidad real.');
-          const created = await createCommunity(values);
+          const created = (!backendConnected || !hasSupabase) ? createLocalCommunity(values) : await createCommunity(values);
           setSelectedId(created.id);
         }, isAdmin ? 'Comunidad creada.' : 'Solicitud enviada para revisión.');
         if (ok) setShowCreate(false);
@@ -599,11 +627,11 @@ function CreateCommunityModal({ busy, onClose, onSubmit }) {
   const [values, setValues] = useState({ name: '', type: 'school', zone: '', description: '', visibility: 'public', joinMode: 'request', schoolLevel: 'Completo', inviteCode: '' });
   return <div className="communityModalBackdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
     <form className="communityModal" onSubmit={event => { event.preventDefault(); onSubmit(values); }}>
-      <div className="communityModalHeader"><div><span className="eyebrow">NUEVA SOLICITUD</span><h2>Crear una comunidad</h2><p>Un administrador de MiZona revisará la información antes de activarla.</p></div><button type="button" className="iconBtn" onClick={onClose}><X size={20}/></button></div>
+      <div className="communityModalHeader"><div><span className="eyebrow">NUEVA COMUNIDAD</span><h2>Crear una comunidad</h2><p>En modo local, los administradores la activan de inmediato; otros perfiles envían una solicitud pendiente.</p></div><button type="button" className="iconBtn" onClick={onClose}><X size={20}/></button></div>
       <div className="formGrid2"><label>Nombre<input value={values.name} onChange={event => setValues({ ...values, name: event.target.value })} minLength={3} maxLength={100} required placeholder="Ejemplo: Colegio San Martín"/></label><label>Tipo<select value={values.type} onChange={event => setValues({ ...values, type: event.target.value })}>{Object.entries(TYPE_META).map(([value, meta]) => <option key={value} value={value}>{meta.label}</option>)}</select></label><label>Zona o distrito<input value={values.zone} onChange={event => setValues({ ...values, zone: event.target.value })} placeholder="Ventanilla, Callao"/></label><label>Visibilidad<select value={values.visibility} onChange={event => setValues({ ...values, visibility: event.target.value })}><option value="public">Pública</option><option value="private">Privada</option><option value="school">Escolar</option></select></label><label>Forma de ingreso<select value={values.joinMode} onChange={event => setValues({ ...values, joinMode: event.target.value })}><option value="request">Con aprobación</option><option value="open">Ingreso abierto</option><option value="code">Con código</option><option value="invite">Solo invitación</option></select></label>{values.type === 'school' && <label>Nivel escolar<select value={values.schoolLevel} onChange={event => setValues({ ...values, schoolLevel: event.target.value })}><option>Inicial</option><option>Primaria</option><option>Secundaria</option><option>Primaria y secundaria</option><option>Completo</option></select></label>}{values.joinMode === 'code' && <label>Código inicial<input value={values.inviteCode} onChange={event => setValues({ ...values, inviteCode: event.target.value })} minLength={4} required placeholder="Mínimo 4 caracteres"/></label>}</div>
       <label>Descripción<textarea value={values.description} onChange={event => setValues({ ...values, description: event.target.value })} rows={4} placeholder="Explica para quién es la comunidad y qué objetivo tiene."/></label>
-      <div className="communityModalInfo"><ShieldCheck size={18}/><span>El propietario podrá administrar miembros y contenido, pero solo MiZona puede aprobar el estado general de la comunidad.</span></div>
-      <div className="formActions"><button type="button" className="ghost" onClick={onClose}>Cancelar</button><button className="primary" disabled={busy}>{busy ? <LoaderCircle className="spin" size={17}/> : <Plus size={17}/>} Enviar solicitud</button></div>
+      <div className="communityModalInfo"><ShieldCheck size={18}/><span>El propietario administra integrantes y contenido. Los perfiles administradores también pueden aprobar solicitudes pendientes.</span></div>
+      <div className="formActions"><button type="button" className="ghost" onClick={onClose}>Cancelar</button><button className="primary" disabled={busy}>{busy ? <LoaderCircle className="spin" size={17}/> : <Plus size={17}/>} Guardar comunidad</button></div>
     </form>
   </div>;
 }

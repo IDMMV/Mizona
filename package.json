@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-etapa14-lab-multiusuario-local",
-  "version": "8.15.0",
+  "name": "mizona-enterprise-v8-etapa15-comunidad-multiusuario-local",
+  "version": "8.16.0",
   "private": true,
   "type": "module",
   "scripts": {

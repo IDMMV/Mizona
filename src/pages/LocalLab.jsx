@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { CheckCircle2, Copy, ExternalLink, FlaskConical, GraduationCap, ShieldCheck, Trash2, UserPlus, UsersRound } from 'lucide-react';
+import { Building2, CheckCircle2, Copy, ExternalLink, FlaskConical, GraduationCap, ShieldCheck, Trash2, UserPlus, UsersRound } from 'lucide-react';
 import Card from '../components/Card';
 import { getLocalStats } from '../lib/localStore';
 import { useApp } from '../context/AppContext';
+import { listLocalCommunities, listLocalMemberships } from '../lib/localCommunity';
 
 const typeLabel = {
   adult: 'Adulto',
@@ -26,6 +27,8 @@ export default function LocalLab({ setPage }) {
   const [message, setMessage] = useState('');
   const [showCreate, setShowCreate] = useState(false);
   const stats = getLocalStats();
+  const communities = listLocalCommunities();
+  const memberships = listLocalMemberships(profile.id);
 
   const switchProfile = item => {
     try {
@@ -87,9 +90,9 @@ export default function LocalLab({ setPage }) {
   return <div className="page localLabPage">
     <section className="labHero">
       <div>
-        <span>ETAPA 14 · SIN SUPABASE</span>
-        <h1>Laboratorio multiusuario local</h1>
-        <p>Prueba solicitudes, contactos, chats, grupos, notificaciones y roles usando varias pestañas del mismo navegador.</p>
+        <span>ETAPA 15 · SIN SUPABASE</span>
+        <h1>Laboratorio multiusuario y comunidades</h1>
+        <p>Prueba perfiles, Chat y comunidades completas usando varias pestañas del mismo navegador.</p>
       </div>
       <div className="labHeroActions">
         <button className="secondary" onClick={openSecondTab}><ExternalLink size={18}/> Abrir segunda sesión</button>
@@ -105,6 +108,8 @@ export default function LocalLab({ setPage }) {
       <article><b>{stats.contacts}</b><span>contactos del perfil</span></article>
       <article><b>{stats.conversations}</b><span>conversaciones visibles</span></article>
       <article><b>{stats.notificationsUnread}</b><span>notificaciones sin leer</span></article>
+      <article><b>{communities.length}</b><span>comunidades visibles</span></article>
+      <article><b>{memberships.filter(item => item.status === 'active').length}</b><span>membresías activas</span></article>
     </div>
 
     {showCreate && <Card title="Crear perfil de prueba" icon="🧪">
@@ -151,6 +156,17 @@ export default function LocalLab({ setPage }) {
           <li>Inicia una conversación y comprueba que los mensajes aparecen en ambas pestañas.</li>
         </ol>
         <button onClick={() => setPage('chat')}><FlaskConical size={17}/> Ir a MiZona Chat</button>
+      </Card>
+
+      <Card title="Prueba comunidades en dos perfiles" icon="🏘️">
+        <ol className="labSteps">
+          <li>En una pestaña usa José, María o un perfil administrador.</li>
+          <li>En otra pestaña selecciona Carlos, Ian, Dylan u otro perfil.</li>
+          <li>Abre Mi Comunidad y solicita ingreso o crea una comunidad.</li>
+          <li>Desde el perfil propietario aprueba integrantes y cambia sus roles.</li>
+          <li>Publica comunicados, eventos, aulas y documentos; comprueba la actualización en la otra pestaña.</li>
+        </ol>
+        <button onClick={() => setPage('community')}><Building2 size={17}/> Ir a Mi Comunidad</button>
       </Card>
       <Card title="Pruebas de seguridad escolar" icon="🏫">
         <ul className="list">

@@ -29,7 +29,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 14 · laboratorio multiusuario local</span><div className="bar"><i style={{ width: '97%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 15 · comunidades multiusuario local</span><div className="bar"><i style={{ width: '98%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">
