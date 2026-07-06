@@ -1,35 +1,35 @@
-# MiZona Enterprise V8 — Etapa 17
+# MiZona Enterprise V8 — Etapa 18
 
-## Negocios y Marketplace multiusuario local
+## CampusHugo multiusuario local
 
-Versión acumulativa construida sobre las Etapas 10–16. Continúa funcionando sin Supabase y convierte **Negocios** y **Marketplace** en módulos interactivos compartidos entre perfiles y pestañas del mismo navegador.
+Versión acumulativa construida sobre las Etapas 10–17. Continúa funcionando sin Supabase y convierte **CampusHugo** en un módulo educativo interactivo compartido entre perfiles y pestañas del mismo navegador.
 
-## Negocios
+## Funciones para estudiantes
 
-- Registro de negocios y servicios locales.
-- Publicaciones pendientes para usuarios normales y aprobación inmediata para administradores.
-- Reclamo de fichas sin propietario.
-- Aprobación o rechazo de reclamos desde el Centro de Control.
-- Propietario verificado, negocio afiliado y estado abierto/cerrado.
+- Catálogo de cursos con búsqueda, categorías y niveles.
 - Favoritos independientes por perfil.
-- Calificaciones y comentarios locales.
-- Ofertas visibles en la ficha comercial.
-- Contacto mediante MiZona Chat.
-- Reportes, suspensión, rechazo y verificación administrativa.
-- Métricas de vistas y contactos.
+- Inscripción local a cursos gratuitos o de pago simulado.
+- Progreso por lección y por usuario.
+- Lecciones de video, práctica y evaluación simuladas.
+- Evaluaciones con calificación automática y mínimo de 70%.
+- Tareas, entregas y retroalimentación del profesor.
+- Certificados con código único local.
+- Notificaciones de inscripción, tareas, notas y certificados.
 
-## Marketplace
+## Funciones para profesores
 
-- Publicación de productos y servicios.
-- Imagen local opcional de hasta 1.2 MB.
-- Filtros por categoría, condición, precio, distancia y verificación.
-- Favoritos independientes por perfil.
-- Estado pendiente, activo, pausado, vendido o rechazado.
-- Panel de publicaciones propias.
-- Contacto con el vendedor mediante solicitud y MiZona Chat.
-- Reportes y moderación desde el Centro de Control.
-- Restricciones de categorías para perfiles estudiantiles.
-- Notificaciones, auditoría y cola de sincronización futura.
+- Perfil profesor habilitado desde el Laboratorio local.
+- Creación de cursos con estado pendiente para moderación.
+- Creación de tareas por curso.
+- Revisión y calificación de entregas.
+- Panel con cursos, estudiantes y entregas pendientes.
+
+## Centro de Control
+
+- Aprobar, verificar, pausar o rechazar cursos.
+- Revisar reportes de contenido.
+- Métricas de cursos, inscripciones y certificados.
+- Auditoría y cola de sincronización futura.
 
 ## Ejecutar
 
@@ -47,4 +47,4 @@ npm run build
 
 ## Estado honesto
 
-Esta etapa comparte información entre pestañas del mismo navegador y dispositivo mediante almacenamiento local. No sincroniza negocios, publicaciones o imágenes entre celulares o computadoras diferentes. No requiere ejecutar SQL.
+Los datos se comparten entre perfiles y pestañas del mismo navegador mediante almacenamiento local. No se sincronizan entre celulares o computadoras diferentes. Los videos, pagos, archivos educativos reales y verificación pública de certificados requieren un backend y servicios externos. No es necesario ejecutar SQL para esta etapa.
