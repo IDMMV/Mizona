@@ -13,6 +13,7 @@ export default function Panel({ setPage }) {
       <button className="quick" onClick={()=>setPage('chat')}>💬 Abrir chat</button>
       <button className="quick" onClick={()=>setPage('transfer')}>📤 Subir tarea</button>
       <button className="quick" onClick={()=>setPage('benefits')}>🎁 Ver oportunidades</button>
+      <button className="quick" onClick={()=>setPage('businesses')}>🏪 Explorar negocios</button>
       <button className="quick" onClick={()=>setPage('admin')}>🛡 Centro de Control</button>
     </div>
     <div className="grid2">

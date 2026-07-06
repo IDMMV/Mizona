@@ -13,7 +13,7 @@ export const modules = [
   { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Sprint 2', audience: 'Usuarios y aulas' },
   { id: 'transfer', label: 'MiZona Transfer', icon: CloudUpload, status: 'active', phase: 'Sprint 2', audience: 'Aulas y trabajos' },
   { id: 'benefits', label: 'Beneficios', icon: Gift, status: 'active', phase: 'Sprint 3', audience: 'Todos' },
-  { id: 'businesses', label: 'Negocios', icon: Store, status: 'beta', phase: 'Sprint 4', audience: 'Comercios' },
+  { id: 'businesses', label: 'Negocios', icon: Store, status: 'active', phase: 'Sprint 4', audience: 'Todos y comercios' },
   { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag, status: 'soon', phase: 'Futuro', audience: 'Usuarios' },
   { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'soon', phase: 'Futuro', audience: 'Negocios' },
   { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'soon', phase: 'Futuro', audience: 'Estudiantes' },

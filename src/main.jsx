@@ -8,6 +8,7 @@ import Chat from './pages/Chat';
 import Transfer from './pages/Transfer';
 import Admin from './pages/Admin';
 import Benefits from './pages/Benefits';
+import Businesses from './pages/Businesses';
 import { Placeholder, Settings, Blueprint } from './pages/Placeholders';
 
 function App(){
@@ -19,7 +20,7 @@ function App(){
   chat:<Chat setPage={setPage}/>,
   transfer:<Transfer/>,
   benefits:<Benefits/>,
-  businesses:<Placeholder title="Negocios y Lugares" desc="Directorio, reclamo de negocio, verificación y campañas medibles." items={[{icon:'🏪',title:'Perfil gratuito',text:'Los negocios pueden existir sin afiliarse.'},{icon:'✅',title:'Verificado',text:'El dueño podrá reclamar su negocio.'},{icon:'📊',title:'Resultados',text:'Cupones y QR medirán conversiones.'}]}/>,
+  businesses:<Businesses/>,
   marketplace:<Placeholder title="Marketplace" desc="Compra, venta y alquiler local con moderación."/>,
   business:<Placeholder title="MiZona Business" desc="POS, caja, cocina, inventario, clientes y reportes."/>,
   campus:<Placeholder title="CampusHugo" desc="Cursos, evaluaciones, certificados e IA educativa."/>,

@@ -119,3 +119,104 @@ for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
 drop policy if exists "Users create and read own actions" on opportunity_actions;
 create policy "Users create and read own actions" on opportunity_actions
 for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+-- Sprint 4: Negocios y lugares
+create table if not exists places (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text unique not null,
+  category text not null,
+  description text,
+  zone text not null,
+  address text,
+  latitude numeric,
+  longitude numeric,
+  phone text,
+  opening_hours jsonb default '{}'::jsonb,
+  source_type text not null default 'community' check (source_type in ('public','community','owner','admin')),
+  affiliate_status text not null default 'unaffiliated' check (affiliate_status in ('unaffiliated','pending','affiliated','suspended')),
+  verification_status text not null default 'unverified' check (verification_status in ('unverified','pending','verified','rejected')),
+  owner_profile_id uuid references profiles(id),
+  rating numeric(2,1) default 0,
+  review_count integer default 0,
+  is_open boolean default false,
+  status text not null default 'active' check (status in ('draft','pending','active','hidden','rejected')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists places_zone_category_idx on places(zone, category);
+create index if not exists places_affiliate_idx on places(affiliate_status, verification_status);
+
+create table if not exists place_claims (
+  id uuid primary key default gen_random_uuid(),
+  place_id uuid references places(id) on delete cascade,
+  claimant_profile_id uuid references profiles(id) on delete cascade,
+  evidence_path text,
+  message text,
+  status text not null default 'pending' check (status in ('pending','approved','rejected','more_info')),
+  reviewed_by uuid references profiles(id),
+  reviewed_at timestamptz,
+  created_at timestamptz default now()
+);
+
+create table if not exists place_suggestions (
+  id uuid primary key default gen_random_uuid(),
+  submitted_by uuid references profiles(id),
+  name text not null,
+  category text not null,
+  zone text not null,
+  address text,
+  photo_path text,
+  status text not null default 'pending' check (status in ('pending','approved','rejected','duplicate')),
+  created_at timestamptz default now()
+);
+
+create table if not exists place_favorites (
+  place_id uuid references places(id) on delete cascade,
+  profile_id uuid references profiles(id) on delete cascade,
+  created_at timestamptz default now(),
+  primary key(place_id, profile_id)
+);
+
+create table if not exists place_actions (
+  id uuid primary key default gen_random_uuid(),
+  place_id uuid references places(id) on delete cascade,
+  profile_id uuid references profiles(id),
+  action_type text not null check (action_type in ('view','favorite','share','route','call','chat','claim','coupon','redeem')),
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default now()
+);
+
+alter table places enable row level security;
+alter table place_claims enable row level security;
+alter table place_suggestions enable row level security;
+alter table place_favorites enable row level security;
+alter table place_actions enable row level security;
+
+drop policy if exists "Public read active places" on places;
+create policy "Public read active places" on places for select using (status = 'active');
+
+drop policy if exists "Owners manage claimed places" on places;
+create policy "Owners manage claimed places" on places
+for update using (auth.uid() = owner_profile_id) with check (auth.uid() = owner_profile_id);
+
+drop policy if exists "Users create own claims" on place_claims;
+create policy "Users create own claims" on place_claims
+for insert with check (auth.uid() = claimant_profile_id);
+
+drop policy if exists "Users read own claims" on place_claims;
+create policy "Users read own claims" on place_claims
+for select using (auth.uid() = claimant_profile_id);
+
+drop policy if exists "Users create suggestions" on place_suggestions;
+create policy "Users create suggestions" on place_suggestions
+for insert with check (auth.uid() = submitted_by);
+
+drop policy if exists "Users manage place favorites" on place_favorites;
+create policy "Users manage place favorites" on place_favorites
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+drop policy if exists "Users create and read own place actions" on place_actions;
+create policy "Users create and read own place actions" on place_actions
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
