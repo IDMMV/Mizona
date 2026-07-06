@@ -1,148 +1,94 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
-  BadgeCheck, Building2, ChevronRight, Clock3, Filter, Heart, MapPin,
-  Navigation, Phone, Search, Share2, ShieldCheck, Sparkles, Star, Store,
-  Tag, TicketPercent, UserCheck, X
+  BadgeCheck, Building2, ChevronRight, Filter, Heart, MapPin, MessageCircle,
+  Search, ShieldCheck, Sparkles, Star, Store, TicketPercent, UserCheck, X
 } from 'lucide-react';
 import Card from '../components/Card';
+import { useApp } from '../context/AppContext';
+import { sendLocalContactRequest, startLocalDirectConversation } from '../lib/localStore';
+import {
+  createLocalBusiness, createLocalBusinessClaim, getLocalCommerceSnapshot,
+  rateLocalBusiness, registerLocalBusinessContact, registerLocalBusinessView,
+  reportLocalBusiness, subscribeLocalCommerce, toggleLocalBusinessFavorite,
+  updateLocalBusiness
+} from '../lib/localCommerce';
 
 const categories = [
-  { id:'all', label:'Todo', icon:'✨' },
-  { id:'food', label:'Comida', icon:'🍔' },
-  { id:'health', label:'Salud', icon:'💊' },
-  { id:'home', label:'Hogar', icon:'🔧' },
-  { id:'education', label:'Educación', icon:'📚' },
-  { id:'beauty', label:'Belleza', icon:'💇' },
+  { id:'all', label:'Todo', icon:'✨' }, { id:'food', label:'Comida', icon:'🍔' },
+  { id:'health', label:'Salud', icon:'💊' }, { id:'home', label:'Hogar', icon:'🔧' },
+  { id:'education', label:'Educación', icon:'📚' }, { id:'beauty', label:'Belleza', icon:'💇' },
   { id:'services', label:'Servicios', icon:'🧰' }
 ];
+const businessEmoji = { food:'🍔', health:'💊', home:'🧱', education:'📘', beauty:'💇', services:'🧰' };
+const emptyBusiness = { name:'', category:'food', zone:'Pachacútec', address:'', description:'', hours:'', offer_title:'', offer_detail:'', offer_price:'' };
 
-const placesSeed = [
-  {
-    id:'lolita-burger', category:'food', name:'Lolita Burger', emoji:'🍔', zone:'Pachacútec',
-    distance:'320 m', rating:4.7, reviews:128, open:true, affiliated:false, verified:false,
-    description:'Hamburguesas artesanales, salchipapas y combos familiares.',
-    address:'Av. 225, Pachacútec', phone:'No disponible', hours:'4:00 p. m. – 11:30 p. m.',
-    badges:['Muy recomendado'], offers:[], source:'Información pública y aportes de vecinos'
-  },
-  {
-    id:'buen-sabor', category:'food', name:'Pollería El Buen Sabor', emoji:'🍗', zone:'Pachacútec',
-    distance:'650 m', rating:4.8, reviews:246, open:true, affiliated:true, verified:true,
-    description:'Pollo a la brasa, parrillas, delivery y promociones para familias.',
-    address:'Mz. H Lt. 12, Pachacútec', phone:'01 555 0198', hours:'12:00 p. m. – 11:00 p. m.',
-    badges:['Afiliado MiZona','Cupón activo'], offers:[{title:'Combo familiar',detail:'1 pollo + papas + ensalada + gaseosa',price:'S/ 49.90'}], source:'Perfil administrado por el negocio'
-  },
-  {
-    id:'farmacia-economica', category:'health', name:'Farmacia Económica', emoji:'💊', zone:'Ventanilla',
-    distance:'1.1 km', rating:4.6, reviews:89, open:true, affiliated:true, verified:true,
-    description:'Medicamentos, cuidado personal y orientación farmacéutica.',
-    address:'Av. Néstor Gambetta 580', phone:'01 555 0132', hours:'24 horas',
-    badges:['24 horas','Afiliado MiZona'], offers:[{title:'Cuidado infantil',detail:'15% en productos seleccionados',price:'15% OFF'}], source:'Perfil administrado por el negocio'
-  },
-  {
-    id:'ferreteria-carlos', category:'home', name:'Ferretería Don Carlos', emoji:'🧱', zone:'Pachacútec',
-    distance:'780 m', rating:4.8, reviews:152, open:true, affiliated:false, verified:false,
-    description:'Herramientas, conexiones eléctricas, pinturas y materiales.',
-    address:'Mercado Pachacútec, puesto 42', phone:'No disponible', hours:'8:00 a. m. – 7:00 p. m.',
-    badges:['Recomendado por vecinos'], offers:[], source:'Información pública y aportes de vecinos'
-  },
-  {
-    id:'academia-futuro', category:'education', name:'Academia Futuro', emoji:'📘', zone:'Ventanilla',
-    distance:'1.6 km', rating:4.5, reviews:64, open:false, affiliated:true, verified:true,
-    description:'Reforzamiento escolar, preparación universitaria e inglés.',
-    address:'Av. La Playa 225', phone:'01 555 0177', hours:'8:00 a. m. – 8:00 p. m.',
-    badges:['Matrícula abierta'], offers:[{title:'Matrícula',detail:'Primera semana de prueba',price:'Gratis'}], source:'Perfil administrado por el negocio'
-  },
-  {
-    id:'salon-luz', category:'beauty', name:'Salón Luz', emoji:'💇', zone:'Pachacútec',
-    distance:'460 m', rating:4.4, reviews:53, open:true, affiliated:false, verified:false,
-    description:'Cortes, peinados, manicure y tratamientos capilares.',
-    address:'Sector C, Pachacútec', phone:'No disponible', hours:'9:00 a. m. – 8:00 p. m.',
-    badges:[], offers:[], source:'Información pública y aportes de vecinos'
-  },
-  {
-    id:'electro-soluciones', category:'services', name:'Electro Soluciones Miguel', emoji:'⚡', zone:'Ventanilla',
-    distance:'2.2 km', rating:4.9, reviews:71, open:true, affiliated:true, verified:true,
-    description:'Instalaciones eléctricas, mantenimiento y emergencias domiciliarias.',
-    address:'Atención a domicilio', phone:'999 222 418', hours:'7:00 a. m. – 9:00 p. m.',
-    badges:['Técnico verificado','Disponible hoy'], offers:[{title:'Diagnóstico',detail:'Visita técnica en Pachacútec',price:'Desde S/ 25'}], source:'Perfil profesional verificado'
-  }
-];
-
-function Stars({ value }){
-  return <span className="stars"><Star size={14} fill="currentColor"/> {value.toFixed(1)}</span>;
-}
+function Stars({ value=0 }){ return <span className="stars"><Star size={14} fill="currentColor"/> {Number(value||0).toFixed(1)}</span>; }
+function distanceLabel(value){ return Number(value)<1?`${Math.round(Number(value)*1000)} m`:`${Number(value).toFixed(1)} km`; }
 
 function BusinessCard({ place, onOpen, onFavorite, favorite }){
-  return <article className="placeCard">
-    <div className="placeVisual"><span>{place.emoji}</span>{place.affiliated&&<b><BadgeCheck size={14}/> MiZona</b>}</div>
+  return <article className={`placeCard ${place.status!=='active'?'commerceInactive':''}`}>
+    <div className="placeVisual"><span>{place.emoji}</span>{place.affiliated&&<b><BadgeCheck size={14}/> MiZona</b>}{place.is_mine&&<i className="mineBadge">Tu negocio</i>}</div>
     <div className="placeBody">
-      <div className="placeTitle"><div><h3>{place.name}</h3><p>{place.description}</p></div><button className={`heartBtn ${favorite?'saved':''}`} onClick={()=>onFavorite(place.id)} aria-label="Guardar"><Heart size={18} fill={favorite?'currentColor':'none'}/></button></div>
-      <div className="placeMeta"><Stars value={place.rating}/><span>{place.reviews} opiniones</span><span><MapPin size={14}/>{place.distance}</span><span className={place.open?'open':'closed'}>{place.open?'Abierto':'Cerrado'}</span></div>
-      <div className="placeBadges">{place.badges.map(b=><span key={b}>{b}</span>)}</div>
-      {place.offers[0]&&<div className="miniOffer"><TicketPercent size={17}/><div><b>{place.offers[0].title}</b><span>{place.offers[0].detail}</span></div><strong>{place.offers[0].price}</strong></div>}
+      {place.status!=='active'&&<span className={`publicationState ${place.status}`}>{place.status==='pending'?'Pendiente de revisión':place.status}</span>}
+      <div className="placeTitle"><div><h3>{place.name}</h3><p>{place.description}</p></div><button className={`heartBtn ${favorite?'saved':''}`} onClick={()=>onFavorite(place.id)}><Heart size={18} fill={favorite?'currentColor':'none'}/></button></div>
+      <div className="placeMeta"><Stars value={place.rating}/><span>{place.review_count} opiniones</span><span><MapPin size={14}/>{distanceLabel(place.distance_km)}</span><span className={place.open?'open':'closed'}>{place.open?'Abierto':'Cerrado'}</span></div>
+      <div className="placeBadges">{(place.badges||[]).map(b=><span key={b}>{b}</span>)}</div>
+      {place.offer_title&&<div className="miniOffer"><TicketPercent size={17}/><div><b>{place.offer_title}</b><span>{place.offer_detail}</span></div><strong>{place.offer_price}</strong></div>}
       <div className="placeActions"><button className="secondary" onClick={()=>onOpen(place)}>Ver detalles</button><button className="primary" onClick={()=>onOpen(place)}>Abrir perfil <ChevronRight size={16}/></button></div>
     </div>
   </article>;
 }
 
-export default function Businesses(){
-  const [category,setCategory]=useState('all');
-  const [query,setQuery]=useState('');
-  const [onlyOpen,setOnlyOpen]=useState(false);
-  const [onlyAffiliated,setOnlyAffiliated]=useState(false);
-  const [sort,setSort]=useState('recommended');
-  const [selected,setSelected]=useState(null);
-  const [favorites,setFavorites]=useState(new Set());
-  const [showClaim,setShowClaim]=useState(false);
-  const [showSuggest,setShowSuggest]=useState(false);
-  const [toast,setToast]=useState('');
+export default function Businesses({ setPage }){
+  const { profile } = useApp();
+  const [snapshot,setSnapshot]=useState(getLocalCommerceSnapshot);
+  const [category,setCategory]=useState('all'); const [query,setQuery]=useState('');
+  const [onlyOpen,setOnlyOpen]=useState(false); const [onlyAffiliated,setOnlyAffiliated]=useState(false);
+  const [sort,setSort]=useState('recommended'); const [selected,setSelected]=useState(null);
+  const [showClaim,setShowClaim]=useState(null); const [showCreate,setShowCreate]=useState(false);
+  const [businessForm,setBusinessForm]=useState(emptyBusiness); const [claimEvidence,setClaimEvidence]=useState('');
+  const [rating,setRating]=useState(5); const [reviewComment,setReviewComment]=useState('');
+  const [toast,setToast]=useState(''); const [error,setError]=useState('');
 
+  useEffect(()=>subscribeLocalCommerce(setSnapshot),[]);
+  const favoriteSet=useMemo(()=>new Set(snapshot.myBusinessFavoriteIds),[snapshot.myBusinessFavoriteIds]);
   const places=useMemo(()=>{
-    let list=placesSeed.filter(p=>category==='all'||p.category===category)
-      .filter(p=>!onlyOpen||p.open)
-      .filter(p=>!onlyAffiliated||p.affiliated)
-      .filter(p=>`${p.name} ${p.description} ${p.zone}`.toLowerCase().includes(query.toLowerCase()));
-    list=[...list].sort((a,b)=>sort==='distance'?parseFloat(a.distance)-parseFloat(b.distance):sort==='rating'?b.rating-a.rating:(Number(b.affiliated)-Number(a.affiliated))||(b.rating-a.rating));
-    return list;
-  },[category,query,onlyOpen,onlyAffiliated,sort]);
+    let list=snapshot.businesses.filter(p=>category==='all'||p.category===category).filter(p=>!onlyOpen||p.open).filter(p=>!onlyAffiliated||p.affiliated).filter(p=>`${p.name} ${p.description} ${p.zone}`.toLowerCase().includes(query.toLowerCase()));
+    return [...list].sort((a,b)=>sort==='distance'?a.distance_km-b.distance_km:sort==='rating'?b.rating-a.rating:(Number(b.affiliated)-Number(a.affiliated))||(b.rating-a.rating));
+  },[snapshot.businesses,category,query,onlyOpen,onlyAffiliated,sort]);
+  const myBusinesses=snapshot.businesses.filter(x=>x.owner_id===profile.id);
+  const notify=text=>{setToast(text);setError('');setTimeout(()=>setToast(''),2600);};
+  const fail=err=>{setError(err?.message||String(err));setTimeout(()=>setError(''),4200);};
+  const openPlace=place=>{registerLocalBusinessView(place.id);setSelected({...place,views:Number(place.views||0)+1});};
+  const favorite=id=>{try{toggleLocalBusinessFavorite(id);}catch(err){fail(err);}};
+  const createBusiness=()=>{try{createLocalBusiness({...businessForm,emoji:businessEmoji[businessForm.category]||'🏪'});setShowCreate(false);setBusinessForm(emptyBusiness);notify('Negocio enviado. Un administrador local podrá aprobarlo.');}catch(err){fail(err);}};
+  const claimBusiness=()=>{try{createLocalBusinessClaim(showClaim.id,claimEvidence);setShowClaim(null);setClaimEvidence('');notify('Solicitud de administración enviada.');}catch(err){fail(err);}};
+  const saveRating=()=>{try{rateLocalBusiness(selected.id,rating,reviewComment);setReviewComment('');setSelected(getLocalCommerceSnapshot().businesses.find(x=>x.id===selected.id)||selected);notify('Tu opinión quedó guardada.');}catch(err){fail(err);}};
+  const contactOwner=place=>{try{
+    if(!place.owner_id) throw new Error('Este negocio todavía no tiene propietario verificado.');
+    try{startLocalDirectConversation(place.owner_id);registerLocalBusinessContact(place.id);setSelected(null);setPage?.('chat');}
+    catch(chatError){ if(String(chatError.message).includes('contactos')){sendLocalContactRequest(place.owner?.username||'');notify('Primero enviamos una solicitud de contacto al negocio.');} else throw chatError; }
+  }catch(err){fail(err);}};
+  const toggleOpen=place=>{try{updateLocalBusiness(place.id,{open:!place.open});setSelected({...place,open:!place.open});notify(place.open?'Negocio marcado como cerrado.':'Negocio marcado como abierto.');}catch(err){fail(err);}};
 
-  const toggleFavorite=id=>setFavorites(prev=>{const next=new Set(prev);next.has(id)?next.delete(id):next.add(id);return next;});
-  const notify=text=>{setToast(text);setTimeout(()=>setToast(''),2400)};
+  return <div className="page businessPage commerceV17">
+    <section className="businessHero"><div><p className="eyebrow">Directorio multiusuario local</p><h1>Negocios y lugares de tu zona</h1><p>Crea un negocio, reclama una ficha, administra horarios y recibe contactos dentro de MiZona Chat.</p></div><div className="businessHeroStats"><span><b>{snapshot.businesses.filter(x=>x.status==='active').length}</b> activos</span><span><b>{snapshot.businesses.filter(x=>x.affiliated).length}</b> afiliados</span><span><b>{snapshot.pendingClaimCount}</b> reclamos pendientes</span></div></section>
 
-  return <div className="page businessPage">
-    <section className="businessHero">
-      <div><p className="eyebrow">Todo lo que existe cerca de ti</p><h1>Negocios y lugares de tu zona</h1><p>Encuentra opciones afiliadas y no afiliadas. MiZona destaca dónde ahorras, qué recomienda tu comunidad y qué está abierto hoy.</p></div>
-      <div className="businessHeroStats"><span><b>248</b> lugares registrados</span><span><b>36</b> perfiles afiliados</span><span><b>18</b> beneficios activos</span></div>
-    </section>
-
-    <section className="businessSearchPanel">
-      <div className="businessSearch"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busca hamburguesas, farmacia, electricista, colegio..."/></div>
-      <button className="secondary" onClick={()=>setShowSuggest(true)}><Store size={17}/> Agregar un lugar</button>
-      <button className="primary" onClick={()=>setShowClaim(true)}><UserCheck size={17}/> Reclamar mi negocio</button>
-    </section>
-
+    <section className="businessSearchPanel"><div className="businessSearch"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busca comida, farmacia, electricista, colegio..."/></div><button className="secondary" onClick={()=>setShowCreate(true)}><Store size={17}/> Registrar negocio</button><button className="primary" onClick={()=>{const candidate=snapshot.businesses.find(x=>!x.owner_id);if(candidate)setShowClaim(candidate);else fail('No hay fichas sin propietario disponibles.');}}><UserCheck size={17}/> Reclamar negocio</button></section>
     <div className="categoryRail">{categories.map(c=><button key={c.id} className={category===c.id?'active':''} onClick={()=>setCategory(c.id)}><span>{c.icon}</span>{c.label}</button>)}</div>
+    <div className="businessToolbar"><div className="filterChecks"><label><input type="checkbox" checked={onlyOpen} onChange={e=>setOnlyOpen(e.target.checked)}/> Abierto ahora</label><label><input type="checkbox" checked={onlyAffiliated} onChange={e=>setOnlyAffiliated(e.target.checked)}/> Afiliado MiZona</label></div><div className="sortSelect"><Filter size={16}/><select value={sort} onChange={e=>setSort(e.target.value)}><option value="recommended">Recomendados</option><option value="distance">Más cercanos</option><option value="rating">Mejor calificados</option></select></div></div>
 
-    <div className="businessToolbar">
-      <div className="filterChecks"><label><input type="checkbox" checked={onlyOpen} onChange={e=>setOnlyOpen(e.target.checked)}/> Abierto ahora</label><label><input type="checkbox" checked={onlyAffiliated} onChange={e=>setOnlyAffiliated(e.target.checked)}/> Afiliado MiZona</label></div>
-      <div className="sortSelect"><Filter size={16}/><select value={sort} onChange={e=>setSort(e.target.value)}><option value="recommended">Recomendados</option><option value="distance">Más cercanos</option><option value="rating">Mejor calificados</option></select></div>
+    <div className="businessLayout"><section><div className="sectionTitle"><div><h2>{places.length} resultados</h2><p>Los datos se comparten entre perfiles y pestañas del mismo navegador.</p></div></div><div className="placeGrid">{places.map(p=><BusinessCard key={p.id} place={p} onOpen={openPlace} onFavorite={favorite} favorite={favoriteSet.has(p.id)}/>)}</div>{!places.length&&<div className="emptyState">No encontramos resultados con esos filtros.</div>}</section>
+      <aside className="businessSide"><Card title="Tus negocios" icon="🏪"><div className="commerceMiniList">{myBusinesses.length?myBusinesses.map(x=><button key={x.id} onClick={()=>openPlace(x)}><span>{x.emoji}</span><div><b>{x.name}</b><small>{x.status} · {x.open?'abierto':'cerrado'}</small></div></button>):<p className="muted">Todavía no administras un negocio.</p>}</div><button className="primary full" onClick={()=>setShowCreate(true)}>Crear perfil comercial</button></Card><Card title="Confianza local" icon="🛡️"><ul className="list compact"><li>Propietarios y fichas pasan por moderación.</li><li>El contacto ocurre dentro de MiZona Chat.</li><li>Opiniones y favoritos son independientes por usuario.</li><li>Los cambios quedan en auditoría local.</li></ul></Card></aside>
     </div>
 
-    <div className="businessLayout">
-      <section><div className="sectionTitle"><div><h2>{places.length} resultados</h2><p>Los afiliados tienen promociones y atención directa; los demás siguen apareciendo con información básica.</p></div></div><div className="placeGrid">{places.map(p=><BusinessCard key={p.id} place={p} onOpen={setSelected} onFavorite={toggleFavorite} favorite={favorites.has(p.id)}/>)}</div>{places.length===0&&<div className="emptyState">No encontramos resultados con esos filtros.</div>}</section>
-      <aside className="businessSide">
-        <Card title="¿Por qué MiZona?" icon="✨"><ul className="list compact"><li>Todos los lugares pueden aparecer.</li><li>Los afiliados desbloquean promociones y chat.</li><li>Las recomendaciones priorizan confianza local.</li><li>Los resultados pueden medirse con QR y cupones.</li></ul></Card>
-        <Card title="Más buscado hoy" icon="🔥"><div className="trendList"><span><b>1.</b> Pollo a la brasa <em>+22%</em></span><span><b>2.</b> Farmacia abierta <em>+18%</em></span><span><b>3.</b> Electricista <em>+15%</em></span><span><b>4.</b> Menú económico <em>+12%</em></span></div></Card>
-        <Card title="Tus favoritos" icon="❤️"><p className="muted">{favorites.size?`Guardaste ${favorites.size} lugar${favorites.size>1?'es':''}.`:'Aún no guardaste lugares.'}</p></Card>
-      </aside>
-    </div>
+    {selected&&<div className="modalBackdrop" onMouseDown={()=>setSelected(null)}><section className="businessModal commerceDetailModal" onMouseDown={e=>e.stopPropagation()}><button className="modalClose" onClick={()=>setSelected(null)}><X size={18}/></button><div className="businessModalHead"><div className="businessAvatar">{selected.emoji}</div><div><p className="eyebrow">{selected.affiliated?'Perfil afiliado':'Ficha comunitaria'}</p><h2>{selected.name}</h2><div className="placeMeta"><Stars value={selected.rating}/><span>{selected.review_count} opiniones</span><span className={selected.open?'open':'closed'}>{selected.open?'Abierto':'Cerrado'}</span></div></div></div><p className="marketDescription">{selected.description}</p><div className="modalFacts"><span><MapPin size={17}/><b>Dirección</b>{selected.address||selected.zone}</span><span><Building2 size={17}/><b>Horario</b>{selected.hours||'Por coordinar'}</span><span><ShieldCheck size={17}/><b>Estado</b>{selected.verified?'Propietario verificado':'Información comunitaria'}</span><span><Sparkles size={17}/><b>Actividad</b>{selected.views||0} vistas · {selected.contact_count||0} contactos</span></div>{selected.offer_title&&<div className="miniOffer"><TicketPercent size={18}/><div><b>{selected.offer_title}</b><span>{selected.offer_detail}</span></div><strong>{selected.offer_price}</strong></div>}
+      <div className="commerceRating"><b>Califica este negocio</b><div><select value={rating} onChange={e=>setRating(Number(e.target.value))}><option value="5">5 estrellas</option><option value="4">4 estrellas</option><option value="3">3 estrellas</option><option value="2">2 estrellas</option><option value="1">1 estrella</option></select><input value={reviewComment} onChange={e=>setReviewComment(e.target.value)} placeholder="Comentario opcional"/><button onClick={saveRating}>Guardar</button></div></div>
+      <div className="modalActions">{!selected.owner_id&&<button className="secondary" onClick={()=>{setShowClaim(selected);setSelected(null);}}><UserCheck size={17}/> Reclamar</button>}<button className="secondary" onClick={()=>{reportLocalBusiness(selected.id,'Información incorrecta','Reporte desde el perfil del negocio');notify('Reporte enviado a moderación local.');}}><ShieldCheck size={17}/> Reportar</button>{selected.is_mine&&<button className="secondary" onClick={()=>toggleOpen(selected)}>{selected.open?'Cerrar ahora':'Abrir ahora'}</button>}<button className="primary" disabled={!selected.owner_id||selected.is_mine} onClick={()=>contactOwner(selected)}><MessageCircle size={17}/> Contactar por Chat</button></div></section></div>}
 
-    {selected&&<div className="modalBackdrop" onMouseDown={()=>setSelected(null)}><section className="businessModal" onMouseDown={e=>e.stopPropagation()}><button className="modalClose" onClick={()=>setSelected(null)}><X size={18}/></button><div className="businessModalTop"><span className="modalEmoji">{selected.emoji}</span><div><div className="modalTitleRow"><h2>{selected.name}</h2>{selected.verified&&<BadgeCheck size={20}/>}</div><p>{selected.description}</p><div className="placeMeta"><Stars value={selected.rating}/><span>{selected.reviews} opiniones</span><span className={selected.open?'open':'closed'}>{selected.open?'Abierto':'Cerrado'}</span></div></div></div><div className="modalFacts"><span><MapPin size={17}/><b>Dirección</b>{selected.address}</span><span><Clock3 size={17}/><b>Horario</b>{selected.hours}</span><span><Phone size={17}/><b>Contacto</b>{selected.phone}</span><span><ShieldCheck size={17}/><b>Fuente</b>{selected.source}</span></div>{selected.offers.length>0&&<div className="modalOffer"><Tag size={20}/><div><b>{selected.offers[0].title}</b><span>{selected.offers[0].detail}</span></div><strong>{selected.offers[0].price}</strong></div>}<div className="modalActions"><button className="secondary" onClick={()=>notify('Enlace copiado para compartir')}><Share2 size={17}/> Compartir</button><button className="secondary" onClick={()=>notify('Ruta preparada para abrir en mapas')}><Navigation size={17}/> Cómo llegar</button>{selected.affiliated?<button className="primary" onClick={()=>notify('Solicitud de contacto registrada')}><Phone size={17}/> Contactar</button>:<button className="primary" onClick={()=>{setSelected(null);setShowClaim(true)}}><UserCheck size={17}/> Soy el dueño</button>}</div></section></div>}
+    {showCreate&&<div className="modalBackdrop" onMouseDown={()=>setShowCreate(false)}><section className="benefitCreateModal" onMouseDown={e=>e.stopPropagation()}><div className="benefitModalHead"><div><p className="eyebrow">Nuevo perfil comercial</p><h2>Registrar negocio</h2></div><button onClick={()=>setShowCreate(false)}><X size={18}/></button></div><div className="benefitFormGrid"><label>Nombre<input value={businessForm.name} onChange={e=>setBusinessForm({...businessForm,name:e.target.value})}/></label><label>Categoría<select value={businessForm.category} onChange={e=>setBusinessForm({...businessForm,category:e.target.value})}>{categories.filter(x=>x.id!=='all').map(x=><option key={x.id} value={x.id}>{x.label}</option>)}</select></label><label>Zona<input value={businessForm.zone} onChange={e=>setBusinessForm({...businessForm,zone:e.target.value})}/></label><label>Dirección<input value={businessForm.address} onChange={e=>setBusinessForm({...businessForm,address:e.target.value})}/></label><label className="wide">Descripción<textarea value={businessForm.description} onChange={e=>setBusinessForm({...businessForm,description:e.target.value})}/></label><label>Horario<input value={businessForm.hours} onChange={e=>setBusinessForm({...businessForm,hours:e.target.value})}/></label><label>Oferta inicial<input value={businessForm.offer_title} onChange={e=>setBusinessForm({...businessForm,offer_title:e.target.value})} placeholder="Opcional"/></label></div><div className="benefitFormActions"><button className="secondary" onClick={()=>setShowCreate(false)}>Cancelar</button><button className="primary" onClick={createBusiness}>Enviar a revisión</button></div></section></div>}
 
-    {showClaim&&<div className="modalBackdrop" onMouseDown={()=>setShowClaim(false)}><section className="formModal" onMouseDown={e=>e.stopPropagation()}><button className="modalClose" onClick={()=>setShowClaim(false)}><X size={18}/></button><h2>Reclamar un negocio</h2><p className="muted">El administrador revisará que tengas relación con el negocio antes de darte acceso.</p><label>Nombre del negocio<input placeholder="Ej. Lolita Burger"/></label><label>Tu nombre<input placeholder="Nombre completo"/></label><label>Documento o prueba de relación<input type="file"/></label><label>Mensaje<textarea placeholder="Explica brevemente tu relación con el negocio"/></label><button className="primary wide" onClick={()=>{setShowClaim(false);notify('Solicitud enviada para revisión')}}>Enviar solicitud</button></section></div>}
-
-    {showSuggest&&<div className="modalBackdrop" onMouseDown={()=>setShowSuggest(false)}><section className="formModal" onMouseDown={e=>e.stopPropagation()}><button className="modalClose" onClick={()=>setShowSuggest(false)}><X size={18}/></button><h2>Agregar un lugar que falta</h2><p className="muted">Tu aporte pasará por revisión antes de publicarse.</p><label>Nombre<input placeholder="Nombre del lugar"/></label><label>Categoría<select><option>Comida</option><option>Salud</option><option>Hogar</option><option>Educación</option><option>Servicios</option></select></label><label>Dirección<input placeholder="Dirección o referencia"/></label><label>Foto opcional<input type="file" accept="image/*"/></label><button className="primary wide" onClick={()=>{setShowSuggest(false);notify('Lugar enviado para revisión')}}>Enviar para revisión</button></section></div>}
-
-    {toast&&<div className="toastSuccess"><Sparkles size={17}/>{toast}</div>}
+    {showClaim&&<div className="modalBackdrop" onMouseDown={()=>setShowClaim(null)}><section className="formModal commerceSmallModal" onMouseDown={e=>e.stopPropagation()}><button className="modalClose" onClick={()=>setShowClaim(null)}><X size={18}/></button><h2>Reclamar {showClaim.name}</h2><p className="muted">Explica por qué eres el propietario o administrador responsable.</p><textarea className="field" value={claimEvidence} onChange={e=>setClaimEvidence(e.target.value)} placeholder="Ej. Soy propietario y puedo presentar licencia o recibos..."/><button className="primary wide" onClick={claimBusiness}>Enviar solicitud</button></section></div>}
+    {toast&&<div className="toastSuccess"><Sparkles size={17}/>{toast}</div>}{error&&<div className="toastError">⚠️ {error}<button onClick={()=>setError('')}>×</button></div>}
   </div>;
 }

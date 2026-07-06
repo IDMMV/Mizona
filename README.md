@@ -1,26 +1,35 @@
-# MiZona Enterprise V8 — Etapa 16
+# MiZona Enterprise V8 — Etapa 17
 
-## Beneficios y oportunidades multiusuario local
+## Negocios y Marketplace multiusuario local
 
-Versión acumulativa construida sobre las Etapas 10–15. Continúa sin Supabase y convierte **Beneficios** en un módulo funcional compartido entre varias pestañas del mismo navegador.
+Versión acumulativa construida sobre las Etapas 10–16. Continúa funcionando sin Supabase y convierte **Negocios** y **Marketplace** en módulos interactivos compartidos entre perfiles y pestañas del mismo navegador.
 
-## Incluye
+## Negocios
 
-- Ofertas, empleos, eventos, campañas y cupones locales.
-- Creación de oportunidades por perfiles adultos.
-- Publicación inmediata para administradores y revisión para usuarios normales.
-- Moderación desde el Centro de Control: aprobar, verificar, pausar y rechazar.
-- Guardados independientes por perfil.
-- Cupones con código local único.
-- Postulaciones, reservas, asistencias y solicitudes.
-- Stock o cupos que disminuyen con cada acción.
-- Cancelación de acciones y devolución del cupo.
-- Reportes de publicaciones y revisión administrativa.
-- Métricas locales de vistas y acciones.
-- Notificaciones al responsable y a los administradores.
-- Auditoría y cola para sincronización futura.
-- Actualización entre pestañas mediante BroadcastChannel.
-- Todo lo incorporado en Chat, grupos, archivos y Mi Comunidad.
+- Registro de negocios y servicios locales.
+- Publicaciones pendientes para usuarios normales y aprobación inmediata para administradores.
+- Reclamo de fichas sin propietario.
+- Aprobación o rechazo de reclamos desde el Centro de Control.
+- Propietario verificado, negocio afiliado y estado abierto/cerrado.
+- Favoritos independientes por perfil.
+- Calificaciones y comentarios locales.
+- Ofertas visibles en la ficha comercial.
+- Contacto mediante MiZona Chat.
+- Reportes, suspensión, rechazo y verificación administrativa.
+- Métricas de vistas y contactos.
+
+## Marketplace
+
+- Publicación de productos y servicios.
+- Imagen local opcional de hasta 1.2 MB.
+- Filtros por categoría, condición, precio, distancia y verificación.
+- Favoritos independientes por perfil.
+- Estado pendiente, activo, pausado, vendido o rechazado.
+- Panel de publicaciones propias.
+- Contacto con el vendedor mediante solicitud y MiZona Chat.
+- Reportes y moderación desde el Centro de Control.
+- Restricciones de categorías para perfiles estudiantiles.
+- Notificaciones, auditoría y cola de sincronización futura.
 
 ## Ejecutar
 
@@ -36,6 +45,6 @@ npm run build
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-## Importante
+## Estado honesto
 
-Esta etapa funciona entre pestañas del mismo navegador y dispositivo. No reemplaza autenticación, moderación ni sincronización real entre celulares o computadoras. No requiere ejecutar SQL.
+Esta etapa comparte información entre pestañas del mismo navegador y dispositivo mediante almacenamiento local. No sincroniza negocios, publicaciones o imágenes entre celulares o computadoras diferentes. No requiere ejecutar SQL.
