@@ -220,3 +220,98 @@ for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
 drop policy if exists "Users create and read own place actions" on place_actions;
 create policy "Users create and read own place actions" on place_actions
 for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+-- Sprint 5: Marketplace local
+create table if not exists marketplace_listings (
+  id uuid primary key default gen_random_uuid(),
+  seller_profile_id uuid references profiles(id) on delete cascade,
+  community_id uuid references communities(id) on delete set null,
+  title text not null,
+  description text,
+  category text not null,
+  condition text not null check (condition in ('new','used_excellent','used_good','used_regular','service')),
+  price numeric(12,2) not null check (price >= 0),
+  currency text not null default 'PEN',
+  zone text not null,
+  latitude numeric,
+  longitude numeric,
+  delivery_available boolean default false,
+  negotiable boolean default false,
+  status text not null default 'pending' check (status in ('draft','pending','active','reserved','sold','hidden','rejected')),
+  moderation_reason text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists marketplace_zone_category_idx on marketplace_listings(zone, category);
+create index if not exists marketplace_status_created_idx on marketplace_listings(status, created_at desc);
+
+create table if not exists marketplace_images (
+  id uuid primary key default gen_random_uuid(),
+  listing_id uuid references marketplace_listings(id) on delete cascade,
+  storage_path text not null,
+  sort_order integer default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists marketplace_favorites (
+  listing_id uuid references marketplace_listings(id) on delete cascade,
+  profile_id uuid references profiles(id) on delete cascade,
+  created_at timestamptz default now(),
+  primary key(listing_id, profile_id)
+);
+
+create table if not exists marketplace_reports (
+  id uuid primary key default gen_random_uuid(),
+  listing_id uuid references marketplace_listings(id) on delete cascade,
+  reporter_profile_id uuid references profiles(id) on delete cascade,
+  reason text not null,
+  details text,
+  status text not null default 'open' check (status in ('open','reviewing','resolved','dismissed')),
+  reviewed_by uuid references profiles(id),
+  reviewed_at timestamptz,
+  created_at timestamptz default now()
+);
+
+create table if not exists marketplace_actions (
+  id uuid primary key default gen_random_uuid(),
+  listing_id uuid references marketplace_listings(id) on delete cascade,
+  profile_id uuid references profiles(id),
+  action_type text not null check (action_type in ('view','favorite','share','chat','report','reserve','sold')),
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default now()
+);
+
+alter table marketplace_listings enable row level security;
+alter table marketplace_images enable row level security;
+alter table marketplace_favorites enable row level security;
+alter table marketplace_reports enable row level security;
+alter table marketplace_actions enable row level security;
+
+drop policy if exists "Public read active marketplace" on marketplace_listings;
+create policy "Public read active marketplace" on marketplace_listings
+for select using (status = 'active');
+
+drop policy if exists "Sellers manage own marketplace listings" on marketplace_listings;
+create policy "Sellers manage own marketplace listings" on marketplace_listings
+for all using (auth.uid() = seller_profile_id) with check (auth.uid() = seller_profile_id);
+
+drop policy if exists "Public read marketplace images" on marketplace_images;
+create policy "Public read marketplace images" on marketplace_images
+for select using (exists(select 1 from marketplace_listings l where l.id = listing_id and l.status = 'active'));
+
+drop policy if exists "Users manage marketplace favorites" on marketplace_favorites;
+create policy "Users manage marketplace favorites" on marketplace_favorites
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+drop policy if exists "Users create marketplace reports" on marketplace_reports;
+create policy "Users create marketplace reports" on marketplace_reports
+for insert with check (auth.uid() = reporter_profile_id);
+
+drop policy if exists "Users read own marketplace reports" on marketplace_reports;
+create policy "Users read own marketplace reports" on marketplace_reports
+for select using (auth.uid() = reporter_profile_id);
+
+drop policy if exists "Users manage own marketplace actions" on marketplace_actions;
+create policy "Users manage own marketplace actions" on marketplace_actions
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);

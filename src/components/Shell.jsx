@@ -15,7 +15,7 @@ export default function Shell({ page, setPage, children }) {
           <Icon size={18}/><span>{m.label}</span>{m.status !== 'active' && <small>{statusLabel[m.status]}</small>}
         </button>; })}
       </nav>
-      <div className="phaseBox"><b>Sprint actual</b><span>Sprint 4: Negocios y lugares</span><div className="bar"><i style={{width:'49%'}} /></div></div>
+      <div className="phaseBox"><b>Sprint actual</b><span>Sprint 5: Marketplace local</span><div className="bar"><i style={{width:'58%'}} /></div></div>
     </aside>
     <main>
       <header className="topbar">

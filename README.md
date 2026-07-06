@@ -1,24 +1,25 @@
-# MiZona Enterprise V8 — Sprint 4
+# MiZona Enterprise V8 — Sprint 5
 
-Aplicación React + Vite que conserva los Sprints 1–3 y agrega **Negocios y lugares**.
+Sprint funcional de **Marketplace Local** construido sobre los Sprint 1–4.
 
 ## Incluye
-- Mi Panel
-- Mi Comunidad y colegio modelo
-- MiZona Chat y Aula Chat
-- MiZona Transfer (archivos temporales)
-- Beneficios, ofertas, empleos, eventos, campañas y cupones
-- Negocios y lugares afiliados o no afiliados
-- Buscador, categorías, filtros, favoritos y fichas detalladas
-- Reclamo de negocio y sugerencia de lugares faltantes
-- Centro de Control
-- SQL inicial Supabase con RLS
+- Mi Panel, Comunidad, Chat, Transfer, Beneficios y Negocios.
+- Marketplace con búsqueda, categorías, filtros y ordenamiento.
+- Publicaciones de productos, servicios y artículos escolares.
+- Favoritos, detalle, chat con vendedor y reportes.
+- Reglas de seguridad y moderación desde Centro de Control.
+- SQL inicial para Supabase y políticas RLS.
+- Carpeta `dist` generada con Vite.
 
-## Publicar en Vercel
-- Framework Preset: `Vite`
-- Install Command: `npm install`
-- Build Command: `npm run build`
-- Output Directory: `dist`
+## Ejecutar
+```bash
+npm install
+npm run dev
+```
 
-## Variables opcionales
-Copia `.env.example` como `.env` y agrega tus credenciales de Supabase cuando conectemos datos reales.
+## Compilar
+```bash
+npm run build
+```
+
+En Vercel: Framework **Vite**, Build Command `npm run build`, Output `dist`.
