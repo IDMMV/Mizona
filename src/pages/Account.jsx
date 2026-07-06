@@ -149,7 +149,7 @@ export default function Account() {
 
     {!backendConnected && <div className="setupWarning">
       <b>Falta conectar el proyecto con Supabase.</b>
-      <span>La interfaz seguirá funcionando como demostración, pero las cuentas y cambios solo serán reales después de configurar las variables y ejecutar el SQL de la Etapa 10.</span>
+      <span>La interfaz seguirá funcionando como demostración, pero las cuentas y cambios solo serán reales después de configurar las variables y ejecutar los SQL de las Etapas 10 y 11.</span>
     </div>}
 
     {tab === 'profile' && <div className="grid2">

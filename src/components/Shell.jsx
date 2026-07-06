@@ -27,7 +27,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Núcleo real · autenticación y roles</span><div className="bar"><i style={{ width: '82%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 11 · comunidad y colegios reales</span><div className="bar"><i style={{ width: '87%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">

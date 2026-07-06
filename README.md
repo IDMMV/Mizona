@@ -1,17 +1,39 @@
-# MiZona Enterprise V8 · Etapa 10 Núcleo Real
+# MiZona Enterprise V8 · Etapa 11 Comunidad Real
 
-Versión acumulativa de MiZona con el primer núcleo conectado a producción.
+Versión acumulativa de MiZona. Conserva todo lo desarrollado hasta la Etapa 10 y conecta **Mi Comunidad** con Supabase.
 
 ## Lo nuevo
 
-- Autenticación real con Supabase.
-- Registro, inicio de sesión, recuperación y cambio de contraseña.
-- Usuario único validado y filtrado.
-- Perfil vinculado a `auth.users`.
-- Roles y protección del Centro de Control.
-- Módulos administrables con persistencia real.
-- RLS, auditoría, términos, preferencias y Storage base.
-- Edge Function para iniciar sesión con usuario o correo.
+- Comunidades reales: colegios, comités, clubes, urbanizaciones, empresas, iglesias y asociaciones.
+- Solicitud de creación y aprobación por el administrador de MiZona.
+- Comunidades públicas, privadas, escolares, abiertas, con aprobación, código o invitación.
+- Membresías, roles y estados reales.
+- Administración de solicitudes de ingreso.
+- Comunicados y eventos guardados en Supabase.
+- Aulas escolares protegidas por comunidad.
+- Documentos privados de hasta 20 MB mediante Supabase Storage.
+- Descargas con enlaces firmados temporales.
+- Actualización en tiempo real para comunicados, eventos y membresías.
+- Políticas RLS para separar el contenido de cada comunidad.
+- Interfaz adaptable a celular, tablet y computadora.
+
+## Archivos SQL
+
+### Ya ejecutaste la Etapa 10
+Ejecuta únicamente:
+
+```text
+supabase/ETAPA11_COMUNIDAD_REAL.sql
+```
+
+### Proyecto nuevo o base limpia
+Ejecuta:
+
+```text
+supabase/ETAPA10_Y_11_COMPLETO.sql
+```
+
+No ejecutes ambos archivos completos en la misma instalación. El SQL está preparado para repetirse, pero el archivo acumulativo ya contiene las dos etapas.
 
 ## Ejecutar localmente
 
@@ -26,14 +48,6 @@ npm run dev
 npm run build
 ```
 
-## Configurar Supabase
-
-1. Copia `.env.example` como `.env`.
-2. Coloca la URL y clave anónima del proyecto.
-3. Ejecuta `supabase/schema.sql` si corresponde.
-4. Ejecuta `supabase/ETAPA10_EJECUTAR.sql`.
-5. Revisa `docs/ETAPA10_NUCLEO_REAL.md`.
-
 ## Vercel
 
 - Framework: **Vite**
@@ -45,4 +59,4 @@ npm run build
 
 ## Estado honesto
 
-Esta etapa hace reales la autenticación, los perfiles, roles y estados de módulos después de configurar Supabase. Comunidad, Chat, Transfer, Marketplace, CampusHugo, Business, Ride e IA todavía conservan partes demostrativas y se conectarán progresivamente en las siguientes etapas técnicas.
+En esta etapa son reales, después de configurar Supabase, la creación de comunidades, aprobación, membresías, comunicados, eventos, aulas y documentos. El chat escolar todavía abre el módulo visual anterior; su conexión en tiempo real será la siguiente etapa técnica.
