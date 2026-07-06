@@ -315,3 +315,147 @@ for select using (auth.uid() = reporter_profile_id);
 drop policy if exists "Users manage own marketplace actions" on marketplace_actions;
 create policy "Users manage own marketplace actions" on marketplace_actions
 for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+-- Sprint 6: CampusHugo
+create table if not exists campus_courses (
+  id uuid primary key default gen_random_uuid(),
+  instructor_profile_id uuid references profiles(id) on delete set null,
+  title text not null,
+  slug text unique not null,
+  summary text,
+  category text not null,
+  level text not null,
+  cover_path text,
+  price numeric(12,2) not null default 0 check (price >= 0),
+  currency text not null default 'PEN',
+  duration_minutes integer not null default 0 check (duration_minutes >= 0),
+  status text not null default 'draft' check (status in ('draft','pending','published','paused','rejected','archived')),
+  verified boolean default false,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists campus_modules (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid references campus_courses(id) on delete cascade,
+  title text not null,
+  sort_order integer not null default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists campus_lessons (
+  id uuid primary key default gen_random_uuid(),
+  module_id uuid references campus_modules(id) on delete cascade,
+  title text not null,
+  lesson_type text not null default 'video' check (lesson_type in ('video','text','file','quiz','live')),
+  content_url text,
+  content_text text,
+  duration_minutes integer not null default 0,
+  is_preview boolean default false,
+  sort_order integer not null default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists campus_enrollments (
+  course_id uuid references campus_courses(id) on delete cascade,
+  profile_id uuid references profiles(id) on delete cascade,
+  status text not null default 'active' check (status in ('active','completed','paused','cancelled')),
+  progress_percent integer not null default 0 check (progress_percent between 0 and 100),
+  enrolled_at timestamptz default now(),
+  completed_at timestamptz,
+  primary key(course_id, profile_id)
+);
+
+create table if not exists campus_lesson_progress (
+  lesson_id uuid references campus_lessons(id) on delete cascade,
+  profile_id uuid references profiles(id) on delete cascade,
+  completed boolean default false,
+  last_position_seconds integer not null default 0,
+  completed_at timestamptz,
+  updated_at timestamptz default now(),
+  primary key(lesson_id, profile_id)
+);
+
+create table if not exists campus_assessments (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid references campus_courses(id) on delete cascade,
+  title text not null,
+  passing_score numeric(5,2) not null default 70,
+  status text not null default 'draft' check (status in ('draft','published','paused')),
+  created_at timestamptz default now()
+);
+
+create table if not exists campus_attempts (
+  id uuid primary key default gen_random_uuid(),
+  assessment_id uuid references campus_assessments(id) on delete cascade,
+  profile_id uuid references profiles(id) on delete cascade,
+  score numeric(5,2),
+  passed boolean default false,
+  answers jsonb default '{}'::jsonb,
+  submitted_at timestamptz default now()
+);
+
+create table if not exists campus_certificates (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid references campus_courses(id) on delete cascade,
+  profile_id uuid references profiles(id) on delete cascade,
+  certificate_code text unique not null,
+  storage_path text,
+  issued_at timestamptz default now(),
+  revoked_at timestamptz,
+  unique(course_id, profile_id)
+);
+
+create index if not exists campus_courses_category_status_idx on campus_courses(category, status);
+create index if not exists campus_modules_course_sort_idx on campus_modules(course_id, sort_order);
+create index if not exists campus_lessons_module_sort_idx on campus_lessons(module_id, sort_order);
+create index if not exists campus_enrollments_profile_idx on campus_enrollments(profile_id, status);
+
+alter table campus_courses enable row level security;
+alter table campus_modules enable row level security;
+alter table campus_lessons enable row level security;
+alter table campus_enrollments enable row level security;
+alter table campus_lesson_progress enable row level security;
+alter table campus_assessments enable row level security;
+alter table campus_attempts enable row level security;
+alter table campus_certificates enable row level security;
+
+drop policy if exists "Public read published campus courses" on campus_courses;
+create policy "Public read published campus courses" on campus_courses
+for select using (status = 'published');
+
+drop policy if exists "Public read modules of published courses" on campus_modules;
+create policy "Public read modules of published courses" on campus_modules
+for select using (exists (
+  select 1 from campus_courses c where c.id = campus_modules.course_id and c.status = 'published'
+));
+
+drop policy if exists "Public read preview lessons" on campus_lessons;
+create policy "Public read preview lessons" on campus_lessons
+for select using (
+  is_preview = true or exists (
+    select 1 from campus_modules m
+    join campus_enrollments e on e.course_id = m.course_id
+    where m.id = campus_lessons.module_id and e.profile_id = auth.uid() and e.status in ('active','completed')
+  )
+);
+
+drop policy if exists "Users manage own campus enrollments" on campus_enrollments;
+create policy "Users manage own campus enrollments" on campus_enrollments
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+drop policy if exists "Users manage own lesson progress" on campus_lesson_progress;
+create policy "Users manage own lesson progress" on campus_lesson_progress
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+drop policy if exists "Users read published assessments" on campus_assessments;
+create policy "Users read published assessments" on campus_assessments
+for select using (status = 'published');
+
+drop policy if exists "Users manage own assessment attempts" on campus_attempts;
+create policy "Users manage own assessment attempts" on campus_attempts
+for all using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+drop policy if exists "Users read own certificates" on campus_certificates;
+create policy "Users read own certificates" on campus_certificates
+for select using (auth.uid() = profile_id);

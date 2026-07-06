@@ -10,6 +10,7 @@ import Admin from './pages/Admin';
 import Benefits from './pages/Benefits';
 import Businesses from './pages/Businesses';
 import Marketplace from './pages/Marketplace';
+import Campus from './pages/Campus';
 import { Placeholder, Settings, Blueprint } from './pages/Placeholders';
 
 function App(){
@@ -24,7 +25,7 @@ function App(){
   businesses:<Businesses/>,
   marketplace:<Marketplace/>,
   business:<Placeholder title="MiZona Business" desc="POS, caja, cocina, inventario, clientes y reportes."/>,
-  campus:<Placeholder title="CampusHugo" desc="Cursos, evaluaciones, certificados e IA educativa."/>,
+  campus:<Campus/>,
   ride:<Placeholder title="MiZona Ride" desc="Pasajeros, conductores, delivery y envíos."/>,
   ai:<Placeholder title="IA MiZona" desc="Asistente para resolver necesidades en la zona."/>,
   admin:<Admin/>,
