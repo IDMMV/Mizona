@@ -1,0 +1,7 @@
+import { useState } from 'react';
+import Card from '../components/Card';
+export default function Transfer(){
+ const [files,setFiles]=useState([{name:'Maqueta ciencias.pdf',size:'8.4 MB',expires:'7 días'},{name:'Fotos grupo.zip',size:'42 MB',expires:'7 días'}]);
+ const add=()=>setFiles([{name:'Nuevo_trabajo_escolar.docx',size:'2.1 MB',expires:'7 días'},...files]);
+ return <div className="page"><div className="pageTitle"><div><h1>MiZona Transfer</h1><p className="muted">Archivos temporales para tareas y trabajos. Controla almacenamiento gratuito.</p></div><button className="primary" onClick={add}>Simular subida</button></div><div className="grid2"><Card title="Subir archivo temporal" icon="📤"><div className="drop">Arrastra tus archivos o selecciona desde el dispositivo<br/><small>PDF, Word, Excel, PowerPoint, imágenes y ZIP. Vence en 7 días.</small></div><button className="primary full" onClick={add}>Seleccionar archivo</button></Card><Card title="Regla de almacenamiento" icon="🧹"><ul className="list"><li>Los chats quedan solo 7 días.</li><li>Los archivos se eliminan automáticamente.</li><li>Solo queda auditoría básica y reportes.</li><li>Máximo inicial recomendado: 50 MB por archivo.</li></ul></Card></div><Card title="Archivos temporales" icon="📁"><div className="adminTable files">{files.map(f=><div key={f.name}><b>{f.name}</b><span>{f.size}</span><span>Vence: {f.expires}</span><button>Copiar enlace</button></div>)}</div></Card></div>
+}
