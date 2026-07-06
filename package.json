@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-final",
-  "version": "8.10.0",
+  "name": "mizona-enterprise-v8-etapa10",
+  "version": "8.11.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,12 +9,11 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "@supabase/supabase-js": "latest",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "lucide-react": "latest",
-    "@supabase/supabase-js": "latest"
-  },
-  "devDependencies": {}
+    "vite": "latest"
+  }
 }
