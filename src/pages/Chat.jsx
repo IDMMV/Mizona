@@ -246,16 +246,9 @@ export default function Chat({ setPage }) {
     setLoading(true);
     setNotice('');
     try {
-      if (!backendConnected) {
-        const existing = conversations.find(item => item.type === 'direct' && item.peer_id === contact.id);
-        const id = existing?.id || `demo-direct-${contact.id}`;
-        if (!existing) setConversations(current => [{ id, type: 'direct', peer_id: contact.id, peer_username: contact.username, peer_display_name: contact.display_name, peer_avatar_url: contact.avatar_url, retention_days: 7, updated_at: new Date().toISOString(), unread_count: 0, last_message: 'Conversación nueva' }, ...current]);
-        setSelectedId(id);
-      } else {
-        const id = await startDirectConversation(contact.id);
-        await refreshLists(true);
-        setSelectedId(id);
-      }
+      const id = await startDirectConversation(contact.id);
+      await refreshLists(true);
+      setSelectedId(id);
       setMobileConversation(true);
       setTab('chats');
     } catch (error) {
@@ -272,11 +265,7 @@ export default function Chat({ setPage }) {
     setNotice('');
     try {
       await sendTextMessage(selectedId, composer);
-      if (!backendConnected) {
-        setMessages(current => [...current, { id: `local-${Date.now()}`, sender_id: user?.id || null, sender_username: profile.username, sender_display_name: profile.displayName, body: composer.trim(), message_type: 'text', created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 7 * 86400000).toISOString(), attachments: [] }]);
-      } else {
-        setMessages(await loadMessages(selectedId));
-      }
+      setMessages(await loadMessages(selectedId));
       setComposer('');
       await refreshLists(true);
     } catch (error) {
@@ -290,7 +279,6 @@ export default function Chat({ setPage }) {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file || !selectedId) return;
-    if (!backendConnected) return setNotice('La carga real de archivos se habilita al conectar Supabase.');
     setSending(true);
     try {
       await sendChatFile({ conversationId: selectedId, file, userId: user.id });
@@ -306,13 +294,8 @@ export default function Chat({ setPage }) {
   const review = async (request, action) => {
     setLoading(true);
     try {
-      if (!backendConnected) {
-        setRequests(current => current.map(item => item.id === request.id ? { ...item, status: action } : item));
-        if (action === 'accepted') setContacts(current => current.some(item => item.id === request.other_user_id) ? current : [...current, { id: request.other_user_id, username: request.username, display_name: request.display_name, avatar_url: request.avatar_url, account_type: request.account_type, zone: 'Contacto MiZona' }]);
-      } else {
-        await reviewContactRequest(request.id, action);
-        await refreshLists(true);
-      }
+      await reviewContactRequest(request.id, action);
+      await refreshLists(true);
     } catch (error) {
       setNotice(error.message);
     } finally {
@@ -350,11 +333,11 @@ export default function Chat({ setPage }) {
 
   return <div className="chatRealPage">
     <div className="chatPageHeader">
-      <div><span>ETAPA 12 · TIEMPO REAL</span><h1>MiZona Chat</h1><p>Contactos por usuario exacto, grupos y archivos temporales.</p></div>
+      <div><span>ETAPA 13 · CONTINGENCIA LOCAL</span><h1>MiZona Chat</h1><p>Contactos, grupos y archivos guardados en este dispositivo.</p></div>
       <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button><button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button><button onClick={() => setShowSearch(true)}><UserPlus size={17}/> Agregar contacto</button></div>
     </div>
 
-    {!backendConnected && <ChatNotice>Modo demostración. Conecta Supabase y ejecuta el SQL de la Etapa 12 para guardar conversaciones reales.</ChatNotice>}
+    {!backendConnected && <ChatNotice kind="success">Modo local activo. Mensajes, contactos, grupos, reportes y archivos se guardan en este dispositivo mediante almacenamiento del navegador.</ChatNotice>}
     {notice && <ChatNotice kind={notice.includes('bloqueado') || notice.includes('Reporte enviado') ? 'success' : 'danger'}>{notice}</ChatNotice>}
 
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>
@@ -389,7 +372,7 @@ export default function Chat({ setPage }) {
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
           <div className="messageStream">
             {messages.length ? messages.map(message => {
-              const own = message.sender_id === user?.id || (!backendConnected && message.sender_username === profile.username);
+              const own = message.sender_id === user?.id || message.sender_username === profile.username;
               return <div key={message.id} className={`messageRow ${own ? 'own' : ''}`}>
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
                   {!own && <b>{message.sender_display_name}</b>}
@@ -397,7 +380,7 @@ export default function Chat({ setPage }) {
                   {Array.isArray(message.attachments) && message.attachments.map(attachment => <button key={attachment.id} className="attachmentCard" onClick={() => attachment.storage_path ? openChatAttachment(attachment.storage_path).catch(error => setNotice(error.message)) : setNotice('Archivo de demostración.')}>
                     {String(attachment.mime_type || '').startsWith('image/') ? <Image size={22}/> : <File size={22}/>}<span><b>{attachment.file_name}</b><small>{formatBytes(attachment.size_bytes)} · enlace privado</small></span><Download size={17}/>
                   </button>)}
-                  <small>{formatTime(message.created_at)}{message.expires_at && ` · vence ${new Date(message.expires_at).toLocaleDateString('es-PE')}`}</small>
+                  <small>{formatTime(message.created_at)}{message.expires_at && ` · vence ${new Date(message.expires_at).toLocaleDateString('es-PE')}`}{message.sync_status === 'local_only' && ' · guardado local'}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
               </div>;
             }) : <div className="emptyConversation"><MessageCircle size={43}/><h3>Inicia la conversación</h3><p>Recuerda no compartir contraseñas, códigos bancarios ni información privada.</p></div>}
@@ -420,6 +403,6 @@ export default function Chat({ setPage }) {
     </div>
 
     {showSearch && <ContactSearch onChanged={() => refreshLists(true)} onClose={() => setShowSearch(false)}/>}
-    {showGroup && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); if (!backendConnected) setConversations(current => [{ id, type: 'group', title: 'Nuevo grupo', retention_days: 7, updated_at: new Date().toISOString(), unread_count: 0, last_message: 'Grupo creado' }, ...current]); else await refreshLists(true); setSelectedId(id); setMobileConversation(true); }} onClose={() => setShowGroup(false)}/>}
+    {showGroup && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); setSelectedId(id); setMobileConversation(true); }} onClose={() => setShowGroup(false)}/>}
   </div>;
 }

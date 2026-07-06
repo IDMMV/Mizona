@@ -1,20 +1,31 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { modules } from '../data/modules';
 import { friendlyAuthError, hasSupabase, normalizeUsername, supabase } from '../lib/supabase';
+import {
+  cleanupExpiredLocalData,
+  deleteLocalNotification,
+  listLocalNotifications,
+  listLocalSyncQueue,
+  markAllLocalNotificationsRead,
+  markLocalNotification,
+  subscribeLocalData
+} from '../lib/localStore';
 
 const AppContext = createContext(null);
 const MODULE_STORAGE_KEY = 'mizona-v8-module-config';
 const PROFILE_STORAGE_KEY = 'mizona-v8-profile';
+const DATA_MODE_KEY = 'mizona-v8-data-mode-v13';
 const TERMS_VERSION = '2026-07';
 
 const demoProfile = {
-  id: null,
+  id: 'local-user-jose',
   displayName: 'José',
   username: 'JOSE1985',
   zone: 'Ventanilla - Pachacútec',
   role: 'super_admin',
   accountType: 'adult',
-  avatarUrl: null
+  avatarUrl: null,
+  status: 'active'
 };
 
 function readStoredModules() {
@@ -35,11 +46,16 @@ function readStoredProfile() {
   }
 }
 
+function readDataMode() {
+  const saved = localStorage.getItem(DATA_MODE_KEY);
+  return saved === 'cloud' ? 'cloud' : 'local';
+}
+
 function mapProfile(row, user) {
   if (!row) {
     return {
       ...demoProfile,
-      id: user?.id || null,
+      id: user?.id || demoProfile.id,
       displayName: user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Usuario',
       username: String(user?.user_metadata?.username || 'USUARIO').toUpperCase(),
       role: 'user'
@@ -80,12 +96,36 @@ function mergeRemoteModules(rows) {
 export function AppProvider({ children }) {
   const [moduleConfig, setModuleConfig] = useState(readStoredModules);
   const [profile, setProfileState] = useState(readStoredProfile);
-  const [session, setSession] = useState(null);
-  const [authLoading, setAuthLoading] = useState(hasSupabase);
+  const [dataMode, setDataModeState] = useState(readDataMode);
+  const [online, setOnline] = useState(() => navigator.onLine);
+  const cloudActive = dataMode === 'cloud' && hasSupabase && online;
+  const [session, setSession] = useState(() => dataMode === 'local' ? { user: { id: readStoredProfile().id, email: null, local: true } } : null);
+  const [authLoading, setAuthLoading] = useState(cloudActive);
   const [backendMessage, setBackendMessage] = useState('');
+  const [notifications, setNotifications] = useState(listLocalNotifications);
+  const [syncQueueCount, setSyncQueueCount] = useState(() => listLocalSyncQueue().length);
+
+  const refreshLocalIndicators = useCallback(() => {
+    setNotifications(listLocalNotifications());
+    setSyncQueueCount(listLocalSyncQueue().filter(item => item.status === 'local_only').length);
+  }, []);
+
+  useEffect(() => {
+    const onOnline = () => setOnline(true);
+    const onOffline = () => setOnline(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+    const unsubscribe = subscribeLocalData(refreshLocalIndicators);
+    cleanupExpiredLocalData().finally(refreshLocalIndicators);
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+      unsubscribe();
+    };
+  }, [refreshLocalIndicators]);
 
   const loadProfile = useCallback(async user => {
-    if (!supabase || !user?.id) return;
+    if (!supabase || !user?.id || !cloudActive) return;
     const { data, error } = await supabase
       .from('profiles')
       .select('id,username,display_name,role,account_type,zone,avatar_url,status')
@@ -101,10 +141,10 @@ export function AppProvider({ children }) {
     const next = mapProfile(data, user);
     setProfileState(next);
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
-  }, []);
+  }, [cloudActive]);
 
   const loadModules = useCallback(async () => {
-    if (!supabase) return;
+    if (!supabase || !cloudActive) return;
     const { data, error } = await supabase
       .from('app_modules')
       .select('id,status,audience,phase,sort_order,visible')
@@ -118,22 +158,30 @@ export function AppProvider({ children }) {
     const next = mergeRemoteModules(data);
     setModuleConfig(next);
     localStorage.setItem(MODULE_STORAGE_KEY, JSON.stringify(next.map(({ id, status, audience, phase, sortOrder, visible }) => ({ id, status, audience, phase, sortOrder, visible }))));
-  }, []);
+  }, [cloudActive]);
 
   useEffect(() => {
-    if (!supabase) {
+    if (!cloudActive) {
+      const localProfile = readStoredProfile();
+      setProfileState(localProfile);
+      setSession({ user: { id: localProfile.id, email: null, local: true } });
       setAuthLoading(false);
+      setBackendMessage(dataMode === 'local' ? 'Modo local activo: los datos se guardan en este dispositivo.' : 'Supabase no está disponible; MiZona conserva el modo local.');
       return undefined;
     }
 
     let active = true;
-
+    setAuthLoading(true);
     supabase.auth.getSession().then(({ data, error }) => {
       if (!active) return;
       if (error) setBackendMessage(friendlyAuthError(error));
       const nextSession = data?.session || null;
       setSession(nextSession);
       if (nextSession?.user) loadProfile(nextSession.user);
+      setAuthLoading(false);
+    }).catch(error => {
+      if (!active) return;
+      setBackendMessage(`No se pudo abrir Supabase: ${friendlyAuthError(error)}. Se recomienda volver al modo local.`);
       setAuthLoading(false);
     });
 
@@ -142,18 +190,14 @@ export function AppProvider({ children }) {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
       setAuthLoading(false);
-      if (nextSession?.user) {
-        window.setTimeout(() => loadProfile(nextSession.user), 0);
-      } else {
-        setProfileState(readStoredProfile());
-      }
+      if (nextSession?.user) window.setTimeout(() => loadProfile(nextSession.user), 0);
     });
 
     return () => {
       active = false;
       authListener?.subscription?.unsubscribe();
     };
-  }, [loadModules, loadProfile]);
+  }, [cloudActive, dataMode, loadModules, loadProfile]);
 
   useEffect(() => {
     localStorage.setItem(MODULE_STORAGE_KEY, JSON.stringify(moduleConfig.map(({ id, status, audience, phase, sortOrder, visible }) => ({ id, status, audience, phase, sortOrder, visible }))));
@@ -163,13 +207,29 @@ export function AppProvider({ children }) {
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
   }, [profile]);
 
-  const signUp = useCallback(async ({ email, password, username, displayName, accountType, zone, termsAccepted }) => {
-    if (!supabase) throw new Error('Supabase todavía no está configurado.');
-    if (!termsAccepted) throw new Error('Debes aceptar los términos, privacidad y reglas de seguridad.');
+  const setDataMode = useCallback(mode => {
+    const next = mode === 'cloud' ? 'cloud' : 'local';
+    localStorage.setItem(DATA_MODE_KEY, next);
+    setDataModeState(next);
+    if (next === 'local') {
+      const localProfile = readStoredProfile();
+      setProfileState(localProfile);
+      setSession({ user: { id: localProfile.id, email: null, local: true } });
+      setBackendMessage('Modo local activado. No se realizarán llamadas a Supabase.');
+    }
+  }, []);
 
+  const signUp = useCallback(async ({ email, password, username, displayName, accountType, zone, termsAccepted }) => {
+    if (!termsAccepted) throw new Error('Debes aceptar los términos, privacidad y reglas de seguridad.');
     const normalized = normalizeUsername(username);
-    if (!/^[a-z0-9_]{4,20}$/.test(normalized)) {
-      throw new Error('El usuario debe tener entre 4 y 20 caracteres: letras, números o guion bajo.');
+    if (!/^[a-z0-9_]{4,20}$/.test(normalized)) throw new Error('El usuario debe tener entre 4 y 20 caracteres: letras, números o guion bajo.');
+
+    if (!cloudActive) {
+      const next = { ...readStoredProfile(), displayName: String(displayName || '').trim(), username: normalized.toUpperCase(), accountType: accountType || 'adult', zone: String(zone || '').trim() || 'Sin zona definida' };
+      setProfileState(next);
+      setSession({ user: { id: next.id, email: String(email || '').trim().toLowerCase(), local: true } });
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
+      return { session: { user: { id: next.id, local: true } }, local: true };
     }
 
     const { data: available, error: availabilityError } = await supabase.rpc('is_username_available', { p_username: normalized });
@@ -181,126 +241,100 @@ export function AppProvider({ children }) {
       password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: {
-          username: normalized,
-          display_name: String(displayName || '').trim(),
-          account_type: accountType || 'adult',
-          zone: String(zone || '').trim(),
-          terms_accepted: true,
-          terms_version: TERMS_VERSION
-        }
+        data: { username: normalized, display_name: String(displayName || '').trim(), account_type: accountType || 'adult', zone: String(zone || '').trim(), terms_accepted: true, terms_version: TERMS_VERSION }
       }
     });
-
     if (error) throw error;
     return data;
-  }, []);
+  }, [cloudActive]);
 
   const signIn = useCallback(async ({ identifier, password }) => {
-    if (!supabase) throw new Error('Supabase todavía no está configurado.');
-    const cleanIdentifier = String(identifier || '').trim();
+    if (!cloudActive) {
+      const stored = readStoredProfile();
+      const clean = String(identifier || '').trim().toUpperCase();
+      if (clean && clean !== stored.username && !clean.includes('@')) throw new Error('En modo local usa el usuario del perfil guardado o edítalo en la pestaña Perfil.');
+      setSession({ user: { id: stored.id, email: clean.includes('@') ? clean.toLowerCase() : null, local: true } });
+      return { session: { user: { id: stored.id, local: true } }, local: true };
+    }
 
+    const cleanIdentifier = String(identifier || '').trim();
     if (cleanIdentifier.includes('@')) {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: cleanIdentifier.toLowerCase(),
-        password
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email: cleanIdentifier.toLowerCase(), password });
       if (error) throw error;
       return data;
     }
-
-    const { data, error } = await supabase.functions.invoke('login-by-username', {
-      body: { identifier: normalizeUsername(cleanIdentifier), password }
-    });
-
+    const { data, error } = await supabase.functions.invoke('login-by-username', { body: { identifier: normalizeUsername(cleanIdentifier), password } });
     if (error) throw error;
     if (data?.error) throw new Error(data.error);
-    if (!data?.access_token || !data?.refresh_token) throw new Error('El acceso por usuario todavía no está desplegado en Supabase Functions. También puedes ingresar con tu correo.');
-
-    const result = await supabase.auth.setSession({
-      access_token: data.access_token,
-      refresh_token: data.refresh_token
-    });
+    if (!data?.access_token || !data?.refresh_token) throw new Error('El acceso por usuario todavía no está desplegado. También puedes ingresar con tu correo.');
+    const result = await supabase.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
     if (result.error) throw result.error;
     return result.data;
-  }, []);
+  }, [cloudActive]);
 
   const signOut = useCallback(async () => {
-    if (!supabase) return;
+    if (!cloudActive) return;
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-  }, []);
+  }, [cloudActive]);
 
   const resetPassword = useCallback(async email => {
-    if (!supabase) throw new Error('Supabase todavía no está configurado.');
-    const { error } = await supabase.auth.resetPasswordForEmail(String(email || '').trim().toLowerCase(), {
-      redirectTo: window.location.origin
-    });
+    if (!cloudActive) throw new Error('La recuperación de contraseña requiere Supabase. El perfil local no utiliza una contraseña real.');
+    const { error } = await supabase.auth.resetPasswordForEmail(String(email || '').trim().toLowerCase(), { redirectTo: window.location.origin });
     if (error) throw error;
-  }, []);
+  }, [cloudActive]);
 
   const updatePassword = useCallback(async password => {
-    if (!supabase) throw new Error('Supabase todavía no está configurado.');
+    if (!cloudActive) throw new Error('El modo local no guarda contraseñas. Activa Supabase para usar autenticación real.');
     const { error } = await supabase.auth.updateUser({ password });
     if (error) throw error;
-  }, []);
+  }, [cloudActive]);
 
   const saveProfile = useCallback(async values => {
     const nextLocal = {
       ...profile,
+      id: profile.id || demoProfile.id,
       displayName: String(values.displayName || '').trim(),
       username: String(values.username || '').trim().toUpperCase(),
       zone: String(values.zone || '').trim()
     };
 
-    if (!supabase || !session?.user?.id) {
+    if (!cloudActive || !session?.user?.id) {
       setProfileState(nextLocal);
-      return { persisted: false, profile: nextLocal };
+      setSession({ user: { id: nextLocal.id, email: null, local: true } });
+      return { persisted: false, local: true, profile: nextLocal };
     }
 
     const normalized = normalizeUsername(values.username);
     if (!/^[a-z0-9_]{4,20}$/.test(normalized)) throw new Error('El usuario debe tener entre 4 y 20 caracteres válidos.');
-
     if (normalized !== String(profile.username || '').toLowerCase()) {
       const { data: available, error: availabilityError } = await supabase.rpc('is_username_available', { p_username: normalized });
       if (availabilityError) throw availabilityError;
       if (!available) throw new Error('Ese nombre de usuario no está disponible.');
     }
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({
-        display_name: nextLocal.displayName,
-        username: normalized,
-        zone: nextLocal.zone,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', session.user.id)
-      .select('id,username,display_name,role,account_type,zone,avatar_url,status')
-      .single();
-
+    const { data, error } = await supabase.from('profiles').update({ display_name: nextLocal.displayName, username: normalized, zone: nextLocal.zone, updated_at: new Date().toISOString() }).eq('id', session.user.id).select('id,username,display_name,role,account_type,zone,avatar_url,status').single();
     if (error) throw error;
     const mapped = mapProfile(data, session.user);
     setProfileState(mapped);
     return { persisted: true, profile: mapped };
-  }, [profile, session]);
+  }, [cloudActive, profile, session]);
 
   const updateModuleStatus = useCallback(async (id, status) => {
     setModuleConfig(current => current.map(module => module.id === id ? { ...module, status } : module));
-    if (!supabase || !session?.user || !['admin', 'super_admin'].includes(profile.role)) return { persisted: false };
-
+    if (!cloudActive || !session?.user || !['admin', 'super_admin'].includes(profile.role)) return { persisted: false, local: true };
     const { error } = await supabase.from('app_modules').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
     return { persisted: true };
-  }, [profile.role, session]);
+  }, [cloudActive, profile.role, session]);
 
   const resetModules = useCallback(async () => {
     setModuleConfig(modules);
-    if (supabase) await loadModules();
-  }, [loadModules]);
+    if (cloudActive) await loadModules();
+  }, [cloudActive, loadModules]);
 
-  const isAuthenticated = Boolean(session?.user);
-  const isAdmin = !hasSupabase || ['admin', 'super_admin'].includes(profile.role);
+  const unreadNotifications = notifications.filter(item => !item.read).length;
+  const isAuthenticated = dataMode === 'local' ? true : Boolean(session?.user);
+  const isAdmin = dataMode === 'local' ? ['admin', 'super_admin'].includes(profile.role) : ['admin', 'super_admin'].includes(profile.role);
 
   const value = useMemo(() => ({
     moduleConfig,
@@ -312,9 +346,20 @@ export function AppProvider({ children }) {
     isAuthenticated,
     isAdmin,
     authLoading,
-    backendConnected: hasSupabase,
+    backendConnected: cloudActive,
+    backendConfigured: hasSupabase,
     backendMessage,
     clearBackendMessage: () => setBackendMessage(''),
+    dataMode,
+    setDataMode,
+    online,
+    notifications,
+    unreadNotifications,
+    syncQueueCount,
+    refreshLocalIndicators,
+    markNotification: (id, read = true) => { markLocalNotification(id, read); refreshLocalIndicators(); },
+    markAllNotificationsRead: () => { markAllLocalNotificationsRead(); refreshLocalIndicators(); },
+    deleteNotification: id => { deleteLocalNotification(id); refreshLocalIndicators(); },
     signUp,
     signIn,
     signOut,
@@ -323,7 +368,7 @@ export function AppProvider({ children }) {
     saveProfile,
     refreshProfile: () => session?.user && loadProfile(session.user),
     refreshModules: loadModules
-  }), [moduleConfig, profile, session, isAuthenticated, isAdmin, authLoading, backendMessage, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, updateModuleStatus, resetModules]);
+  }), [moduleConfig, profile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, updateModuleStatus, resetModules]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

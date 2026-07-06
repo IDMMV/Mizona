@@ -1,4 +1,4 @@
-const CACHE = 'mizona-v8-etapa12-chat-real-1';
+const CACHE = 'mizona-v8-etapa13-contingencia-local-1';
 const CORE = ['/', '/manifest.webmanifest'];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));

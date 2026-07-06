@@ -1,32 +1,33 @@
-# MiZona Enterprise V8 — Etapa 12: MiZona Chat Real
+# MiZona Enterprise V8 — Etapa 13: Contingencia local
 
-Versión acumulativa construida sobre las Etapas 10 y 11.
+Versión acumulativa construida sobre las Etapas 10, 11 y 12. Esta entrega permite continuar trabajando **sin Supabase** mientras el panel o la base externa no estén disponibles.
 
-## Incluye
+## Funciones nuevas
 
-- Búsqueda de personas únicamente por usuario exacto.
-- Solicitudes de contacto: enviar, aceptar y rechazar.
-- Bloqueo bidireccional y eliminación del contacto.
-- Conversaciones privadas entre contactos aceptados.
-- Grupos privados y grupos escolares vinculados a comunidad o aula.
-- Mensajes en tiempo real con Supabase Realtime.
-- Imágenes y documentos privados de hasta 25 MB.
-- Enlaces de descarga temporales.
-- Retención inicial de mensajes y archivos por 7 días.
-- Restricciones especiales para cuentas estudiantiles.
-- Reportes visibles en el Centro de Control.
-- Políticas RLS y bucket privado `chat-files`.
+- Modo local activado por defecto, incluso si Vercel conserva variables de Supabase.
+- MiZona Chat persistente en este dispositivo.
+- Contactos, solicitudes, grupos y mensajes guardados en `localStorage`.
+- Archivos de chat de hasta 25 MB guardados en `IndexedDB`.
+- Descarga local de archivos adjuntos.
+- Centro de notificaciones con lectura, filtros y eliminación.
+- Moderación local de reportes desde Centro de Control.
+- Auditoría local de acciones.
+- Cola de acciones preparada para una sincronización futura.
+- Limpieza de mensajes y archivos vencidos a los 7 días.
+- Exportación e importación de respaldo JSON.
+- PWA y funcionamiento básico sin conexión.
 
-## Orden correcto
+## Importante
 
-1. Las Etapas 10 y 11 deben estar instaladas sin errores.
-2. Ejecuta `supabase/ETAPA12_CHAT_REAL.sql` en Supabase SQL Editor.
-3. Comprueba que los seis resultados finales aparezcan en `true`.
-4. El archivo `ETAPA12_LIMPIEZA_AUTOMATICA_OPCIONAL.sql` es opcional.
-5. Sube todo el proyecto a GitHub.
-6. Vercel debe usar Vite, `npm run build` y salida `dist`.
+El modo local es una contingencia de desarrollo y pruebas:
 
-## Desarrollo local
+- Los datos existen solo en el navegador y dispositivo usados.
+- El respaldo JSON no incluye el contenido binario de los archivos guardados en IndexedDB.
+- No existe autenticación real ni comunicación entre distintos usuarios o dispositivos.
+- No se debe considerar todavía una plataforma multiusuario de producción.
+- Cuando Supabase vuelva, primero se verificará la Etapa 12 antes de diseñar la sincronización.
+
+## Ejecutar
 
 ```bash
 npm install
@@ -34,13 +35,10 @@ npm run dev
 npm run build
 ```
 
-## Variables de Vercel
+## Vercel
 
-```text
-VITE_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY
-```
+- Framework: **Vite**
+- Build Command: `npm run build`
+- Output Directory: `dist`
 
-## Estado
-
-La interfaz, las operaciones de contacto, las conversaciones, los mensajes, el almacenamiento privado y Realtime están conectados a Supabase. La limpieza horaria de archivos vencidos requiere ejecutar el SQL opcional de Cron o llamar periódicamente a `public.mz_chat_cleanup_expired()` desde una tarea segura.
+No necesitas modificar ni eliminar las variables de Supabase. MiZona inicia en modo local y no realiza llamadas a Supabase hasta cambiar manualmente a modo nube desde Configuración.

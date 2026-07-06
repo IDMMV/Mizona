@@ -1,4 +1,6 @@
 import { hasSupabase, supabase } from './supabase';
+import { communities as demoCommunities, schoolRooms as demoSchoolRooms, notices as demoNotices } from '../data/modules';
+import { isLocalDataMode } from './localStore';
 
 function requireBackend() {
   if (!hasSupabase || !supabase) throw new Error('Supabase todavía no está configurado.');
@@ -6,6 +8,7 @@ function requireBackend() {
 }
 
 export async function listCommunities() {
+  if (isLocalDataMode()) return demoCommunities.map(item => ({ ...item, owner_id: 'local-user-jose', slug: item.id, type: item.type === 'Colegio' ? 'school' : item.type === 'Comité' ? 'committee' : item.type === 'Club' ? 'club' : 'neighborhood', status: item.status === 'soon' ? 'pending' : 'active', visibility: item.type === 'Colegio' ? 'school' : 'public', join_mode: 'request', member_count: item.members, description: `${item.name} en modo local`, created_at: new Date().toISOString() }));
   const client = requireBackend();
   const { data, error } = await client
     .from('communities')
@@ -17,6 +20,7 @@ export async function listCommunities() {
 
 export async function listMyMemberships(userId) {
   if (!userId) return [];
+  if (isLocalDataMode()) return demoCommunities.map(item => ({ community_id: item.id, user_id: userId, role: item.type === 'Colegio' ? 'parent' : 'member', status: 'active', joined_at: new Date().toISOString() }));
   const client = requireBackend();
   const { data, error } = await client
     .from('community_members')
@@ -91,6 +95,13 @@ export async function reviewCommunity(communityId, status) {
 }
 
 export async function loadCommunityBundle(communityId, includePrivate = true) {
+  if (isLocalDataMode()) return {
+    announcements: demoNotices.map((item, index) => ({ id: `local-ann-${index}`, community_id: communityId, title: item.title, body: `${item.category} para ${item.target}`, audience: 'members', status: 'published', is_pinned: index === 0, published_at: new Date().toISOString() })),
+    events: demoNotices.filter(item => item.category === 'Evento').map((item, index) => ({ id: `local-event-${index}`, community_id: communityId, title: item.title, description: item.target, location: 'Local comunal', starts_at: new Date(Date.now() + 86400000).toISOString(), audience: 'members', status: 'published' })),
+    rooms: demoSchoolRooms.map(item => ({ ...item, community_id: communityId, status: 'active' })),
+    members: [],
+    documents: []
+  };
   const client = requireBackend();
   const announcementsQuery = client.from('community_announcements')
     .select('id,community_id,author_id,title,body,audience,status,is_pinned,published_at,created_at')
@@ -276,7 +287,7 @@ export async function createDocumentSignedUrl(path) {
 }
 
 export function subscribeCommunity(communityId, onChange) {
-  if (!supabase || !communityId) return () => {};
+  if (isLocalDataMode() || !supabase || !communityId) return () => {};
   const channel = supabase
     .channel(`community-${communityId}`)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'community_announcements', filter: `community_id=eq.${communityId}` }, onChange)
