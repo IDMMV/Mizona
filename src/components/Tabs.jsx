@@ -1,1 +1,0 @@
-export default function Tabs({ tabs, active, setActive }) { return <div className="tabs">{tabs.map(t => <button key={t.id} className={active===t.id?'active':''} onClick={()=>setActive(t.id)}>{t.icon} {t.label}</button>)}</div>; }
