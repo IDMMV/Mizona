@@ -21,6 +21,7 @@ export default function Panel({ setPage }) {
       <button className="quick" onClick={()=>setPage('business')}>🧾 Administrar negocio</button>
       <button className="quick" onClick={()=>setPage('ride')}>🚗 Pedir viaje o envío</button>
       <button className="quick" onClick={()=>setPage('ai')}>✨ Consultar IA MiZona</button>
+      <button className="quick" onClick={()=>setPage('localLab')}>🧪 Laboratorio local</button>
       <button className="quick" onClick={()=>setPage('admin')}>🛡 Centro de Control</button>
     </div>
     <div className="grid2">

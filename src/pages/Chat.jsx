@@ -211,7 +211,7 @@ export default function Chat({ setPage }) {
     }
     setLoading(true);
     refreshLists(false).catch(error => setNotice(error.message)).finally(() => setLoading(false));
-  }, [backendConnected, isAuthenticated]);
+  }, [backendConnected, isAuthenticated, user?.id]);
 
   useEffect(() => {
     if (!selectedId) return setMessages([]);
@@ -333,11 +333,11 @@ export default function Chat({ setPage }) {
 
   return <div className="chatRealPage">
     <div className="chatPageHeader">
-      <div><span>ETAPA 13 · CONTINGENCIA LOCAL</span><h1>MiZona Chat</h1><p>Contactos, grupos y archivos guardados en este dispositivo.</p></div>
+      <div><span>ETAPA 14 · LABORATORIO MULTIUSUARIO</span><h1>MiZona Chat</h1><p>Prueba conversaciones reales entre perfiles locales usando varias pestañas.</p></div>
       <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button><button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button><button onClick={() => setShowSearch(true)}><UserPlus size={17}/> Agregar contacto</button></div>
     </div>
 
-    {!backendConnected && <ChatNotice kind="success">Modo local activo. Mensajes, contactos, grupos, reportes y archivos se guardan en este dispositivo mediante almacenamiento del navegador.</ChatNotice>}
+    {!backendConnected && <ChatNotice kind="success">Modo local multiusuario activo. Cada pestaña puede usar un perfil diferente y los cambios se comparten en este navegador.</ChatNotice>}
     {notice && <ChatNotice kind={notice.includes('bloqueado') || notice.includes('Reporte enviado') ? 'success' : 'danger'}>{notice}</ChatNotice>}
 
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>

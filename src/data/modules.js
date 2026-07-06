@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell } from 'lucide-react';
+import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical } from 'lucide-react';
 
 export const statusLabel = {
   active: 'Activo',
@@ -10,8 +10,9 @@ export const statusLabel = {
 export const modules = [
   { id: 'panel', label: 'Mi Panel', icon: Home, status: 'active', phase: 'Base', audience: 'Todos' },
   { id: 'community', label: 'Mi Comunidad', icon: Users, status: 'active', phase: 'Sprint 2', audience: 'Colegios, comités, clubes' },
-  { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Etapa 13', audience: 'Usuarios y aulas' },
-  { id: 'notifications', label: 'Notificaciones', icon: Bell, status: 'active', phase: 'Etapa 13', audience: 'Todos' },
+  { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Etapa 14', audience: 'Usuarios y aulas' },
+  { id: 'notifications', label: 'Notificaciones', icon: Bell, status: 'active', phase: 'Etapa 14', audience: 'Todos' },
+  { id: 'localLab', label: 'Laboratorio local', icon: FlaskConical, status: 'active', phase: 'Etapa 14', audience: 'Equipo y pruebas' },
   { id: 'transfer', label: 'MiZona Transfer', icon: CloudUpload, status: 'active', phase: 'Sprint 2', audience: 'Aulas y trabajos' },
   { id: 'benefits', label: 'Beneficios', icon: Gift, status: 'active', phase: 'Sprint 3', audience: 'Todos' },
   { id: 'businesses', label: 'Negocios', icon: Store, status: 'active', phase: 'Sprint 4', audience: 'Todos y comercios' },

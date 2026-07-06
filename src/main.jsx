@@ -18,6 +18,7 @@ import Ride from './pages/Ride';
 import AiAssistant from './pages/AiAssistant';
 import Account from './pages/Account';
 import Notifications from './pages/Notifications';
+import LocalLab from './pages/LocalLab';
 import AccessDenied from './pages/AccessDenied';
 import { Blueprint } from './pages/Placeholders';
 
@@ -30,6 +31,7 @@ function App() {
     school: <SchoolPage setPage={setPage}/>,
     chat: <Chat setPage={setPage}/>,
     notifications: <Notifications setPage={setPage}/>,
+    localLab: <LocalLab setPage={setPage}/>,
     transfer: <Transfer/>,
     benefits: <Benefits/>,
     businesses: <Businesses/>,

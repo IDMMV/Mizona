@@ -29,7 +29,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 13 · notificaciones, moderación y contingencia local</span><div className="bar"><i style={{ width: '96%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 14 · laboratorio multiusuario local</span><div className="bar"><i style={{ width: '97%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">
@@ -38,7 +38,7 @@ export default function Shell({ page, setPage, children }) {
         <span className={`runtimeBadge ${backendConnected ? 'cloud' : 'local'} ${online ? '' : 'offline'}`}>{online ? <Wifi size={15}/> : <CloudOff size={15}/>} {backendConnected ? 'Nube' : dataMode === 'local' ? 'Local' : 'Contingencia'}</span>
         <button className="zoneBtn">📍 {profile.zone}</button>
         <button className="iconBtn" onClick={() => setPage('notifications')} aria-label="Abrir notificaciones"><Bell size={18}/>{unreadNotifications > 0 && <em>{unreadNotifications > 99 ? '99+' : unreadNotifications}</em>}</button>
-        <button className="profileBtn" onClick={() => setPage('settings')}>
+        <button className="profileBtn" onClick={() => setPage(backendConnected ? 'settings' : 'localLab')}>
           <User size={18}/>{authLoading ? 'Verificando...' : profile.displayName}
           <span className={`sessionDot ${dataMode === 'local' || backendConnected ? 'online' : ''}`} title={dataMode === 'local' ? 'Perfil local activo' : backendConnected ? 'Sesión conectada' : 'Sin conexión'}/>
         </button>

@@ -138,7 +138,7 @@ export default function Account() {
 
     {(message || backendMessage) && <div className="accountMessage"><CheckCircle2 size={18}/>{message || backendMessage}<button onClick={() => { setMessage(''); clearBackendMessage(); }}>×</button></div>}
 
-    <div className="localOperationBanner"><CloudOff size={20}/><div><b>Continuamos sin Supabase</b><span>MiZona usa almacenamiento local e IndexedDB. Los datos permanecen en este navegador y pueden exportarse como respaldo.</span></div><em>{online ? 'Internet disponible' : 'Sin internet'}</em></div>
+    <div className="localOperationBanner"><CloudOff size={20}/><div><b>Continuamos sin Supabase · Etapa 14</b><span>MiZona usa almacenamiento local e IndexedDB. Los datos permanecen en este navegador y pueden exportarse como respaldo.</span></div><em>{online ? 'Internet disponible' : 'Sin internet'}</em></div>
 
     {tab === 'profile' && <div className="grid2">
       <Card title="Identidad MiZona" icon="👤">
@@ -154,7 +154,7 @@ export default function Account() {
 
     {tab === 'access' && <>
       {dataMode === 'local' ? <div className="grid2">
-        <Card title="Sesión local activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Identificador: {profile.id}</small><small>Rol local: {profile.role}</small></div><p className="muted">El modo local no guarda contraseñas ni pretende reemplazar la autenticación real. Sirve para seguir desarrollando y probando MiZona.</p></Card>
+        <Card title="Sesión local activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Identificador: {profile.id}</small><small>Rol local: {profile.role}</small></div><p className="muted">El laboratorio local no guarda contraseñas ni reemplaza la autenticación real. Usa perfiles de prueba independientes por pestaña.</p></Card>
         <Card title="Conexión futura" icon="☁️"><p className="muted">Cuando Supabase vuelva a estar estable podremos cambiar a modo nube y verificar las Etapas 10, 11 y 12.</p><button className="ghost" disabled={!backendConfigured} onClick={() => { setDataMode('cloud'); setMessage(backendConfigured ? 'Modo nube solicitado. Recarga la página para verificar la sesión.' : 'Las variables de Supabase no están configuradas.'); }}><Cloud size={17}/>Intentar modo nube después</button>{!backendConfigured && <small className="muted">VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY no están configuradas.</small>}</Card>
       </div> : <>
         {authLoading && <Card title="Verificando sesión" icon="⏳"><p className="muted">Comprobando tu acceso...</p></Card>}

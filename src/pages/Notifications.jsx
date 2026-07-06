@@ -29,7 +29,7 @@ export default function Notifications({ setPage }) {
 
   return <div className="page notificationsPage">
     <div className="notificationHero">
-      <div><span>ETAPA 13 · CENTRO LOCAL</span><h1>Notificaciones</h1><p>Avisos de chat, comunidad, moderación y estado del sistema, disponibles incluso sin Supabase.</p></div>
+      <div><span>ETAPA 14 · AVISOS POR PERFIL</span><h1>Notificaciones</h1><p>Avisos separados por cada perfil local, disponibles incluso sin Supabase.</p></div>
       <div className="notificationHeroStats">
         <span><b>{unreadNotifications}</b> sin leer</span>
         <span><b>{syncQueueCount}</b> acciones locales</span>

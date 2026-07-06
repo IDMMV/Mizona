@@ -1,31 +1,23 @@
-# MiZona Enterprise V8 — Etapa 13: Contingencia local
+# MiZona Enterprise V8 — Etapa 14
 
-Versión acumulativa construida sobre las Etapas 10, 11 y 12. Esta entrega permite continuar trabajando **sin Supabase** mientras el panel o la base externa no estén disponibles.
+## Laboratorio multiusuario local
 
-## Funciones nuevas
+Versión acumulativa construida sobre las Etapas 10–13. Esta entrega continúa sin Supabase y permite probar flujos de varios usuarios dentro del mismo navegador.
 
-- Modo local activado por defecto, incluso si Vercel conserva variables de Supabase.
-- MiZona Chat persistente en este dispositivo.
-- Contactos, solicitudes, grupos y mensajes guardados en `localStorage`.
-- Archivos de chat de hasta 25 MB guardados en `IndexedDB`.
-- Descarga local de archivos adjuntos.
-- Centro de notificaciones con lectura, filtros y eliminación.
-- Moderación local de reportes desde Centro de Control.
-- Auditoría local de acciones.
-- Cola de acciones preparada para una sincronización futura.
-- Limpieza de mensajes y archivos vencidos a los 7 días.
-- Exportación e importación de respaldo JSON.
-- PWA y funcionamiento básico sin conexión.
+## Incluye
 
-## Importante
-
-El modo local es una contingencia de desarrollo y pruebas:
-
-- Los datos existen solo en el navegador y dispositivo usados.
-- El respaldo JSON no incluye el contenido binario de los archivos guardados en IndexedDB.
-- No existe autenticación real ni comunicación entre distintos usuarios o dispositivos.
-- No se debe considerar todavía una plataforma multiusuario de producción.
-- Cuando Supabase vuelva, primero se verificará la Etapa 12 antes de diseñar la sincronización.
+- Perfiles locales independientes por pestaña.
+- Creación, selección y eliminación de perfiles de prueba.
+- Solicitudes de contacto entre perfiles.
+- Contactos aceptados y bloqueos por usuario.
+- Conversaciones privadas y grupos compartidos.
+- Mensajes y archivos visibles en varias pestañas mediante almacenamiento local y BroadcastChannel.
+- Notificaciones separadas por usuario.
+- Conteos de mensajes no leídos por perfil.
+- Reglas de búsqueda para estudiantes vinculados al mismo colegio.
+- Roles locales para probar Centro de Control.
+- Respaldo JSON compatible con la Etapa 13.
+- PWA y funcionamiento sin conexión.
 
 ## Ejecutar
 
@@ -41,4 +33,6 @@ npm run build
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-No necesitas modificar ni eliminar las variables de Supabase. MiZona inicia en modo local y no realiza llamadas a Supabase hasta cambiar manualmente a modo nube desde Configuración.
+## Importante
+
+Este laboratorio no reemplaza la autenticación ni la seguridad real del backend. Los perfiles comparten el mismo navegador y sirven exclusivamente para pruebas funcionales mientras Supabase está temporalmente fuera de servicio.

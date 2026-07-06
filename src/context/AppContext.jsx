@@ -3,12 +3,18 @@ import { modules } from '../data/modules';
 import { friendlyAuthError, hasSupabase, normalizeUsername, supabase } from '../lib/supabase';
 import {
   cleanupExpiredLocalData,
+  createLocalProfile,
   deleteLocalNotification,
+  deleteLocalProfile,
+  getActiveLocalProfile,
   listLocalNotifications,
+  listLocalProfiles,
   listLocalSyncQueue,
   markAllLocalNotificationsRead,
   markLocalNotification,
-  subscribeLocalData
+  subscribeLocalData,
+  switchLocalProfile,
+  updateActiveLocalProfile
 } from '../lib/localStore';
 
 const AppContext = createContext(null);
@@ -95,17 +101,22 @@ function mergeRemoteModules(rows) {
 
 export function AppProvider({ children }) {
   const [moduleConfig, setModuleConfig] = useState(readStoredModules);
-  const [profile, setProfileState] = useState(readStoredProfile);
+  const [profile, setProfileState] = useState(() => readDataMode() === 'local' ? getActiveLocalProfile() : readStoredProfile());
+  const [localProfiles, setLocalProfiles] = useState(listLocalProfiles);
   const [dataMode, setDataModeState] = useState(readDataMode);
   const [online, setOnline] = useState(() => navigator.onLine);
   const cloudActive = dataMode === 'cloud' && hasSupabase && online;
-  const [session, setSession] = useState(() => dataMode === 'local' ? { user: { id: readStoredProfile().id, email: null, local: true } } : null);
+  const [session, setSession] = useState(() => dataMode === 'local' ? { user: { id: getActiveLocalProfile().id, email: null, local: true } } : null);
   const [authLoading, setAuthLoading] = useState(cloudActive);
   const [backendMessage, setBackendMessage] = useState('');
   const [notifications, setNotifications] = useState(listLocalNotifications);
   const [syncQueueCount, setSyncQueueCount] = useState(() => listLocalSyncQueue().length);
 
   const refreshLocalIndicators = useCallback(() => {
+    const active = getActiveLocalProfile();
+    setProfileState(active);
+    setSession({ user: { id: active.id, email: null, local: true } });
+    setLocalProfiles(listLocalProfiles());
     setNotifications(listLocalNotifications());
     setSyncQueueCount(listLocalSyncQueue().filter(item => item.status === 'local_only').length);
   }, []);
@@ -162,7 +173,7 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     if (!cloudActive) {
-      const localProfile = readStoredProfile();
+      const localProfile = getActiveLocalProfile();
       setProfileState(localProfile);
       setSession({ user: { id: localProfile.id, email: null, local: true } });
       setAuthLoading(false);
@@ -212,7 +223,7 @@ export function AppProvider({ children }) {
     localStorage.setItem(DATA_MODE_KEY, next);
     setDataModeState(next);
     if (next === 'local') {
-      const localProfile = readStoredProfile();
+      const localProfile = getActiveLocalProfile();
       setProfileState(localProfile);
       setSession({ user: { id: localProfile.id, email: null, local: true } });
       setBackendMessage('Modo local activado. No se realizarán llamadas a Supabase.');
@@ -225,10 +236,11 @@ export function AppProvider({ children }) {
     if (!/^[a-z0-9_]{4,20}$/.test(normalized)) throw new Error('El usuario debe tener entre 4 y 20 caracteres: letras, números o guion bajo.');
 
     if (!cloudActive) {
-      const next = { ...readStoredProfile(), displayName: String(displayName || '').trim(), username: normalized.toUpperCase(), accountType: accountType || 'adult', zone: String(zone || '').trim() || 'Sin zona definida' };
+      const next = createLocalProfile({ displayName, username: normalized, accountType, zone, role: 'user' });
       setProfileState(next);
+      setLocalProfiles(listLocalProfiles());
       setSession({ user: { id: next.id, email: String(email || '').trim().toLowerCase(), local: true } });
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
+      setNotifications(listLocalNotifications());
       return { session: { user: { id: next.id, local: true } }, local: true };
     }
 
@@ -250,11 +262,15 @@ export function AppProvider({ children }) {
 
   const signIn = useCallback(async ({ identifier, password }) => {
     if (!cloudActive) {
-      const stored = readStoredProfile();
       const clean = String(identifier || '').trim().toUpperCase();
-      if (clean && clean !== stored.username && !clean.includes('@')) throw new Error('En modo local usa el usuario del perfil guardado o edítalo en la pestaña Perfil.');
-      setSession({ user: { id: stored.id, email: clean.includes('@') ? clean.toLowerCase() : null, local: true } });
-      return { session: { user: { id: stored.id, local: true } }, local: true };
+      const match = listLocalProfiles().find(item => String(item.username).toUpperCase() === clean);
+      if (!match) throw new Error('No existe un perfil local con ese usuario. Créalo en Laboratorio local.');
+      const next = switchLocalProfile(match.id);
+      setProfileState(next);
+      setLocalProfiles(listLocalProfiles());
+      setSession({ user: { id: next.id, email: null, local: true } });
+      setNotifications(listLocalNotifications());
+      return { session: { user: { id: next.id, local: true } }, local: true };
     }
 
     const cleanIdentifier = String(identifier || '').trim();
@@ -300,9 +316,11 @@ export function AppProvider({ children }) {
     };
 
     if (!cloudActive || !session?.user?.id) {
-      setProfileState(nextLocal);
-      setSession({ user: { id: nextLocal.id, email: null, local: true } });
-      return { persisted: false, local: true, profile: nextLocal };
+      const next = updateActiveLocalProfile(values);
+      setProfileState(next);
+      setLocalProfiles(listLocalProfiles());
+      setSession({ user: { id: next.id, email: null, local: true } });
+      return { persisted: false, local: true, profile: next };
     }
 
     const normalized = normalizeUsername(values.username);
@@ -332,6 +350,31 @@ export function AppProvider({ children }) {
     if (cloudActive) await loadModules();
   }, [cloudActive, loadModules]);
 
+  const activateLocalProfile = useCallback(profileId => {
+    const next = switchLocalProfile(profileId);
+    setProfileState(next);
+    setLocalProfiles(listLocalProfiles());
+    setSession({ user: { id: next.id, email: null, local: true } });
+    setNotifications(listLocalNotifications());
+    setBackendMessage(`Perfil local activo: @${next.username}.`);
+    return next;
+  }, []);
+
+  const addLocalProfile = useCallback(values => {
+    const next = createLocalProfile(values);
+    setProfileState(next);
+    setLocalProfiles(listLocalProfiles());
+    setSession({ user: { id: next.id, email: null, local: true } });
+    setNotifications(listLocalNotifications());
+    return next;
+  }, []);
+
+  const removeLocalProfile = useCallback(profileId => {
+    deleteLocalProfile(profileId);
+    setLocalProfiles(listLocalProfiles());
+    return true;
+  }, []);
+
   const unreadNotifications = notifications.filter(item => !item.read).length;
   const isAuthenticated = dataMode === 'local' ? true : Boolean(session?.user);
   const isAdmin = dataMode === 'local' ? ['admin', 'super_admin'].includes(profile.role) : ['admin', 'super_admin'].includes(profile.role);
@@ -341,6 +384,10 @@ export function AppProvider({ children }) {
     updateModuleStatus,
     resetModules,
     profile,
+    localProfiles,
+    activateLocalProfile,
+    addLocalProfile,
+    removeLocalProfile,
     session,
     user: session?.user || null,
     isAuthenticated,
@@ -368,7 +415,7 @@ export function AppProvider({ children }) {
     saveProfile,
     refreshProfile: () => session?.user && loadProfile(session.user),
     refreshModules: loadModules
-  }), [moduleConfig, profile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, updateModuleStatus, resetModules]);
+  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, updateModuleStatus, resetModules]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
