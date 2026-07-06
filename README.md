@@ -1,27 +1,24 @@
-# MiZona Enterprise V8 — Sprint 6
+# MiZona Enterprise V8 — Versión final consolidada
 
-Versión acumulativa construida sobre los Sprint 1–5.
+Proyecto React + Vite acumulativo con:
 
-## Incluye
-- Mi Panel.
-- Mi Comunidad y colegio modelo.
-- MiZona Chat, grupos y Aula Chat.
-- MiZona Transfer con vencimiento de 7 días.
-- Beneficios y oportunidades.
-- Negocios y lugares afiliados/no afiliados.
-- Marketplace local.
-- **CampusHugo integrado:** cursos, progreso, clases, profesores y certificados.
-- Centro de Control con administración de módulos y CampusHugo.
-- SQL inicial para Supabase y políticas RLS.
+- Mi Panel
+- Mi Comunidad y colegio modelo
+- MiZona Chat y Transfer
+- Beneficios y oportunidades
+- Negocios y lugares
+- Marketplace local
+- CampusHugo
+- MiZona Business
+- MiZona Ride
+- IA MiZona
+- Centro de Control
+- Cuenta, privacidad y PWA
 
-## Ejecutar localmente
+## Ejecutar
 ```bash
 npm install
 npm run dev
-```
-
-## Compilar
-```bash
 npm run build
 ```
 
@@ -30,5 +27,8 @@ npm run build
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-## Importante
-Los datos visibles son de demostración. La estructura está preparada para conectar autenticación, persistencia, archivos y permisos reales con Supabase.
+## Supabase
+Copia `.env.example` a `.env`, coloca URL y clave anónima, y ejecuta `supabase/schema.sql` en un proyecto de prueba antes de producción.
+
+## Estado honesto
+La navegación, formularios y simulaciones principales funcionan en modo demostración. La persistencia real, autenticación multiusuario, archivos, pagos, mapas, comprobantes fiscales y proveedor de IA requieren configurar servicios externos y conectar cada operación al backend.

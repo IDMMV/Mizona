@@ -15,10 +15,10 @@ export const modules = [
   { id: 'benefits', label: 'Beneficios', icon: Gift, status: 'active', phase: 'Sprint 3', audience: 'Todos' },
   { id: 'businesses', label: 'Negocios', icon: Store, status: 'active', phase: 'Sprint 4', audience: 'Todos y comercios' },
   { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag, status: 'active', phase: 'Sprint 5', audience: 'Usuarios' },
-  { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'soon', phase: 'Futuro', audience: 'Negocios' },
+  { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'active', phase: 'Sprint 7', audience: 'Negocios y emprendimientos' },
   { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Sprint 6', audience: 'Estudiantes, familias y negocios' },
-  { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'soon', phase: 'Futuro', audience: 'Transporte' },
-  { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'maintenance', phase: 'Futuro', audience: 'Todos' },
+  { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Sprint 8', audience: 'Pasajeros, conductores y envíos' },
+  { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Sprint 9', audience: 'Todos' },
   { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },
   { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo' },
   { id: 'settings', label: 'Configuración', icon: Settings, status: 'active', phase: 'Core', audience: 'Usuario' }
