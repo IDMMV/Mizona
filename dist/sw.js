@@ -1,4 +1,4 @@
-const CACHE = 'mizona-v8-etapa21-ia-local-1';
+const CACHE = 'mizona-v8-etapa25-cloud-push-local-1';
 const CORE = ['/', '/manifest.webmanifest'];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
@@ -9,4 +9,13 @@ self.addEventListener('fetch', event => {
     caches.open(CACHE).then(cache => cache.put(event.request, copy));
     return response;
   }).catch(() => caches.match(event.request).then(cached => cached || caches.match('/'))));
+});
+
+self.addEventListener('push', event => {
+  const data = event.data ? event.data.json() : { title: 'MiZona', body: 'Tienes una nueva notificación.' };
+  event.waitUntil(self.registration.showNotification(data.title || 'MiZona', { body: data.body || '', icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', data: data.url || '/' }));
+});
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data || '/'));
 });

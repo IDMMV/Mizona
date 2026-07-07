@@ -1,26 +1,25 @@
-# MiZona Enterprise V8 — Etapa 24
+# MiZona Enterprise V8 — Etapa 25
 
-## Usuarios reales y sincronización preparada
+## Notificaciones reales y archivos en nube preparados
 
-Versión acumulativa construida sobre las Etapas 1–23. Funciona sin Supabase y conserva los datos en el navegador.
+Versión acumulativa construida sobre las Etapas 1–24. Funciona sin Supabase y conserva los datos en el navegador.
 
 ### Incluye
 
-- Nuevo módulo **Usuarios y Sync** visible solo para administradores.
-- Estado del backend, modo local/nube, internet y Supabase.
-- Revisión automática de preparación antes de migrar.
-- Resumen de perfiles, estudiantes, administradores, mensajes, adjuntos y cola local.
-- Plan de migración local para pasar de pruebas a usuarios reales.
-- Reglas de sincronización: respaldo obligatorio, política de conflictos y protección de menores.
-- Control de dispositivos confiables y códigos locales de vinculación.
-- Exportación de respaldo local completo.
-- Importación de respaldo JSON.
-- Descarga del plan de migración en JSON.
-- Checklist por bloques: perfiles, módulos, comunidad, chat, archivos, pagos y verificación.
-
-### Estado honesto
-
-Esta etapa todavía no sincroniza entre celulares o computadoras diferentes. Su función es preparar el paso seguro desde el modo local hacia un backend real, evitando perder datos y manteniendo roles seguros.
+- Nuevo módulo **Nube y Push** visible para administradores.
+- Preparación de notificaciones push del navegador.
+- Plantillas de avisos por Chat, Comunidad, Business, Pagos y Ride.
+- Envíos simulados por navegador, correo futuro, WhatsApp futuro y SMS futuro.
+- Segmentación protegida para estudiantes y adultos.
+- Registro local de archivos por módulo.
+- Reglas de retención: 7, 30, 180 y 365 días.
+- Cola local de subida futura.
+- Buckets planificados para Chat, Transfer, Business, Verificación y Marketplace.
+- Estados de archivo: limpio, cuarentena, bloqueado, listo nube, vencido.
+- Bloqueo de ejecutables y archivos peligrosos.
+- Reporte JSON de configuración, archivos y envíos.
+- Service Worker preparado para eventos push futuros.
+- Auditoría local y cola de sincronización futura.
 
 ### Ejecutar
 
@@ -35,3 +34,7 @@ npm run build
 - Framework: **Vite**
 - Build Command: `npm run build`
 - Output Directory: `dist`
+
+### Estado honesto
+
+Esta etapa todavía no sube archivos a Internet ni envía push real desde un servidor. Permite probar flujos, reglas, permisos, retención, plantillas y seguridad antes de conectar almacenamiento real y proveedor de notificaciones.

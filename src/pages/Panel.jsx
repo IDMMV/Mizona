@@ -10,7 +10,7 @@ export default function Panel({ setPage }) {
   const quicks = [
     ['community','🏫 Ver comunidad'], ['chat','💬 Abrir chat'], ['transfer','📤 Subir tarea'], ['campus','🎓 Ir a CampusHugo'],
     ['committees','📋 Plataforma comités'], ['benefits','🎁 Ver oportunidades'], ['businesses','🏪 Explorar negocios'], ['marketplace','🛒 Abrir Marketplace'],
-    ['business','🧾 Administrar negocio'], ['ride','🚗 Pedir viaje o envío'], ['ai','✨ Consultar IA MiZona'], ['sync','☁️ Usuarios y sync'], ['localLab','🧪 Laboratorio local'], ['admin','🛡 Centro de Control']
+    ['business','🧾 Administrar negocio'], ['ride','🚗 Pedir viaje o envío'], ['ai','✨ Consultar IA MiZona'], ['sync','☁️ Usuarios y sync'], ['cloudCenter','🔔 Nube y Push'], ['localLab','🧪 Laboratorio local'], ['admin','🛡 Centro de Control']
   ].filter(([id]) => canAccessModule(profile, id));
   const visibleModuleRows = moduleConfig.filter(m => canAccessModule(profile, m.id));
   return <div className="page">

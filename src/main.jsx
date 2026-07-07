@@ -19,6 +19,7 @@ import AiAssistant from './pages/AiAssistant';
 import Payments from './pages/Payments';
 import Verification from './pages/Verification';
 import SyncCenter from './pages/SyncCenter';
+import CloudCenter from './pages/CloudCenter';
 import Account from './pages/Account';
 import Notifications from './pages/Notifications';
 import LocalLab from './pages/LocalLab';
@@ -49,6 +50,7 @@ function App() {
     verification: <Verification/>,
     payments: <Payments/>,
     sync: <SyncCenter/>,
+    cloudCenter: <CloudCenter/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
     settings: <Account/>,
     blueprint: <Blueprint/>

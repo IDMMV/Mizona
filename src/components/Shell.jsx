@@ -29,7 +29,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 24 · Usuarios reales y sincronización preparada</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 25 · Notificaciones reales y archivos en nube preparados</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">
