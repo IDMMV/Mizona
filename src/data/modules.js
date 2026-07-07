@@ -21,7 +21,7 @@ export const modules = [
   { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'active', phase: 'Etapa 19', audience: 'Negocios y emprendimientos' },
   { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Etapa 18', audience: 'Estudiantes, familias y negocios' },
   { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos' },
-  { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Sprint 9', audience: 'Todos' },
+  { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Etapa 21', audience: 'Adultos y organizaciones' },
   { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },
   { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo' },
   { id: 'settings', label: 'Configuración', icon: Settings, status: 'active', phase: 'Core', audience: 'Usuario' }

@@ -1,28 +1,24 @@
-# MiZona Enterprise V8 · Etapa 20
+# MiZona Enterprise V8 — Etapa 21
 
-Versión acumulativa con **MiZona Ride multiusuario local**.
+## IA MiZona multiusuario local
 
-## Novedades
+Versión acumulativa construida sobre las Etapas 1–20. Funciona sin Supabase y conserva los datos en el navegador.
 
-- Solicitudes de viaje entre perfiles de diferentes pestañas.
-- Conductores registrados, verificados, suspendidos o rechazados.
-- Estado disponible/fuera de línea.
-- Asignación de conductor y código de seguridad de 4 dígitos.
-- Estados: búsqueda, asignado, en camino, esperando, en curso y completado.
-- Envíos y delivery con recojo, traslado y entrega.
-- Historial, calificaciones y ganancias del conductor.
-- Alertas, reportes, moderación y auditoría local.
-- Restricción total para perfiles infantiles y estudiantiles.
-- Sincronización inmediata entre pestañas mediante BroadcastChannel y localStorage.
+### Incluye
 
-## Limitaciones de esta etapa
+- Historial de conversaciones separado para cada perfil local.
+- Especialistas de Comunidad, Negocio, Aprendizaje, Zona y Ride.
+- Respuestas contextuales basadas en conteos y resúmenes de los módulos locales.
+- Accesos directos desde cada respuesta al módulo correspondiente.
+- Planes guardados, listas de verificación y preguntas favoritas.
+- Calificación de respuestas.
+- Alertas por contraseñas, datos bancarios o información privada de menores.
+- Panel administrativo de IA con configuración, métricas y revisión de alertas.
+- Actualización entre pestañas mediante BroadcastChannel.
+- Endpoint externo opcional mediante `VITE_AI_ENDPOINT`, sin exponer claves en el navegador.
+- IA oculta para cuentas estudiantiles por defecto.
 
-- No utiliza GPS ni mapas reales.
-- No procesa pagos reales.
-- El botón de emergencia genera una alerta local para demostración; no llama a policía, bomberos ni contactos externos.
-- Los datos no se comparten entre computadoras o celulares distintos.
-
-## Ejecutar
+### Ejecutar
 
 ```bash
 npm install
@@ -30,10 +26,12 @@ npm run dev
 npm run build
 ```
 
-## Vercel
+### Vercel
 
-- Framework: Vite
+- Framework: **Vite**
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-Consulta `docs/PASOS_ETAPA20_SIN_SUPABASE.md`.
+### Estado honesto
+
+El motor local es un asistente basado en reglas y datos resumidos del navegador; no es un modelo generativo completo. El endpoint externo es opcional y debe implementarse en un servidor seguro. Los datos siguen siendo locales y no se sincronizan entre equipos distintos.

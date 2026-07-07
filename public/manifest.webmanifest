@@ -1,14 +1,22 @@
 {
-  "name": "MiZona Enterprise V8 · Etapa 18",
+  "name": "MiZona Enterprise V8 · Etapa 21",
   "short_name": "MiZona",
-  "description": "Comunidad, comunicación, oportunidades, aprendizaje, negocios, movilidad e IA.",
+  "description": "MiZona con IA local multiusuario, comunidad, chat, beneficios, negocios, aprendizaje, Business y Ride.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f5f7fb",
   "theme_color": "#101a2e",
   "lang": "es",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }

@@ -1,116 +1,249 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Bot, BriefcaseBusiness, Building2, GraduationCap, Lightbulb, Loader2,
-  MapPin, MessageSquareText, Send, ShieldCheck, Sparkles, Store, WandSparkles
+  Archive, Bot, BriefcaseBusiness, Building2, Check, ChevronRight, Clock3,
+  GraduationCap, Heart, History, Lightbulb, Loader2, MapPin, MessageSquareText,
+  Plus, RotateCcw, Save, Send, Settings2, ShieldAlert, ShieldCheck, Sparkles,
+  Store, ThumbsDown, ThumbsUp, Trash2, WandSparkles, Car, X
 } from 'lucide-react';
 import Card from '../components/Card';
+import Tabs from '../components/Tabs';
+import { useApp } from '../context/AppContext';
+import { isPlatformAdmin, isStudentProfile } from '../lib/permissions';
+import {
+  askLocalAi,
+  createLocalAiConversation,
+  deleteLocalAiConversation,
+  deleteLocalAiPlan,
+  getLocalAiSnapshot,
+  localAiUserLabel,
+  rateLocalAiMessage,
+  resetLocalAi,
+  reviewLocalAiFlag,
+  saveLocalAiPlan,
+  subscribeLocalAi,
+  toggleLocalAiFavorite,
+  updateLocalAiSettings
+} from '../lib/localAi';
 
 const starters = [
-  '¿Qué actividades hay hoy en mi comunidad?',
-  'Ayúdame a crear una oferta para mi negocio',
-  'Recomiéndame un curso de Excel',
-  '¿Cómo publico un producto de forma segura?',
-  'Necesito organizar los gastos de mi comité',
-  '¿Cómo solicito un viaje o delivery?'
+  '¿Qué actividades y pendientes tengo hoy?',
+  'Ayúdame a organizar los gastos de mi comité',
+  'Crea una oferta para aumentar ventas',
+  'Recomiéndame una ruta de Excel desde cero',
+  '¿Qué opciones tengo cerca de mi zona?',
+  'Prepara una lista de seguridad para un viaje'
 ];
 
-const assistants = [
-  { id: 'community', icon: Building2, title: 'Comunidad', text: 'Comunicados, eventos, actas, reuniones y organización vecinal.', prompt: 'Ayúdame a organizar una actividad de mi comunidad' },
-  { id: 'business', icon: BriefcaseBusiness, title: 'Negocio', text: 'Ofertas, ventas, inventario, clientes y reportes de MiZona Business.', prompt: 'Analiza cómo puedo mejorar las ventas de mi negocio' },
-  { id: 'education', icon: GraduationCap, title: 'Aprendizaje', text: 'Rutas de estudio, cursos y ejercicios dentro de CampusHugo.', prompt: 'Crea una ruta de aprendizaje de Excel desde cero' },
-  { id: 'local', icon: MapPin, title: 'Zona', text: 'Negocios, beneficios, Marketplace, transporte y servicios cercanos.', prompt: '¿Qué puedo encontrar cerca de mi zona?' }
+const specialists = [
+  { id: 'general', icon: Bot, title: 'General', text: 'Encuentra el módulo y la secuencia correcta.' },
+  { id: 'community', icon: Building2, title: 'Comunidad', text: 'Comités, comunicados, reuniones, eventos y gastos.' },
+  { id: 'business', icon: BriefcaseBusiness, title: 'Negocio', text: 'Caja, inventario, ventas, clientes y promociones.' },
+  { id: 'education', icon: GraduationCap, title: 'Aprendizaje', text: 'Cursos, tareas, prácticas y rutas de estudio.' },
+  { id: 'local', icon: MapPin, title: 'Mi zona', text: 'Beneficios, negocios, servicios y Marketplace.' },
+  { id: 'ride', icon: Car, title: 'Ride', text: 'Viajes, delivery, conductores y seguridad.' }
 ];
 
-const localReply = prompt => {
-  const text = prompt.toLowerCase();
-  if (text.includes('comunidad') || text.includes('comité') || text.includes('reunión') || text.includes('gasto')) {
-    return 'Para organizarlo dentro de Mi Comunidad: crea una publicación, define fecha y responsables, adjunta el sustento en documentos y registra los gastos por categoría. Después podrás compartir la publicación y exportar el resumen para los vecinos.';
-  }
-  if (text.includes('negocio') || text.includes('venta') || text.includes('oferta') || text.includes('inventario')) {
-    return 'En MiZona Business puedes revisar primero los productos más vendidos y las alertas de stock. Luego crea una oferta con vigencia, público objetivo y cantidad disponible. El panel separa el IGV incluido y permite medir vistas, cupones y ventas.';
-  }
-  if (text.includes('excel') || text.includes('curso') || text.includes('aprender') || text.includes('estudio')) {
-    return 'Te recomiendo iniciar en CampusHugo con Excel desde cero: interfaz y celdas, fórmulas básicas, tablas, gráficos, filtros y luego tablas dinámicas. Completa una práctica por tema antes de avanzar al nivel intermedio.';
-  }
-  if (text.includes('producto') || text.includes('marketplace') || text.includes('publicar')) {
-    return 'Para publicar de forma segura: usa fotos propias, describe el estado real, fija un precio claro, no muestres tu teléfono públicamente y conversa por MiZona Chat. Reúnete en un lugar público y reporta cualquier solicitud sospechosa.';
-  }
-  if (text.includes('viaje') || text.includes('delivery') || text.includes('envío')) {
-    return 'Abre MiZona Ride, confirma origen y destino, compara el tipo de vehículo y verifica conductor, placa y código de seguridad. Para delivery, registra el punto de recojo, entrega y contenido del paquete.';
-  }
-  if (text.includes('beneficio') || text.includes('descuento') || text.includes('empleo')) {
-    return 'En Beneficios puedes filtrar ofertas, empleos, campañas, eventos y cupones por zona. Revisa siempre la vigencia y el responsable antes de guardar, compartir o postular.';
-  }
-  return 'Puedo ayudarte a encontrar la mejor ruta dentro de MiZona. Indícame si tu necesidad está relacionada con comunidad, chat, beneficios, negocios, Marketplace, CampusHugo, Business o Ride, y te daré pasos concretos.';
+const pageLabels = {
+  panel: 'Mi Panel', community: 'Mi Comunidad', committees: 'Comités', business: 'MiZona Business',
+  benefits: 'Beneficios', businesses: 'Negocios', marketplace: 'Marketplace', campus: 'CampusHugo',
+  ride: 'MiZona Ride', chat: 'MiZona Chat', notifications: 'Notificaciones', settings: 'Configuración'
 };
 
 export default function AiAssistant({ setPage }) {
-  const [messages, setMessages] = useState([
-    { id: 1, role: 'assistant', text: 'Hola José. Soy el asistente de MiZona. Puedo orientarte entre todos los módulos y ayudarte a convertir una necesidad en pasos concretos.' }
-  ]);
+  const { profile } = useApp();
+  const admin = isPlatformAdmin(profile);
+  const student = isStudentProfile(profile);
+  const [snapshot, setSnapshot] = useState(() => getLocalAiSnapshot());
+  const [tab, setTab] = useState('assistant');
+  const [activeId, setActiveId] = useState(() => getLocalAiSnapshot().conversations[0]?.id || null);
+  const [specialist, setSpecialist] = useState('general');
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState(import.meta.env.VITE_AI_ENDPOINT ? 'Conectado a endpoint seguro' : 'Modo local de demostración');
-  const sequence = useRef(2);
+  const [message, setMessage] = useState('');
+  const [settingsDraft, setSettingsDraft] = useState(() => getLocalAiSnapshot().settings);
+  const messageEnd = useRef(null);
 
-  const suggestions = useMemo(() => starters.filter(item => !messages.some(message => message.text === item)).slice(0, 4), [messages]);
+  const reload = () => {
+    const next = getLocalAiSnapshot();
+    setSnapshot(next);
+    setSettingsDraft(next.settings);
+    setActiveId(current => current && next.conversations.some(item => item.id === current) ? current : next.conversations[0]?.id || null);
+  };
 
-  const ask = async promptValue => {
-    const prompt = String(promptValue ?? input).trim();
+  useEffect(() => subscribeLocalAi(reload), []);
+  useEffect(() => { messageEnd.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [activeId, snapshot.conversations, loading]);
+
+  const active = useMemo(() => snapshot.conversations.find(item => item.id === activeId) || null, [snapshot.conversations, activeId]);
+  const favoritePrompts = snapshot.favorites.map(item => item.prompt);
+  const endpointConfigured = Boolean(import.meta.env.VITE_AI_ENDPOINT);
+  const tabs = [
+    { id: 'assistant', label: 'Asistente' },
+    { id: 'history', label: `Historial (${snapshot.conversations.length})` },
+    { id: 'plans', label: `Planes guardados (${snapshot.savedPlans.length})` },
+    ...(admin ? [{ id: 'admin', label: 'Administración IA' }] : [])
+  ];
+
+  const createConversation = (selected = specialist) => {
+    const id = createLocalAiConversation({ specialist: selected });
+    setActiveId(id);
+    setSpecialist(selected);
+    setTab('assistant');
+    setMessage('Nueva conversación creada.');
+  };
+
+  const ask = async value => {
+    const prompt = String(value ?? input).trim();
     if (!prompt || loading) return;
-    const userMessage = { id: sequence.current++, role: 'user', text: prompt };
-    setMessages(current => [...current, userMessage]);
-    setInput(''); setLoading(true);
+    setLoading(true);
+    setMessage('');
     try {
-      const endpoint = import.meta.env.VITE_AI_ENDPOINT;
-      let answer;
-      if (endpoint) {
-        const response = await fetch(endpoint, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: prompt, context: 'MiZona Enterprise V8' })
-        });
-        if (!response.ok) throw new Error('El endpoint de IA no respondió correctamente.');
-        const payload = await response.json();
-        answer = payload.answer || payload.message || localReply(prompt);
-        setMode('Conectado a endpoint seguro');
-      } else {
-        await new Promise(resolve => setTimeout(resolve, 450));
-        answer = localReply(prompt);
-      }
-      setMessages(current => [...current, { id: sequence.current++, role: 'assistant', text: answer }]);
+      let conversationId = activeId;
+      if (!conversationId) conversationId = createLocalAiConversation({ title: prompt.slice(0, 60), specialist });
+      setActiveId(conversationId);
+      setInput('');
+      await askLocalAi({ conversationId, prompt, specialist, endpoint: import.meta.env.VITE_AI_ENDPOINT || '' });
+      reload();
     } catch (error) {
-      setMode('Endpoint no disponible · respuesta local');
-      setMessages(current => [...current, { id: sequence.current++, role: 'assistant', text: `${localReply(prompt)}\n\nNota: ${error.message}` }]);
-    } finally { setLoading(false); }
+      setMessage(error.message || 'No fue posible procesar la consulta.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const goTo = module => {
-    const pageMap = { community: 'community', business: 'business', education: 'campus', local: 'businesses' };
-    setPage?.(pageMap[module] || 'panel');
+  const removeConversation = id => {
+    if (!confirm('¿Eliminar esta conversación local?')) return;
+    try { deleteLocalAiConversation(id); reload(); } catch (error) { setMessage(error.message); }
   };
 
-  return <div className="page aiPage">
+  const savePlan = (conversationId, messageId) => {
+    try { saveLocalAiPlan(conversationId, messageId); setMessage('Plan guardado en tu perfil local.'); reload(); }
+    catch (error) { setMessage(error.message); }
+  };
+
+  const saveSettings = () => {
+    try { updateLocalAiSettings(settingsDraft); setMessage('Configuración local de IA actualizada.'); reload(); }
+    catch (error) { setMessage(error.message); }
+  };
+
+  if (student) return <div className="page"><Card title="IA MiZona no disponible" icon="🛡️"><p className="muted">La cuenta estudiantil no tiene acceso al asistente general. Continúa usando Comunidad escolar, Chat seguro, Transfer y CampusHugo.</p></Card></div>;
+
+  return <div className="page aiPage aiV21">
     <section className="aiHero">
-      <div><p className="eyebrow">Asistente transversal de la plataforma</p><h1>IA MiZona</h1><p>Describe lo que necesitas y recibe una guía práctica usando Comunidad, Beneficios, Negocios, Marketplace, CampusHugo, Business y Ride.</p><div className="aiMode"><Sparkles size={17}/>{mode}</div></div>
+      <div>
+        <p className="eyebrow">Etapa 21 · Asistente multiusuario local</p>
+        <h1>IA MiZona</h1>
+        <p>Consulta los datos guardados en este navegador y convierte una necesidad en un plan con accesos directos a los módulos.</p>
+        <div className="aiMode"><Sparkles size={17}/>{endpointConfigured ? 'Endpoint opcional configurado · respaldo local activo' : 'Motor local activo · sin Supabase ni claves externas'}</div>
+      </div>
       <div className="aiHeroVisual"><div className="aiOrb"><Bot size={52}/></div><span>Resolver</span><span>Organizar</span><span>Aprender</span><span>Crecer</span></div>
     </section>
 
-    <div className="aiLayout">
-      <section className="aiChatCard">
-        <header><div><WandSparkles size={21}/><div><b>Asistente MiZona</b><span>Orientación general · No reemplaza asesoría profesional</span></div></div><button onClick={() => setMessages(messages.slice(0, 1))}>Nueva conversación</button></header>
-        <div className="aiMessages">{messages.map(message => <div key={message.id} className={`aiMessage ${message.role}`}><span>{message.role === 'assistant' ? <Bot size={18}/> : 'JH'}</span><p>{message.text}</p></div>)}{loading && <div className="aiMessage assistant"><span><Bot size={18}/></span><p className="typing"><Loader2 size={17}/>Preparando una respuesta...</p></div>}</div>
-        <div className="aiSuggestions">{suggestions.map(item => <button key={item} onClick={() => ask(item)}>{item}</button>)}</div>
-        <form className="aiComposer" onSubmit={event => { event.preventDefault(); ask(); }}><textarea value={input} onChange={event => setInput(event.target.value)} placeholder="Ejemplo: necesito organizar una reunión de padres y compartir los acuerdos..." rows="2"/><button disabled={loading || !input.trim()}><Send size={19}/></button></form>
-        <footer><ShieldCheck size={15}/>No escribas contraseñas, datos bancarios ni información privada de menores.</footer>
+    <div className="aiContextStrip">
+      <span><Building2 size={17}/><b>{snapshot.context.counts.communities}</b> comunidades</span>
+      <span><MessageSquareText size={17}/><b>{snapshot.context.counts.conversations}</b> chats</span>
+      <span><Store size={17}/><b>{snapshot.context.counts.benefits}</b> beneficios</span>
+      <span><GraduationCap size={17}/><b>{snapshot.context.counts.courses_enrolled}</b> cursos</span>
+      <span><BriefcaseBusiness size={17}/><b>{snapshot.context.counts.business_workspaces}</b> negocios</span>
+      <span><Car size={17}/><b>{snapshot.context.counts.rides + snapshot.context.counts.deliveries}</b> servicios Ride</span>
+    </div>
+
+    <Tabs tabs={tabs} active={tab} setActive={setTab}/>
+    {message && <div className="aiNotice"><Lightbulb size={17}/>{message}<button onClick={() => setMessage('')}><X size={16}/></button></div>}
+
+    {tab === 'assistant' && <div className="aiLayout aiLayoutV21">
+      <aside className="aiConversationRail">
+        <button className="aiNewButton" onClick={() => createConversation()}><Plus size={17}/>Nueva conversación</button>
+        <div className="aiHistoryMini">
+          {snapshot.conversations.slice(0, 12).map(item => <button key={item.id} className={item.id === activeId ? 'active' : ''} onClick={() => { setActiveId(item.id); setSpecialist(item.specialist || 'general'); }}>
+            <span><History size={15}/><b>{item.title}</b></span><small>{new Date(item.updated_at).toLocaleString('es-PE')}</small>
+          </button>)}
+          {!snapshot.conversations.length && <p className="muted">Todavía no hay conversaciones.</p>}
+        </div>
+      </aside>
+
+      <section className="aiChatCard aiChatV21">
+        <header>
+          <div><WandSparkles size={21}/><div><b>{active?.title || 'Nueva conversación'}</b><span>@{profile.username} · historial privado de este perfil local</span></div></div>
+          {active && <button onClick={() => removeConversation(active.id)}><Trash2 size={15}/>Eliminar</button>}
+        </header>
+
+        <div className="aiSpecialistBar">
+          {specialists.map(item => { const Icon = item.icon; return <button key={item.id} className={specialist === item.id ? 'active' : ''} onClick={() => setSpecialist(item.id)} title={item.text}><Icon size={16}/>{item.title}</button>; })}
+        </div>
+
+        <div className="aiMessages aiMessagesV21">
+          {!active?.messages?.length && <div className="aiEmpty"><Bot size={42}/><b>¿Qué necesitas resolver?</b><p>Selecciona un especialista o utiliza una pregunta sugerida.</p></div>}
+          {(active?.messages || []).map(item => <div key={item.id} className={`aiMessage ${item.role}`}>
+            <span>{item.role === 'assistant' ? <Bot size={18}/> : String(profile.displayName || 'U').slice(0, 2).toUpperCase()}</span>
+            <div className="aiMessageBody">
+              {item.title && <b>{item.title}</b>}
+              <p>{item.text}</p>
+              {!!item.checklist?.length && <ul>{item.checklist.map(line => <li key={line}><Check size={14}/>{line}</li>)}</ul>}
+              {!!item.actions?.length && <div className="aiActionButtons">{item.actions.map(action => <button key={`${item.id}-${action.page}`} onClick={() => setPage?.(action.page)}>{action.label || pageLabels[action.page] || action.page}<ChevronRight size={14}/></button>)}</div>}
+              {item.role === 'assistant' && <div className="aiMessageTools">
+                <button onClick={() => savePlan(active.id, item.id)}><Save size={14}/>Guardar plan</button>
+                <button onClick={() => rateLocalAiMessage(active.id, item.id, 'up')}><ThumbsUp size={14}/></button>
+                <button onClick={() => rateLocalAiMessage(active.id, item.id, 'down')}><ThumbsDown size={14}/></button>
+                <small>{item.source === 'safety' ? 'Protección local' : item.source?.includes('endpoint') ? 'Endpoint o respaldo local' : 'Motor local'}</small>
+              </div>}
+            </div>
+          </div>)}
+          {loading && <div className="aiMessage assistant"><span><Bot size={18}/></span><div className="aiMessageBody"><p className="typing"><Loader2 size={17}/>Analizando los módulos locales...</p></div></div>}
+          <div ref={messageEnd}/>
+        </div>
+
+        <div className="aiSuggestions">
+          {[...favoritePrompts, ...starters].filter((item, index, rows) => rows.indexOf(item) === index).slice(0, 6).map(item => <button key={item} onClick={() => ask(item)}>{favoritePrompts.includes(item) && <Heart size={13} fill="currentColor"/>}{item}</button>)}
+        </div>
+        <form className="aiComposer" onSubmit={event => { event.preventDefault(); ask(); }}>
+          <textarea value={input} maxLength={snapshot.settings.max_prompt_chars} onChange={event => setInput(event.target.value)} placeholder="Ejemplo: crea un plan para organizar una reunión, responsables, gastos y publicación de acuerdos..." rows="3"/>
+          <button disabled={loading || !input.trim()}><Send size={19}/></button>
+        </form>
+        <footer><ShieldCheck size={15}/>{snapshot.settings.safety_notice}<span>{input.length}/{snapshot.settings.max_prompt_chars}</span></footer>
       </section>
 
       <aside className="aiSide">
-        <Card title="Asistentes especializados" icon="✨"><div className="assistantCards">{assistants.map(item => { const Icon = item.icon; return <button key={item.id} onClick={() => ask(item.prompt)}><span><Icon size={19}/></span><div><b>{item.title}</b><p>{item.text}</p></div></button>; })}</div></Card>
-        <Card title="Abrir módulo" icon="🧭"><div className="aiModuleLinks"><button onClick={() => goTo('community')}><Building2/>Mi Comunidad</button><button onClick={() => goTo('business')}><BriefcaseBusiness/>MiZona Business</button><button onClick={() => goTo('education')}><GraduationCap/>CampusHugo</button><button onClick={() => goTo('local')}><Store/>Negocios cercanos</button></div></Card>
-        <Card title="Ideas de uso" icon="💡"><ul className="list"><li>Redactar un comunicado claro.</li><li>Preparar una oferta para un negocio.</li><li>Crear una ruta de aprendizaje.</li><li>Organizar tareas y responsables.</li><li>Encontrar el módulo correcto.</li></ul></Card>
+        <Card title="Especialistas" icon="✨"><div className="assistantCards">{specialists.slice(1).map(item => { const Icon = item.icon; return <button key={item.id} onClick={() => { setSpecialist(item.id); createConversation(item.id); }}><span><Icon size={19}/></span><div><b>{item.title}</b><p>{item.text}</p></div></button>; })}</div></Card>
+        <Card title="Preguntas favoritas" icon="❤️"><div className="aiFavoriteList">{favoritePrompts.map(prompt => <div key={prompt}><button onClick={() => ask(prompt)}>{prompt}</button><button onClick={() => { toggleLocalAiFavorite(prompt); reload(); }}><Trash2 size={14}/></button></div>)}{!favoritePrompts.length && <p className="muted">Guarda preguntas frecuentes desde esta sección.</p>}<button className="primary full" onClick={() => { if (input.trim()) { toggleLocalAiFavorite(input); reload(); } else setMessage('Escribe primero una pregunta para guardarla.'); }}><Heart size={15}/>Guardar texto actual</button></div></Card>
       </aside>
-    </div>
+    </div>}
 
-    <div className="aiCapabilityGrid"><article><MessageSquareText/><b>Conversación contextual</b><p>Mantiene el hilo de la consulta actual.</p></article><article><Lightbulb/><b>Acciones concretas</b><p>Convierte preguntas en pasos y módulos.</p></article><article><ShieldCheck/><b>Diseño seguro</b><p>El proveedor externo debe conectarse mediante un endpoint del servidor, nunca con una clave visible en el navegador.</p></article></div>
+    {tab === 'history' && <div className="aiHistoryGrid">
+      {snapshot.conversations.map(item => <article key={item.id}>
+        <div><History size={20}/><span><b>{item.title}</b><small>{item.messages.length} mensajes · {new Date(item.updated_at).toLocaleString('es-PE')}</small></span></div>
+        <p>{item.messages.slice(-1)[0]?.text || 'Conversación vacía'}</p>
+        <footer><button onClick={() => { setActiveId(item.id); setSpecialist(item.specialist || 'general'); setTab('assistant'); }}>Abrir</button><button onClick={() => removeConversation(item.id)}><Trash2 size={15}/></button></footer>
+      </article>)}
+      {!snapshot.conversations.length && <Card title="Sin historial" icon="🕘"><p className="muted">Crea tu primera conversación con IA MiZona.</p></Card>}
+    </div>}
+
+    {tab === 'plans' && <div className="aiPlanGrid">
+      {snapshot.savedPlans.map(plan => <article key={plan.id}>
+        <header><Archive size={20}/><div><b>{plan.title}</b><small>{new Date(plan.created_at).toLocaleString('es-PE')}</small></div></header>
+        <p>{plan.body}</p>
+        {!!plan.checklist?.length && <ul>{plan.checklist.map(line => <li key={line}><Check size={14}/>{line}</li>)}</ul>}
+        <footer><button onClick={() => deleteLocalAiPlan(plan.id)}><Trash2 size={15}/>Eliminar</button></footer>
+      </article>)}
+      {!snapshot.savedPlans.length && <Card title="Planes guardados" icon="📌"><p className="muted">Cuando una respuesta te resulte útil, pulsa “Guardar plan”.</p></Card>}
+    </div>}
+
+    {tab === 'admin' && admin && <div className="aiAdminGrid">
+      <Card title="Configuración local" icon="⚙️">
+        <label className="aiSwitch"><span><b>Motor local</b><small>Mantiene respuestas disponibles sin servicios externos.</small></span><input type="checkbox" checked={settingsDraft.local_enabled} onChange={e => setSettingsDraft(s => ({ ...s, local_enabled: e.target.checked }))}/></label>
+        <label className="aiSwitch"><span><b>Endpoint externo opcional</b><small>Solo funciona cuando VITE_AI_ENDPOINT está configurado.</small></span><input type="checkbox" checked={settingsDraft.external_endpoint_enabled} onChange={e => setSettingsDraft(s => ({ ...s, external_endpoint_enabled: e.target.checked }))}/></label>
+        <label className="aiSwitch"><span><b>Permitir estudiantes</b><small>Se mantiene desactivado por seguridad.</small></span><input type="checkbox" checked={settingsDraft.allow_student_access} onChange={e => setSettingsDraft(s => ({ ...s, allow_student_access: e.target.checked }))}/></label>
+        <label className="fieldLabel">Máximo de caracteres<input className="field" type="number" min="300" max="5000" value={settingsDraft.max_prompt_chars} onChange={e => setSettingsDraft(s => ({ ...s, max_prompt_chars: Number(e.target.value) }))}/></label>
+        <button className="primary" onClick={saveSettings}><Settings2 size={16}/>Guardar configuración</button>
+      </Card>
+      <Card title="Métricas locales" icon="📊"><div className="aiAdminStats"><span><b>{snapshot.state.usage.length}</b> consultas</span><span><b>{snapshot.state.conversations.length}</b> conversaciones</span><span><b>{snapshot.state.saved_plans.length}</b> planes</span><span><b>{snapshot.state.feedback.length}</b> evaluaciones</span></div><p className="muted">Estas métricas pertenecen únicamente a este navegador.</p></Card>
+      <Card title="Alertas de seguridad" icon="🚨"><div className="aiFlagList">{snapshot.flagged.map(flag => <div key={flag.id}><span><b>{localAiUserLabel(flag.user_id)}</b><small>{flag.prompt}</small><em>{flag.reason}</em></span><select value={flag.status} onChange={e => { reviewLocalAiFlag(flag.id, e.target.value); reload(); }}><option value="blocked">Bloqueado</option><option value="reviewed">Revisado</option><option value="dismissed">Descartado</option></select></div>)}{!snapshot.flagged.length && <p className="muted">No hay consultas bloqueadas.</p>}</div></Card>
+      <Card title="Mantenimiento" icon="🧹"><p className="muted">Restablece solamente historial, planes y configuración de IA de este navegador.</p><button className="dangerButton" onClick={() => { if (confirm('¿Restablecer IA MiZona local?')) { resetLocalAi(); reload(); } }}><RotateCcw size={16}/>Restablecer IA local</button></Card>
+    </div>}
+
+    <div className="aiCapabilityGrid">
+      <article><MessageSquareText/><b>Contexto local</b><p>Usa conteos y datos resumidos de los módulos del perfil activo.</p></article>
+      <article><Clock3/><b>Historial separado</b><p>Cada perfil local conserva sus propias conversaciones y planes.</p></article>
+      <article><ShieldAlert/><b>Privacidad y filtros</b><p>Bloquea consultas con contraseñas, datos bancarios o información privada de menores.</p></article>
+    </div>
   </div>;
 }

@@ -29,7 +29,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 18.1 · Roles seguros y portal de comités</span><div className="bar"><i style={{ width: '99%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 21 · IA MiZona multiusuario local</span><div className="bar"><i style={{ width: '99%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">
