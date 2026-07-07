@@ -1,22 +1,9 @@
-# MiZona Enterprise V8 — Etapa 28
+# MiZona Enterprise V8 — Etapa 28.1
 
-## Comités: cuotas, actividades y control de pagos
+Comité completo unificado: cuotas, pagos por alumno, gastos detallados, comprobantes, comunicados, eventos, actas, documentos, junta directiva, reportes CSV/PDF, respaldo JSON y configuración.
 
-Versión acumulativa construida sobre las Etapas 1–27.
+## Ejecutar
 
-### Incluye
-- Cuotas mensuales, vestimenta, cumpleaños, paseos y cualquier actividad.
-- Lista de alumnos y apoderados.
-- Matriz para saber quién pagó, quién debe y quién pagó parcialmente.
-- Registro de Yape, Plin, efectivo y transferencia.
-- Número de operación o recibo.
-- Recordatorios por familia.
-- Gastos asociados a cada actividad.
-- Saldo real, cobrado, pendiente y gastado.
-- Exportación CSV para Excel.
-- Datos compartidos entre pestañas del mismo navegador.
-
-### Ejecutar
 ```bash
 npm install
 npm run dev
