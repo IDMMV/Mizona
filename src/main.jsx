@@ -21,6 +21,7 @@ import GatewayCenter from './pages/GatewayCenter';
 import Verification from './pages/Verification';
 import SyncCenter from './pages/SyncCenter';
 import CloudCenter from './pages/CloudCenter';
+import QualityCenter from './pages/QualityCenter';
 import Account from './pages/Account';
 import Notifications from './pages/Notifications';
 import LocalLab from './pages/LocalLab';
@@ -53,6 +54,7 @@ function App() {
     gateway: <GatewayCenter/>,
     sync: <SyncCenter/>,
     cloudCenter: <CloudCenter/>,
+    quality: <QualityCenter/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
     settings: <Account/>,
     blueprint: <Blueprint/>

@@ -1,22 +1,17 @@
-# MiZona Enterprise V8 — Etapa 26
+# MiZona Enterprise V8 — Etapa 27
 
-## Pasarela y liquidaciones locales
+## Calidad, seguridad y lanzamiento piloto
 
-Versión acumulativa sobre la corrección 25.1. Añade un centro administrativo para preparar proveedores de pago, webhooks, liquidaciones a vendedores, reservas antifraude y devoluciones.
+Versión acumulativa construida sobre las Etapas 1–26.
 
-### Incluye
+Incluye:
+- Diagnóstico automático de almacenamiento, conectividad, PWA, cuota, perfiles, pagos y protección estudiantil.
+- Checklist integral de módulos.
+- Registro y seguimiento de incidencias.
+- Participantes para colegio, comité y negocio piloto.
+- Pruebas móviles obligatorias.
+- Candidatos de publicación bloqueados por fallas críticas.
+- Exportación del reporte técnico en JSON.
+- Reglas administrables de calidad y lanzamiento.
 
-- Proveedores preparados: Manual, Culqi, Niubiz, Izipay, Mercado Pago y Yape Empresas.
-- Activación y selección de proveedor.
-- Modo sandbox por defecto.
-- Simulación de webhooks.
-- Saldos retenidos, disponibles, pagados y bloqueados.
-- Comisión, reserva antifraude y monto neto.
-- Solicitudes de devolución y aprobación administrativa.
-- Exportación JSON.
-- Diseño adaptado a celular.
-- Sin claves secretas en el navegador.
-
-### Estado honesto
-
-No procesa dinero real. Para producción se necesita backend seguro, credenciales del proveedor, webhooks firmados, conciliación bancaria y revisión legal/contable.
+La plataforma continúa funcionando en modo local y todavía no sustituye backend, pasarela, GPS, validación de identidad ni auditorías externas.
