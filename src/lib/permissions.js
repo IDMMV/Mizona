@@ -27,6 +27,7 @@ export function canAccessModule(profile, moduleId, { ownsBusiness = false } = {}
   if (moduleId === 'business') return admin || isBusinessProfile(profile) || ownsBusiness || !isStudentProfile(profile);
   if (moduleId === 'committees') return admin || !isStudentProfile(profile);
   if (moduleId === 'payments') return admin || !isStudentProfile(profile);
+  if (moduleId === 'verification') return admin || !isStudentProfile(profile);
   return true;
 }
 
