@@ -17,6 +17,7 @@ import BusinessSuite from './pages/BusinessSuite';
 import Ride from './pages/Ride';
 import AiAssistant from './pages/AiAssistant';
 import Payments from './pages/Payments';
+import GatewayCenter from './pages/GatewayCenter';
 import Verification from './pages/Verification';
 import SyncCenter from './pages/SyncCenter';
 import CloudCenter from './pages/CloudCenter';
@@ -49,6 +50,7 @@ function App() {
     ai: <AiAssistant setPage={setPage}/>,
     verification: <Verification/>,
     payments: <Payments/>,
+    gateway: <GatewayCenter/>,
     sync: <SyncCenter/>,
     cloudCenter: <CloudCenter/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,

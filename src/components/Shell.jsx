@@ -13,7 +13,8 @@ export default function Shell({ page, setPage, children }) {
     return canAccessModule(profile, module.id);
   }), [moduleConfig, profile]);
 
-  return <div className="app">
+  return <div className={`app ${open ? 'menuOpen' : ''}`}>
+    {open && <button className="sidebarBackdrop" aria-label="Cerrar menú" onClick={() => setOpen(false)}/>}
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="brand">
         <div className="logo">MZ</div><div><b>MiZona</b><span>Enterprise V8</span></div>

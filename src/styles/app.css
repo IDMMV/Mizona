@@ -118,3 +118,37 @@
 
 /* Etapa 24 · Usuarios reales y sincronización */
 .syncPage .syncStatus{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.syncStatus span{border:1px solid rgba(15,23,42,.08);border-radius:16px;padding:12px;background:#f8fafc;display:flex;flex-direction:column;gap:4px}.syncStatus b{font-size:.78rem;color:#64748b;text-transform:uppercase;letter-spacing:.04em}.compactTable article{grid-template-columns:1fr auto auto}.syncProgress{display:flex;align-items:center;gap:14px;margin:10px 0 18px}.syncProgress>div{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;flex:1}.syncProgress i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:999px}.syncPlanGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.syncPlanGrid article{border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:12px;background:#fff;display:grid;gap:8px}.syncPlanGrid article span{font-size:.85rem;color:#64748b}.syncPlanGrid select,.fileButton{border:1px solid #dbe3ef;border-radius:12px;background:#f8fafc;padding:9px 10px}.fileButton{display:inline-flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;color:#0f172a}.fileButton input{display:none}.payStatus.ok{background:#dcfce7;color:#166534}.payStatus.warning{background:#fef3c7;color:#92400e}.payStatus.fail{background:#fee2e2;color:#991b1b}.payStatus.blocked_no_backend,.payStatus.blocked_until_legal{background:#fee2e2;color:#991b1b}.payStatus.ready_for_manual_execution{background:#dbeafe;color:#1d4ed8}@media(max-width:800px){.syncStatus,.syncPlanGrid{grid-template-columns:1fr}.compactTable article{grid-template-columns:1fr}.syncPage .payActions{display:grid;grid-template-columns:1fr;gap:8px}.syncProgress{align-items:flex-start;flex-direction:column}.syncProgress>div{width:100%}}
+
+
+/* Etapa 25.1 · Corrección móvil y estabilidad de Pagos */
+.sidebarBackdrop{display:none}
+@media(max-width:980px){
+  body{overflow-x:hidden}
+  .app.menuOpen{overflow:hidden}
+  .sidebarBackdrop{display:block;position:fixed;inset:0;border:0;background:rgba(9,18,34,.58);backdrop-filter:blur(2px);z-index:29}
+  .sidebar{z-index:30;width:min(86vw,320px);padding:14px 14px 24px;background:linear-gradient(180deg,#101a2e 0%,#0d1730 100%);box-shadow:18px 0 50px rgba(3,10,24,.35);border-radius:0 22px 22px 0;color:#fff;opacity:1}
+  .sidebar .brand{margin-bottom:14px;padding:4px 2px 10px;border-bottom:1px solid rgba(255,255,255,.10)}
+  .sidebar .brand b{font-size:18px}.sidebar .brand span{font-size:11px}
+  .sidebar nav{display:grid;gap:2px}.sidebar .navItem{min-height:45px;padding:11px 12px;border-radius:12px;color:#edf4ff;background:transparent}
+  .sidebar .navItem.active{background:linear-gradient(135deg,rgba(25,103,255,.35),rgba(0,168,120,.22));box-shadow:inset 0 0 0 1px rgba(255,255,255,.09)}
+  .sidebar .navItem span{font-size:14px;font-weight:750}.sidebar .phaseBox{margin-top:14px}
+  .topbar{height:64px;padding:8px 10px;gap:8px;background:#fff;backdrop-filter:none}
+  .topbar>.iconBtn{flex:0 0 44px;height:44px;justify-content:center;padding:0;border-radius:14px}
+  .searchBox{height:44px;min-width:0;padding:0 10px;border-radius:14px}.searchBox input{font-size:14px;text-overflow:ellipsis}
+  .content{padding:12px 10px 24px}.page h1{font-size:25px}.hero,.committeeHero,.notificationHero,.labHero{border-radius:18px;padding:18px}
+  .hero h1,.committeeHero h1,.notificationHero h1{font-size:27px}.card{padding:15px;border-radius:17px}.grid2{gap:12px;margin-top:12px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;margin:12px 0;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{white-space:nowrap;flex:0 0 auto;padding:9px 12px}
+}
+@media(max-width:520px){
+  .searchBox svg{display:none}.searchBox{padding:0 9px}.searchBox input{font-size:13px}
+  .paymentWarning{padding:12px;border-radius:14px}.paymentWarning span{font-size:.84rem}
+  .paymentKpis{gap:8px;margin:12px 0}.paymentKpis span{padding:12px}.paymentKpis b{font-size:1rem;overflow-wrap:anywhere}
+  .paymentGrid{gap:10px;margin:12px 0}.paymentForm input,.paymentForm select{min-height:44px}
+  .paymentAdminModels article{padding:11px}.paymentAdminModels label{justify-content:space-between}.paymentAdminModels label input[type=number]{width:82px}
+  .paymentFooterActions button,.payActions button,.paymentForm button{width:100%;justify-content:center;min-height:43px}
+}
+/* Etapa 26: pasarela, webhooks y liquidaciones */
+.gatewayPage .pageHero{background:linear-gradient(135deg,#0f3d72,#087f8c);color:#fff}.gatewayPage .pageHero p{color:rgba(255,255,255,.82)}
+.gatewayGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.gatewayCard{display:grid;gap:10px;padding:16px;border:1px solid var(--line,#dbe4ef);border-radius:18px;background:#fff}.gatewayCard>div{display:flex;justify-content:space-between;gap:10px}.gatewayCard span,.gatewayCard small{color:var(--muted,#64748b)}
+.inlineForm{display:flex;gap:10px;flex-wrap:wrap}.inlineForm input{flex:1 1 180px}.dataList{display:grid;gap:10px}.dataList article{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:14px;border:1px solid var(--line,#dbe4ef);border-radius:16px}.dataList article>div{display:grid;gap:3px}.dataList span,.dataList small{color:var(--muted,#64748b)}.rowActions{display:flex!important;grid-auto-flow:column;gap:8px}.buttonWrap{display:flex;flex-wrap:wrap;gap:10px}.warningBox{display:grid;gap:4px;margin:16px 0;padding:14px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}.heroBadge{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.14)}
+@media(max-width:720px){.dataList article{grid-template-columns:1fr}.rowActions{display:flex!important;flex-wrap:wrap}.inlineForm{display:grid}.inlineForm input,.inlineForm button{width:100%}.gatewayGrid{grid-template-columns:1fr}.gatewayPage .pageHero{padding:20px;border-radius:20px}.gatewayPage .pageHero h1{font-size:1.65rem}}

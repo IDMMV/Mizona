@@ -39,7 +39,28 @@ const defaults={
  ],
  audit:[]
 };
-function read(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');return x&&x.version===22?x:structuredClone(defaults);}catch{return structuredClone(defaults)}}
+function normalize(raw){
+ const base=structuredClone(defaults);
+ const x=raw&&typeof raw==='object'?raw:{};
+ const settings={...base.settings,...(x.settings&&typeof x.settings==='object'?x.settings:{})};
+ const incomingModels=Array.isArray(x.models)?x.models:[];
+ const byId=Object.fromEntries(incomingModels.filter(Boolean).map(m=>[m.id,m]));
+ const models=base.models.map(m=>({...m,...(byId[m.id]||{})}));
+ const extra=incomingModels.filter(m=>m&&m.id&&!models.some(x=>x.id===m.id));
+ const transactions=Array.isArray(x.transactions)?x.transactions.filter(Boolean):base.transactions;
+ const audit=Array.isArray(x.audit)?x.audit.filter(Boolean):[];
+ const defaultExists=[...models,...extra].some(m=>m.id===settings.default_model&&m.enabled);
+ if(!defaultExists) settings.default_model=[...models,...extra].find(m=>m.enabled)?.id||'direct_seller';
+ return {version:22,updated_at:x.updated_at||now(),settings,models:[...models,...extra],transactions,audit};
+}
+function read(){
+ try{
+  const raw=JSON.parse(localStorage.getItem(KEY)||'null');
+  const normalized=normalize(raw);
+  if(raw && JSON.stringify(raw)!==JSON.stringify(normalized)) localStorage.setItem(KEY,JSON.stringify(normalized));
+  return normalized;
+ }catch{return normalize(null)}
+}
 function write(state,action='update'){state.updated_at=now();state.audit=[{id:id('audit'),action,created_at:now()},...(state.audit||[])].slice(0,100);localStorage.setItem(KEY,JSON.stringify(state));try{new BroadcastChannel(CHANNEL).postMessage({type:'changed'})}catch{};window.dispatchEvent(new CustomEvent('mizona-payments-changed'));return state}
 export const getPaymentsState=()=>read();
 export function subscribePayments(cb){const handler=()=>cb(read());window.addEventListener('storage',handler);window.addEventListener('mizona-payments-changed',handler);let ch;try{ch=new BroadcastChannel(CHANNEL);ch.onmessage=handler}catch{};return()=>{window.removeEventListener('storage',handler);window.removeEventListener('mizona-payments-changed',handler);ch?.close()}}

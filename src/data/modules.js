@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck } from 'lucide-react';
+import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark } from 'lucide-react';
 
 export const statusLabel = {
   active: 'Activo',
@@ -25,6 +25,7 @@ export const modules = [
   { id: 'sync', label: 'Usuarios y Sync', icon: CloudUpload, status: 'active', phase: 'Etapa 24', audience: 'Administradores y migración' },
   { id: 'cloudCenter', label: 'Nube y Push', icon: CloudUpload, status: 'active', phase: 'Etapa 25', audience: 'Administradores, archivos y avisos' },
   { id: 'payments', label: 'Pagos MiZona', icon: CreditCard, status: 'active', phase: 'Etapa 22', audience: 'Adultos, negocios y administradores' },
+  { id: 'gateway', label: 'Pasarela y liquidaciones', icon: Landmark, status: 'active', phase: 'Etapa 26', audience: 'Administradores y finanzas' },
   { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Etapa 21', audience: 'Adultos y organizaciones' },
   { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },
   { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo' },
