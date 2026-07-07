@@ -26,6 +26,7 @@ export function canAccessModule(profile, moduleId, { ownsBusiness = false } = {}
   if (isStudentProfile(profile)) return STUDENT_MODULES.has(moduleId);
   if (moduleId === 'business') return admin || isBusinessProfile(profile) || ownsBusiness || !isStudentProfile(profile);
   if (moduleId === 'committees') return admin || !isStudentProfile(profile);
+  if (moduleId === 'payments') return admin || !isStudentProfile(profile);
   return true;
 }
 

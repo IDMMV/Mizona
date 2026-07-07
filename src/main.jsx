@@ -16,6 +16,7 @@ import Campus from './pages/Campus';
 import BusinessSuite from './pages/BusinessSuite';
 import Ride from './pages/Ride';
 import AiAssistant from './pages/AiAssistant';
+import Payments from './pages/Payments';
 import Account from './pages/Account';
 import Notifications from './pages/Notifications';
 import LocalLab from './pages/LocalLab';
@@ -43,6 +44,7 @@ function App() {
     campus: <Campus/>,
     ride: <Ride/>,
     ai: <AiAssistant setPage={setPage}/>,
+    payments: <Payments/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
     settings: <Account/>,
     blueprint: <Blueprint/>

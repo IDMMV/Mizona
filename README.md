@@ -1,37 +1,29 @@
-# MiZona Enterprise V8 — Etapa 21
+# MiZona Enterprise V8 — Etapa 22
 
-## IA MiZona multiusuario local
+## Pagos configurables y simulación local
 
-Versión acumulativa construida sobre las Etapas 1–20. Funciona sin Supabase y conserva los datos en el navegador.
+Versión acumulativa sobre las Etapas 1–21.
 
 ### Incluye
+- Pago directo al vendedor.
+- Pago contra entrega.
+- Enlace o QR de pago.
+- Checkout dentro de MiZona.
+- Pago protegido.
+- Pago dividido automático.
+- Activación, publicación y selección del modelo predeterminado por el administrador.
+- Comisión porcentual, cargo fijo, montos mínimos y máximos.
+- Retención, devolución y liberación simulada.
+- Cuenta receptora, billetera y proveedor configurables.
+- Historial de pagos de prueba y exportación JSON.
+- Restricción completa para cuentas estudiantiles.
 
-- Historial de conversaciones separado para cada perfil local.
-- Especialistas de Comunidad, Negocio, Aprendizaje, Zona y Ride.
-- Respuestas contextuales basadas en conteos y resúmenes de los módulos locales.
-- Accesos directos desde cada respuesta al módulo correspondiente.
-- Planes guardados, listas de verificación y preguntas favoritas.
-- Calificación de respuestas.
-- Alertas por contraseñas, datos bancarios o información privada de menores.
-- Panel administrativo de IA con configuración, métricas y revisión de alertas.
-- Actualización entre pestañas mediante BroadcastChannel.
-- Endpoint externo opcional mediante `VITE_AI_ENDPOINT`, sin exponer claves en el navegador.
-- IA oculta para cuentas estudiantiles por defecto.
+### Importante
+Esta etapa no mueve dinero real. Los modelos de checkout, pago protegido y pago dividido requieren una pasarela que soporte marketplaces, contratos comerciales, validación de vendedores y revisión legal/tributaria antes de producción.
 
 ### Ejecutar
-
 ```bash
 npm install
 npm run dev
 npm run build
 ```
-
-### Vercel
-
-- Framework: **Vite**
-- Build Command: `npm run build`
-- Output Directory: `dist`
-
-### Estado honesto
-
-El motor local es un asistente basado en reglas y datos resumidos del navegador; no es un modelo generativo completo. El endpoint externo es opcional y debe implementarse en un servidor seguro. Los datos siguen siendo locales y no se sincronizan entre equipos distintos.
