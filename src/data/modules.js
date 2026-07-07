@@ -22,6 +22,7 @@ export const modules = [
   { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Etapa 18', audience: 'Estudiantes, familias y negocios' },
   { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos' },
   { id: 'verification', label: 'Verificación', icon: BadgeCheck, status: 'active', phase: 'Etapa 23', audience: 'Adultos, negocios y administradores' },
+  { id: 'sync', label: 'Usuarios y Sync', icon: CloudUpload, status: 'active', phase: 'Etapa 24', audience: 'Administradores y migración' },
   { id: 'payments', label: 'Pagos MiZona', icon: CreditCard, status: 'active', phase: 'Etapa 22', audience: 'Adultos, negocios y administradores' },
   { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Etapa 21', audience: 'Adultos y organizaciones' },
   { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },

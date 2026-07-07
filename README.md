@@ -1,9 +1,37 @@
-# MiZona Enterprise V8 — Etapa 23
+# MiZona Enterprise V8 — Etapa 24
 
-## Centro de Verificación, Reputación y Antifraude
+## Usuarios reales y sincronización preparada
 
-Versión acumulativa sobre las Etapas 1–22. Funciona localmente sin Supabase.
+Versión acumulativa construida sobre las Etapas 1–23. Funciona sin Supabase y conserva los datos en el navegador.
 
-Incluye solicitudes de verificación, revisión de identidad/RUC/local/licencias, estados administrativos, distintivos públicos, vencimientos, reportes, suspensión preventiva, auditoría y reglas configurables.
+### Incluye
 
-Los documentos seleccionados se registran por nombre en esta simulación local; no se validan contra SUNAT, SUNARP ni servicios biométricos.
+- Nuevo módulo **Usuarios y Sync** visible solo para administradores.
+- Estado del backend, modo local/nube, internet y Supabase.
+- Revisión automática de preparación antes de migrar.
+- Resumen de perfiles, estudiantes, administradores, mensajes, adjuntos y cola local.
+- Plan de migración local para pasar de pruebas a usuarios reales.
+- Reglas de sincronización: respaldo obligatorio, política de conflictos y protección de menores.
+- Control de dispositivos confiables y códigos locales de vinculación.
+- Exportación de respaldo local completo.
+- Importación de respaldo JSON.
+- Descarga del plan de migración en JSON.
+- Checklist por bloques: perfiles, módulos, comunidad, chat, archivos, pagos y verificación.
+
+### Estado honesto
+
+Esta etapa todavía no sincroniza entre celulares o computadoras diferentes. Su función es preparar el paso seguro desde el modo local hacia un backend real, evitando perder datos y manteniendo roles seguros.
+
+### Ejecutar
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+### Vercel
+
+- Framework: **Vite**
+- Build Command: `npm run build`
+- Output Directory: `dist`

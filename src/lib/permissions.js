@@ -2,7 +2,7 @@ export const STUDENT_MODULES = new Set([
   'panel', 'community', 'chat', 'notifications', 'transfer', 'campus', 'settings'
 ]);
 
-export const ADMIN_ONLY_MODULES = new Set(['admin', 'localLab', 'blueprint']);
+export const ADMIN_ONLY_MODULES = new Set(['admin', 'localLab', 'blueprint', 'sync']);
 
 export function isStudentProfile(profile) {
   return profile?.accountType === 'student' || profile?.account_type === 'student' || profile?.schoolRole === 'student' || profile?.school_role === 'student';
