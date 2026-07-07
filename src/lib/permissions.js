@@ -24,7 +24,7 @@ export function canAccessModule(profile, moduleId, { ownsBusiness = false } = {}
   const admin = isPlatformAdmin(profile);
   if (ADMIN_ONLY_MODULES.has(moduleId)) return admin;
   if (isStudentProfile(profile)) return STUDENT_MODULES.has(moduleId);
-  if (moduleId === 'business') return admin || isBusinessProfile(profile) || ownsBusiness;
+  if (moduleId === 'business') return admin || isBusinessProfile(profile) || ownsBusiness || !isStudentProfile(profile);
   if (moduleId === 'committees') return admin || !isStudentProfile(profile);
   return true;
 }

@@ -1,19 +1,20 @@
+# MiZona Enterprise V8 · Etapa 19
 
-# MiZona Enterprise V8 — Etapa 18.1
+Versión acumulativa con **MiZona Business multiusuario local**.
 
-## Corrección de roles y portal para comités
+## Novedades
 
-Esta entrega corrige el punto detectado en pruebas: las cuentas estudiantiles no deben ver módulos de adultos, administración, negocios, ride, marketplace, IA ni comités.
-
-## Cambios principales
-
-- Menú filtrado por tipo de perfil.
-- Ian/Dylan y otros perfiles estudiantiles solo ven comunidad escolar, chat permitido, transfer, CampusHugo, notificaciones y configuración.
-- Centro de Control, Laboratorio local, Blueprint y módulos de negocio quedan ocultos para niños.
-- Nueva pantalla **Comités** para adultos y administradores.
-- Plataforma de comités con resumen, aportes, gastos, actas, documentos y respaldo local.
-- Panel principal cambia según el perfil activo.
-- Pantalla de acceso restringido explica por qué un niño no puede entrar a módulos adultos.
+- Multiempresa por `business_id`.
+- Caja y cierre de turno.
+- POS con IGV incluido y vuelto.
+- Boleta imprimible.
+- Pedidos, cocina y entrega.
+- Inventario y movimientos.
+- Clientes y fidelización.
+- Personal con roles.
+- Gastos y reportes CSV.
+- Restricción de acceso para estudiantes.
+- Sincronización entre pestañas sin Supabase.
 
 ## Ejecutar
 
@@ -25,8 +26,8 @@ npm run build
 
 ## Vercel
 
-- Framework: **Vite**
+- Framework: Vite
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-No requiere SQL porque continúa en modo local.
+Consulta `docs/PASOS_ETAPA19_SIN_SUPABASE.md`.
