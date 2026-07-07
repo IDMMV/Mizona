@@ -20,7 +20,7 @@ export const modules = [
   { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag, status: 'active', phase: 'Etapa 17', audience: 'Usuarios' },
   { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'active', phase: 'Etapa 19', audience: 'Negocios y emprendimientos' },
   { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Etapa 18', audience: 'Estudiantes, familias y negocios' },
-  { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Sprint 8', audience: 'Pasajeros, conductores y envíos' },
+  { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos' },
   { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Sprint 9', audience: 'Todos' },
   { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },
   { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo' },

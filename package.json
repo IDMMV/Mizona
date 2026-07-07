@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-etapa19-business-local",
-  "version": "8.19.0",
+  "name": "mizona-enterprise-v8-etapa20-ride-local",
+  "version": "8.20.0",
   "private": true,
   "type": "module",
   "scripts": {
