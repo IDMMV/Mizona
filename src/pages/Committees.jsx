@@ -1,72 +1,33 @@
-
-import { useMemo, useState } from 'react';
-import { Download, FileSpreadsheet, Plus, ShieldCheck, WalletCards } from 'lucide-react';
+import {useEffect,useMemo,useState} from 'react';
+import {Download,Plus,ReceiptText,Send,Users,WalletCards} from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
-import { useApp } from '../context/AppContext';
-import { isStudentProfile } from '../lib/permissions';
-
-const money = value => `S/ ${Number(value || 0).toFixed(2)}`;
-const baseExpenses = [
-  { id: 'g1', date: '2026-07-03', category: 'Limpieza', detail: 'Compra de bolsas, escobas y guantes para faena comunitaria.', amount: 86.50, status: 'Aprobado', receipt: 'Boleta 001-245' },
-  { id: 'g2', date: '2026-07-04', category: 'Seguridad', detail: 'Reparación de foco y cableado en ingreso principal.', amount: 132.00, status: 'Por revisar', receipt: 'Recibo simple' },
-  { id: 'g3', date: '2026-07-05', category: 'Eventos', detail: 'Alquiler de sillas para reunión vecinal.', amount: 75.00, status: 'Aprobado', receipt: 'Factura F001-114' }
-];
-const contributions = [
-  { id: 'a1', member: 'Mz. A Lt. 04', concept: 'Cuota julio', amount: 20, status: 'Pagado' },
-  { id: 'a2', member: 'Mz. A Lt. 05', concept: 'Cuota julio', amount: 20, status: 'Pendiente' },
-  { id: 'a3', member: 'Mz. B Lt. 02', concept: 'Apoyo faena', amount: 10, status: 'Pagado' }
-];
-const minutes = [
-  { id: 'acta1', title: 'Acta de asamblea vecinal', date: '2026-07-01', summary: 'Acuerdos sobre limpieza, seguridad y alumbrado público.' },
-  { id: 'acta2', title: 'Lista de asistencia', date: '2026-07-05', summary: 'Registro de participantes en faena comunitaria.' }
-];
-
-function exportJson(filename, data) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
-}
-
-export default function Committees({ setPage }) {
-  const { profile } = useApp();
-  const [tab, setTab] = useState('dashboard');
-  const [expenses, setExpenses] = useState(baseExpenses);
-  const [message, setMessage] = useState('');
-  const totals = useMemo(() => {
-    const income = contributions.filter(c => c.status === 'Pagado').reduce((sum, c) => sum + c.amount, 0);
-    const spent = expenses.reduce((sum, item) => sum + item.amount, 0);
-    return { income, spent, balance: income - spent };
-  }, [expenses]);
-
-  if (isStudentProfile(profile)) return <div className="page"><Card title="Acceso protegido" icon="🛡️"><p>Las cuentas estudiantiles no pueden ver gastos, actas ni administración de comités.</p><button className="primary" onClick={() => setPage('campus')}>Volver a CampusHugo</button></Card></div>;
-
-  const addExpense = () => {
-    const next = { id: `g${Date.now()}`, date: new Date().toISOString().slice(0,10), category: 'Nuevo gasto', detail: 'Detalle pendiente de completar por tesorería.', amount: 0, status: 'Borrador', receipt: 'Sin comprobante' };
-    setExpenses([next, ...expenses]);
-    setMessage('Gasto agregado en modo local. En producción se guardará en Supabase y podrá exportarse a Excel/PDF.');
-  };
-
-  return <div className="page committeesPage">
-    <section className="committeeHero">
-      <div><p className="eyebrow">Plataforma para comités y juntas vecinales</p><h1>Comité Vecinal Los Pinos</h1><p>Transparencia de aportes, gastos, actas, eventos y documentos. Esta es la plataforma que ven los adultos responsables, no los niños.</p></div>
-      <div className="committeeHeroStats"><span><b>{money(totals.income)}</b> Ingresos</span><span><b>{money(totals.spent)}</b> Gastos</span><span><b>{money(totals.balance)}</b> Saldo</span></div>
-    </section>
-
-    {message && <div className="localModeStrip"><ShieldCheck size={18}/><span>{message}</span><button onClick={() => setMessage('')}>×</button></div>}
-
-    <Tabs active={tab} setActive={setTab} tabs={[{id:'dashboard',label:'Resumen',icon:'📊'},{id:'expenses',label:'Gastos',icon:'💸'},{id:'contributions',label:'Aportes',icon:'🧾'},{id:'minutes',label:'Actas y documentos',icon:'📁'}]}/>
-
-    {tab === 'dashboard' && <div className="grid2">
-      <Card title="Resumen del comité" icon="📊"><div className="committeeTotals"><span><b>{money(totals.income)}</b><small>Aportes cobrados</small></span><span><b>{money(totals.spent)}</b><small>Gastos registrados</small></span><span><b>{money(totals.balance)}</b><small>Saldo disponible</small></span></div><p className="muted">Ideal para rendición de cuentas en asambleas. Cada gasto puede tener detalle y comprobante.</p></Card>
-      <Card title="Acciones rápidas" icon="⚙️"><div className="committeeActions"><button className="primary" onClick={addExpense}><Plus size={16}/> Registrar gasto</button><button onClick={() => exportJson('mizona-comite-los-pinos.json', { expenses, contributions, minutes })}><Download size={16}/> Descargar respaldo</button><button onClick={() => setTab('expenses')}><WalletCards size={16}/> Ver gastos</button><button onClick={() => setMessage('Exportación a Excel/PDF preparada para la versión con backend. En modo local se descarga JSON.')}><FileSpreadsheet size={16}/> Excel/PDF</button></div></Card>
-    </div>}
-
-    {tab === 'expenses' && <Card title="Gastos con detalle" icon="💸" action={<button className="primary" onClick={addExpense}>Agregar gasto</button>}><div className="committeeTable">{expenses.map(item => <article key={item.id}><b>{item.category}</b><span>{item.date}</span><span>{money(item.amount)}</span><em>{item.status}</em><p>{item.detail}</p><small>{item.receipt}</small></article>)}</div></Card>}
-
-    {tab === 'contributions' && <Card title="Aportes vecinales" icon="🧾"><div className="committeeTable compact">{contributions.map(item => <article key={item.id}><b>{item.member}</b><span>{item.concept}</span><span>{money(item.amount)}</span><em>{item.status}</em></article>)}</div></Card>}
-
-    {tab === 'minutes' && <Card title="Actas y documentos" icon="📁"><div className="committeeTable compact">{minutes.map(item => <article key={item.id}><b>{item.title}</b><span>{item.date}</span><p>{item.summary}</p><button>Ver detalle</button></article>)}</div></Card>}
-  </div>;
+import {useApp} from '../context/AppContext';
+import {isStudentProfile} from '../lib/permissions';
+import {addCampaign,addExpense,addFamily,addPayment,getCommitteeFinance,markReminder,subscribeCommitteeFinance} from '../lib/localCommittees';
+const money=v=>`S/ ${Number(v||0).toFixed(2)}`;
+const csv=(name,rows)=>{const text=rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type:'text/csv'}));a.download=name;a.click();URL.revokeObjectURL(a.href)};
+export default function Committees({setPage}){
+ const {profile}=useApp(); const [data,setData]=useState(getCommitteeFinance); const [tab,setTab]=useState('dashboard'); const [notice,setNotice]=useState('');
+ useEffect(()=>subscribeCommitteeFinance(setData),[]);
+ const [campaign,setCampaign]=useState({name:'',category:'',amount:'',dueDate:''});
+ const [payment,setPayment]=useState({familyId:'',campaignId:'',amount:'',method:'Yape',reference:''});
+ const [expense,setExpense]=useState({campaignId:'',concept:'',amount:'',receipt:''});
+ const [family,setFamily]=useState({student:'',guardian:'',phone:''});
+ const summary=useMemo(()=>{const expected=data.campaigns.reduce((s,c)=>s+c.amount*data.families.length,0);const collected=data.payments.reduce((s,p)=>s+Number(p.amount),0);const spent=data.expenses.reduce((s,e)=>s+Number(e.amount),0);return{expected,collected,spent,balance:collected-spent,pending:Math.max(0,expected-collected)}},[data]);
+ const paid=(f,c)=>data.payments.filter(p=>p.familyId===f&&p.campaignId===c).reduce((s,p)=>s+Number(p.amount),0);
+ const status=(f,c)=>{const x=paid(f.id,c.id);return x>=c.amount?'Pagado':x>0?'Parcial':'Pendiente'};
+ if(isStudentProfile(profile))return <div className="page"><Card title="Acceso protegido" icon="🛡️"><p>La cobranza del comité solo puede ser administrada por adultos responsables.</p><button className="primary" onClick={()=>setPage('campus')}>Volver</button></Card></div>;
+ const notify=(f,c)=>{markReminder(f.id,c.id);setNotice(`Recordatorio preparado para ${f.guardian}: ${c.name} · ${money(c.amount-paid(f.id,c.id))} pendiente.`)};
+ return <div className="page committeeFinancePage">
+  <section className="committeeHero"><div><p className="eyebrow">Control escolar transparente</p><h1>{data.committee.name}</h1><p>{data.committee.school} · {data.committee.classroom}. Registra cada cuota, quién pagó, cuánto falta y en qué se gastó.</p></div><div className="committeeHeroStats"><span><b>{money(summary.collected)}</b>Cobrado</span><span><b>{money(summary.pending)}</b>Pendiente</span><span><b>{money(summary.balance)}</b>Saldo</span></div></section>
+  {notice&&<div className="localModeStrip"><Send size={18}/><span>{notice}</span><button onClick={()=>setNotice('')}>×</button></div>}
+  <Tabs active={tab} setActive={setTab} tabs={[{id:'dashboard',label:'Resumen',icon:'📊'},{id:'campaigns',label:'Cuotas y actividades',icon:'🧾'},{id:'matrix',label:'Quién pagó',icon:'✅'},{id:'payments',label:'Registrar pago',icon:'💳'},{id:'expenses',label:'Gastos',icon:'💸'},{id:'families',label:'Familias',icon:'👨‍👩‍👧'}]}/>
+  {tab==='dashboard'&&<><div className="committeeKpis"><span><b>{money(summary.expected)}</b><small>Total esperado</small></span><span><b>{money(summary.collected)}</b><small>Total cobrado</small></span><span><b>{money(summary.spent)}</b><small>Gastos</small></span><span><b>{money(summary.balance)}</b><small>Saldo real</small></span></div><div className="grid2"><Card title="Actividades abiertas" icon="📌"><div className="dataList">{data.campaigns.map(c=><article key={c.id}><div><b>{c.name}</b><span>{c.category} · vence {c.dueDate}</span></div><strong>{money(c.amount)}</strong><em className="payStatus">{c.status}</em></article>)}</div></Card><Card title="Acciones rápidas" icon="⚙️"><div className="buttonWrap"><button className="primary" onClick={()=>setTab('payments')}><Plus size={16}/> Registrar pago</button><button onClick={()=>setTab('campaigns')}><ReceiptText size={16}/> Nueva cuota</button><button onClick={()=>csv('estado-pagos-comite.csv',[['Alumno','Apoderado',...data.campaigns.map(c=>c.name)],...data.families.map(f=>[f.student,f.guardian,...data.campaigns.map(c=>status(f,c))])])}><Download size={16}/> Descargar Excel/CSV</button></div></Card></div></>}
+  {tab==='campaigns'&&<div className="grid2"><Card title="Crear cuota o actividad" icon="➕"><div className="committeeForm"><input placeholder="Ej. Compartir cumpleaños" value={campaign.name} onChange={e=>setCampaign({...campaign,name:e.target.value})}/><input placeholder="Categoría" value={campaign.category} onChange={e=>setCampaign({...campaign,category:e.target.value})}/><input type="number" placeholder="Monto por familia" value={campaign.amount} onChange={e=>setCampaign({...campaign,amount:e.target.value})}/><input type="date" value={campaign.dueDate} onChange={e=>setCampaign({...campaign,dueDate:e.target.value})}/><button className="primary" onClick={()=>{if(!campaign.name||!campaign.amount)return;addCampaign({...campaign,amount:Number(campaign.amount)});setCampaign({name:'',category:'',amount:'',dueDate:''})}}>Guardar actividad</button></div></Card><Card title="Cuotas registradas" icon="🧾"><div className="committeeTable compact">{data.campaigns.map(c=><article key={c.id}><b>{c.name}</b><span>{c.category}</span><span>{money(c.amount)}</span><em>{c.dueDate}</em></article>)}</div></Card></div>}
+  {tab==='matrix'&&<Card title="Control por alumno y concepto" icon="✅"><div className="paymentMatrix"><table><thead><tr><th>Alumno / apoderado</th>{data.campaigns.map(c=><th key={c.id}>{c.name}<small>{money(c.amount)}</small></th>)}</tr></thead><tbody>{data.families.map(f=><tr key={f.id}><td><b>{f.student}</b><small>{f.guardian}<br/>{f.phone}</small></td>{data.campaigns.map(c=>{const st=status(f,c);return <td key={c.id}><span className={`matrixStatus ${st.toLowerCase()}`}>{st}</span><small>{money(paid(f.id,c.id))} / {money(c.amount)}</small>{st!=='Pagado'&&<button onClick={()=>notify(f,c)}><Send size={14}/> Recordar</button>}</td>})}</tr>)}</tbody></table></div></Card>}
+  {tab==='payments'&&<div className="grid2"><Card title="Registrar pago" icon="💳"><div className="committeeForm"><select value={payment.familyId} onChange={e=>setPayment({...payment,familyId:e.target.value})}><option value="">Seleccionar alumno</option>{data.families.map(f=><option key={f.id} value={f.id}>{f.student} · {f.guardian}</option>)}</select><select value={payment.campaignId} onChange={e=>{const c=data.campaigns.find(x=>x.id===e.target.value);setPayment({...payment,campaignId:e.target.value,amount:c?String(c.amount):payment.amount})}}><option value="">Seleccionar concepto</option>{data.campaigns.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><input type="number" placeholder="Monto pagado" value={payment.amount} onChange={e=>setPayment({...payment,amount:e.target.value})}/><select value={payment.method} onChange={e=>setPayment({...payment,method:e.target.value})}><option>Yape</option><option>Plin</option><option>Efectivo</option><option>Transferencia</option></select><input placeholder="N.º de operación o recibo" value={payment.reference} onChange={e=>setPayment({...payment,reference:e.target.value})}/><button className="primary" onClick={()=>{if(!payment.familyId||!payment.campaignId||!payment.amount)return;addPayment({...payment,amount:Number(payment.amount)});setPayment({familyId:'',campaignId:'',amount:'',method:'Yape',reference:''});setNotice('Pago registrado correctamente.')}}><WalletCards size={16}/> Guardar pago</button></div></Card><Card title="Últimos pagos" icon="📋"><div className="committeeTable compact">{data.payments.map(p=>{const f=data.families.find(x=>x.id===p.familyId),c=data.campaigns.find(x=>x.id===p.campaignId);return <article key={p.id}><b>{f?.student||'Alumno'}</b><span>{c?.name||'Concepto'}</span><span>{money(p.amount)}</span><em>{p.method} · {p.date}</em></article>})}</div></Card></div>}
+  {tab==='expenses'&&<div className="grid2"><Card title="Registrar gasto" icon="💸"><div className="committeeForm"><select value={expense.campaignId} onChange={e=>setExpense({...expense,campaignId:e.target.value})}><option value="">Fondo o actividad</option>{data.campaigns.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><input placeholder="Detalle del gasto" value={expense.concept} onChange={e=>setExpense({...expense,concept:e.target.value})}/><input type="number" placeholder="Monto" value={expense.amount} onChange={e=>setExpense({...expense,amount:e.target.value})}/><input placeholder="Boleta, factura o recibo" value={expense.receipt} onChange={e=>setExpense({...expense,receipt:e.target.value})}/><button className="primary" onClick={()=>{if(!expense.concept||!expense.amount)return;addExpense({...expense,amount:Number(expense.amount)});setExpense({campaignId:'',concept:'',amount:'',receipt:''})}}>Guardar gasto</button></div></Card><Card title="Gastos realizados" icon="🧾"><div className="committeeTable">{data.expenses.map(e=><article key={e.id}><b>{e.concept}</b><span>{e.date}</span><span>{money(e.amount)}</span><em>{e.receipt}</em></article>)}</div></Card></div>}
+  {tab==='families'&&<div className="grid2"><Card title="Agregar alumno y apoderado" icon="👨‍👩‍👧"><div className="committeeForm"><input placeholder="Nombre del alumno" value={family.student} onChange={e=>setFamily({...family,student:e.target.value})}/><input placeholder="Apoderado" value={family.guardian} onChange={e=>setFamily({...family,guardian:e.target.value})}/><input placeholder="Teléfono" value={family.phone} onChange={e=>setFamily({...family,phone:e.target.value})}/><button className="primary" onClick={()=>{if(!family.student)return;addFamily(family);setFamily({student:'',guardian:'',phone:''})}}><Users size={16}/> Agregar familia</button></div></Card><Card title="Familias del aula" icon="📋"><div className="committeeTable compact">{data.families.map(f=><article key={f.id}><b>{f.student}</b><span>{f.guardian}</span><span>{f.phone}</span></article>)}</div></Card></div>}
+ </div>
 }

@@ -10,7 +10,7 @@ export const statusLabel = {
 export const modules = [
   { id: 'panel', label: 'Mi Panel', icon: Home, status: 'active', phase: 'Base', audience: 'Todos' },
   { id: 'community', label: 'Mi Comunidad', icon: Users, status: 'active', phase: 'Etapa 15', audience: 'Colegios, comités, clubes' },
-  { id: 'committees', label: 'Comités', icon: ClipboardList, status: 'active', phase: 'Etapa 18.1', audience: 'Vecinos y administradores' },
+  { id: 'committees', label: 'Comités', icon: ClipboardList, status: 'active', phase: 'Etapa 28', audience: 'Padres, vecinos y administradores' },
   { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Etapa 14', audience: 'Usuarios y aulas' },
   { id: 'notifications', label: 'Notificaciones', icon: Bell, status: 'active', phase: 'Etapa 14', audience: 'Todos' },
   { id: 'localLab', label: 'Laboratorio local', icon: FlaskConical, status: 'active', phase: 'Etapa 18', audience: 'Equipo y pruebas' },

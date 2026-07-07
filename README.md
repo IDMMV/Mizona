@@ -1,17 +1,24 @@
-# MiZona Enterprise V8 — Etapa 27
+# MiZona Enterprise V8 — Etapa 28
 
-## Calidad, seguridad y lanzamiento piloto
+## Comités: cuotas, actividades y control de pagos
 
-Versión acumulativa construida sobre las Etapas 1–26.
+Versión acumulativa construida sobre las Etapas 1–27.
 
-Incluye:
-- Diagnóstico automático de almacenamiento, conectividad, PWA, cuota, perfiles, pagos y protección estudiantil.
-- Checklist integral de módulos.
-- Registro y seguimiento de incidencias.
-- Participantes para colegio, comité y negocio piloto.
-- Pruebas móviles obligatorias.
-- Candidatos de publicación bloqueados por fallas críticas.
-- Exportación del reporte técnico en JSON.
-- Reglas administrables de calidad y lanzamiento.
+### Incluye
+- Cuotas mensuales, vestimenta, cumpleaños, paseos y cualquier actividad.
+- Lista de alumnos y apoderados.
+- Matriz para saber quién pagó, quién debe y quién pagó parcialmente.
+- Registro de Yape, Plin, efectivo y transferencia.
+- Número de operación o recibo.
+- Recordatorios por familia.
+- Gastos asociados a cada actividad.
+- Saldo real, cobrado, pendiente y gastado.
+- Exportación CSV para Excel.
+- Datos compartidos entre pestañas del mismo navegador.
 
-La plataforma continúa funcionando en modo local y todavía no sustituye backend, pasarela, GPS, validación de identidad ni auditorías externas.
+### Ejecutar
+```bash
+npm install
+npm run dev
+npm run build
+```
