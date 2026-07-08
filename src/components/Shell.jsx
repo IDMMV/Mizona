@@ -31,14 +31,11 @@ export default function Shell({ page, setPage, children }) {
             <Icon size={18}/><span>{module.label}</span>{badge ? <i className="navBadge">{badge}</i> : module.status !== 'active' && <small>{statusLabel[module.status]}</small>}
           </button>;
         })}
+        <button className="navItem sidebarLogoutMenuItem" onClick={() => { void signOut().finally(() => { setPage('settings'); setOpen(false); }); }} aria-label="Cerrar sesión" title="Cerrar sesión">
+          <LogOut size={18}/><span>Cerrar sesión</span>
+        </button>
       </nav>
-      <button className="sidebarLogoutNav" onClick={() => { void signOut().finally(() => { setPage('settings'); setOpen(false); }); }} aria-label="Cerrar sesión" title="Cerrar sesión">
-        <LogOut size={18}/><span>Cerrar sesión</span>
-      </button>
       <div className="phaseBox"><b>Etapa actual</b><span>Etapa 30 · Finanzas personales privadas</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
-      <button className="sidebarLogoutBtn" onClick={() => { void signOut().finally(() => { setPage('settings'); setOpen(false); }); }} aria-label="Cerrar sesión" title="Cerrar sesión">
-        <LogOut size={18}/><span>Cerrar sesión</span>
-      </button>
     </aside>
     <main>
       <header className="topbar">
