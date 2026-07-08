@@ -301,3 +301,11 @@
 @media(max-width:620px){.paymentSummaryStrip{grid-template-columns:1fr}.filtersGrid{grid-template-columns:1fr!important}}
 .paymentViewTabs{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 12px}.paymentViewTabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer}.paymentViewTabs button.active{background:#0f2e68;color:#fff;border-color:#0f2e68;box-shadow:0 8px 22px rgba(15,46,104,.18)}
 @media(max-width:760px){.paymentViewTabs{display:grid;grid-template-columns:1fr 1fr}.paymentViewTabs button{width:100%}}
+
+/* Etapa 30.7 - pagos más claros */
+.dateFilter{display:flex;align-items:center;gap:.45rem;background:#fff;border:1px solid var(--line,#dbe3ef);border-radius:16px;padding:.35rem .65rem;font-weight:800;color:#52627a}
+.dateFilter input{border:0!important;background:transparent!important;padding:.35rem!important;min-width:130px}
+.miniMoneyInput{width:130px;max-width:100%;border:1px solid var(--line,#dbe3ef);border-radius:12px;padding:.65rem .75rem;font-weight:800;background:#fff;color:inherit}
+.rowActions{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap}
+.rowActions .ghost{background:#eaf4ff;color:#0b63ce;border:1px solid #b8d9ff}
+@media (max-width: 760px){.dateFilter{width:100%;justify-content:space-between}.miniMoneyInput{width:110px}.rowActions{min-width:170px}}
