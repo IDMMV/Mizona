@@ -72,7 +72,9 @@ export default function CloudCenter() {
 
   const askPermission = async () => {
     const permission = await requestBrowserPermission();
-    setMsg(permission === 'granted' ? 'Permiso de notificaciones concedido.' : `Permiso del navegador: ${permission}.`);
+    if (permission === 'granted') setMsg('Permiso de notificaciones concedido. Push interno activado.');
+    else if (permission === 'denied') setMsg('El navegador tiene las notificaciones bloqueadas. Actívalas desde el candado de la barra de dirección y vuelve a probar.');
+    else setMsg(`Permiso del navegador: ${permission}.`);
   };
 
   return <div className="page cloudPage">
@@ -131,12 +133,16 @@ export default function CloudCenter() {
     {tab === 'push' && <>
       <div className="grid2">
         <Card title="Enviar notificación de prueba" icon={<BellRing/>}>
+          <div className="pushPermissionBox">
+            <div><b>Permiso del navegador</b><span>{settings.browserPermission || 'default'}</span></div>
+            <button type="button" onClick={askPermission}>Solicitar permiso</button>
+          </div>
           <div className="paymentForm">
             <label>Plantilla<select value={selectedTemplate} onChange={e => setSelectedTemplate(e.target.value)}>{cloud.templates.map(t => <option key={t.id} value={t.id}>{t.title} · {t.type}</option>)}</select></label>
             <label>Canal<select value={channel} onChange={e => setChannel(e.target.value)}><option value="browser">Navegador</option><option value="email_future">Correo futuro</option><option value="whatsapp_future">WhatsApp futuro</option><option value="sms_future">SMS futuro</option></select></label>
-            <button onClick={sendTest}>Enviar prueba local</button>
+            <button type="button" onClick={sendTest}>Enviar prueba local</button>
           </div>
-          <p className="muted">Se envía a algunos perfiles locales para probar contadores, historial y separación por usuario.</p>
+          <p className="muted">Primero presiona Solicitar permiso. Luego usa Enviar prueba local para revisar si aparece el aviso.</p>
         </Card>
         <Card title="Segmentos protegidos" icon="👥">
           <ul className="list"><li><b>{adultProfiles.length}</b> adultos o administradores.</li><li><b>{studentProfiles.length}</b> estudiantes protegidos.</li><li>Marketing para estudiantes: <b>bloqueado</b>.</li><li>Push estudiantil: <b>{settings.allowStudentPush ? 'solo avisos necesarios' : 'apagado'}</b>.</li></ul>
