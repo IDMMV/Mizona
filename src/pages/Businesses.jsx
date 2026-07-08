@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import Card from '../components/Card';
 import { useApp } from '../context/AppContext';
-import { sendLocalContactRequest, startLocalDirectConversation } from '../lib/localStore';
+import { startLocalDirectConversation } from '../lib/localStore';
+import { startDirectConversation } from '../lib/chat';
 import {
   createLocalBusiness, createLocalBusinessClaim, getLocalCommerceSnapshot,
   rateLocalBusiness, registerLocalBusinessContact, registerLocalBusinessView,
@@ -40,7 +41,7 @@ function BusinessCard({ place, onOpen, onFavorite, favorite }){
 }
 
 export default function Businesses({ setPage }){
-  const { profile } = useApp();
+  const { profile, backendConnected } = useApp();
   const [snapshot,setSnapshot]=useState(getLocalCommerceSnapshot);
   const [category,setCategory]=useState('all'); const [query,setQuery]=useState('');
   const [onlyOpen,setOnlyOpen]=useState(false); const [onlyAffiliated,setOnlyAffiliated]=useState(false);
@@ -64,15 +65,22 @@ export default function Businesses({ setPage }){
   const createBusiness=()=>{try{createLocalBusiness({...businessForm,emoji:businessEmoji[businessForm.category]||'🏪'});setShowCreate(false);setBusinessForm(emptyBusiness);notify('Negocio enviado. Un administrador local podrá aprobarlo.');}catch(err){fail(err);}};
   const claimBusiness=()=>{try{createLocalBusinessClaim(showClaim.id,claimEvidence);setShowClaim(null);setClaimEvidence('');notify('Solicitud de administración enviada.');}catch(err){fail(err);}};
   const saveRating=()=>{try{rateLocalBusiness(selected.id,rating,reviewComment);setReviewComment('');setSelected(getLocalCommerceSnapshot().businesses.find(x=>x.id===selected.id)||selected);notify('Tu opinión quedó guardada.');}catch(err){fail(err);}};
-  const contactOwner=place=>{try{
+  const isUuid=value=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value||''));
+  const contactOwner=async place=>{try{
     if(!place.owner_id) throw new Error('Este negocio todavía no tiene propietario verificado.');
-    try{startLocalDirectConversation(place.owner_id);registerLocalBusinessContact(place.id);setSelected(null);setPage?.('chat');}
-    catch(chatError){ if(String(chatError.message).includes('contactos')){sendLocalContactRequest(place.owner?.username||'');notify('Primero enviamos una solicitud de contacto al negocio.');} else throw chatError; }
+    if(backendConnected && !isUuid(place.owner_id)){
+      throw new Error('Este negocio es una ficha de ejemplo/local. Para abrir chat real en nube, el propietario debe registrarse en MiZona y reclamar o crear el negocio con su cuenta real.');
+    }
+    const conversationId = backendConnected ? await startDirectConversation(place.owner_id) : startLocalDirectConversation(place.owner_id);
+    if(conversationId) sessionStorage.setItem('mizona-chat-open-conversation', conversationId);
+    registerLocalBusinessContact(place.id);
+    setSelected(null);
+    setPage?.('chat');
   }catch(err){fail(err);}};
   const toggleOpen=place=>{try{updateLocalBusiness(place.id,{open:!place.open});setSelected({...place,open:!place.open});notify(place.open?'Negocio marcado como cerrado.':'Negocio marcado como abierto.');}catch(err){fail(err);}};
 
   return <div className="page businessPage commerceV17">
-    <section className="businessHero"><div><p className="eyebrow">Directorio multiusuario local</p><h1>Negocios y lugares de tu zona</h1><p>Crea un negocio, reclama una ficha, administra horarios y recibe contactos dentro de MiZona Chat.</p></div><div className="businessHeroStats"><span><b>{snapshot.businesses.filter(x=>x.status==='active').length}</b> activos</span><span><b>{snapshot.businesses.filter(x=>x.affiliated).length}</b> afiliados</span><span><b>{snapshot.pendingClaimCount}</b> reclamos pendientes</span></div></section>
+    <section className="businessHero"><div><p className="eyebrow">Directorio multiusuario local</p><h1>Negocios y lugares de tu zona</h1><p>Crea un negocio, reclama una ficha, administra horarios y recibe contactos dentro de MiZona Chat. En nube el chat funciona solo con negocios que tengan propietario real registrado.</p></div><div className="businessHeroStats"><span><b>{snapshot.businesses.filter(x=>x.status==='active').length}</b> activos</span><span><b>{snapshot.businesses.filter(x=>x.affiliated).length}</b> afiliados</span><span><b>{snapshot.pendingClaimCount}</b> reclamos pendientes</span></div></section>
 
     <section className="businessSearchPanel"><div className="businessSearch"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busca comida, farmacia, electricista, colegio..."/></div><button className="secondary" onClick={()=>setShowCreate(true)}><Store size={17}/> Registrar negocio</button><button className="primary" onClick={()=>{const candidate=snapshot.businesses.find(x=>!x.owner_id);if(candidate)setShowClaim(candidate);else fail('No hay fichas sin propietario disponibles.');}}><UserCheck size={17}/> Reclamar negocio</button></section>
     <div className="categoryRail">{categories.map(c=><button key={c.id} className={category===c.id?'active':''} onClick={()=>setCategory(c.id)}><span>{c.icon}</span>{c.label}</button>)}</div>
@@ -84,7 +92,7 @@ export default function Businesses({ setPage }){
 
     {selected&&<div className="modalBackdrop" onMouseDown={()=>setSelected(null)}><section className="businessModal commerceDetailModal" onMouseDown={e=>e.stopPropagation()}><button className="modalClose" onClick={()=>setSelected(null)}><X size={18}/></button><div className="businessModalHead"><div className="businessAvatar">{selected.emoji}</div><div><p className="eyebrow">{selected.affiliated?'Perfil afiliado':'Ficha comunitaria'}</p><h2>{selected.name}</h2><div className="placeMeta"><Stars value={selected.rating}/><span>{selected.review_count} opiniones</span><span className={selected.open?'open':'closed'}>{selected.open?'Abierto':'Cerrado'}</span></div></div></div><p className="marketDescription">{selected.description}</p><div className="modalFacts"><span><MapPin size={17}/><b>Dirección</b>{selected.address||selected.zone}</span><span><Building2 size={17}/><b>Horario</b>{selected.hours||'Por coordinar'}</span><span><ShieldCheck size={17}/><b>Estado</b>{selected.verified?'Propietario verificado':'Información comunitaria'}</span><span><Sparkles size={17}/><b>Actividad</b>{selected.views||0} vistas · {selected.contact_count||0} contactos</span></div>{selected.offer_title&&<div className="miniOffer"><TicketPercent size={18}/><div><b>{selected.offer_title}</b><span>{selected.offer_detail}</span></div><strong>{selected.offer_price}</strong></div>}
       <div className="commerceRating"><b>Califica este negocio</b><div><select value={rating} onChange={e=>setRating(Number(e.target.value))}><option value="5">5 estrellas</option><option value="4">4 estrellas</option><option value="3">3 estrellas</option><option value="2">2 estrellas</option><option value="1">1 estrella</option></select><input value={reviewComment} onChange={e=>setReviewComment(e.target.value)} placeholder="Comentario opcional"/><button onClick={saveRating}>Guardar</button></div></div>
-      <div className="modalActions">{!selected.owner_id&&<button className="secondary" onClick={()=>{setShowClaim(selected);setSelected(null);}}><UserCheck size={17}/> Reclamar</button>}<button className="secondary" onClick={()=>{reportLocalBusiness(selected.id,'Información incorrecta','Reporte desde el perfil del negocio');notify('Reporte enviado a moderación local.');}}><ShieldCheck size={17}/> Reportar</button>{selected.is_mine&&<button className="secondary" onClick={()=>toggleOpen(selected)}>{selected.open?'Cerrar ahora':'Abrir ahora'}</button>}<button className="primary" disabled={!selected.owner_id||selected.is_mine} onClick={()=>contactOwner(selected)}><MessageCircle size={17}/> Contactar por Chat</button></div></section></div>}
+      <div className="modalActions">{!selected.owner_id&&<button className="secondary" onClick={()=>{setShowClaim(selected);setSelected(null);}}><UserCheck size={17}/> Reclamar</button>}<button className="secondary" onClick={()=>{reportLocalBusiness(selected.id,'Información incorrecta','Reporte desde el perfil del negocio');notify('Reporte enviado a moderación local.');}}><ShieldCheck size={17}/> Reportar</button>{selected.is_mine&&<button className="secondary" onClick={()=>toggleOpen(selected)}>{selected.open?'Cerrar ahora':'Abrir ahora'}</button>}<button className="primary" disabled={!selected.owner_id||selected.is_mine} onClick={()=>contactOwner(selected)}><MessageCircle size={17}/> Contactar por Chat</button>{backendConnected&&selected.owner_id&&!isUuid(selected.owner_id)&&<p className="businessChatHint">Ficha de ejemplo: el chat real se habilita cuando el negocio tenga propietario registrado en Supabase.</p>}</div></section></div>}
 
     {showCreate&&<div className="modalBackdrop" onMouseDown={()=>setShowCreate(false)}><section className="benefitCreateModal" onMouseDown={e=>e.stopPropagation()}><div className="benefitModalHead"><div><p className="eyebrow">Nuevo perfil comercial</p><h2>Registrar negocio</h2></div><button onClick={()=>setShowCreate(false)}><X size={18}/></button></div><div className="benefitFormGrid"><label>Nombre<input value={businessForm.name} onChange={e=>setBusinessForm({...businessForm,name:e.target.value})}/></label><label>Categoría<select value={businessForm.category} onChange={e=>setBusinessForm({...businessForm,category:e.target.value})}>{categories.filter(x=>x.id!=='all').map(x=><option key={x.id} value={x.id}>{x.label}</option>)}</select></label><label>Zona<input value={businessForm.zone} onChange={e=>setBusinessForm({...businessForm,zone:e.target.value})}/></label><label>Dirección<input value={businessForm.address} onChange={e=>setBusinessForm({...businessForm,address:e.target.value})}/></label><label className="wide">Descripción<textarea value={businessForm.description} onChange={e=>setBusinessForm({...businessForm,description:e.target.value})}/></label><label>Horario<input value={businessForm.hours} onChange={e=>setBusinessForm({...businessForm,hours:e.target.value})}/></label><label>Oferta inicial<input value={businessForm.offer_title} onChange={e=>setBusinessForm({...businessForm,offer_title:e.target.value})} placeholder="Opcional"/></label></div><div className="benefitFormActions"><button className="secondary" onClick={()=>setShowCreate(false)}>Cancelar</button><button className="primary" onClick={createBusiness}>Enviar a revisión</button></div></section></div>}
 

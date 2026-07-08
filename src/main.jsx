@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
 import Shell from './components/Shell';
@@ -34,34 +34,17 @@ import PersonalFinance from './pages/PersonalFinance';
 import { canAccessModule } from './lib/permissions';
 
 function App() {
-  const initialPage = (() => {
-    const fromState = window.history.state?.mzPage;
-    const fromHash = window.location.hash?.replace('#', '').split('/')[0];
-    return fromState || fromHash || 'panel';
-  })();
-  const [page, setPageState] = useState(initialPage);
-  const isPoppingRef = useRef(false);
+  const [page, setPageState] = useState(() => window.history.state?.mizonaPage || 'panel');
+  const setPage = useCallback(next => {
+    setPageState(next);
+    if (window.history.state?.mizonaPage !== next) window.history.pushState({ mizonaPage: next }, '', window.location.href);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   useEffect(() => {
-    if (!window.history.state?.mzPage) {
-      window.history.replaceState({ mzPage: page }, '', `#${page}`);
-    }
-    const onPopState = event => {
-      isPoppingRef.current = true;
-      setPageState(event.state?.mzPage || 'panel');
-    };
+    if (!window.history.state?.mizonaPage) window.history.replaceState({ mizonaPage: page }, '', window.location.href);
+    const onPopState = event => setPageState(event.state?.mizonaPage || 'panel');
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
-  const setPage = useCallback(next => {
-    setPageState(prev => {
-      const value = typeof next === 'function' ? next(prev) : next;
-      if (!value) return prev;
-      if (value !== prev && !isPoppingRef.current) {
-        window.history.pushState({ mzPage: value }, '', `#${value}`);
-      }
-      isPoppingRef.current = false;
-      return value;
-    });
   }, []);
   const { backendConnected, isAdmin, profile, dataMode, isAuthenticated, authLoading } = useApp();
   const pages = {

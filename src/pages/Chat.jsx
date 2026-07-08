@@ -200,6 +200,14 @@ export default function Chat({ setPage }) {
     setContacts(nextContacts);
     setRequests(nextRequests);
     setConversations(nextConversations);
+    const pendingOpen = sessionStorage.getItem('mizona-chat-open-conversation');
+    if (pendingOpen && nextConversations.some(item => item.id === pendingOpen)) {
+      sessionStorage.removeItem('mizona-chat-open-conversation');
+      setSelectedId(pendingOpen);
+      setMobileConversation(true);
+      setTab('chats');
+      return;
+    }
     if (!keepSelection || !selectedId) setSelectedId(nextConversations[0]?.id || null);
     else if (!nextConversations.some(item => item.id === selectedId)) setSelectedId(nextConversations[0]?.id || null);
   };
