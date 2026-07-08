@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
 import Shell from './components/Shell';
@@ -30,10 +30,39 @@ import { Blueprint } from './pages/Placeholders';
 import Committees from './pages/Committees';
 import CloudLaunch from './pages/CloudLaunch';
 import CloudAuthGate from './pages/CloudAuthGate';
+import PersonalFinance from './pages/PersonalFinance';
 import { canAccessModule } from './lib/permissions';
 
 function App() {
-  const [page, setPage] = useState('panel');
+  const initialPage = (() => {
+    const fromState = window.history.state?.mzPage;
+    const fromHash = window.location.hash?.replace('#', '').split('/')[0];
+    return fromState || fromHash || 'panel';
+  })();
+  const [page, setPageState] = useState(initialPage);
+  const isPoppingRef = useRef(false);
+  useEffect(() => {
+    if (!window.history.state?.mzPage) {
+      window.history.replaceState({ mzPage: page }, '', `#${page}`);
+    }
+    const onPopState = event => {
+      isPoppingRef.current = true;
+      setPageState(event.state?.mzPage || 'panel');
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+  const setPage = useCallback(next => {
+    setPageState(prev => {
+      const value = typeof next === 'function' ? next(prev) : next;
+      if (!value) return prev;
+      if (value !== prev && !isPoppingRef.current) {
+        window.history.pushState({ mzPage: value }, '', `#${value}`);
+      }
+      isPoppingRef.current = false;
+      return value;
+    });
+  }, []);
   const { backendConnected, isAdmin, profile, dataMode, isAuthenticated, authLoading } = useApp();
   const pages = {
     panel: <Panel setPage={setPage}/>,
@@ -42,6 +71,7 @@ function App() {
     school: <SchoolPage setPage={setPage}/>,
     chat: <Chat setPage={setPage}/>,
     notifications: <Notifications setPage={setPage}/>,
+    personalFinance: <PersonalFinance/>,
     localLab: <LocalLab setPage={setPage}/>,
     transfer: <Transfer/>,
     benefits: <Benefits/>,

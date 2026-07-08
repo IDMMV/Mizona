@@ -30,7 +30,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 29 · Supabase y usuarios reales</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 30 · Finanzas personales privadas</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">

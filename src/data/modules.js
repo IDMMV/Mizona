@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog } from 'lucide-react';
+import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog, WalletCards } from 'lucide-react';
 
 export const statusLabel = {
   active: 'Activo',
@@ -13,6 +13,7 @@ export const modules = [
   { id: 'committees', label: 'Comités', icon: ClipboardList, status: 'active', phase: 'Etapa 28', audience: 'Padres, vecinos y administradores' },
   { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Etapa 14', audience: 'Usuarios y aulas' },
   { id: 'notifications', label: 'Notificaciones', icon: Bell, status: 'active', phase: 'Etapa 14', audience: 'Todos' },
+  { id: 'personalFinance', label: 'Mis gastos', icon: WalletCards, status: 'active', phase: 'Etapa 30', audience: 'Finanzas personales privadas' },
   { id: 'localLab', label: 'Laboratorio local', icon: FlaskConical, status: 'active', phase: 'Etapa 18', audience: 'Equipo y pruebas' },
   { id: 'transfer', label: 'MiZona Transfer', icon: CloudUpload, status: 'active', phase: 'Sprint 2', audience: 'Aulas y trabajos' },
   { id: 'benefits', label: 'Beneficios', icon: Gift, status: 'active', phase: 'Etapa 16', audience: 'Todos' },

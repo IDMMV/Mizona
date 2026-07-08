@@ -1,5 +1,5 @@
 export const STUDENT_MODULES = new Set([
-  'panel', 'community', 'chat', 'notifications', 'transfer', 'campus', 'settings'
+  'panel', 'community', 'chat', 'notifications', 'personalFinance', 'transfer', 'campus', 'settings'
 ]);
 
 export const ADMIN_ONLY_MODULES = new Set(['admin', 'localLab', 'blueprint', 'sync', 'cloudCenter', 'quality', 'gateway', 'cloudLaunch']);

@@ -1,27 +1,50 @@
-# MiZona Enterprise V8 — Etapa 29
+# MiZona Enterprise V8 — Etapa 30.1
 
-## Supabase y usuarios reales
+## Corrección comité móvil + participantes por cuota
 
-Versión acumulativa construida sobre la Etapa 28.1. Activa la conexión real con Supabase, autenticación, perfiles, módulos y notificaciones reales.
+Versión acumulativa construida sobre Etapa 30. Mantiene Supabase/Auth real y finanzas personales, y mejora el módulo **Comités**.
 
 ### Incluye
-- Pantalla de acceso obligatoria cuando el modo nube está activo y no existe sesión.
-- Registro con correo, contraseña, usuario único, zona y tipo de cuenta.
-- Confirmación de correo y recuperación de contraseña.
-- Perfil real desde `profiles`.
-- Módulos desde `app_modules`.
-- Notificaciones desde `mz_notifications` con Realtime.
-- Centro administrativo **Supabase real** con diagnóstico de Auth, tablas y Storage.
-- Cambio controlado entre modo local y nube.
-- Conserva el modo local como contingencia.
 
-### Variables de Vercel
-```
-VITE_SUPABASE_URL=https://TU-PROYECTO.supabase.co
-VITE_SUPABASE_ANON_KEY=TU_ANON_KEY
+- Apariencia móvil mejorada para el módulo Comités.
+- Pestañas ordenadas según el flujo real de trabajo:
+  1. Inicio
+  2. Participantes
+  3. Cuotas
+  4. Quién pagó
+  5. Ingresos
+  6. Gastos
+  7. Comunicados
+  8. Eventos
+  9. Actas
+  10. Documentos
+  11. Reportes
+  12. Configuración
+- Nueva pestaña **Participantes**.
+- Cada cuota o actividad puede tener participantes distintos.
+- La cuota se cobra solo a quienes participan, no a todo el aula.
+- Vista “Quién pagó” convertida en tarjetas móviles, sin tabla cortada.
+- Formularios con etiquetas claras y ejemplos de qué colocar en cada cuadro.
+- Configuración con descripción breve y ayudas por campo.
+- Ayuda ordenada según las pestañas.
+- Botón atrás del celular preparado para retroceder dentro de MiZona y entre pestañas principales.
+- Migración automática de datos anteriores del comité.
+
+### Ejecutar
+
+```bash
+npm install
+npm run dev
+npm run build
 ```
 
-### Publicación
-- Framework: Vite
+### Vercel
+
+- Framework: **Vite**
+- Install Command: `npm install`
 - Build Command: `npm run build`
 - Output Directory: `dist`
+
+### Supabase
+
+No requiere SQL nuevo. Usa las tablas ya cargadas. Los cambios de participantes del comité continúan preparados localmente hasta conectar la sincronización completa del módulo Comités al backend.
