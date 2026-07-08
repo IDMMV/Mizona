@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
 import Shell from './components/Shell';
@@ -34,17 +34,38 @@ import PersonalFinance from './pages/PersonalFinance';
 import { canAccessModule } from './lib/permissions';
 
 function App() {
-  const [page, setPageState] = useState(() => window.history.state?.mizonaPage || 'panel');
-  const setPage = useCallback(next => {
-    setPageState(next);
-    if (window.history.state?.mizonaPage !== next) window.history.pushState({ mizonaPage: next }, '', window.location.href);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+  const initialPage = (() => {
+    const fromState = window.history.state?.mizonaPage || window.history.state?.mzPage;
+    const fromHash = window.location.hash?.replace('#', '').split('/')[0];
+    return fromState || fromHash || 'panel';
+  })();
+  const [page, setPageState] = useState(initialPage);
+  const isPoppingRef = useRef(false);
+
   useEffect(() => {
-    if (!window.history.state?.mizonaPage) window.history.replaceState({ mizonaPage: page }, '', window.location.href);
-    const onPopState = event => setPageState(event.state?.mizonaPage || 'panel');
+    if (!window.history.state?.mizonaPage) {
+      window.history.replaceState({ mizonaPage: page, mzPage: page }, '', `#${page}`);
+    }
+    const onPopState = event => {
+      isPoppingRef.current = true;
+      setPageState(event.state?.mizonaPage || event.state?.mzPage || 'panel');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const setPage = useCallback(next => {
+    setPageState(prev => {
+      const value = typeof next === 'function' ? next(prev) : next;
+      if (!value) return prev;
+      if (value !== prev && !isPoppingRef.current) {
+        window.history.pushState({ mizonaPage: value, mzPage: value }, '', `#${value}`);
+      }
+      isPoppingRef.current = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return value;
+    });
   }, []);
   const { backendConnected, isAdmin, profile, dataMode, isAuthenticated, authLoading } = useApp();
   const pages = {
