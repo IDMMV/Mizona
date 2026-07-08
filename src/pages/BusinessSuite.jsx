@@ -141,7 +141,7 @@ export default function BusinessSuite(){
         <button className={kioskView==='kitchen'?'active':''} onClick={()=>{setKioskView('kitchen');setTab('kitchen')}}>👨‍🍳 Cocina</button>
         <button className={kioskView==='tv'?'active':''} onClick={()=>{setKioskView('tv');setTab('dashboard')}}>📺 Panel TV</button>
       </div>
-      <button className={kioskLocked?'kioskLock locked':'kioskLock'} onClick={()=>kioskLocked?setKioskLocked(false):exitKiosk()}>{kioskLocked?'🔒 Mantener seguro':'🔓 Salir de pantalla completa'}</button>
+      <button className={kioskLocked?'kioskLock locked':'kioskLock'} onClick={()=>kioskLocked?setKioskLocked(false):exitKiosk()}>{kioskLocked?'🔒 Seguro':'🔓 Salir'}</button>
     </div>}
     {!kioskMode&&<section className="businessSuiteHero">
       <div><p className="eyebrow">Etapa 19 · Gestión multiusuario local</p><h1>MiZona Business</h1><p>Caja, pedidos, cocina, inventario, clientes, trabajadores y reportes separados por negocio.</p><div className="businessSelector"><Store size={17}/><select value={businessId} onChange={e=>switchBusiness(e.target.value)}>{workspaces.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}</select><span>{snapshot.business.zone}</span></div></div>
