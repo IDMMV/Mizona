@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { modules } from '../data/modules';
 import { friendlyAuthError, hasSupabase, normalizeUsername, supabase } from '../lib/supabase';
+import { loadCloudNotifications, markAllCloudNotificationsRead, markCloudNotification, subscribeCloudNotifications } from '../lib/cloudBackend';
 import {
   cleanupExpiredLocalData,
   createLocalProfile,
@@ -110,6 +111,12 @@ export function AppProvider({ children }) {
   const [authLoading, setAuthLoading] = useState(cloudActive);
   const [backendMessage, setBackendMessage] = useState('');
   const [notifications, setNotifications] = useState(listLocalNotifications);
+
+  const refreshCloudNotifications = useCallback(async userId => {
+    if (!cloudActive || !userId) return;
+    try { setNotifications(await loadCloudNotifications(userId)); }
+    catch (error) { setBackendMessage(`Notificaciones usando respaldo local: ${error.message}`); }
+  }, [cloudActive]);
   const [syncQueueCount, setSyncQueueCount] = useState(() => listLocalSyncQueue().length);
 
   const refreshLocalIndicators = useCallback(() => {
@@ -170,6 +177,12 @@ export function AppProvider({ children }) {
     setModuleConfig(next);
     localStorage.setItem(MODULE_STORAGE_KEY, JSON.stringify(next.map(({ id, status, audience, phase, sortOrder, visible }) => ({ id, status, audience, phase, sortOrder, visible }))));
   }, [cloudActive]);
+
+  useEffect(() => {
+    if (!cloudActive || !session?.user?.id) return undefined;
+    refreshCloudNotifications(session.user.id);
+    return subscribeCloudNotifications(session.user.id, () => refreshCloudNotifications(session.user.id));
+  }, [cloudActive, session?.user?.id, refreshCloudNotifications]);
 
   useEffect(() => {
     if (!cloudActive) {
@@ -404,9 +417,9 @@ export function AppProvider({ children }) {
     unreadNotifications,
     syncQueueCount,
     refreshLocalIndicators,
-    markNotification: (id, read = true) => { markLocalNotification(id, read); refreshLocalIndicators(); },
-    markAllNotificationsRead: () => { markAllLocalNotificationsRead(); refreshLocalIndicators(); },
-    deleteNotification: id => { deleteLocalNotification(id); refreshLocalIndicators(); },
+    markNotification: async (id, read = true) => { if (cloudActive) { await markCloudNotification(id, read); await refreshCloudNotifications(session?.user?.id); } else { markLocalNotification(id, read); refreshLocalIndicators(); } },
+    markAllNotificationsRead: async () => { if (cloudActive) { await markAllCloudNotificationsRead(session?.user?.id); await refreshCloudNotifications(session?.user?.id); } else { markAllLocalNotificationsRead(); refreshLocalIndicators(); } },
+    deleteNotification: id => { if (!cloudActive) { deleteLocalNotification(id); refreshLocalIndicators(); } },
     signUp,
     signIn,
     signOut,
@@ -414,8 +427,9 @@ export function AppProvider({ children }) {
     updatePassword,
     saveProfile,
     refreshProfile: () => session?.user && loadProfile(session.user),
-    refreshModules: loadModules
-  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, updateModuleStatus, resetModules]);
+    refreshModules: loadModules,
+    refreshCloudNotifications
+  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, refreshCloudNotifications, updateModuleStatus, resetModules]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

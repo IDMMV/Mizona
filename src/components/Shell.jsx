@@ -20,7 +20,7 @@ export default function Shell({ page, setPage, children }) {
         <div className="logo">MZ</div><div><b>MiZona</b><span>Enterprise V8</span></div>
         <button className="iconBtn mobileOnly" onClick={() => setOpen(false)}><X size={18}/></button>
       </div>
-      <div className="sidebarMode"><CloudOff size={15}/><span><b>Modo local</b><small>{syncQueueCount} acciones guardadas</small></span></div>
+      <div className="sidebarMode">{backendConnected ? <Wifi size={15}/> : <CloudOff size={15}/>}<span><b>{backendConnected ? 'Nube activa' : 'Modo local'}</b><small>{backendConnected ? 'Supabase conectado' : `${syncQueueCount} acciones guardadas`}</small></span></div>
       <nav>
         {visibleModules.map(module => {
           const Icon = module.icon;
@@ -30,7 +30,7 @@ export default function Shell({ page, setPage, children }) {
           </button>;
         })}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 27 · Calidad, seguridad y lanzamiento piloto</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
+      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 29 · Supabase y usuarios reales</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
     </aside>
     <main>
       <header className="topbar">

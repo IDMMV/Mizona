@@ -6,14 +6,14 @@ import { friendlyAuthError } from '../lib/supabase';
 import { exportLocalBackup, getLocalPreferences, importLocalBackup, resetLocalData, saveLocalPreferences } from '../lib/localStore';
 import { useApp } from '../context/AppContext';
 
-export default function Account() {
+export default function Account({ initialTab = 'profile', cloudOnly = false }) {
   const {
     profile, user, isAuthenticated, authLoading, backendConnected, backendConfigured,
     backendMessage, clearBackendMessage, dataMode, setDataMode, online, syncQueueCount,
     signIn, signUp, signOut, resetPassword, updatePassword, saveProfile, refreshLocalIndicators
   } = useApp();
 
-  const [tab, setTab] = useState('profile');
+  const [tab, setTab] = useState(initialTab);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);

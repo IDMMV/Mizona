@@ -28,11 +28,13 @@ import LocalLab from './pages/LocalLab';
 import AccessDenied from './pages/AccessDenied';
 import { Blueprint } from './pages/Placeholders';
 import Committees from './pages/Committees';
+import CloudLaunch from './pages/CloudLaunch';
+import CloudAuthGate from './pages/CloudAuthGate';
 import { canAccessModule } from './lib/permissions';
 
 function App() {
   const [page, setPage] = useState('panel');
-  const { backendConnected, isAdmin, profile } = useApp();
+  const { backendConnected, isAdmin, profile, dataMode, isAuthenticated, authLoading } = useApp();
   const pages = {
     panel: <Panel setPage={setPage}/>,
     community: <Community setPage={setPage}/>,
@@ -54,12 +56,14 @@ function App() {
     gateway: <GatewayCenter/>,
     sync: <SyncCenter/>,
     cloudCenter: <CloudCenter/>,
+    cloudLaunch: <CloudLaunch setPage={setPage}/>,
     quality: <QualityCenter/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
     settings: <Account/>,
     blueprint: <Blueprint/>
   };
 
+  if (dataMode === 'cloud' && !authLoading && !isAuthenticated) return <CloudAuthGate/>;
   const denied = !canAccessModule(profile, page);
   return <Shell page={denied ? 'panel' : page} setPage={setPage}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</Shell>;
 }

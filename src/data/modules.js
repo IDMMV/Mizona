@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck } from 'lucide-react';
+import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog } from 'lucide-react';
 
 export const statusLabel = {
   active: 'Activo',
@@ -23,6 +23,7 @@ export const modules = [
   { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos' },
   { id: 'verification', label: 'Verificación', icon: BadgeCheck, status: 'active', phase: 'Etapa 23', audience: 'Adultos, negocios y administradores' },
   { id: 'sync', label: 'Usuarios y Sync', icon: CloudUpload, status: 'active', phase: 'Etapa 24', audience: 'Administradores y migración' },
+  { id: 'cloudLaunch', label: 'Supabase real', icon: ServerCog, status: 'active', phase: 'Etapa 29', audience: 'Administradores y backend' },
   { id: 'cloudCenter', label: 'Nube y Push', icon: CloudUpload, status: 'active', phase: 'Etapa 25', audience: 'Administradores, archivos y avisos' },
   { id: 'payments', label: 'Pagos MiZona', icon: CreditCard, status: 'active', phase: 'Etapa 22', audience: 'Adultos, negocios y administradores' },
   { id: 'gateway', label: 'Pasarela y liquidaciones', icon: Landmark, status: 'active', phase: 'Etapa 26', audience: 'Administradores y finanzas' },
