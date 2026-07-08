@@ -340,3 +340,17 @@
   .accessChoiceRow { flex-direction: column; }
   .accessChoiceRow .ghost { width: 100%; }
 }
+
+/* ETAPA 30.10 - MiZona Business modo pantalla completa / kiosco */
+body.businessKioskActive{overflow:hidden;background:#f5f7fb}
+body.businessKioskActive .sidebar,
+body.businessKioskActive .topbar{display:none!important}
+body.businessKioskActive main{margin-left:0!important;width:100%!important}
+body.businessKioskActive .content{padding:12px!important;max-width:none!important}
+.businessModePanel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:16px 0;box-shadow:0 10px 26px rgba(24,45,85,.05)}
+.businessModePanel>div{display:grid;gap:3px;margin-right:auto}.businessModePanel span{color:var(--muted);font-size:13px}.businessModePanel button{border:1px solid #cfe0f5;background:#f8fbff;border-radius:14px;padding:11px 14px;font-weight:900;cursor:pointer}.businessModePanel button:hover{background:#eaf3ff;border-color:#7eb2f0}
+.businessSuiteKiosk{max-width:none!important;padding:0!important;min-height:calc(100vh - 24px)}
+.businessKioskTop{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0f172a,#153f73 60%,#0f8f75);color:#fff;border-radius:18px;margin-bottom:14px;padding:12px 14px;box-shadow:0 14px 30px rgba(15,23,42,.18)}
+.businessKioskTop>div:first-child{display:grid;gap:2px;margin-right:auto}.businessKioskTop span{font-size:12px;color:#dbeafe}.businessKioskSwitch{display:flex;gap:8px;flex-wrap:wrap}.businessKioskSwitch button,.kioskLock{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.13);color:#fff;border-radius:13px;padding:10px 12px;font-weight:950;cursor:pointer}.businessKioskSwitch button.active{background:#fff;color:#123c70}.kioskLock.locked{background:rgba(254,240,138,.18);border-color:rgba(254,240,138,.35)}.kioskLock:not(.locked){background:#dc2626;border-color:#fecaca}.businessSuiteKiosk .businessKpis{grid-template-columns:repeat(4,1fr);margin-top:0}.businessSuiteKiosk .businessKpis>span{padding:20px}.businessSuiteKiosk .businessKpis b{font-size:30px}.businessSuiteKiosk .kitchenBoard{grid-template-columns:repeat(4,1fr)}.businessSuiteKiosk .kitchenBoard>section{min-height:calc(100vh - 155px)}.businessSuiteKiosk .kitchenBoard article{font-size:17px}.businessSuiteKiosk .posLayout{grid-template-columns:minmax(0,1fr) 460px}.businessSuiteKiosk .cartPanel{top:92px}.businessSuiteKiosk .posProductGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.businessSuiteKiosk .businessSuiteHero,.businessSuiteKiosk .businessRoleStrip,.businessSuiteKiosk .tabs{display:none!important}
+@media(max-width:980px){body.businessKioskActive .content{padding:8px!important}.businessKioskTop{align-items:stretch;flex-direction:column}.businessKioskSwitch{display:grid;grid-template-columns:repeat(3,1fr)}.businessSuiteKiosk .businessKpis,.businessSuiteKiosk .posProductGrid{grid-template-columns:1fr 1fr}.businessSuiteKiosk .posLayout{grid-template-columns:1fr}.businessSuiteKiosk .cartPanel{position:static}.businessSuiteKiosk .kitchenBoard{grid-template-columns:1fr}.businessSuiteKiosk .kitchenBoard>section{min-height:auto}}
+@media(max-width:560px){.businessModePanel{display:grid}.businessModePanel button{width:100%}.businessKioskSwitch{grid-template-columns:1fr}.businessSuiteKiosk .businessKpis,.businessSuiteKiosk .posProductGrid{grid-template-columns:1fr}.businessKioskTop{border-radius:14px}.kioskLock{width:100%}}

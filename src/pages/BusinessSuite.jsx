@@ -69,8 +69,15 @@ export default function BusinessSuite(){
   const [customerForm,setCustomerForm]=useState({name:'',phone:''});
   const [workerForm,setWorkerForm]=useState({username:'',role:'cashier'});
   const [expenseForm,setExpenseForm]=useState({category:'Compra de insumos',description:'',amount:'',payment_method:'cash'});
+  const [kioskMode,setKioskMode]=useState(false);
+  const [kioskView,setKioskView]=useState('tv');
+  const [kioskLocked,setKioskLocked]=useState(true);
 
   useEffect(()=>subscribeLocalBusiness(()=>{setVersion(v=>v+1);refreshLocalIndicators?.();}),[refreshLocalIndicators]);
+  useEffect(()=>{
+    document.body.classList.toggle('businessKioskActive', kioskMode);
+    return ()=>document.body.classList.remove('businessKioskActive');
+  },[kioskMode]);
   const workspaces=useMemo(()=>listLocalBusinessWorkspaces(),[version,profile.id]);
   useEffect(()=>{if(!businessId&&workspaces[0])setBusinessId(workspaces[0].id);if(businessId&&!workspaces.some(x=>x.id===businessId)&&workspaces[0])setBusinessId(workspaces[0].id);},[businessId,workspaces]);
   const snapshot=useMemo(()=>businessId?getLocalBusinessSnapshot(businessId):null,[businessId,version]);
@@ -108,17 +115,46 @@ export default function BusinessSuite(){
     ...(can(role,'manager')?[{id:'workers',label:'Personal',icon:'🧑‍💼'},{id:'expenses',label:'Gastos',icon:'💸'},{id:'reports',label:'Reportes',icon:'📈'}]:[])
   ];
 
+  const enterKiosk=(view='tv')=>{
+    setKioskView(view);
+    setKioskLocked(true);
+    setKioskMode(true);
+    if(view==='pos'&&tabs.some(x=>x.id==='pos'))setTab('pos');
+    if(view==='kitchen'&&tabs.some(x=>x.id==='kitchen'))setTab('kitchen');
+    document.documentElement.requestFullscreen?.().catch(()=>{});
+  };
+  const exitKiosk=()=>{
+    setKioskMode(false);
+    setKioskLocked(true);
+    if(document.fullscreenElement)document.exitFullscreen?.().catch(()=>{});
+  };
+
   const statusNext={received:'preparing',preparing:'ready',ready:'delivered'};
   const today=snapshot.sales.filter(x=>x.created_at.slice(0,10)===new Date().toISOString().slice(0,10));
   const topProducts=Object.values(today.flatMap(sale=>{const order=snapshot.orders.find(o=>o.id===sale.order_id);return order?.items||[];}).reduce((acc,item)=>{acc[item.name]=acc[item.name]||{name:item.name,qty:0,total:0};acc[item.name].qty+=item.qty;acc[item.name].total+=item.qty*item.price;return acc;},{})).sort((a,b)=>b.qty-a.qty).slice(0,5);
 
-  return <div className="page businessSuitePage">
-    <section className="businessSuiteHero">
+  return <div className={`page businessSuitePage ${kioskMode?'businessSuiteKiosk':''}`}>
+    {kioskMode&&<div className="businessKioskTop">
+      <div><b>🔒 MiZona Business</b><span>{snapshot.business.name} · {openSession?'Caja abierta':'Caja cerrada'} · @{profile.username}</span></div>
+      <div className="businessKioskSwitch">
+        <button className={kioskView==='pos'?'active':''} onClick={()=>{setKioskView('pos');setTab('pos')}}>🧾 Caja</button>
+        <button className={kioskView==='kitchen'?'active':''} onClick={()=>{setKioskView('kitchen');setTab('kitchen')}}>👨‍🍳 Cocina</button>
+        <button className={kioskView==='tv'?'active':''} onClick={()=>{setKioskView('tv');setTab('dashboard')}}>📺 Panel TV</button>
+      </div>
+      <button className={kioskLocked?'kioskLock locked':'kioskLock'} onClick={()=>kioskLocked?setKioskLocked(false):exitKiosk()}>{kioskLocked?'🔒 Mantener seguro':'🔓 Salir de pantalla completa'}</button>
+    </div>}
+    {!kioskMode&&<section className="businessSuiteHero">
       <div><p className="eyebrow">Etapa 19 · Gestión multiusuario local</p><h1>MiZona Business</h1><p>Caja, pedidos, cocina, inventario, clientes, trabajadores y reportes separados por negocio.</p><div className="businessSelector"><Store size={17}/><select value={businessId} onChange={e=>switchBusiness(e.target.value)}>{workspaces.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}</select><span>{snapshot.business.zone}</span></div></div>
       <div className="businessHeroStats"><span><b>{money(snapshot.stats.today_total)}</b>ventas de hoy</span><span><b>{snapshot.stats.today_sales}</b>comprobantes</span><span><b>{snapshot.stats.pending_orders}</b>pedidos activos</span><span><b>{snapshot.stats.low_stock}</b>alertas de stock</span></div>
-    </section>
-    <div className="businessRoleStrip"><span><b>{roleLabel[role]||role}</b> · @{profile.username}</span><span>{openSession?`Caja abierta desde ${new Date(openSession.opened_at).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`:'Caja cerrada'}</span></div>
-    <Tabs tabs={tabs} active={tabs.some(x=>x.id===tab)?tab:tabs[0].id} setActive={setTab}/>
+    </section>}
+    {!kioskMode&&<div className="businessModePanel">
+      <div><b>🖥️ Modo pantalla completa / kiosco</b><span>Oculta menús de MiZona y deja Business en una vista limpia para caja, cocina, TV, tablet o celular.</span></div>
+      <button onClick={()=>enterKiosk('pos')}>🧾 Caja / POS</button>
+      <button onClick={()=>enterKiosk('kitchen')}>👨‍🍳 Cocina</button>
+      <button onClick={()=>enterKiosk('tv')}>📺 Panel TV</button>
+    </div>}
+    {!kioskMode&&<div className="businessRoleStrip"><span><b>{roleLabel[role]||role}</b> · @{profile.username}</span><span>{openSession?`Caja abierta desde ${new Date(openSession.opened_at).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`:'Caja cerrada'}</span></div>}
+    {!kioskMode&&<Tabs tabs={tabs} active={tabs.some(x=>x.id===tab)?tab:tabs[0].id} setActive={setTab}/>}
     {notice&&<div className="businessNotice"><CheckCircle2 size={18}/>{notice}<button onClick={()=>setNotice('')}>×</button></div>}
     {error&&<div className="businessError"><XCircle size={18}/>{error}<button onClick={()=>setError('')}>×</button></div>}
 
