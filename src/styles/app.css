@@ -206,6 +206,12 @@
 @media(max-width:900px){.logoutTopTextBtn span{display:none}.logoutTopTextBtn{width:42px;height:42px;padding:0;border-radius:14px}}
 @media(max-width:560px){.topbar .logoutTopTextBtn{order:8}.topbar .profileBtn{max-width:150px}}
 
+
+/* Botón cerrar sesión visible dentro del menú lateral, justo antes de Etapa actual */
+.sidebarLogoutNav{width:100%;border:1px solid rgba(254,202,202,.8);background:rgba(220,38,38,.14);color:#fecaca;display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;text-align:left;cursor:pointer;margin:8px 0 10px;font-weight:900}
+.sidebarLogoutNav:hover{background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;border-color:rgba(255,255,255,.18)}
+.sidebarLogoutNav svg{flex:0 0 auto}
+
 /* Botón cerrar sesión fijo al final de la barra lateral */
 .sidebarLogoutBtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:12px;border:1px solid rgba(254,202,202,.75);background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;border-radius:18px;padding:13px 14px;font-weight:950;cursor:pointer;box-shadow:0 10px 24px rgba(220,38,38,.22)}
 .sidebarLogoutBtn:hover{filter:brightness(1.05);transform:translateY(-1px)}
