@@ -131,15 +131,13 @@ export default function CloudCenter() {
     </>}
 
     {tab === 'push' && <>
-      <Card title="Permiso del navegador" icon={<BellRing/>}>
-        <div className="pushPermissionHero">
-          <div>
-            <b>Estado: {settings.browserPermission || 'default'}</b>
-            <span>Presiona este botón para que Chrome muestre la ventana de permiso de notificaciones.</span>
-          </div>
-          <button type="button" className="pushPermissionMainButton" onClick={askPermission}>🔔 Solicitar permiso</button>
+      <div className="pushPermissionVisiblePanel">
+        <div>
+          <b>🔔 Permiso del navegador</b>
+          <span>Estado actual: <strong>{settings.browserPermission || 'default'}</strong>. Presiona el botón para que Chrome muestre la ventana de permiso.</span>
         </div>
-      </Card>
+        <button type="button" onClick={askPermission}>🔔 Solicitar permiso</button>
+      </div>
       <div className="grid2">
         <Card title="Enviar notificación de prueba" icon={<BellRing/>}>
           <div className="pushPermissionBox">
@@ -149,6 +147,7 @@ export default function CloudCenter() {
           <div className="paymentForm">
             <label>Plantilla<select value={selectedTemplate} onChange={e => setSelectedTemplate(e.target.value)}>{cloud.templates.map(t => <option key={t.id} value={t.id}>{t.title} · {t.type}</option>)}</select></label>
             <label>Canal<select value={channel} onChange={e => setChannel(e.target.value)}><option value="browser">Navegador</option><option value="email_future">Correo futuro</option><option value="whatsapp_future">WhatsApp futuro</option><option value="sms_future">SMS futuro</option></select></label>
+            <button type="button" className="pushPermissionInlineButton" onClick={askPermission}>🔔 Solicitar permiso del navegador</button>
             <button type="button" onClick={sendTest}>Enviar prueba local</button>
           </div>
           <p className="muted">Primero presiona Solicitar permiso. Luego usa Enviar prueba local para revisar si aparece el aviso.</p>
