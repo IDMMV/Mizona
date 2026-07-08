@@ -21,6 +21,7 @@ export function isPlatformAdmin(profile) {
 }
 
 export function canAccessModule(profile, moduleId, { ownsBusiness = false } = {}) {
+  if (profile?.role === 'guest') return ['panel', 'settings'].includes(moduleId);
   const admin = isPlatformAdmin(profile);
   if (ADMIN_ONLY_MODULES.has(moduleId)) return admin;
   if (isStudentProfile(profile)) return STUDENT_MODULES.has(moduleId);

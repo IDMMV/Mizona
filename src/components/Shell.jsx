@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
-import { Bell, CloudOff, Menu, Search, User, Wifi, X } from 'lucide-react';
+import { Bell, CloudOff, LogOut, Menu, Search, User, Wifi, X } from 'lucide-react';
 import { statusLabel } from '../data/modules';
 import { useApp } from '../context/AppContext';
 import { canAccessModule } from '../lib/permissions';
 
 export default function Shell({ page, setPage, children }) {
   const [open, setOpen] = useState(false);
-  const { moduleConfig, profile, isAdmin, backendConnected, authLoading, unreadNotifications, dataMode, online, syncQueueCount } = useApp();
+  const { moduleConfig, profile, isAdmin, isAuthenticated, backendConnected, authLoading, unreadNotifications, dataMode, online, syncQueueCount, signOut } = useApp();
 
   const visibleModules = useMemo(() => moduleConfig.filter(module => {
     if (module.visible === false) return false;
@@ -39,7 +39,8 @@ export default function Shell({ page, setPage, children }) {
         <span className={`runtimeBadge ${backendConnected ? 'cloud' : 'local'} ${online ? '' : 'offline'}`}>{online ? <Wifi size={15}/> : <CloudOff size={15}/>} {backendConnected ? 'Nube' : dataMode === 'local' ? 'Local' : 'Contingencia'}</span>
         <button className="zoneBtn">📍 {profile.zone}</button>
         <button className="iconBtn" onClick={() => setPage('notifications')} aria-label="Abrir notificaciones"><Bell size={18}/>{unreadNotifications > 0 && <em>{unreadNotifications > 99 ? '99+' : unreadNotifications}</em>}</button>
-        <button className="profileBtn" onClick={() => setPage(backendConnected ? 'settings' : 'localLab')}>
+        {isAuthenticated && <button className="iconBtn logoutTopBtn" onClick={() => { void signOut().finally(() => setPage('settings')); }} aria-label="Cerrar sesión" title="Cerrar sesión"><LogOut size={18}/></button>}
+        <button className="profileBtn" onClick={() => setPage(isAuthenticated ? 'settings' : 'settings')}>
           <User size={18}/>{authLoading ? 'Verificando...' : profile.displayName}
           <span className={`sessionDot ${dataMode === 'local' || backendConnected ? 'online' : ''}`} title={dataMode === 'local' ? 'Perfil local activo' : backendConnected ? 'Sesión conectada' : 'Sin conexión'}/>
         </button>

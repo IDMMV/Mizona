@@ -35,6 +35,28 @@ const demoProfile = {
   status: 'active'
 };
 
+const LOCAL_SIGNED_OUT_KEY = 'mizona-v8-local-signed-out';
+
+const guestProfile = {
+  id: 'local-guest',
+  displayName: 'Visitante',
+  username: 'VISITANTE',
+  zone: 'Sin zona definida',
+  role: 'guest',
+  accountType: 'visitor',
+  avatarUrl: null,
+  status: 'guest'
+};
+
+function isLocalSignedOut() {
+  return sessionStorage.getItem(LOCAL_SIGNED_OUT_KEY) === 'true';
+}
+
+function setLocalSignedOut(value) {
+  if (value) sessionStorage.setItem(LOCAL_SIGNED_OUT_KEY, 'true');
+  else sessionStorage.removeItem(LOCAL_SIGNED_OUT_KEY);
+}
+
 function readStoredModules() {
   try {
     const saved = JSON.parse(localStorage.getItem(MODULE_STORAGE_KEY) || 'null');
@@ -102,12 +124,12 @@ function mergeRemoteModules(rows) {
 
 export function AppProvider({ children }) {
   const [moduleConfig, setModuleConfig] = useState(readStoredModules);
-  const [profile, setProfileState] = useState(() => readDataMode() === 'local' ? getActiveLocalProfile() : readStoredProfile());
+  const [profile, setProfileState] = useState(() => readDataMode() === 'local' ? (isLocalSignedOut() ? guestProfile : getActiveLocalProfile()) : readStoredProfile());
   const [localProfiles, setLocalProfiles] = useState(listLocalProfiles);
   const [dataMode, setDataModeState] = useState(readDataMode);
   const [online, setOnline] = useState(() => navigator.onLine);
   const cloudActive = dataMode === 'cloud' && hasSupabase && online;
-  const [session, setSession] = useState(() => dataMode === 'local' ? { user: { id: getActiveLocalProfile().id, email: null, local: true } } : null);
+  const [session, setSession] = useState(() => dataMode === 'local' && !isLocalSignedOut() ? { user: { id: getActiveLocalProfile().id, email: null, local: true } } : null);
   const [authLoading, setAuthLoading] = useState(cloudActive);
   const [backendMessage, setBackendMessage] = useState('');
   const [notifications, setNotifications] = useState(listLocalNotifications);
@@ -120,6 +142,14 @@ export function AppProvider({ children }) {
   const [syncQueueCount, setSyncQueueCount] = useState(() => listLocalSyncQueue().length);
 
   const refreshLocalIndicators = useCallback(() => {
+    if (isLocalSignedOut()) {
+      setProfileState(guestProfile);
+      setSession(null);
+      setLocalProfiles(listLocalProfiles());
+      setNotifications([]);
+      setSyncQueueCount(listLocalSyncQueue().filter(item => item.status === 'local_only').length);
+      return;
+    }
     const active = getActiveLocalProfile();
     setProfileState(active);
     setSession({ user: { id: active.id, email: null, local: true } });
@@ -186,6 +216,14 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     if (!cloudActive) {
+      if (isLocalSignedOut()) {
+        setProfileState(guestProfile);
+        setSession(null);
+        setNotifications([]);
+        setAuthLoading(false);
+        setBackendMessage('Sesión local cerrada. Puedes ingresar nuevamente desde Mi Cuenta > Acceso.');
+        return undefined;
+      }
       const localProfile = getActiveLocalProfile();
       setProfileState(localProfile);
       setSession({ user: { id: localProfile.id, email: null, local: true } });
@@ -236,6 +274,12 @@ export function AppProvider({ children }) {
     localStorage.setItem(DATA_MODE_KEY, next);
     setDataModeState(next);
     if (next === 'local') {
+      if (isLocalSignedOut()) {
+        setProfileState(guestProfile);
+        setSession(null);
+        setBackendMessage('Modo local activado. Inicia sesión local para usar tu perfil.');
+        return;
+      }
       const localProfile = getActiveLocalProfile();
       setProfileState(localProfile);
       setSession({ user: { id: localProfile.id, email: null, local: true } });
@@ -249,6 +293,7 @@ export function AppProvider({ children }) {
     if (!/^[a-z0-9_]{4,20}$/.test(normalized)) throw new Error('El usuario debe tener entre 4 y 20 caracteres: letras, números o guion bajo.');
 
     if (!cloudActive) {
+      setLocalSignedOut(false);
       const next = createLocalProfile({ displayName, username: normalized, accountType, zone, role: 'user' });
       setProfileState(next);
       setLocalProfiles(listLocalProfiles());
@@ -275,6 +320,7 @@ export function AppProvider({ children }) {
 
   const signIn = useCallback(async ({ identifier, password }) => {
     if (!cloudActive) {
+      setLocalSignedOut(false);
       const clean = String(identifier || '').trim().toUpperCase();
       const match = listLocalProfiles().find(item => String(item.username).toUpperCase() === clean);
       if (!match) throw new Error('No existe un perfil local con ese usuario. Créalo en Laboratorio local.');
@@ -302,7 +348,14 @@ export function AppProvider({ children }) {
   }, [cloudActive]);
 
   const signOut = useCallback(async () => {
-    if (!cloudActive) return;
+    if (!cloudActive) {
+      setLocalSignedOut(true);
+      setSession(null);
+      setProfileState(guestProfile);
+      setNotifications([]);
+      setBackendMessage('Sesión local cerrada. Tus datos no se borraron.');
+      return { local: true };
+    }
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   }, [cloudActive]);
@@ -329,6 +382,7 @@ export function AppProvider({ children }) {
     };
 
     if (!cloudActive || !session?.user?.id) {
+      if (!session?.user?.id) throw new Error('Inicia sesión local antes de editar el perfil.');
       const next = updateActiveLocalProfile(values);
       setProfileState(next);
       setLocalProfiles(listLocalProfiles());
@@ -364,6 +418,7 @@ export function AppProvider({ children }) {
   }, [cloudActive, loadModules]);
 
   const activateLocalProfile = useCallback(profileId => {
+    setLocalSignedOut(false);
     const next = switchLocalProfile(profileId);
     setProfileState(next);
     setLocalProfiles(listLocalProfiles());
@@ -374,6 +429,7 @@ export function AppProvider({ children }) {
   }, []);
 
   const addLocalProfile = useCallback(values => {
+    setLocalSignedOut(false);
     const next = createLocalProfile(values);
     setProfileState(next);
     setLocalProfiles(listLocalProfiles());
@@ -389,8 +445,8 @@ export function AppProvider({ children }) {
   }, []);
 
   const unreadNotifications = notifications.filter(item => !item.read).length;
-  const isAuthenticated = dataMode === 'local' ? true : Boolean(session?.user);
-  const isAdmin = dataMode === 'local' ? ['admin', 'super_admin'].includes(profile.role) : ['admin', 'super_admin'].includes(profile.role);
+  const isAuthenticated = Boolean(session?.user);
+  const isAdmin = Boolean(session?.user) && ['admin', 'super_admin'].includes(profile.role);
 
   const value = useMemo(() => ({
     moduleConfig,

@@ -142,19 +142,20 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
 
     {tab === 'profile' && <div className="grid2">
       <Card title="Identidad MiZona" icon="👤">
-        <form className="accountForm" onSubmit={submitProfile} key={`${profile.id || 'local'}-${profile.username}`}>
+        {isAuthenticated ? <form className="accountForm" onSubmit={submitProfile} key={`${profile.id || 'local'}-${profile.username}`}>
           <label>Nombre visible<input name="displayName" defaultValue={profile.displayName} required/></label>
           <label>Usuario único<input name="username" defaultValue={profile.username} pattern="[A-Za-z0-9_]{4,20}" required/><small>Se utiliza para encontrarte por coincidencia exacta.</small></label>
           <label>Zona principal<input name="zone" defaultValue={profile.zone}/></label>
           <button className="primary" type="submit" disabled={busy}><Save size={17}/>Guardar en este dispositivo</button>
-        </form>
+        </form> : <div className="sessionSummary"><b>Sesión cerrada</b><span>Ingresa desde la pestaña Acceso para editar tu perfil.</span><button className="primary" onClick={() => setTab('access')}><KeyRound size={17}/>Ir a Acceso</button></div>}
       </Card>
-      <Card title="Resumen de perfil local" icon="🪪"><div className="profilePreview"><div>{initials}</div><h2>{profile.displayName}</h2><b>@{profile.username}</b><span>📍 {profile.zone}</span><em>Perfil local · {profile.role}</em>{user?.email && <small>{user.email}</small>}</div></Card>
+      <Card title="Resumen de perfil local" icon="🪪"><div className="profilePreview"><div>{initials}</div><h2>{profile.displayName}</h2><b>@{profile.username}</b><span>📍 {profile.zone}</span><em>{isAuthenticated ? `Perfil local · ${profile.role}` : 'Sesión cerrada'}</em>{user?.email && <small>{user.email}</small>}{isAuthenticated && <button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button>}</div></Card>
     </div>}
 
     {tab === 'access' && <>
       {dataMode === 'local' ? <div className="grid2">
-        <Card title="Sesión local activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Identificador: {profile.id}</small><small>Rol local: {profile.role}</small></div><p className="muted">El laboratorio local no guarda contraseñas ni reemplaza la autenticación real. Usa perfiles de prueba independientes por pestaña.</p></Card>
+        {isAuthenticated ? <Card title="Sesión local activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Identificador: {profile.id}</small><small>Rol local: {profile.role}</small></div><p className="muted">El laboratorio local no guarda contraseñas reales. Al cerrar sesión tus datos permanecen en este dispositivo.</p><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card> : <Card title="Iniciar sesión local" icon="🔐"><form className="accountForm" onSubmit={submitLogin}><label>Usuario local<input name="identifier" placeholder="Ejemplo: JOSE1985" autoComplete="username" required/></label><small className="muted">En modo local se ingresa por usuario. La contraseña se usará cuando actives Supabase real.</small><button className="primary" disabled={busy}><KeyRound size={17}/>Ingresar</button></form></Card>}
+        {!isAuthenticated && <Card title="Crear perfil local" icon="✨"><form className="accountForm" onSubmit={submitRegister}><label>Nombre visible<input name="displayName" required/></label><label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label><label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label><label>Zona principal<input name="zone"/></label><label>Correo de recuperación opcional<input name="email" type="email"/></label><input name="terms" type="hidden" value="on"/><button className="primary" disabled={busy}><UserRound size={17}/>Crear perfil</button></form></Card>}
         <Card title="Conexión futura" icon="☁️"><p className="muted">Cuando Supabase vuelva a estar estable podremos cambiar a modo nube y verificar las Etapas 10, 11 y 12.</p><button className="ghost" disabled={!backendConfigured} onClick={() => { setDataMode('cloud'); setMessage(backendConfigured ? 'Modo nube solicitado. Recarga la página para verificar la sesión.' : 'Las variables de Supabase no están configuradas.'); }}><Cloud size={17}/>Intentar modo nube después</button>{!backendConfigured && <small className="muted">VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY no están configuradas.</small>}</Card>
       </div> : <>
         {authLoading && <Card title="Verificando sesión" icon="⏳"><p className="muted">Comprobando tu acceso...</p></Card>}
