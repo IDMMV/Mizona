@@ -8,7 +8,7 @@ const now=()=>new Date().toISOString();
 const today=()=>now().slice(0,10);
 
 const seed=()=>({
- version:30.1,
+ version:30.5,
  committee:{id:'aula-4',name:'Comité Aula 4 años',description:'Comité de padres para apoyar actividades, cuotas, comunicados y rendición del aula.',school:'Colegio San Martín',classroom:'Aula 4 años',period:'2026',treasurer:'Milan Aide Guevara',president:'Katia',secretary:'José Hugo',publishEvents:true},
  families:[
   {id:'f1',student:'Adair Alexander',guardian:'José Salazar',phone:'929347128'},
@@ -58,7 +58,7 @@ function normalize(raw){
  return {
   ...s,
   ...raw,
-  version:30.1,
+  version:30.5,
   committee:{...s.committee,...(raw?.committee||{})},
   families:fixed.families,
   campaigns:fixed.campaigns,
@@ -95,13 +95,23 @@ function write(data,action='Actualización'){
  return next;
 }
 export const getCommitteeFinance=()=>clone(read());
+const nextPaymentReference=(payments=[])=>{
+ const nums=payments.map(p=>String(p.reference||'').match(/OP-(\d+)/i)?.[1]).filter(Boolean).map(Number);
+ const next=(nums.length?Math.max(...nums):0)+1;
+ return `OP-${String(next).padStart(5,'0')}`;
+};
+export const getNextPaymentReference=()=>nextPaymentReference(read().payments||[]);
 export const saveCommitteeFinance=(updater,action)=>write(typeof updater==='function'?updater(read()):updater,action);
 const add=(field,prefix,data,defaults={})=>saveCommitteeFinance(s=>({...s,[field]:[{id:uid(prefix),...defaults,...data},...s[field]]}),`Nuevo registro en ${field}`);
 export const addCampaign=data=>saveCommitteeFinance(s=>({
  ...s,
  campaigns:[{id:uid('c'),status:'active',createdAt:now(),participantIds:s.families.map(f=>f.id),...data},...s.campaigns]
 }),'Nueva cuota o actividad');
-export const addPayment=data=>add('payments','p',data,{date:today()});
+export const addPayment=data=>saveCommitteeFinance(s=>{
+ const reference=data.reference||nextPaymentReference(s.payments||[]);
+ const payment={id:uid('p'),date:today(),...data,reference};
+ return {...s,payments:[payment,...s.payments]};
+},'Nuevo pago registrado');
 export const addExpense=data=>add('expenses','e',data,{date:today()});
 export const addFamily=data=>saveCommitteeFinance(s=>{
  const id=uid('f');

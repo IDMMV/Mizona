@@ -6,6 +6,7 @@ import { canAccessModule } from '../lib/permissions';
 
 export default function Shell({ page, setPage, children }) {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('mizona-sidebar-collapsed') === '1');
   const { moduleConfig, profile, isAdmin, isAuthenticated, backendConnected, authLoading, unreadNotifications, dataMode, online, syncQueueCount, signOut } = useApp();
 
   const canLogout = isAuthenticated || (profile?.id && profile.id !== 'local-guest') || profile?.username === 'JOSE1985';
@@ -15,7 +16,14 @@ export default function Shell({ page, setPage, children }) {
     return canAccessModule(profile, module.id);
   }), [moduleConfig, profile]);
 
-  return <div className={`app ${open ? 'menuOpen' : ''}`}>
+  const toggleSidebar = () => {
+    if (window.matchMedia?.('(max-width: 980px)')?.matches) return setOpen(true);
+    const next = !collapsed;
+    setCollapsed(next);
+    localStorage.setItem('mizona-sidebar-collapsed', next ? '1' : '0');
+  };
+
+  return <div className={`app ${open ? 'menuOpen' : ''} ${collapsed ? 'sidebarCollapsed' : ''}`}>
     {open && <button className="sidebarBackdrop" aria-label="Cerrar menú" onClick={() => setOpen(false)}/>}
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="brand">
@@ -39,7 +47,7 @@ export default function Shell({ page, setPage, children }) {
     </aside>
     <main>
       <header className="topbar">
-        <button className="iconBtn mobileOnly" onClick={() => setOpen(true)}><Menu size={20}/></button>
+        <button className="iconBtn sidebarMasterToggle" onClick={toggleSidebar} title={collapsed ? 'Mostrar menú lateral' : 'Ocultar menú lateral'}><Menu size={20}/></button>
         <div className="searchBox"><Search size={18}/><input placeholder="¿Qué necesitas hoy? colegio, chat, ofertas, servicios..."/></div>
         <span className={`runtimeBadge ${backendConnected ? 'cloud' : 'local'} ${online ? '' : 'offline'}`}>{online ? <Wifi size={15}/> : <CloudOff size={15}/>} {backendConnected ? 'Nube' : dataMode === 'local' ? 'Local' : 'Contingencia'}</span>
         <button className="zoneBtn">📍 {profile.zone}</button>
