@@ -321,3 +321,22 @@
 .paymentEmptySummary{border:1px dashed #93c5fd;background:#eff6ff;color:#1e3a8a;border-radius:18px;padding:16px;font-weight:800;margin:12px 0 18px}
 .selectedPaymentSummary{margin:12px 0 18px}
 @media(max-width:760px){.passwordField{border-radius:18px}.passwordField input{font-size:16px}.paymentEmptySummary{font-size:15px}.accountAuthGrid{display:grid;grid-template-columns:1fr!important}.accountAccessGrid{display:grid;grid-template-columns:1fr!important}}
+
+/* Etapa 30.9 - Acceso limpio en hojas independientes */
+.singleAccessPanel {
+  max-width: 760px;
+}
+.accessChoiceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+.accessChoiceRow .ghost {
+  flex: 1 1 220px;
+}
+@media (max-width: 720px) {
+  .singleAccessPanel { max-width: none; }
+  .accessChoiceRow { flex-direction: column; }
+  .accessChoiceRow .ghost { width: 100%; }
+}

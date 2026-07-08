@@ -25,6 +25,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [notifications, setNotifications] = useState(getLocalPreferences);
   const [recoveryQuestion, setRecoveryQuestion] = useState('');
+  const [accessView, setAccessView] = useState('login');
   const importInput = useRef(null);
   const canLogout = isAuthenticated || (profile?.id && profile.id !== 'local-guest') || profile?.username === 'JOSE1985';
 
@@ -46,6 +47,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     run(async () => {
       await signIn({ identifier: form.get('identifier'), password: form.get('password') });
       setMessage('Sesión iniciada correctamente.');
+      setAccessView('session');
       setTab('profile');
     });
   };
@@ -59,6 +61,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
         zone: form.get('zone'), email: form.get('email'), password: form.get('password'), secretQuestion: form.get('secretQuestion'), secretAnswer: form.get('secretAnswer'), termsAccepted: Boolean(form.get('terms'))
       });
       setMessage(result?.local ? 'Perfil local creado en este dispositivo.' : result?.session ? 'Cuenta creada e iniciada.' : 'Cuenta creada. Revisa tu correo para confirmarla.');
+      setAccessView('login');
     });
   };
 
@@ -121,6 +124,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
       event.currentTarget.reset();
       setRecoveryQuestion('');
       setMessage('Contraseña recuperada. Ahora puedes iniciar sesión local.');
+      setAccessView('login');
     });
   };
 
@@ -133,7 +137,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     });
   };
 
-  const logout = () => run(async () => { await signOut(); setMessage('Sesión cerrada.'); setTab('access'); });
+  const logout = () => run(async () => { await signOut(); setMessage('Sesión cerrada correctamente.'); setAccessView('login'); setTab('access'); });
 
   const install = async () => {
     if (!installPrompt) {
@@ -190,27 +194,24 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
 
     <div className="localOperationBanner"><CloudOff size={20}/><div><b>Continuamos sin Supabase · Etapa 14</b><span>MiZona usa almacenamiento local e IndexedDB. Los datos permanecen en este navegador y pueden exportarse como respaldo.</span></div><em>{online ? 'Internet disponible' : 'Sin internet'}</em></div>
 
-    {tab === 'profile' && <div className="grid2">
-      <Card title="Identidad MiZona" icon="👤">
-        {isAuthenticated ? <form className="accountForm" onSubmit={submitProfile} key={`${profile.id || 'local'}-${profile.username}`}>
-          <label>Nombre visible<input name="displayName" defaultValue={profile.displayName} required/></label>
-          <label>Usuario único<input name="username" defaultValue={profile.username} pattern="[A-Za-z0-9_]{4,20}" required/><small>Se utiliza para encontrarte por coincidencia exacta.</small></label>
-          <label>Zona principal<input name="zone" defaultValue={profile.zone}/></label>
-          <button className="primary" type="submit" disabled={busy}><Save size={17}/>Guardar en este dispositivo</button>
-        </form> : <div className="sessionSummary"><b>Sesión cerrada</b><span>Ingresa desde la pestaña Acceso para editar tu perfil.</span><button className="primary" onClick={() => setTab('access')}><KeyRound size={17}/>Ir a Acceso</button></div>}
-      </Card>
-      <Card title="Resumen de perfil local" icon="🪪"><div className="profilePreview"><div>{initials}</div><h2>{profile.displayName}</h2><b>@{profile.username}</b><span>📍 {profile.zone}</span><em>{isAuthenticated ? `Perfil local · ${profile.role}` : 'Sesión cerrada'}</em>{user?.email && <small>{user.email}</small>}{canLogout && <button className="dangerButton alwaysVisibleLogout" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button>}</div></Card>
-    </div>}
+    {tab === 'profile' && <Card title="Identidad MiZona" icon="👤">
+      {isAuthenticated ? <form className="accountForm" onSubmit={submitProfile} key={`${profile.id || 'local'}-${profile.username}`}>
+        <label>Nombre visible<input name="displayName" defaultValue={profile.displayName} required/></label>
+        <label>Usuario único<input name="username" defaultValue={profile.username} pattern="[A-Za-z0-9_]{4,20}" required/><small>Se utiliza para encontrarte por coincidencia exacta.</small></label>
+        <label>Zona principal<input name="zone" defaultValue={profile.zone}/></label>
+        <button className="primary" type="submit" disabled={busy}><Save size={17}/>Guardar en este dispositivo</button>
+      </form> : <div className="sessionSummary"><b>Sesión cerrada</b><span>Ingresa desde Acceso para editar tu perfil.</span><button className="primary" onClick={() => { setTab('access'); setAccessView('login'); }}><KeyRound size={17}/>Iniciar sesión</button></div>}
+    </Card>}
 
     {tab === 'access' && <>
       {dataMode === 'local' ? <>
         {canLogout ? <div className="grid2 accountAccessGrid">
           <Card title="Sesión local activa" icon="✅">
             <div className="sessionSummary sessionActiveBox"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Rol local: {profile.role}</small><small>Zona: {profile.zone}</small></div>
-            <p className="muted">Estás dentro de MiZona con este perfil. Aquí puedes proteger el acceso, cambiar contraseña, configurar recuperación o cerrar sesión.</p>
-            <div className="buttonWrap"><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button><button className="ghost" onClick={() => setTab('profile')}><UserRound size={17}/>Ver perfil</button></div>
+            <p className="muted">Estás dentro de MiZona con este perfil.</p>
+            <div className="buttonWrap"><button className="ghost" onClick={() => setAccessView('security')}><KeyRound size={17}/>Cambiar contraseña</button><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></div>
           </Card>
-          <Card title="Cambiar contraseña y recuperación" icon="🔑">
+          {accessView === 'security' && <Card title="Cambiar contraseña y recuperación" icon="🔑">
             <form className="accountForm" onSubmit={submitLocalSecurity}>
               <PasswordField label="Contraseña actual" name="currentPassword" minLength={4} placeholder="Solo si ya configuraste una"/>
               <PasswordField label="Nueva contraseña" name="newPassword" minLength={4} autoComplete="new-password" placeholder="mín. 4 caracteres"/>
@@ -219,16 +220,17 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
               <label>Respuesta secreta<input name="secretAnswer" placeholder="Tu respuesta"/></label>
               <button className="primary" disabled={busy}><KeyRound size={17}/>Guardar cambios</button>
             </form>
-          </Card>
-        </div> : <div className="accountAuthGrid">
-          <Card title="Iniciar sesión local" icon="🔐">
+          </Card>}
+        </div> : <div className="singleAccessPanel">
+          {accessView === 'login' && <Card title="Iniciar sesión local" icon="🔐">
             <form className="accountForm" onSubmit={submitLogin}>
               <label>Usuario local<input name="identifier" placeholder="Ejemplo: JOSE1985" autoComplete="username" required/></label>
-              <PasswordField label="Contraseña" name="password" minLength={4} placeholder="Si no configuraste, puedes dejarla vacía" autoComplete="current-password"/>
+              <PasswordField label="Contraseña" name="password" minLength={4} placeholder="Contraseña local opcional" autoComplete="current-password"/>
               <button className="primary" disabled={busy}><KeyRound size={17}/>Ingresar</button>
             </form>
-          </Card>
-          <Card title="Recuperar contraseña local" icon="🛟">
+            <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>¿Olvidaste tu contraseña?</button><button className="ghost" type="button" onClick={() => setAccessView('create')}><UserRound size={17}/>Crear perfil local</button></div>
+          </Card>}
+          {accessView === 'recover' && <Card title="Recuperar contraseña local" icon="🛟">
             <form className="accountForm" onSubmit={loadLocalRecoveryQuestion}>
               <label>Usuario local<input name="username" placeholder="Ejemplo: JOSE1985" required/></label>
               <button className="ghost" disabled={busy}><HelpCircle size={17}/>Buscar pregunta secreta</button>
@@ -241,8 +243,9 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
               <PasswordField label="Confirmar nueva contraseña" name="confirmation" minLength={4} autoComplete="new-password" required/>
               <button className="primary" disabled={busy}><KeyRound size={17}/>Cambiar contraseña</button>
             </form>}
-          </Card>
-          <Card title="Crear perfil local" icon="✨">
+            <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => { setRecoveryQuestion(''); setAccessView('login'); }}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => { setRecoveryQuestion(''); setAccessView('create'); }}><UserRound size={17}/>Crear perfil local</button></div>
+          </Card>}
+          {accessView === 'create' && <Card title="Crear perfil local" icon="✨">
             <form className="accountForm" onSubmit={submitRegister}>
               <label>Nombre visible<input name="displayName" required/></label>
               <label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label>
@@ -255,7 +258,8 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
               <input name="terms" type="hidden" value="on"/>
               <button className="primary" disabled={busy}><UserRound size={17}/>Crear perfil</button>
             </form>
-          </Card>
+            <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('login')}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>Recuperar contraseña</button></div>
+          </Card>}
         </div>}
         <Card title="Conexión futura" icon="☁️"><p className="muted">Cuando Supabase vuelva a estar estable podremos cambiar a modo nube y verificar las Etapas 10, 11 y 12.</p><button className="ghost" disabled={!backendConfigured} onClick={() => { setDataMode('cloud'); setMessage(backendConfigured ? 'Modo nube solicitado. Recarga la página para verificar la sesión.' : 'Las variables de Supabase no están configuradas.'); }}><Cloud size={17}/>Intentar modo nube después</button>{!backendConfigured && <small className="muted">VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY no están configuradas.</small>}</Card>
       </> : <>
