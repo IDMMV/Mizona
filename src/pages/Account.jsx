@@ -180,6 +180,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     { id: 'install', label: 'Instalar app', icon: '📲' }
   ];
 
+  const visibleTabs = tab === 'access' ? [{ id: 'access', label: 'Acceso', icon: '🔐' }] : tabs;
   const initials = String(profile.displayName || 'MZ').split(' ').map(word => word[0]).join('').slice(0, 2).toUpperCase();
 
   return <div className="page accountPage">
@@ -188,11 +189,11 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
       <span className={`connectionBadge ${backendConnected ? 'connected' : 'localConnected'}`}>{backendConnected ? 'Supabase conectado' : 'Modo local operativo'}</span>
     </div>
 
-    <Tabs tabs={tabs} active={tab} setActive={setTab}/>
+    <Tabs tabs={visibleTabs} active={tab} setActive={setTab}/>
 
     {(message || backendMessage) && <div className="accountMessage"><CheckCircle2 size={18}/>{message || backendMessage}<button onClick={() => { setMessage(''); clearBackendMessage(); }}>×</button></div>}
 
-    <div className="localOperationBanner"><CloudOff size={20}/><div><b>Continuamos sin Supabase · Etapa 14</b><span>MiZona usa almacenamiento local e IndexedDB. Los datos permanecen en este navegador y pueden exportarse como respaldo.</span></div><em>{online ? 'Internet disponible' : 'Sin internet'}</em></div>
+    <div className={`localOperationBanner ${backendConnected ? 'cloudReadyBanner' : ''}`}>{backendConnected ? <Cloud size={20}/> : <CloudOff size={20}/>}<div><b>{backendConnected ? 'Supabase conectado correctamente' : 'Modo local activo · Etapa 14'}</b><span>{backendConnected ? 'Tus datos pueden sincronizarse con la nube cuando uses una cuenta conectada.' : 'MiZona usa almacenamiento local e IndexedDB. Los datos permanecen en este navegador y pueden exportarse como respaldo.'}</span></div><em>{online ? 'Internet disponible' : 'Sin internet'}</em></div>
 
     {tab === 'profile' && <Card title="Identidad MiZona" icon="👤">
       {isAuthenticated ? <form className="accountForm" onSubmit={submitProfile} key={`${profile.id || 'local'}-${profile.username}`}>
@@ -265,7 +266,36 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
       </> : <>
         {authLoading && <Card title="Verificando sesión" icon="⏳"><p className="muted">Comprobando tu acceso...</p></Card>}
         {!authLoading && canLogout && <div className="grid2"><Card title="Sesión de nube activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>{user?.email}</small><small>Rol: {profile.role}</small></div><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card><Card title="Cambiar contraseña" icon="🔑"><form className="accountForm" onSubmit={submitPassword}><PasswordField label="Nueva contraseña" name="password" minLength={8} autoComplete="new-password" required/><PasswordField label="Repetir contraseña" name="confirmation" minLength={8} autoComplete="new-password" required/><button className="primary" disabled={busy}><KeyRound size={17}/>Actualizar contraseña</button></form></Card></div>}
-        {!authLoading && !canLogout && <div className="accountAuthGrid"><Card title="Iniciar sesión" icon="🔐"><form className="accountForm" onSubmit={submitLogin}><label>Usuario o correo<input name="identifier" autoComplete="username" required/></label><PasswordField label="Contraseña" name="password" minLength={6} required/><button className="primary" disabled={busy || !backendConnected}><KeyRound size={17}/>Ingresar</button></form></Card><Card title="Crear cuenta" icon="✨"><form className="accountForm" onSubmit={submitRegister}><label>Nombre visible<input name="displayName" required/></label><label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label><label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label><label>Zona principal<input name="zone"/></label><label>Correo<input name="email" type="email" required/></label><PasswordField label="Contraseña" name="password" minLength={8} autoComplete="new-password" required/><label className="termsCheck"><input name="terms" type="checkbox" required/>Acepto términos, privacidad y reglas de seguridad.</label><button className="primary" disabled={busy || !backendConnected}><UserRound size={17}/>Registrarme</button></form></Card><Card title="Recuperar contraseña" icon="📧"><form className="accountForm" onSubmit={submitRecovery}><label>Correo<input name="email" type="email" required/></label><button className="ghost" disabled={busy || !backendConnected}><Mail size={17}/>Enviar enlace</button></form></Card></div>}
+        {!authLoading && !canLogout && <div className="singleAccessPanel">
+          {accessView === 'login' && <Card title="Iniciar sesión" icon="🔐">
+            <form className="accountForm" onSubmit={submitLogin}>
+              <label>Usuario o correo<input name="identifier" autoComplete="username" required/></label>
+              <PasswordField label="Contraseña" name="password" minLength={6} required/>
+              <button className="primary" disabled={busy || !backendConnected}><KeyRound size={17}/>Ingresar</button>
+            </form>
+            <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>¿Olvidaste tu contraseña?</button><button className="ghost" type="button" onClick={() => setAccessView('create')}><UserRound size={17}/>Crear cuenta</button></div>
+          </Card>}
+          {accessView === 'create' && <Card title="Crear cuenta" icon="✨">
+            <form className="accountForm" onSubmit={submitRegister}>
+              <label>Nombre visible<input name="displayName" required/></label>
+              <label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label>
+              <label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label>
+              <label>Zona principal<input name="zone"/></label>
+              <label>Correo<input name="email" type="email" required/></label>
+              <PasswordField label="Contraseña" name="password" minLength={8} autoComplete="new-password" required/>
+              <label className="termsCheck"><input name="terms" type="checkbox" required/>Acepto términos, privacidad y reglas de seguridad.</label>
+              <button className="primary" disabled={busy || !backendConnected}><UserRound size={17}/>Registrarme</button>
+            </form>
+            <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('login')}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>Recuperar contraseña</button></div>
+          </Card>}
+          {accessView === 'recover' && <Card title="Recuperar contraseña" icon="📧">
+            <form className="accountForm" onSubmit={submitRecovery}>
+              <label>Correo<input name="email" type="email" required/></label>
+              <button className="ghost" disabled={busy || !backendConnected}><Mail size={17}/>Enviar enlace</button>
+            </form>
+            <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('login')}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => setAccessView('create')}><UserRound size={17}/>Crear cuenta</button></div>
+          </Card>}
+        </div>}
         <button className="ghost" onClick={() => setDataMode('local')}><CloudOff size={17}/>Volver al modo local</button>
       </>}
     </>}
