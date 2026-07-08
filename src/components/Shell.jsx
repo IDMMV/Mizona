@@ -44,7 +44,6 @@ export default function Shell({ page, setPage, children }) {
         <span className={`runtimeBadge ${backendConnected ? 'cloud' : 'local'} ${online ? '' : 'offline'}`}>{online ? <Wifi size={15}/> : <CloudOff size={15}/>} {backendConnected ? 'Nube' : dataMode === 'local' ? 'Local' : 'Contingencia'}</span>
         <button className="zoneBtn">📍 {profile.zone}</button>
         <button className="iconBtn" onClick={() => setPage('notifications')} aria-label="Abrir notificaciones"><Bell size={18}/>{unreadNotifications > 0 && <em>{unreadNotifications > 99 ? '99+' : unreadNotifications}</em>}</button>
-        {canLogout && <button className="logoutTopTextBtn" onClick={() => { void signOut().finally(() => setPage('settings')); }} aria-label="Cerrar sesión" title="Cerrar sesión"><LogOut size={17}/><span>Cerrar sesión</span></button>}
         <button className="profileBtn" onClick={() => setPage(isAuthenticated ? 'settings' : 'settings')}>
           <User size={18}/>{authLoading ? 'Verificando...' : profile.displayName}
           <span className={`sessionDot ${dataMode === 'local' || backendConnected ? 'online' : ''}`} title={dataMode === 'local' ? 'Perfil local activo' : backendConnected ? 'Sesión conectada' : 'Sin conexión'}/>

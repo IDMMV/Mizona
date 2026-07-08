@@ -131,6 +131,15 @@ export default function CloudCenter() {
     </>}
 
     {tab === 'push' && <>
+      <Card title="Permiso del navegador" icon={<BellRing/>}>
+        <div className="pushPermissionHero">
+          <div>
+            <b>Estado: {settings.browserPermission || 'default'}</b>
+            <span>Presiona este botón para que Chrome muestre la ventana de permiso de notificaciones.</span>
+          </div>
+          <button type="button" className="pushPermissionMainButton" onClick={askPermission}>🔔 Solicitar permiso</button>
+        </div>
+      </Card>
       <div className="grid2">
         <Card title="Enviar notificación de prueba" icon={<BellRing/>}>
           <div className="pushPermissionBox">
