@@ -197,3 +197,11 @@
   .chatDirectory{min-height:62vh}
   .chatConversation{min-height:62vh}
 }
+
+
+/* Corrección visible: botón cerrar sesión */
+.logoutTopTextBtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #fecaca;background:#fff1f2;color:#b42318;border-radius:999px;padding:10px 13px;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(180,35,24,.08)}
+.logoutTopTextBtn:hover{background:#ffe4e6;border-color:#fda4af}
+.alwaysVisibleLogout{margin-top:10px}
+@media(max-width:900px){.logoutTopTextBtn span{display:none}.logoutTopTextBtn{width:42px;height:42px;padding:0;border-radius:14px}}
+@media(max-width:560px){.topbar .logoutTopTextBtn{order:8}.topbar .profileBtn{max-width:150px}}

@@ -348,16 +348,18 @@ export function AppProvider({ children }) {
   }, [cloudActive]);
 
   const signOut = useCallback(async () => {
-    if (!cloudActive) {
-      setLocalSignedOut(true);
-      setSession(null);
-      setProfileState(guestProfile);
-      setNotifications([]);
-      setBackendMessage('Sesión local cerrada. Tus datos no se borraron.');
-      return { local: true };
+    // Cierre visible y efectivo para modo local, modo nube y perfiles cargados desde respaldo.
+    if (cloudActive && supabase) {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     }
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    setLocalSignedOut(true);
+    setSession(null);
+    setProfileState(guestProfile);
+    setNotifications([]);
+    localStorage.removeItem(PROFILE_STORAGE_KEY);
+    setBackendMessage('Sesión cerrada. Tus datos locales no se borraron.');
+    return { local: !cloudActive };
   }, [cloudActive]);
 
   const resetPassword = useCallback(async email => {
