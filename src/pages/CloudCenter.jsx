@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
 import { downloadCloudReport, expireFile, getCloudSummary, getCloudState, registerLocalFile, requestBrowserPermission, simulateSend, subscribeCloud, toggleTemplate, updateCloudSettings, upsertBucket } from '../lib/localCloud';
+import { activateFirebasePush, getFirebasePushConfigStatus, registerForegroundPushListener } from '../lib/fcmPush';
 
 const fmtBytes = value => {
   const n = Number(value || 0);
@@ -21,8 +22,17 @@ export default function CloudCenter() {
   const [upload, setUpload] = useState({ module: 'Transfer', retentionDays: 7, sharedWith: [] });
   const [selectedTemplate, setSelectedTemplate] = useState('tpl-chat');
   const [channel, setChannel] = useState('browser');
+  const [deviceLabel, setDeviceLabel] = useState('Mi celular principal');
+  const [activatingFcm, setActivatingFcm] = useState(false);
+  const fcmStatus = useMemo(() => getFirebasePushConfigStatus(), [cloud]);
 
   useEffect(() => subscribeCloud(setCloud), []);
+
+  useEffect(() => {
+    let unsubscribe = null;
+    registerForegroundPushListener(() => setMsg('Llegó una notificación FCM mientras MiZona estaba abierta.')).then(fn => { unsubscribe = fn; }).catch(() => {});
+    return () => { if (typeof unsubscribe === 'function') unsubscribe(); };
+  }, []);
 
   const summary = useMemo(() => getCloudSummary(), [cloud, syncQueueCount]);
   const settings = cloud.settings || {};
@@ -77,6 +87,23 @@ export default function CloudCenter() {
     else setMsg(`Permiso del navegador: ${permission}.`);
   };
 
+
+  const activateRealPush = async () => {
+    setActivatingFcm(true);
+    setMsg('Activando notificaciones reales FCM...');
+    try {
+      const result = await activateFirebasePush({ deviceLabel });
+      setCloud(getCloudState());
+      setMsg(result.supabase?.saved
+        ? 'Notificaciones reales activadas. Este dispositivo quedó registrado en Supabase.'
+        : 'Token FCM obtenido y guardado localmente. Falta Supabase para recibir desde otros celulares.');
+    } catch (error) {
+      setMsg(error.message || 'No se pudo activar Firebase Cloud Messaging.');
+    } finally {
+      setActivatingFcm(false);
+    }
+  };
+
   return <div className="page cloudPage">
     <div className="hero compact">
       <div><span className="eyebrow">Etapa 25</span><h1>Notificaciones y archivos en nube</h1><p>Centro para preparar push real, correos, archivos, vencimientos, escaneo y almacenamiento futuro.</p></div>
@@ -87,7 +114,7 @@ export default function CloudCenter() {
       <Lock/><div><b>Preparado para nube, sin mover datos reales todavía</b><span>Esta versión registra archivos y avisos localmente. La subida real requiere backend, storage y proveedor push.</span></div>
     </div>
 
-    <Tabs value={tab} onChange={setTab} items={[{id:'dashboard',label:'Estado'},{id:'push',label:'Push y avisos'},{id:'files',label:'Archivos'},{id:'storage',label:'Buckets'},{id:'settings',label:'Reglas'}]}/>
+    <Tabs value={tab} onChange={setTab} items={[{id:'dashboard',label:'Estado'},{id:'push',label:'Push y avisos'},{id:'fcm',label:'Push real FCM'},{id:'files',label:'Archivos'},{id:'storage',label:'Buckets'},{id:'settings',label:'Reglas'}]}/>
     {msg && <p className="accountMessage">{msg}</p>}
 
     {tab === 'dashboard' && <>
@@ -158,6 +185,51 @@ export default function CloudCenter() {
       </div>
       <Card title="Plantillas de avisos" icon="🧩"><div className="paymentTable compactTable">{cloud.templates.map(t => <article key={t.id}><div><b>{t.title}</b><span>{t.body} · {t.audience}</span></div><em className={`payStatus ${t.enabled ? 'ok':'blocked'}`}>{t.enabled ? 'activa':'apagada'}</em><div className="payActions"><button onClick={() => toggleTemplate(t.id)}>{t.enabled ? 'Apagar' : 'Activar'}</button></div></article>)}</div></Card>
       <Card title="Historial de envíos simulados" icon="📨"><div className="paymentTable compactTable">{cloud.sends.length ? cloud.sends.map(s => <article key={s.id}><div><b>{s.title}</b><span>{s.channel} · {s.recipients.length} receptor(es) · {new Date(s.createdAt).toLocaleString('es-PE')}</span></div><em className="payStatus ok">{statusLabel[s.status] || s.status}</em></article>) : <p className="muted">Aún no hay envíos.</p>}</div></Card>
+    </>}
+
+
+    {tab === 'fcm' && <>
+      <div className="pushRealHero">
+        <div>
+          <span className="eyebrow">Firebase Cloud Messaging</span>
+          <h2>Push real entre celulares</h2>
+          <p>Registra este celular para que MiZona pueda avisarte cuando otra persona te escriba por Chat, incluso desde otro equipo.</p>
+        </div>
+        <div className={`pushRealStatus ${fcmStatus.ready ? 'ready' : 'pending'}`}>{fcmStatus.ready ? 'Configuración lista' : 'Faltan datos Firebase'}</div>
+      </div>
+      <div className="grid2">
+        <Card title="Activar este dispositivo" icon="📲">
+          <div className="syncStatus">
+            <span><b>Permiso navegador</b>{settings.browserPermission || 'default'}</span>
+            <span><b>Proveedor</b>{settings.pushProvider || 'web_push_future'}</span>
+            <span><b>Push real</b>{settings.pushRealEnabled ? 'Activo' : 'Pendiente'}</span>
+            <span><b>Tokens guardados</b>{cloud.fcmTokens?.length || 0}</span>
+          </div>
+          <div className="paymentForm">
+            <label>Nombre del dispositivo<input value={deviceLabel} onChange={e => setDeviceLabel(e.target.value)} placeholder="Ejemplo: Celular de José"/></label>
+            <button type="button" onClick={activateRealPush} disabled={activatingFcm || !fcmStatus.ready}>{activatingFcm ? 'Activando...' : '🔔 Activar notificaciones reales'}</button>
+          </div>
+          {!fcmStatus.ready && <p className="muted dangerText">Faltan: {fcmStatus.missing.join(', ')}. Completa las variables de Firebase y el archivo public/firebase-messaging-sw.js.</p>}
+          <p className="muted">Este botón obtiene el token FCM del navegador y lo guarda en Supabase en la tabla <b>mz_push_tokens</b>.</p>
+        </Card>
+        <Card title="Qué falta para que llegue desde otro celular" icon="🧭">
+          <ol className="orderedList">
+            <li>Crear proyecto Firebase y copiar configuración web.</li>
+            <li>Ejecutar el SQL <b>ETAPA30_3_PUSH_REAL_FCM.sql</b>.</li>
+            <li>Desplegar la función <b>send-chat-push</b> en Supabase.</li>
+            <li>Activar notificaciones reales en cada celular.</li>
+            <li>Enviar un mensaje desde otro usuario por MiZona Chat.</li>
+          </ol>
+        </Card>
+      </div>
+      <Card title="Dispositivos registrados en este navegador" icon="🗂️">
+        <div className="paymentTable compactTable">
+          {(cloud.fcmTokens || []).length ? cloud.fcmTokens.map(item => <article key={item.id}>
+            <div><b>{item.deviceLabel || 'Dispositivo'}</b><span>@{String(item.username || '').toUpperCase()} · {item.updatedAt ? new Date(item.updatedAt).toLocaleString('es-PE') : ''}</span></div>
+            <em className="payStatus ok">FCM</em>
+          </article>) : <p className="muted">Aún no hay tokens guardados en este navegador.</p>}
+        </div>
+      </Card>
     </>}
 
     {tab === 'files' && <>

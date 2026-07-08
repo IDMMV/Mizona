@@ -1,4 +1,5 @@
 import { hasSupabase, normalizeUsername, supabase } from './supabase';
+import { sendChatPushTrigger } from './fcmPush';
 import {
   blockLocalUser,
   createLocalGroup,
@@ -118,13 +119,20 @@ export async function createChatGroup({ title, memberIds = [], communityId = nul
 
 export async function sendTextMessage(conversationId, body, replyTo = null) {
   if (useLocal()) return sendLocalTextMessage(conversationId, body, replyTo);
+  const text = String(body || '').trim();
   const { data, error } = await supabase.rpc('mz_chat_send_message', {
     p_conversation_id: conversationId,
-    p_body: String(body || '').trim(),
+    p_body: text,
     p_message_type: 'text',
     p_reply_to: replyTo
   });
   if (error) throw error;
+  sendChatPushTrigger({
+    conversationId,
+    messageId: data,
+    title: 'Nuevo mensaje en MiZona Chat',
+    body: text.length > 90 ? `${text.slice(0, 90)}...` : text
+  }).catch(() => {});
   return data;
 }
 
@@ -167,6 +175,12 @@ export async function sendChatFile({ conversationId, file, userId }) {
     await supabase.from('mz_chat_messages').delete().eq('id', messageId);
     throw metadataError;
   }
+  sendChatPushTrigger({
+    conversationId,
+    messageId,
+    title: 'Nuevo archivo en MiZona Chat',
+    body: file.name
+  }).catch(() => {});
   return messageId;
 }
 

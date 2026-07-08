@@ -43,6 +43,7 @@ function seedCloudState() {
       { id: 'bucket-marketplace', name: 'marketplace-images', module: 'Marketplace', retentionDays: 180, encrypted: true, public: true, status: 'planned' }
     ],
     subscriptions: [],
+    fcmTokens: [],
     files: [
       { id: 'file-demo-1', name: 'Acta_comite_julio.pdf', module: 'Comités', ownerId: 'local-user-jose', sizeBytes: 218000, mimeType: 'application/pdf', retentionDays: 30, scanStatus: 'clean', cloudStatus: 'local_only', createdAt: now(), expiresAt: futureDays(30), sharedWith: ['local-user-maria'] },
       { id: 'file-demo-2', name: 'Tarea_ciencias_Ian.docx', module: 'CampusHugo', ownerId: 'local-user-ian', sizeBytes: 92000, mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', retentionDays: 7, scanStatus: 'clean', cloudStatus: 'local_only', createdAt: now(), expiresAt: futureDays(7), sharedWith: ['local-user-ana'] }
@@ -70,6 +71,7 @@ function normalize(state) {
     templates: Array.isArray(state?.templates) && state.templates.length ? state.templates : seeded.templates,
     buckets: Array.isArray(state?.buckets) && state.buckets.length ? state.buckets : seeded.buckets,
     subscriptions: Array.isArray(state?.subscriptions) ? state.subscriptions : [],
+    fcmTokens: Array.isArray(state?.fcmTokens) ? state.fcmTokens : [],
     files: Array.isArray(state?.files) && state.files.length ? state.files : seeded.files,
     sends: Array.isArray(state?.sends) ? state.sends : [],
     uploadQueue: Array.isArray(state?.uploadQueue) ? state.uploadQueue : [],
