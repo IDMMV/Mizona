@@ -236,7 +236,7 @@ export function switchLocalProfile(profileId) {
   return getActiveLocalProfile();
 }
 
-export function createLocalProfile({ displayName, username, accountType = 'adult', zone = '', role = 'user', schoolId = null, schoolRole = null }) {
+export function createLocalProfile({ displayName, username, accountType = 'adult', zone = '', role = 'user', schoolId = null, schoolRole = null, password = '', secretQuestion = '', secretAnswer = '' }) {
   const normalized = String(username || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '');
   if (!/^[A-Z0-9_]{4,20}$/.test(normalized)) throw new Error('El usuario debe tener entre 4 y 20 caracteres: letras, números o guion bajo.');
   const cleanName = String(displayName || '').trim();
@@ -256,7 +256,10 @@ export function createLocalProfile({ displayName, username, accountType = 'adult
       school_role: schoolRole || null,
       status: 'active',
       builtin: false,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      local_password_hash: String(password || '').trim() ? hashLocalSecret(password) : '',
+      secret_question: String(secretQuestion || '').trim(),
+      secret_answer_hash: String(secretAnswer || '').trim() ? hashLocalSecret(normalizeLocalSecret(secretAnswer)) : ''
     }));
     draft.preferencesByUser[profileId] = { community: true, chat: true, offers: true, courses: false, ride: true };
     addAudit(draft, 'local_profile_create', 'profile', profileId, normalized);
@@ -300,6 +303,80 @@ export function deleteLocalProfile(profileId) {
     addAudit(draft, 'local_profile_delete', 'profile', profileId, row.username);
   }, 'profile-delete');
   return true;
+}
+
+export function localProfileRequiresPassword(username) {
+  const normalized = String(username || '').trim().toUpperCase();
+  const state = readLocalState();
+  const row = state.directory.find(item => String(item.username || '').toUpperCase() === normalized && item.status === 'active');
+  return Boolean(row?.local_password_hash);
+}
+
+export function verifyLocalProfilePassword(username, password) {
+  const normalized = String(username || '').trim().toUpperCase();
+  const state = readLocalState();
+  const row = state.directory.find(item => String(item.username || '').toUpperCase() === normalized && item.status === 'active');
+  if (!row) throw new Error('No existe un perfil local con ese usuario.');
+  if (!row.local_password_hash) return true;
+  if (row.local_password_hash !== hashLocalSecret(password || '')) throw new Error('Contraseña local incorrecta.');
+  return true;
+}
+
+export function updateLocalProfileSecurity({ currentPassword = '', newPassword = '', secretQuestion = '', secretAnswer = '' }) {
+  const profileId = getActiveLocalProfileId();
+  const state = readLocalState();
+  const row = state.directory.find(item => item.id === profileId);
+  if (!row) throw new Error('El perfil local no existe.');
+  if (row.local_password_hash && row.local_password_hash !== hashLocalSecret(currentPassword || '')) throw new Error('La contraseña actual no es correcta.');
+  const cleanPassword = String(newPassword || '').trim();
+  if (cleanPassword && cleanPassword.length < 4) throw new Error('La nueva contraseña debe tener como mínimo 4 caracteres.');
+  mutateLocalState(draft => {
+    const target = draft.directory.find(item => item.id === profileId);
+    if (!target) throw new Error('El perfil local no existe.');
+    if (cleanPassword) target.local_password_hash = hashLocalSecret(cleanPassword);
+    if (String(secretQuestion || '').trim()) target.secret_question = String(secretQuestion || '').trim();
+    if (String(secretAnswer || '').trim()) target.secret_answer_hash = hashLocalSecret(normalizeLocalSecret(secretAnswer));
+    addAudit(draft, 'local_security_update', 'profile', profileId, 'Contraseña/pregunta local actualizada');
+  }, 'profile-security-update');
+  return true;
+}
+
+export function getLocalRecoveryQuestion(username) {
+  const normalized = String(username || '').trim().toUpperCase();
+  const state = readLocalState();
+  const row = state.directory.find(item => String(item.username || '').toUpperCase() === normalized && item.status === 'active');
+  if (!row) throw new Error('No existe un perfil local con ese usuario.');
+  if (!row.secret_question || !row.secret_answer_hash) throw new Error('Ese perfil aún no tiene pregunta secreta configurada.');
+  return row.secret_question;
+}
+
+export function recoverLocalProfilePassword({ username = '', secretAnswer = '', newPassword = '' }) {
+  const normalized = String(username || '').trim().toUpperCase();
+  const cleanPassword = String(newPassword || '').trim();
+  if (cleanPassword.length < 4) throw new Error('La nueva contraseña debe tener como mínimo 4 caracteres.');
+  mutateLocalState(draft => {
+    const row = draft.directory.find(item => String(item.username || '').toUpperCase() === normalized && item.status === 'active');
+    if (!row) throw new Error('No existe un perfil local con ese usuario.');
+    if (!row.secret_question || !row.secret_answer_hash) throw new Error('Ese perfil no tiene recuperación configurada.');
+    if (row.secret_answer_hash !== hashLocalSecret(normalizeLocalSecret(secretAnswer))) throw new Error('La respuesta secreta no es correcta.');
+    row.local_password_hash = hashLocalSecret(cleanPassword);
+    addAudit(draft, 'local_password_recovery', 'profile', row.id, 'Contraseña local recuperada');
+  }, 'profile-password-recovery');
+  return true;
+}
+
+function normalizeLocalSecret(value) {
+  return String(value || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function hashLocalSecret(value) {
+  const text = String(value || '');
+  let hash = 2166136261;
+  for (let i = 0; i < text.length; i += 1) {
+    hash ^= text.charCodeAt(i);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return `local-${(hash >>> 0).toString(16)}`;
 }
 
 function readProfile() {

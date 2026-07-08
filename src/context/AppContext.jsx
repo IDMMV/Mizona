@@ -15,7 +15,8 @@ import {
   markLocalNotification,
   subscribeLocalData,
   switchLocalProfile,
-  updateActiveLocalProfile
+  updateActiveLocalProfile,
+  verifyLocalProfilePassword
 } from '../lib/localStore';
 
 const AppContext = createContext(null);
@@ -287,14 +288,14 @@ export function AppProvider({ children }) {
     }
   }, []);
 
-  const signUp = useCallback(async ({ email, password, username, displayName, accountType, zone, termsAccepted }) => {
+  const signUp = useCallback(async ({ email, password, username, displayName, accountType, zone, secretQuestion, secretAnswer, termsAccepted }) => {
     if (!termsAccepted) throw new Error('Debes aceptar los términos, privacidad y reglas de seguridad.');
     const normalized = normalizeUsername(username);
     if (!/^[a-z0-9_]{4,20}$/.test(normalized)) throw new Error('El usuario debe tener entre 4 y 20 caracteres: letras, números o guion bajo.');
 
     if (!cloudActive) {
       setLocalSignedOut(false);
-      const next = createLocalProfile({ displayName, username: normalized, accountType, zone, role: 'user' });
+      const next = createLocalProfile({ displayName, username: normalized, accountType, zone, role: 'user', password, secretQuestion, secretAnswer });
       setProfileState(next);
       setLocalProfiles(listLocalProfiles());
       setSession({ user: { id: next.id, email: String(email || '').trim().toLowerCase(), local: true } });
@@ -323,7 +324,8 @@ export function AppProvider({ children }) {
       setLocalSignedOut(false);
       const clean = String(identifier || '').trim().toUpperCase();
       const match = listLocalProfiles().find(item => String(item.username).toUpperCase() === clean);
-      if (!match) throw new Error('No existe un perfil local con ese usuario. Créalo en Laboratorio local.');
+      if (!match) throw new Error('No existe un perfil local con ese usuario. Créalo en Mi Cuenta > Acceso.');
+      verifyLocalProfilePassword(clean, password);
       const next = switchLocalProfile(match.id);
       setProfileState(next);
       setLocalProfiles(listLocalProfiles());

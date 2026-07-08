@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, CheckCircle2, Cloud, CloudOff, Database, Download, KeyRound, LockKeyhole, LogOut, Mail, Save, ShieldCheck, Upload, UserRound, Wifi } from 'lucide-react';
+import { Bell, CheckCircle2, Cloud, CloudOff, Database, Download, Eye, EyeOff, HelpCircle, KeyRound, LockKeyhole, LogOut, Mail, Save, ShieldCheck, Upload, UserRound, Wifi } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { friendlyAuthError } from '../lib/supabase';
-import { exportLocalBackup, getLocalPreferences, importLocalBackup, resetLocalData, saveLocalPreferences } from '../lib/localStore';
+import { exportLocalBackup, getLocalPreferences, getLocalRecoveryQuestion, importLocalBackup, recoverLocalProfilePassword, resetLocalData, saveLocalPreferences, updateLocalProfileSecurity } from '../lib/localStore';
 import { useApp } from '../context/AppContext';
+
+
+function PasswordField({ label, name, minLength = 4, placeholder = '', autoComplete = 'current-password', required = false }) {
+  const [visible, setVisible] = useState(false);
+  return <label>{label}<span className="passwordField"><input name={name} type={visible ? 'text' : 'password'} minLength={minLength} placeholder={placeholder} autoComplete={autoComplete} required={required}/><button type="button" aria-label={visible ? 'Ocultar contraseña' : 'Ver contraseña'} onClick={() => setVisible(v => !v)}>{visible ? <EyeOff size={17}/> : <Eye size={17}/>}</button></span></label>;
+}
 
 export default function Account({ initialTab = 'profile', cloudOnly = false }) {
   const {
@@ -18,6 +24,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
   const [busy, setBusy] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [notifications, setNotifications] = useState(getLocalPreferences);
+  const [recoveryQuestion, setRecoveryQuestion] = useState('');
   const importInput = useRef(null);
   const canLogout = isAuthenticated || (profile?.id && profile.id !== 'local-guest') || profile?.username === 'JOSE1985';
 
@@ -49,7 +56,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     run(async () => {
       const result = await signUp({
         displayName: form.get('displayName'), username: form.get('username'), accountType: form.get('accountType'),
-        zone: form.get('zone'), email: form.get('email'), password: form.get('password'), termsAccepted: Boolean(form.get('terms'))
+        zone: form.get('zone'), email: form.get('email'), password: form.get('password'), secretQuestion: form.get('secretQuestion'), secretAnswer: form.get('secretAnswer'), termsAccepted: Boolean(form.get('terms'))
       });
       setMessage(result?.local ? 'Perfil local creado en este dispositivo.' : result?.session ? 'Cuenta creada e iniciada.' : 'Cuenta creada. Revisa tu correo para confirmarla.');
     });
@@ -72,6 +79,48 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
       await updatePassword(password);
       event.currentTarget.reset();
       setMessage('Contraseña actualizada correctamente.');
+    });
+  };
+
+  const submitLocalSecurity = event => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const newPassword = String(form.get('newPassword') || '');
+    const confirmation = String(form.get('confirmation') || '');
+    run(async () => {
+      if (newPassword && newPassword !== confirmation) throw new Error('Las contraseñas no coinciden.');
+      updateLocalProfileSecurity({
+        currentPassword: form.get('currentPassword'),
+        newPassword,
+        secretQuestion: form.get('secretQuestion'),
+        secretAnswer: form.get('secretAnswer')
+      });
+      event.currentTarget.reset();
+      setMessage('Acceso local actualizado correctamente.');
+    });
+  };
+
+  const loadLocalRecoveryQuestion = event => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    run(async () => {
+      const question = getLocalRecoveryQuestion(form.get('username'));
+      setRecoveryQuestion(question);
+      setMessage('Pregunta secreta encontrada. Responde para crear una nueva contraseña.');
+    });
+  };
+
+  const submitLocalRecovery = event => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const newPassword = String(form.get('newPassword') || '');
+    const confirmation = String(form.get('confirmation') || '');
+    run(async () => {
+      if (newPassword !== confirmation) throw new Error('Las contraseñas no coinciden.');
+      recoverLocalProfilePassword({ username: form.get('username'), secretAnswer: form.get('secretAnswer'), newPassword });
+      event.currentTarget.reset();
+      setRecoveryQuestion('');
+      setMessage('Contraseña recuperada. Ahora puedes iniciar sesión local.');
     });
   };
 
@@ -154,14 +203,65 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     </div>}
 
     {tab === 'access' && <>
-      {dataMode === 'local' ? <div className="grid2">
-        {canLogout ? <Card title="Sesión local activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Identificador: {profile.id}</small><small>Rol local: {profile.role}</small></div><p className="muted">El laboratorio local no guarda contraseñas reales. Al cerrar sesión tus datos permanecen en este dispositivo.</p><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card> : <Card title="Iniciar sesión local" icon="🔐"><form className="accountForm" onSubmit={submitLogin}><label>Usuario local<input name="identifier" placeholder="Ejemplo: JOSE1985" autoComplete="username" required/></label><small className="muted">En modo local se ingresa por usuario. La contraseña se usará cuando actives Supabase real.</small><button className="primary" disabled={busy}><KeyRound size={17}/>Ingresar</button></form></Card>}
-        {!isAuthenticated && <Card title="Crear perfil local" icon="✨"><form className="accountForm" onSubmit={submitRegister}><label>Nombre visible<input name="displayName" required/></label><label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label><label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label><label>Zona principal<input name="zone"/></label><label>Correo de recuperación opcional<input name="email" type="email"/></label><input name="terms" type="hidden" value="on"/><button className="primary" disabled={busy}><UserRound size={17}/>Crear perfil</button></form></Card>}
+      {dataMode === 'local' ? <>
+        {canLogout ? <div className="grid2 accountAccessGrid">
+          <Card title="Sesión local activa" icon="✅">
+            <div className="sessionSummary sessionActiveBox"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Rol local: {profile.role}</small><small>Zona: {profile.zone}</small></div>
+            <p className="muted">Estás dentro de MiZona con este perfil. Aquí puedes proteger el acceso, cambiar contraseña, configurar recuperación o cerrar sesión.</p>
+            <div className="buttonWrap"><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button><button className="ghost" onClick={() => setTab('profile')}><UserRound size={17}/>Ver perfil</button></div>
+          </Card>
+          <Card title="Cambiar contraseña y recuperación" icon="🔑">
+            <form className="accountForm" onSubmit={submitLocalSecurity}>
+              <PasswordField label="Contraseña actual" name="currentPassword" minLength={4} placeholder="Solo si ya configuraste una"/>
+              <PasswordField label="Nueva contraseña" name="newPassword" minLength={4} autoComplete="new-password" placeholder="mín. 4 caracteres"/>
+              <PasswordField label="Confirmar nueva contraseña" name="confirmation" minLength={4} autoComplete="new-password" placeholder="repite la contraseña"/>
+              <label>Pregunta secreta para recuperar<input name="secretQuestion" placeholder="Ej. ¿Ciudad natal?"/></label>
+              <label>Respuesta secreta<input name="secretAnswer" placeholder="Tu respuesta"/></label>
+              <button className="primary" disabled={busy}><KeyRound size={17}/>Guardar cambios</button>
+            </form>
+          </Card>
+        </div> : <div className="accountAuthGrid">
+          <Card title="Iniciar sesión local" icon="🔐">
+            <form className="accountForm" onSubmit={submitLogin}>
+              <label>Usuario local<input name="identifier" placeholder="Ejemplo: JOSE1985" autoComplete="username" required/></label>
+              <PasswordField label="Contraseña" name="password" minLength={4} placeholder="Si no configuraste, puedes dejarla vacía" autoComplete="current-password"/>
+              <button className="primary" disabled={busy}><KeyRound size={17}/>Ingresar</button>
+            </form>
+          </Card>
+          <Card title="Recuperar contraseña local" icon="🛟">
+            <form className="accountForm" onSubmit={loadLocalRecoveryQuestion}>
+              <label>Usuario local<input name="username" placeholder="Ejemplo: JOSE1985" required/></label>
+              <button className="ghost" disabled={busy}><HelpCircle size={17}/>Buscar pregunta secreta</button>
+            </form>
+            {recoveryQuestion && <form className="accountForm recoveryForm" onSubmit={submitLocalRecovery}>
+              <label>Usuario local<input name="username" placeholder="Repite tu usuario" required/></label>
+              <label>Pregunta secreta<input value={recoveryQuestion} readOnly/></label>
+              <label>Respuesta secreta<input name="secretAnswer" required/></label>
+              <PasswordField label="Nueva contraseña" name="newPassword" minLength={4} autoComplete="new-password" required/>
+              <PasswordField label="Confirmar nueva contraseña" name="confirmation" minLength={4} autoComplete="new-password" required/>
+              <button className="primary" disabled={busy}><KeyRound size={17}/>Cambiar contraseña</button>
+            </form>}
+          </Card>
+          <Card title="Crear perfil local" icon="✨">
+            <form className="accountForm" onSubmit={submitRegister}>
+              <label>Nombre visible<input name="displayName" required/></label>
+              <label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label>
+              <label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label>
+              <label>Zona principal<input name="zone"/></label>
+              <label>Correo de recuperación opcional<input name="email" type="email"/></label>
+              <PasswordField label="Contraseña local" name="password" minLength={4} autoComplete="new-password" placeholder="opcional, mín. 4"/>
+              <label>Pregunta secreta<input name="secretQuestion" placeholder="Ej. ¿Ciudad natal?"/></label>
+              <label>Respuesta secreta<input name="secretAnswer" placeholder="Tu respuesta"/></label>
+              <input name="terms" type="hidden" value="on"/>
+              <button className="primary" disabled={busy}><UserRound size={17}/>Crear perfil</button>
+            </form>
+          </Card>
+        </div>}
         <Card title="Conexión futura" icon="☁️"><p className="muted">Cuando Supabase vuelva a estar estable podremos cambiar a modo nube y verificar las Etapas 10, 11 y 12.</p><button className="ghost" disabled={!backendConfigured} onClick={() => { setDataMode('cloud'); setMessage(backendConfigured ? 'Modo nube solicitado. Recarga la página para verificar la sesión.' : 'Las variables de Supabase no están configuradas.'); }}><Cloud size={17}/>Intentar modo nube después</button>{!backendConfigured && <small className="muted">VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY no están configuradas.</small>}</Card>
-      </div> : <>
+      </> : <>
         {authLoading && <Card title="Verificando sesión" icon="⏳"><p className="muted">Comprobando tu acceso...</p></Card>}
-        {!authLoading && canLogout && <div className="grid2"><Card title="Sesión de nube activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>{user?.email}</small><small>Rol: {profile.role}</small></div><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card><Card title="Cambiar contraseña" icon="🔑"><form className="accountForm" onSubmit={submitPassword}><label>Nueva contraseña<input name="password" type="password" minLength="8" required/></label><label>Repetir contraseña<input name="confirmation" type="password" minLength="8" required/></label><button className="primary" disabled={busy}><KeyRound size={17}/>Actualizar contraseña</button></form></Card></div>}
-        {!authLoading && !canLogout && <div className="accountAuthGrid"><Card title="Iniciar sesión" icon="🔐"><form className="accountForm" onSubmit={submitLogin}><label>Usuario o correo<input name="identifier" autoComplete="username" required/></label><label>Contraseña<input name="password" type="password" minLength="6" required/></label><button className="primary" disabled={busy || !backendConnected}><KeyRound size={17}/>Ingresar</button></form></Card><Card title="Crear cuenta" icon="✨"><form className="accountForm" onSubmit={submitRegister}><label>Nombre visible<input name="displayName" required/></label><label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label><label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label><label>Zona principal<input name="zone"/></label><label>Correo<input name="email" type="email" required/></label><label>Contraseña<input name="password" type="password" minLength="8" required/></label><label className="termsCheck"><input name="terms" type="checkbox" required/>Acepto términos, privacidad y reglas de seguridad.</label><button className="primary" disabled={busy || !backendConnected}><UserRound size={17}/>Registrarme</button></form></Card><Card title="Recuperar contraseña" icon="📧"><form className="accountForm" onSubmit={submitRecovery}><label>Correo<input name="email" type="email" required/></label><button className="ghost" disabled={busy || !backendConnected}><Mail size={17}/>Enviar enlace</button></form></Card></div>}
+        {!authLoading && canLogout && <div className="grid2"><Card title="Sesión de nube activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>{user?.email}</small><small>Rol: {profile.role}</small></div><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card><Card title="Cambiar contraseña" icon="🔑"><form className="accountForm" onSubmit={submitPassword}><PasswordField label="Nueva contraseña" name="password" minLength={8} autoComplete="new-password" required/><PasswordField label="Repetir contraseña" name="confirmation" minLength={8} autoComplete="new-password" required/><button className="primary" disabled={busy}><KeyRound size={17}/>Actualizar contraseña</button></form></Card></div>}
+        {!authLoading && !canLogout && <div className="accountAuthGrid"><Card title="Iniciar sesión" icon="🔐"><form className="accountForm" onSubmit={submitLogin}><label>Usuario o correo<input name="identifier" autoComplete="username" required/></label><PasswordField label="Contraseña" name="password" minLength={6} required/><button className="primary" disabled={busy || !backendConnected}><KeyRound size={17}/>Ingresar</button></form></Card><Card title="Crear cuenta" icon="✨"><form className="accountForm" onSubmit={submitRegister}><label>Nombre visible<input name="displayName" required/></label><label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label><label>Tipo de cuenta<select name="accountType"><option value="adult">Adulto</option><option value="student">Estudiante</option><option value="business">Negocio</option><option value="organization">Organización</option></select></label><label>Zona principal<input name="zone"/></label><label>Correo<input name="email" type="email" required/></label><PasswordField label="Contraseña" name="password" minLength={8} autoComplete="new-password" required/><label className="termsCheck"><input name="terms" type="checkbox" required/>Acepto términos, privacidad y reglas de seguridad.</label><button className="primary" disabled={busy || !backendConnected}><UserRound size={17}/>Registrarme</button></form></Card><Card title="Recuperar contraseña" icon="📧"><form className="accountForm" onSubmit={submitRecovery}><label>Correo<input name="email" type="email" required/></label><button className="ghost" disabled={busy || !backendConnected}><Mail size={17}/>Enviar enlace</button></form></Card></div>}
         <button className="ghost" onClick={() => setDataMode('local')}><CloudOff size={17}/>Volver al modo local</button>
       </>}
     </>}
@@ -173,7 +273,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
 
     {tab === 'notifications' && <Card title="Qué deseas recibir" icon="🔔"><div className="preferenceList">{Object.entries({ community: 'Comunicados de mi comunidad', chat: 'Mensajes e invitaciones', offers: 'Beneficios y oportunidades', courses: 'Recordatorios de CampusHugo', ride: 'Estados de viajes y envíos' }).map(([key, label]) => <label key={key}><span><Bell size={17}/>{label}</span><input type="checkbox" checked={Boolean(notifications[key])} onChange={event => setNotifications(current => ({ ...current, [key]: event.target.checked }))}/></label>)}</div><button className="primary" onClick={savePreferences}><Save size={17}/>Guardar preferencias</button></Card>}
 
-    {tab === 'security' && <div className="grid2"><Card title="Privacidad por defecto" icon="🛡️"><div className="preferenceList"><label><span><LockKeyhole size={17}/>Buscarme solo por usuario exacto</span><input type="checkbox" defaultChecked/></label><label><span><ShieldCheck size={17}/>Bloquear contacto externo para estudiantes</span><input type="checkbox" defaultChecked/></label><label><span><UserRound size={17}/>Mostrar comunidad en perfil</span><input type="checkbox"/></label></div></Card><Card title="Límites del modo local" icon="⚠️"><ul className="list"><li>Los datos solo existen en este navegador y dispositivo.</li><li>Un respaldo JSON no incluye el contenido binario de archivos adjuntos.</li><li>No hay verificación real de identidad ni contraseña.</li><li>No se sincroniza todavía con otros usuarios o equipos.</li><li>La seguridad multiusuario se activará al recuperar el backend.</li></ul></Card></div>}
+    {tab === 'security' && <div className="grid2"><Card title="Privacidad por defecto" icon="🛡️"><div className="preferenceList"><label><span><LockKeyhole size={17}/>Buscarme solo por usuario exacto</span><input type="checkbox" defaultChecked/></label><label><span><ShieldCheck size={17}/>Bloquear contacto externo para estudiantes</span><input type="checkbox" defaultChecked/></label><label><span><UserRound size={17}/>Mostrar comunidad en perfil</span><input type="checkbox"/></label></div></Card><Card title="Límites del modo local" icon="⚠️"><ul className="list"><li>Los datos solo existen en este navegador y dispositivo.</li><li>Un respaldo JSON no incluye el contenido binario de archivos adjuntos.</li><li>La contraseña local protege este navegador; la seguridad real multiusuario se activará con Supabase.</li><li>No se sincroniza todavía con otros usuarios o equipos.</li><li>La seguridad multiusuario se activará al recuperar el backend.</li></ul></Card></div>}
 
     {tab === 'install' && <div className="installCard"><div className="installPhone"><span>MZ</span><b>MiZona</b><small>Tu comunidad en una app</small></div><div><h2>Instala MiZona como aplicación</h2><p>La PWA conserva la interfaz y los datos locales en conexiones inestables.</p><ul className="list"><li>Acceso directo desde celular, tablet o PC.</li><li>Chat local y notificaciones disponibles en el dispositivo.</li><li>Los servicios externos seguirán necesitando internet.</li></ul><button className="primary" onClick={install}><Download size={18}/>Instalar MiZona</button></div></div>}
   </div>;
