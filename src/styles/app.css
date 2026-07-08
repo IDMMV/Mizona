@@ -299,3 +299,5 @@
  .paymentSummaryStrip span:first-child{grid-column:1/-1}
 }
 @media(max-width:620px){.paymentSummaryStrip{grid-template-columns:1fr}.filtersGrid{grid-template-columns:1fr!important}}
+.paymentViewTabs{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 12px}.paymentViewTabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer}.paymentViewTabs button.active{background:#0f2e68;color:#fff;border-color:#0f2e68;box-shadow:0 8px 22px rgba(15,46,104,.18)}
+@media(max-width:760px){.paymentViewTabs{display:grid;grid-template-columns:1fr 1fr}.paymentViewTabs button{width:100%}}
