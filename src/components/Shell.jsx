@@ -33,6 +33,9 @@ export default function Shell({ page, setPage, children }) {
         })}
       </nav>
       <div className="phaseBox"><b>Etapa actual</b><span>Etapa 30 · Finanzas personales privadas</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
+      <button className="sidebarLogoutBtn" onClick={() => { void signOut().finally(() => { setPage('settings'); setOpen(false); }); }} aria-label="Cerrar sesión" title="Cerrar sesión">
+        <LogOut size={18}/><span>Cerrar sesión</span>
+      </button>
     </aside>
     <main>
       <header className="topbar">
