@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle, Ban, Check, ChevronLeft, CircleUserRound, Download, File,
   FileUp, Image, Info, Loader2, MessageCircle, MessageSquarePlus, MoreVertical,
-  Paperclip, Plus, RefreshCw, Search, Send, ShieldCheck, UserPlus, Users, X
+  Paperclip, Plus, RefreshCw, Search, Send, ShieldCheck, SlidersHorizontal, UserPlus, Users, X
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { listCommunities, listMyMemberships, loadCommunityBundle } from '../lib/community';
@@ -186,11 +186,27 @@ export default function Chat({ setPage }) {
   const [showSearch, setShowSearch] = useState(false);
   const [showGroup, setShowGroup] = useState(false);
   const [mobileConversation, setMobileConversation] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const fileInput = useRef(null);
   const messageEnd = useRef(null);
 
   const selected = useMemo(() => conversations.find(item => item.id === selectedId) || null, [conversations, selectedId]);
   const receivedPending = requests.filter(item => item.direction === 'received' && item.status === 'pending');
+  const isStudent = String(profile?.account_type || profile?.type || profile?.role || '').toLowerCase().includes('student') || String(profile?.role || '').toLowerCase().includes('alumno');
+  const conversationName = item => item?.type === 'direct' ? item.peer_display_name || item.peer_username || 'Conversación' : item?.title || 'Grupo';
+  const directConversations = useMemo(() => conversations.filter(item => item.type === 'direct'), [conversations]);
+  const groupConversations = useMemo(() => conversations.filter(item => item.type !== 'direct'), [conversations]);
+  const filteredConversations = useMemo(() => {
+    const source = tab === 'groups' ? groupConversations : conversations;
+    const q = searchText.trim().toLowerCase();
+    if (!q) return source;
+    return source.filter(item => [conversationName(item), item.last_message, item.peer_username, item.title].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
+  }, [tab, conversations, groupConversations, searchText]);
+  const filteredContacts = useMemo(() => {
+    const q = searchText.trim().toLowerCase();
+    if (!q) return contacts;
+    return contacts.filter(item => [item.display_name, item.username, item.zone].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
+  }, [contacts, searchText]);
 
   const refreshLists = async (keepSelection = true) => {
     setNotice('');
@@ -333,7 +349,6 @@ export default function Chat({ setPage }) {
     }
   };
 
-  const conversationName = item => item?.type === 'direct' ? item.peer_display_name || item.peer_username || 'Conversación' : item?.title || 'Grupo';
 
   if (backendConnected && !isAuthenticated) return <div className="chatLoginGate">
     <div><ShieldCheck size={48}/><h1>MiZona Chat protegido</h1><p>Inicia sesión para buscar contactos, recibir invitaciones y conversar de forma segura.</p><button onClick={() => setPage('settings')}>Ingresar o crear cuenta</button></div>
@@ -341,8 +356,8 @@ export default function Chat({ setPage }) {
 
   return <div className="chatRealPage">
     <div className="chatPageHeader">
-      <div><span>ETAPA 14 · LABORATORIO MULTIUSUARIO</span><h1>MiZona Chat</h1><p>Prueba conversaciones reales entre perfiles locales usando varias pestañas.</p></div>
-      <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button><button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button><button onClick={() => setShowSearch(true)}><UserPlus size={17}/> Agregar contacto</button></div>
+      <div><span>{isStudent ? 'CHAT SEGURO PARA ESTUDIANTES' : 'ETAPA 14 · LABORATORIO MULTIUSUARIO'}</span><h1>MiZona Chat</h1><p>{isStudent ? 'Elige chats, grupos, contactos o solicitudes permitidas. No quedas encerrado en una conversación.' : 'Prueba conversaciones reales entre perfiles locales usando varias pestañas.'}</p></div>
+      <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button>{!isStudent && <button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button>}<button onClick={() => setShowSearch(true)}><UserPlus size={17}/> {isStudent ? 'Buscar permitido' : 'Agregar contacto'}</button></div>
     </div>
 
     {!backendConnected && <ChatNotice kind="success">Modo local multiusuario activo. Cada pestaña puede usar un perfil diferente y los cambios se comparten en este navegador.</ChatNotice>}
@@ -350,20 +365,25 @@ export default function Chat({ setPage }) {
 
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>
       <aside className="chatDirectory">
-        <div className="chatTabs">
-          <button className={tab === 'chats' ? 'active' : ''} onClick={() => setTab('chats')}><MessageCircle size={16}/> Chats</button>
-          <button className={tab === 'contacts' ? 'active' : ''} onClick={() => setTab('contacts')}><CircleUserRound size={16}/> Contactos</button>
-          <button className={tab === 'requests' ? 'active' : ''} onClick={() => setTab('requests')}><UserPlus size={16}/> Solicitudes{receivedPending.length > 0 && <i>{receivedPending.length}</i>}</button>
+        <div className="chatDirectoryTop">
+          <div className="chatSearchBar"><Search size={17}/><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder="Buscar conversación o usuario"/><button type="button" title="Filtros"><SlidersHorizontal size={16}/></button></div>
+          {isStudent && <ChatNotice kind="success">Solo verás contactos y grupos aprobados para tu cuenta estudiantil.</ChatNotice>}
+          <div className="chatTabs">
+            <button className={tab === 'chats' ? 'active' : ''} onClick={() => setTab('chats')}><MessageCircle size={16}/> Chats</button>
+            <button className={tab === 'groups' ? 'active' : ''} onClick={() => setTab('groups')}><Users size={16}/> Grupos</button>
+            <button className={tab === 'contacts' ? 'active' : ''} onClick={() => setTab('contacts')}><CircleUserRound size={16}/> Contactos</button>
+            <button className={tab === 'requests' ? 'active' : ''} onClick={() => setTab('requests')}><UserPlus size={16}/> Solicitudes{receivedPending.length > 0 && <i>{receivedPending.length}</i>}</button>
+          </div>
         </div>
 
-        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : tab === 'chats' ? <div className="conversationList">
-          {conversations.length ? conversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}>
+        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">
+          {filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}>
             <Avatar name={conversationName(item)} image={item.peer_avatar_url}/>
-            <span><b>{conversationName(item)}</b><small>{item.last_message || 'Conversación nueva'}</small></span>
+            <span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (item.last_message || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${item.last_message || 'Sin mensajes recientes'}`}</small></span>
             <em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em>
-          </button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>Aún no hay conversaciones</b><span>Agrega un contacto o crea un grupo.</span></div>}
+          </button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}
         </div> : tab === 'contacts' ? <div className="contactListReal">
-          {contacts.length ? contacts.map(contact => <article key={contact.id}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" onClick={() => startDirect(contact)}><MessageCircle size={17}/></button><button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button></div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><button onClick={() => setShowSearch(true)}>Buscar usuario</button></div>}
+          {filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}
         </div> : <div className="requestListReal">
           {requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}
         </div>}
@@ -374,8 +394,9 @@ export default function Chat({ setPage }) {
           <header className="conversationHeader">
             <button className="iconBtn chatBack" onClick={() => setMobileConversation(false)}><ChevronLeft/></button>
             <Avatar name={conversationName(selected)} image={selected.peer_avatar_url}/>
-            <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'} · elimina mensajes en {selected.retention_days || 7} días</span></div>
-            <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); } }}><MoreVertical/></button>
+            <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type?.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'} · elimina mensajes en {selected.retention_days || 7} días</span></div>
+            <button className="chatViewListBtn" type="button" onClick={() => setMobileConversation(false)}>Ver chats</button>
+            <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); setMobileConversation(false); } }}><MoreVertical/></button>
           </header>
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
           <div className="messageStream">
@@ -411,6 +432,6 @@ export default function Chat({ setPage }) {
     </div>
 
     {showSearch && <ContactSearch onChanged={() => refreshLists(true)} onClose={() => setShowSearch(false)}/>}
-    {showGroup && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); setSelectedId(id); setMobileConversation(true); }} onClose={() => setShowGroup(false)}/>}
+    {showGroup && !isStudent && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); setSelectedId(id); setMobileConversation(true); }} onClose={() => setShowGroup(false)}/>}
   </div>;
 }

@@ -924,3 +924,55 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   .committeeProPage .paymentSummaryStrip{grid-template-columns:1fr!important}
   .committeeProPage .committeeKpis{grid-template-columns:1fr!important}
 }
+
+/* Etapa 30.21 · Chat alumno navegable */
+.chatDirectoryTop{display:grid;gap:8px;background:#fff;border-bottom:1px solid var(--line);padding:10px}
+.chatSearchBar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 9px 8px 12px;box-shadow:0 8px 20px rgba(15,23,42,.035)}
+.chatSearchBar input{border:0;outline:0;background:transparent;font:inherit;min-width:0;color:var(--ink)}
+.chatSearchBar button{width:34px;height:34px;border:1px solid #dbe7f5;background:#f8fafc;color:#64748b;border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.chatDirectoryTop .chatNotice{font-size:11px;padding:9px 10px;border-radius:13px}
+.chatDirectoryTop .chatTabs{padding:0;border-bottom:0;background:transparent;grid-template-columns:repeat(4,minmax(0,1fr))}
+.chatDirectoryTop .chatTabs button{min-height:38px;background:#f8fafc;color:#526174;border:1px solid #e2e8f0}
+.chatDirectoryTop .chatTabs button.active{background:linear-gradient(135deg,var(--theme-primary,#0f766e),var(--theme-accent,#14b8a6));border-color:transparent;color:#fff;box-shadow:0 8px 20px rgba(15,118,110,.16)}
+.chatWorkspace{height:min(760px,calc(100vh - 205px))}
+.conversationHeader{grid-template-columns:auto auto minmax(0,1fr) auto auto;height:68px}
+.chatViewListBtn{border:1px solid var(--line);background:#fff;color:#17324a;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.chatViewListBtn::before{content:'☰';font-size:13px;color:var(--theme-primary,#0f766e)}
+.conversationList>button small{font-size:12px;line-height:1.25}
+.chatDirectoryEmpty span{max-width:260px;line-height:1.35}
+@media(max-width:760px){
+  .chatRealPage{gap:10px}
+  .chatPageHeader{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:0 10px 24px rgba(15,23,42,.05)}
+  .chatPageHeader>div:first-child>span{font-size:10px;color:var(--theme-primary,#0f766e)}
+  .chatPageHeader h1{font-size:1.35rem;margin:3px 0}
+  .chatHeaderActions{grid-template-columns:1fr 1fr;gap:8px}
+  .chatHeaderActions button{padding:10px 9px;border-radius:13px;font-size:12px}
+  .chatWorkspace{height:calc(100vh - 195px);min-height:610px;border-radius:22px;background:#fff;box-shadow:0 14px 32px rgba(15,23,42,.08)}
+  .chatDirectoryTop{position:sticky;top:0;z-index:3;padding:10px;background:rgba(255,255,255,.96);backdrop-filter:blur(12px)}
+  .chatDirectoryTop .chatTabs{display:flex;overflow-x:auto;gap:8px;scrollbar-width:none}
+  .chatDirectoryTop .chatTabs::-webkit-scrollbar{display:none}
+  .chatDirectoryTop .chatTabs button{min-width:max-content;padding:9px 13px;font-size:12px}
+  .chatDirectoryTop .chatTabs button svg{width:16px;height:16px}
+  .conversationList>button{padding:13px 12px;grid-template-columns:auto minmax(0,1fr) auto}
+  .chatAvatar{width:48px;height:48px;border-radius:16px}
+  .chatConversation{background:#f8fffc}
+  .conversationHeader{height:68px;grid-template-columns:auto auto minmax(0,1fr) auto auto;padding:9px 10px;gap:8px;position:sticky;top:0;z-index:4}
+  .conversationHeader .chatAvatar{width:42px;height:42px;border-radius:14px}
+  .conversationHeader>div:nth-child(3)>b{font-size:14px}
+  .conversationHeader>div:nth-child(3)>span{font-size:10px}
+  .chatViewListBtn{font-size:11px;padding:7px 9px}
+  .messageStream{padding:12px 10px 90px;gap:11px}
+  .messageRow{max-width:94%}
+  .messageBubble{border-radius:17px;padding:10px 12px;font-size:14px}
+  .messageComposer{position:sticky;bottom:0;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);grid-template-columns:auto minmax(0,1fr) 46px;padding:9px;box-shadow:0 -8px 22px rgba(15,23,42,.05)}
+  .messageComposer>input{height:44px;border-radius:15px;font-size:16px}
+  .messageComposer>button:last-child{height:44px;border-radius:15px;background:linear-gradient(135deg,var(--theme-primary,#0f766e),var(--theme-accent,#14b8a6))}
+  .retentionBanner{justify-content:flex-start;font-size:11px;line-height:1.35;padding:9px 12px}
+  .noConversationSelected{display:none}
+}
+@media(max-width:430px){
+  .chatDirectoryTop .chatNotice{font-size:10px}
+  .chatSearchBar{border-radius:15px}
+  .chatViewListBtn{max-width:86px;overflow:hidden;text-overflow:ellipsis}
+  .chatWorkspace{height:calc(100vh - 180px);min-height:600px}
+}
