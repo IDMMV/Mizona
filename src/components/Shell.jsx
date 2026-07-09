@@ -35,7 +35,7 @@ export default function Shell({ page, setPage, children }) {
         {visibleModules.map(module => {
           const Icon = module.icon;
           const badge = module.id === 'notifications' && unreadNotifications > 0 ? unreadNotifications : null;
-          return <button key={module.id} onClick={() => { setPage(module.id); setOpen(false); }} className={`navItem ${page === module.id ? 'active' : ''}`}>
+          return <button key={module.id} onClick={() => { setPage(module.id); setOpen(false); }} className={`navItem nav-${module.id} ${page === module.id ? 'active' : ''}`}>
             <Icon size={18}/><span>{module.label}</span>{badge ? <i className="navBadge">{badge}</i> : module.status !== 'active' && <small>{statusLabel[module.status]}</small>}
           </button>;
         })}
