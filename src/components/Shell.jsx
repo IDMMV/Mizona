@@ -7,7 +7,7 @@ import { canAccessModule } from '../lib/permissions';
 export default function Shell({ page, setPage, children }) {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('mizona-sidebar-collapsed') === '1');
-  const { moduleConfig, profile, isAdmin, isAuthenticated, backendConnected, authLoading, unreadNotifications, dataMode, online, syncQueueCount, signOut } = useApp();
+  const { moduleConfig, profile, isAdmin, isAuthenticated, backendConnected, authLoading, unreadNotifications, dataMode, online, syncQueueCount, signOut, uiColor, uiMode } = useApp();
 
   const canLogout = isAuthenticated || (profile?.id && profile.id !== 'local-guest') || profile?.username === 'JOSE1985';
 
@@ -23,7 +23,7 @@ export default function Shell({ page, setPage, children }) {
     localStorage.setItem('mizona-sidebar-collapsed', next ? '1' : '0');
   };
 
-  return <div className={`app ${open ? 'menuOpen' : ''} ${collapsed ? 'sidebarCollapsed' : ''}`}>
+  return <div className={`app theme-${uiColor || 'green'} mode-${uiMode || 'light'} ${open ? 'menuOpen' : ''} ${collapsed ? 'sidebarCollapsed' : ''}`}>
     {open && <button className="sidebarBackdrop" aria-label="Cerrar menú" onClick={() => setOpen(false)}/>}
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="brand">

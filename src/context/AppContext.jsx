@@ -24,6 +24,18 @@ const MODULE_STORAGE_KEY = 'mizona-v8-module-config';
 const PROFILE_STORAGE_KEY = 'mizona-v8-profile';
 const DATA_MODE_KEY = 'mizona-v8-data-mode-v13';
 const TERMS_VERSION = '2026-07';
+const UI_COLOR_KEY = 'mizona-v8-ui-color';
+const UI_MODE_KEY = 'mizona-v8-ui-mode';
+
+function readUiColor() {
+  const saved = localStorage.getItem(UI_COLOR_KEY);
+  return ['green', 'blue', 'purple'].includes(saved) ? saved : 'green';
+}
+
+function readUiMode() {
+  const saved = localStorage.getItem(UI_MODE_KEY);
+  return saved === 'dark' ? 'dark' : 'light';
+}
 
 const demoProfile = {
   id: 'local-user-jose',
@@ -128,6 +140,8 @@ export function AppProvider({ children }) {
   const [profile, setProfileState] = useState(() => readDataMode() === 'local' ? (isLocalSignedOut() ? guestProfile : getActiveLocalProfile()) : readStoredProfile());
   const [localProfiles, setLocalProfiles] = useState(listLocalProfiles);
   const [dataMode, setDataModeState] = useState(readDataMode);
+  const [uiColor, setUiColorState] = useState(readUiColor);
+  const [uiMode, setUiModeState] = useState(readUiMode);
   const [online, setOnline] = useState(() => navigator.onLine);
   const cloudActive = dataMode === 'cloud' && hasSupabase && online;
   const [session, setSession] = useState(() => dataMode === 'local' && !isLocalSignedOut() ? { user: { id: getActiveLocalProfile().id, email: null, local: true } } : null);
@@ -448,6 +462,21 @@ export function AppProvider({ children }) {
     return true;
   }, []);
 
+
+  const setUiColor = useCallback(color => {
+    const next = ['green', 'blue', 'purple'].includes(color) ? color : 'green';
+    localStorage.setItem(UI_COLOR_KEY, next);
+    setUiColorState(next);
+    return next;
+  }, []);
+
+  const setUiMode = useCallback(mode => {
+    const next = mode === 'dark' ? 'dark' : 'light';
+    localStorage.setItem(UI_MODE_KEY, next);
+    setUiModeState(next);
+    return next;
+  }, []);
+
   const unreadNotifications = notifications.filter(item => !item.read).length;
   const isAuthenticated = Boolean(session?.user);
   const isAdmin = Boolean(session?.user) && ['admin', 'super_admin'].includes(profile.role);
@@ -472,6 +501,10 @@ export function AppProvider({ children }) {
     clearBackendMessage: () => setBackendMessage(''),
     dataMode,
     setDataMode,
+    uiColor,
+    uiMode,
+    setUiColor,
+    setUiMode,
     online,
     notifications,
     unreadNotifications,
@@ -489,7 +522,7 @@ export function AppProvider({ children }) {
     refreshProfile: () => session?.user && loadProfile(session.user),
     refreshModules: loadModules,
     refreshCloudNotifications
-  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, refreshCloudNotifications, updateModuleStatus, resetModules]);
+  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, uiColor, uiMode, setUiColor, setUiMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, refreshCloudNotifications, updateModuleStatus, resetModules]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
