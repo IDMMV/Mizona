@@ -772,3 +772,49 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   .app .hero p,.app .committeeHero p,.app .businessHero p,.app .rideHero p,.app .benefitsHero p,.app .marketHero p{font-size:13px!important}
   .app .quickGrid{grid-template-columns:1fr!important}.app .card{padding:14px!important}.app .quick{min-height:48px!important;padding:12px!important}
 }
+
+/* Etapa 30.18 - experiencia completa: panel inteligente, navegación móvil y UI más compacta */
+:root{
+  --mz-nav-mobile-h:72px;
+  --mz-banner-radius:20px;
+  --mz-card-radius:18px;
+}
+.app .content{max-width:1680px;margin:0 auto;width:100%}
+.app .page{display:grid;gap:18px}
+.app .page h1{font-size:clamp(20px,1.8vw,26px)!important;letter-spacing:-.035em!important}
+.app .page h2{font-size:clamp(17px,1.35vw,21px)!important;letter-spacing:-.025em!important}
+.app .page h3{font-size:clamp(15px,1.1vw,18px)!important;letter-spacing:-.018em!important}
+.app .hero,.app .marketHero,.app .businessHero,.app .businessSuiteHero,.app .rideHero,.app .benefitsHero,.app .notificationHero,.app .communityHeroReal,.app .labHero,.app .financeHero,.app .aiHero,.app .campusHero,.app .newCommitteeHero{
+  min-height:auto!important;padding:20px 22px!important;border-radius:var(--mz-banner-radius)!important;align-items:center!important;
+}
+.app .hero h1,.app .marketHero h1,.app .businessHero h1,.app .businessSuiteHero h1,.app .rideHero h1,.app .benefitsHero h1,.app .notificationHero h1,.app .communityHeroReal h1,.app .labHero h1,.app .financeHero h1,.app .aiHero h1,.app .campusHero h1,.app .newCommitteeHero h1{
+  font-size:clamp(22px,1.9vw,30px)!important;line-height:1.08!important;
+}
+.app .heroStats span,.app .marketHeroStats span,.app .businessHeroStats span,.app .rideHeroStats span{padding:10px 12px!important;border-radius:13px!important;font-size:13px!important}
+.app .card,.app .quick,.app .moduleMini>div,.app .adminTable>div,.app .stats span{border-radius:var(--mz-card-radius)!important;box-shadow:0 10px 26px rgba(15,23,42,.055)!important}
+.app .primary,.app button.primary,.app .tabs button,.app .chip,.app .ghost,.app .zoneBtn,.app .profileBtn,.app .iconBtn{border-radius:13px!important}
+
+/* Panel inteligente */
+.panelSmartPage{gap:18px!important}
+.smartHero{background:linear-gradient(135deg,var(--hero-start) 0%,var(--hero-mid) 56%,var(--hero-end) 100%);color:#fff;border-radius:22px;padding:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.72fr);gap:22px;box-shadow:0 16px 42px color-mix(in srgb,var(--brand) 16%,transparent)}
+.smartHero h1{color:#fff!important;font-size:clamp(24px,2vw,34px)!important;margin:4px 0 8px!important}.smartHero p{color:rgba(255,255,255,.9)!important;max-width:780px}.smartHeroActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.smartHeroActions button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.13);color:#fff;border-radius:14px;padding:10px 13px;font-weight:850;cursor:pointer}.smartMetricGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.smartMetricGrid span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.21);border-radius:16px;padding:12px;display:grid;gap:3px}.smartMetricGrid b{color:#fff!important;font-size:clamp(20px,2vw,28px)!important}.smartMetricGrid small{color:rgba(255,255,255,.86)!important;font-weight:800}.smartMetricGrid em{color:rgba(255,255,255,.72);font-size:11px;font-style:normal}.smartOverview{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}.radarList{display:grid;gap:10px}.radarList button{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:11px;text-align:left;cursor:pointer}.radarList i,.quickActionGrid i{width:36px;height:36px;border-radius:12px;background:color-mix(in srgb,var(--brand) 13%,#fff);display:grid;place-items:center;font-style:normal}.radarList small,.quickActionGrid small{display:block;color:var(--muted)!important;font-weight:500}.radarList em{font-style:normal;color:var(--brand3);font-size:12px;font-weight:850}.quickActionGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.quickActionGrid button{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:14px 10px;display:grid;gap:7px;place-items:center;text-align:center;cursor:pointer}.sectionHeader{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:4px 0 10px}.sectionHeader h2{margin:0}.sectionHeader button{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:10px 12px;font-weight:800;cursor:pointer}.moduleStatusGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.moduleStatusGrid article{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:14px;display:grid;grid-template-columns:1fr auto;gap:5px;align-items:center;cursor:pointer}.moduleStatusGrid article span{color:var(--muted);font-size:12px}.moduleStatusGrid article .pill{grid-column:2;grid-row:1/3}
+
+/* Navegación móvil tipo app */
+.mobileBottomNav{display:none}
+@media(max-width:760px){
+  .app main{padding-bottom:calc(var(--mz-nav-mobile-h) + 8px)}
+  .mobileBottomNav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:0;right:0;bottom:0;height:var(--mz-nav-mobile-h);z-index:35;background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -10px 28px rgba(15,23,42,.08);backdrop-filter:blur(14px);padding:7px 6px calc(env(safe-area-inset-bottom,0px) + 5px)}
+  .mobileBottomNav button{border:0;background:transparent;color:var(--muted);display:grid;place-items:center;gap:2px;font-size:10px;font-weight:800;border-radius:13px;min-width:0}
+  .mobileBottomNav button svg{color:var(--muted)!important}.mobileBottomNav button.active{background:color-mix(in srgb,var(--brand) 12%,#fff);color:var(--brand3)}.mobileBottomNav button.active svg{color:var(--brand)!important}
+  .topbar{height:62px!important}.searchBox{height:42px!important}.runtimeBadge,.topbar .zoneBtn{display:none!important}.content{padding:12px!important}
+  .smartHero{grid-template-columns:1fr;padding:18px!important;border-radius:20px}.smartMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.smartHeroActions button{flex:1 1 120px}.smartOverview{grid-template-columns:1fr}.quickActionGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.quickActionGrid button{padding:10px 5px}.quickActionGrid small{display:none}.moduleStatusGrid{grid-template-columns:1fr}.sectionHeader{align-items:start}.sectionHeader button{display:none}
+  .app .hero,.app .marketHero,.app .businessHero,.app .businessSuiteHero,.app .rideHero,.app .benefitsHero,.app .notificationHero,.app .communityHeroReal,.app .labHero,.app .financeHero,.app .aiHero,.app .campusHero,.app .newCommitteeHero{padding:16px!important;border-radius:18px!important}
+  .app .heroStats span,.app .marketHeroStats span,.app .businessHeroStats span,.app .rideHeroStats span{font-size:12px!important;padding:9px!important}.app .page h1{font-size:21px!important}.app .page h2{font-size:18px!important}
+}
+@media(max-width:420px){.quickActionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.smartMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.smartHero h1{font-size:23px!important}}
+
+/* PWA y pantallas vacías más amigables */
+.app .emptyState,.app .soon{background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--soft) 55%,#fff))!important;border:1px dashed var(--line)!important;color:var(--muted)!important}.app .emptyState b,.app .soon b{color:var(--heading)!important}
+
+/* Impresión/reportes básicos */
+@media print{.sidebar,.topbar,.mobileBottomNav,.tabs,.navItem,.sidebarLogoutFinal{display:none!important}main{margin:0!important;width:100%!important}.content{padding:0!important}.card,.hero{box-shadow:none!important;break-inside:avoid}}

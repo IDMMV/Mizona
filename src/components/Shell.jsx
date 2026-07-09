@@ -16,6 +16,12 @@ export default function Shell({ page, setPage, children }) {
     return canAccessModule(profile, module.id);
   }), [moduleConfig, profile]);
 
+  const mobilePrimaryModules = useMemo(() => ['panel', 'committees', 'chat', 'business', 'more']
+    .map(id => id === 'more'
+      ? { id: 'more', label: 'Más', icon: Menu, target: 'menu' }
+      : visibleModules.find(module => module.id === id))
+    .filter(Boolean), [visibleModules]);
+
   const toggleSidebar = () => {
     if (window.matchMedia?.('(max-width: 980px)')?.matches) return setOpen(true);
     const next = !collapsed;
@@ -45,6 +51,15 @@ export default function Shell({ page, setPage, children }) {
         <LogOut size={18}/><span>Cerrar sesión</span>
       </button>
     </aside>
+    <div className="mobileBottomNav" aria-label="Navegación principal móvil">
+      {mobilePrimaryModules.map(module => {
+        const Icon = module.icon;
+        const active = module.id !== 'more' && page === module.id;
+        return <button key={module.id} className={active ? 'active' : ''} onClick={() => module.target === 'menu' ? setOpen(true) : setPage(module.id)}>
+          <Icon size={19}/><span>{module.label}</span>
+        </button>;
+      })}
+    </div>
     <main>
       <header className="topbar">
         <button className="iconBtn sidebarMasterToggle" onClick={toggleSidebar} title={collapsed ? 'Mostrar menú lateral' : 'Ocultar menú lateral'}><Menu size={20}/></button>
