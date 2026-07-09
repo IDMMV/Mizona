@@ -331,20 +331,15 @@ export default function Chat({ setPage }) {
   };
 
   const showChatList = () => {
+    // Botón interno tipo WhatsApp: vuelve a la lista sin salir del módulo Chat.
+    // No usamos history.back() aquí porque en algunos celulares el navegador salta
+    // a la pestaña anterior de MiZona. La tecla física Atrás sí conserva su flujo.
     setMobileConversation(false);
     setSelectedId(null);
     setTab('chats');
     setSearchText('');
     if (isMobileViewport()) {
-      const state = window.history.state || {};
-      if (state.chatView === 'conversation' && pushedMobileChatState.current) {
-        pushedMobileChatState.current = false;
-        window.history.back();
-        return;
-      }
-      if (state.chatView === 'conversation') {
-        window.history.replaceState({ mizonaPage: 'chat', mzPage: 'chat' }, '', '#chat');
-      }
+      window.history.replaceState({ mizonaPage: 'chat', mzPage: 'chat', chatView: 'list' }, '', '#chat');
       pushedMobileChatState.current = false;
     }
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);

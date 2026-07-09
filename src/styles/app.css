@@ -1282,3 +1282,84 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   body.mizona-chat-fullscreen .retentionBanner{min-height:38px!important;padding:8px 12px!important;font-size:11.5px!important;}
   body.mizona-chat-fullscreen .messageComposer{min-height:66px!important;grid-template-columns:44px minmax(0,1fr) 48px!important;}
 }
+
+/* ETAPA 30.28 - Chat móvil tipo WhatsApp y botón Ver chats sin salir del módulo */
+@media (max-width: 760px){
+  .chatRealPage.mobileChatListMode{background:#071317!important;min-height:calc(100dvh - 74px)!important;padding:0!important;}
+  .chatRealPage.mobileChatListMode .chatWorkspace{
+    height:calc(100dvh - 74px)!important;min-height:0!important;border:0!important;border-radius:0!important;
+    box-shadow:none!important;background:#071317!important;overflow:hidden!important;
+  }
+  .chatRealPage.mobileChatListMode .chatDirectory{
+    background:#071317!important;color:#f8fafc!important;border:0!important;position:absolute!important;inset:0!important;
+  }
+  .chatRealPage.mobileChatListMode .chatDirectoryTop{background:#071317!important;border:0!important;padding:16px 16px 10px!important;}
+  .chatRealPage.mobileChatListMode .chatDirectoryTop:before{
+    content:'MiZona Chat';display:block;color:#f8fafc;font-size:30px;font-weight:900;letter-spacing:-.04em;margin:4px 0 14px;
+  }
+  .chatRealPage.mobileChatListMode .chatSearchBar{
+    background:#1f2a30!important;border:0!important;border-radius:999px!important;height:48px!important;color:#cbd5e1!important;padding:0 14px!important;
+  }
+  .chatRealPage.mobileChatListMode .chatSearchBar input{background:transparent!important;color:#f8fafc!important;font-size:16px!important;}
+  .chatRealPage.mobileChatListMode .chatSearchBar input::placeholder{color:#94a3b8!important;}
+  .chatRealPage.mobileChatListMode .chatSearchBar button{display:none!important;}
+  .chatRealPage.mobileChatListMode .chatTabs{
+    display:flex!important;gap:8px!important;background:#071317!important;border:0!important;padding:12px 0 4px!important;overflow-x:auto!important;
+  }
+  .chatRealPage.mobileChatListMode .chatTabs button{
+    flex:0 0 auto!important;background:#152127!important;color:#cbd5e1!important;border-radius:999px!important;padding:10px 14px!important;font-size:12px!important;
+  }
+  .chatRealPage.mobileChatListMode .chatTabs button.active{background:#0f766e!important;color:#fff!important;}
+  .chatRealPage.mobileChatListMode .conversationList{background:#071317!important;padding:0 10px 82px!important;}
+  .chatRealPage.mobileChatListMode .conversationList>button{
+    min-height:78px!important;border:0!important;border-radius:18px!important;margin:4px 0!important;background:#071317!important;color:#f8fafc!important;
+    grid-template-columns:54px minmax(0,1fr) auto!important;padding:10px 8px!important;
+  }
+  .chatRealPage.mobileChatListMode .conversationList>button.active,
+  .chatRealPage.mobileChatListMode .conversationList>button:hover{background:#111c22!important;}
+  .chatRealPage.mobileChatListMode .conversationList>button b{font-size:17px!important;color:#f8fafc!important;font-weight:850!important;}
+  .chatRealPage.mobileChatListMode .conversationList>button small{font-size:13px!important;color:#9ca3af!important;}
+  .chatRealPage.mobileChatListMode .conversationList>button>em{font-size:12px!important;color:#22c55e!important;}
+  .chatRealPage.mobileChatListMode .conversationList>button>em i{background:#22c55e!important;color:#062312!important;}
+  .chatRealPage.mobileChatListMode .chatAvatar{width:52px!important;height:52px!important;border-radius:999px!important;background:#243039!important;color:#f8fafc!important;}
+  .chatRealPage.mobileChatListMode .chatDirectoryEmpty,.chatRealPage.mobileChatListMode .chatListLoading{color:#94a3b8!important;background:#071317!important;}
+  .chatRealPage.mobileChatListMode .chatDirectoryEmpty b{color:#f8fafc!important;}
+
+  body.mizona-chat-fullscreen{background:#071317!important;}
+  body.mizona-chat-fullscreen .chatConversation{background:#081316!important;color:#f8fafc!important;}
+  body.mizona-chat-fullscreen .conversationHeader{
+    height:66px!important;min-height:66px!important;background:#071317!important;color:#f8fafc!important;border-bottom:0!important;box-shadow:none!important;
+    grid-template-columns:42px 42px minmax(0,1fr) 82px 42px!important;padding:8px 10px!important;gap:8px!important;
+  }
+  body.mizona-chat-fullscreen .chatBack,
+  body.mizona-chat-fullscreen .conversationHeader .iconBtn:last-child{background:transparent!important;border:0!important;color:#f8fafc!important;border-radius:999px!important;}
+  body.mizona-chat-fullscreen .conversationHeader .chatAvatar{border-radius:999px!important;background:#2a211d!important;color:#f8fafc!important;}
+  body.mizona-chat-fullscreen .conversationHeader>div:nth-child(3)>b{color:#f8fafc!important;font-size:17px!important;font-weight:850!important;}
+  body.mizona-chat-fullscreen .conversationHeader>div:nth-child(3)>span{color:#cbd5e1!important;font-size:12px!important;}
+  body.mizona-chat-fullscreen .chatViewListBtn{
+    background:#102820!important;border:1px solid rgba(34,197,94,.35)!important;color:#22c55e!important;border-radius:999px!important;height:38px!important;min-width:78px!important;font-weight:900!important;
+  }
+  body.mizona-chat-fullscreen .retentionBanner{background:#102820!important;color:#9ff0c0!important;border:0!important;justify-content:flex-start!important;font-size:12px!important;}
+  body.mizona-chat-fullscreen .messageStream{
+    background:#0b141a!important;background-image:radial-gradient(circle at 20% 10%,rgba(34,197,94,.06),transparent 25%)!important;
+    padding:16px 9px 18px!important;gap:10px!important;
+  }
+  body.mizona-chat-fullscreen .messageRow{max-width:90%!important;}
+  body.mizona-chat-fullscreen .messageBubble{
+    background:#202c33!important;border:0!important;color:#f8fafc!important;box-shadow:none!important;border-radius:16px 16px 16px 4px!important;font-size:16px!important;padding:9px 11px!important;
+  }
+  body.mizona-chat-fullscreen .messageRow.own .messageBubble{background:#0f766e!important;color:#fff!important;border-radius:16px 16px 4px 16px!important;}
+  body.mizona-chat-fullscreen .messageBubble>b{color:#22c55e!important;font-size:12px!important;}
+  body.mizona-chat-fullscreen .messageBubble>small{color:#9ca3af!important;font-size:10px!important;}
+  body.mizona-chat-fullscreen .messageRow.own .messageBubble>small{color:rgba(255,255,255,.58)!important;}
+  body.mizona-chat-fullscreen .messageComposer{
+    background:#071317!important;border:0!important;box-shadow:none!important;grid-template-columns:48px minmax(0,1fr) 54px!important;gap:7px!important;min-height:70px!important;
+    padding:9px 8px calc(9px + env(safe-area-inset-bottom))!important;
+  }
+  body.mizona-chat-fullscreen .messageComposer .iconBtn{background:#202c33!important;border:0!important;color:#d1d5db!important;border-radius:999px!important;}
+  body.mizona-chat-fullscreen .messageComposer>input:not([type=file]){
+    background:#202c33!important;border:0!important;color:#f8fafc!important;border-radius:999px!important;height:50px!important;font-size:16px!important;
+  }
+  body.mizona-chat-fullscreen .messageComposer>input:not([type=file])::placeholder{color:#9ca3af!important;}
+  body.mizona-chat-fullscreen .messageComposer>button:last-child{background:#22c55e!important;color:#052e16!important;border-radius:999px!important;width:54px!important;height:50px!important;}
+}
