@@ -47,3 +47,7 @@ supabase/ETAPA30_FINANZAS_PERSONALES.sql
 - Si la ficha todavía usa un propietario local de ejemplo, MiZona muestra un aviso claro para reclamar o crear el negocio con una cuenta real.
 - Cuando se crea una conversación válida, Chat la abre automáticamente.
 - El botón físico **atrás** del celular retrocede dentro de MiZona en vez de sacar inmediatamente del aplicativo.
+
+
+## Etapa 30.20
+Mejora de apariencia móvil en Comité: participantes, pagos, gastos y calendario.
