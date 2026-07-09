@@ -34,18 +34,18 @@ import {
 
 const categories = [
   { id: 'all', label: 'Todo', icon: '✨' },
-  { id: 'offers', label: 'Ofertas', icon: '🏷️' },
-  { id: 'jobs', label: 'Empleos', icon: '💼' },
-  { id: 'events', label: 'Eventos', icon: '🎉' },
+  { id: 'offers', label: 'Comida', icon: '🍔' },
+  { id: 'jobs', label: 'Trabajo', icon: '💼' },
+  { id: 'events', label: 'Eventos', icon: '🎟️' },
   { id: 'campaigns', label: 'Campañas', icon: '❤️' },
-  { id: 'coupons', label: 'Cupones', icon: '🎟️' }
+  { id: 'coupons', label: 'Cupones', icon: '🏷️' }
 ];
 
 const modeTabs = [
-  { id: 'discover', label: 'Explorar', icon: '🔎' },
+  { id: 'discover', label: 'Promos', icon: '🏷️' },
   { id: 'saved', label: 'Guardados', icon: '⭐' },
-  { id: 'actions', label: 'Mis beneficios', icon: '🎟️' },
-  { id: 'publications', label: 'Mis publicaciones', icon: '📣' }
+  { id: 'actions', label: 'Mis compras', icon: '🛍️' },
+  { id: 'publications', label: 'Publicar', icon: '📣' }
 ];
 
 const iconByType = { offers: Tag, jobs: BriefcaseBusiness, events: CalendarDays, campaigns: Heart, coupons: Ticket };
@@ -170,23 +170,43 @@ export default function Benefits() {
     campaigns: activeItems.filter(item => item.type === 'campaigns').length
   }), [activeItems]);
 
-  return <div className="page benefitsPage benefitsLocalV16">
-    <section className="benefitsHero benefitsHeroV16">
-      <div>
-        <p className="eyebrow">Etapa 16 · multiusuario local</p>
-        <h1>Beneficios y oportunidades compartidos entre perfiles</h1>
-        <p>Publica, guarda, postula, obtiene cupones y modera oportunidades sin depender de Supabase.</p>
-        <div className="benefitSearch"><Search size={19}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca pollo, empleo, campaña médica, cine..." /></div>
-      </div>
-      <div className="savingBox savingBoxV16">
-        <Sparkles size={24}/>
-        <b>{activeItems.length}</b>
-        <span>oportunidades activas en este navegador</span>
+  const featured = activeItems.slice(0, 5);
+  const brandItems = [
+    { label: 'MiPlaza', icon: '🛒' },
+    { label: 'Cine', icon: '🎬' },
+    { label: 'Saboría', icon: '🍔' },
+    { label: 'EduPlus', icon: '🎓' },
+    { label: 'MoviGo', icon: '🚗' },
+    { label: 'Más', icon: '+' }
+  ];
+
+  return <div className="page benefitsPage benefitsLocalV16 yapeBenefitsPro">
+    <section className="benefitsHero benefitsHeroV16 yapeBenefitsHero">
+      <div className="yapeBenefitsTop">
+        <div>
+          <p className="eyebrow">MiZona beneficios</p>
+          <h1>Descuentos y oportunidades para tu zona</h1>
+          <p>Encuentra promos, campañas, cursos, servicios y beneficios verificados.</p>
+        </div>
         <button className="benefitCreateButton" onClick={() => setShowCreate(true)}><Plus size={17}/> Publicar</button>
+      </div>
+      <div className="benefitSearch yapeSearch"><Search size={19}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca beneficios, marcas o categorías" /></div>
+      <div className="yapePromoBanner">
+        <div>
+          <span>Días MiZona</span>
+          <strong>Beneficios que ayudan todos los días</strong>
+          <small>Hasta 60% dscto. en promos y servicios aliados</small>
+        </div>
+        <b>60%</b>
       </div>
     </section>
 
-    <div className="benefitStats">
+    <div className="yapeBrands">
+      <div className="sectionLine"><h2>Marcas aliadas</h2><button onClick={() => setActive('all')}>Ver todas</button></div>
+      <div className="brandScroller">{brandItems.map(item => <button key={item.label} type="button" onClick={() => setActive('all')}><span>{item.icon}</span><small>{item.label}</small></button>)}</div>
+    </div>
+
+    <div className="benefitStats yapeStats">
       <span><Gift size={18}/> {counts.offers} ofertas</span>
       <span><BriefcaseBusiness size={18}/> {counts.jobs} empleos</span>
       <span><CalendarDays size={18}/> {counts.events} eventos</span>
@@ -195,6 +215,16 @@ export default function Benefits() {
 
     <Tabs tabs={modeTabs} active={mode} setActive={setMode}/>
     {mode !== 'actions' && <Tabs tabs={categories} active={active} setActive={setActive}/>} 
+
+    {mode === 'discover' && featured.length > 0 && <section className="yapeFeatured">
+      <div className="sectionLine"><h2>Beneficios destacados</h2><button onClick={() => { setActive('all'); setQuery(''); }}>Ver más</button></div>
+      <div className="featuredScroller">{featured.map(item => <button key={item.id} type="button" className="featuredCard" onClick={() => openDetails(item)}>
+        <span className="discountBadge">{item.badge || 'Nuevo'}</span>
+        <strong>{item.image}</strong>
+        <b>{item.title}</b>
+        <small>{item.price}</small>
+      </button>)}</div>
+    </section>}
 
     {mode !== 'actions' && <>
       <div className="benefitToolbar">

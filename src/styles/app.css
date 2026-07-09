@@ -976,3 +976,96 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   .chatViewListBtn{max-width:86px;overflow:hidden;text-overflow:ellipsis}
   .chatWorkspace{height:calc(100vh - 180px);min-height:600px}
 }
+
+/* ETAPA 30.22 · Beneficios estilo tienda/promos móvil */
+.yapeBenefitsPro{
+  --benefit-purple:#5b21b6;
+  --benefit-purple-2:#8b1bb8;
+  --benefit-teal:#12b8a6;
+  --benefit-ink:#211832;
+  --benefit-muted:#6b6477;
+  --benefit-soft:#f7f2ff;
+}
+.yapeBenefitsPro .yapeBenefitsHero{
+  display:block!important;
+  padding:22px!important;
+  border-radius:28px!important;
+  background:linear-gradient(135deg,var(--benefit-purple),var(--benefit-purple-2) 58%,#d946ef)!important;
+  box-shadow:0 18px 50px rgba(91,33,182,.20)!important;
+  color:#fff!important;
+}
+.yapeBenefitsTop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.yapeBenefitsTop h1{font-size:30px!important;margin:4px 0 8px!important;color:#fff!important;letter-spacing:-.035em!important;line-height:1.08!important}
+.yapeBenefitsTop p{color:#f5e9ff!important;margin:0!important;font-size:14px!important}
+.yapeBenefitsTop .eyebrow{color:#fcd34d!important;letter-spacing:.14em!important;text-transform:uppercase!important;font-size:11px!important;font-weight:900!important}
+.yapeBenefitsPro .benefitCreateButton{background:#fff!important;color:var(--benefit-purple)!important;border:0!important;box-shadow:0 10px 26px rgba(0,0,0,.14)!important;border-radius:14px!important;padding:11px 14px!important;white-space:nowrap!important}
+.yapeBenefitsPro .yapeSearch{max-width:none!important;margin-top:18px!important;height:52px!important;border-radius:15px!important;color:var(--benefit-purple)!important;box-shadow:0 8px 22px rgba(0,0,0,.10)!important}
+.yapeBenefitsPro .yapeSearch input{font-size:15px!important;color:var(--benefit-ink)!important}
+.yapePromoBanner{margin-top:18px;background:linear-gradient(135deg,#8a22d6,#c026d3 55%,#14b8a6);border-radius:22px;min-height:130px;padding:22px;display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative}
+.yapePromoBanner:before{content:"";position:absolute;inset:auto -40px -60px auto;width:210px;height:210px;border-radius:50%;background:rgba(255,255,255,.13)}
+.yapePromoBanner span{display:inline-flex;background:#facc15;color:#3b0764;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:950;text-transform:uppercase}
+.yapePromoBanner strong{display:block;margin-top:10px;max-width:420px;font-size:25px;line-height:1.05;color:#fff;letter-spacing:-.04em}
+.yapePromoBanner small{display:block;margin-top:8px;color:#fff7ed;font-weight:800}
+.yapePromoBanner>b{font-size:54px;color:#fff;background:#12b8a6;border-radius:22px;padding:12px 16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);position:relative;z-index:2}
+.yapeBrands,.yapeFeatured{margin-top:18px}
+.sectionLine{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px}
+.sectionLine h2{margin:0!important;color:var(--benefit-ink)!important;font-size:21px!important;letter-spacing:-.025em!important}
+.sectionLine button{border:0;background:transparent;color:var(--benefit-teal);font-weight:950;cursor:pointer;font-size:14px}
+.brandScroller,.featuredScroller{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.brandScroller button{min-width:86px;border:0;background:transparent;display:grid;gap:7px;place-items:center;color:var(--benefit-ink);font-weight:900;cursor:pointer;scroll-snap-align:start}
+.brandScroller span{width:58px;height:58px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:25px;box-shadow:0 10px 28px rgba(42,24,70,.10);border:1px solid rgba(91,33,182,.10)}
+.brandScroller small{font-size:12px;color:var(--benefit-ink)}
+.yapeStats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.yapeStats span{border-color:#efe7ff!important;background:#fff!important;color:var(--benefit-ink)!important;box-shadow:0 8px 22px rgba(91,33,182,.06)!important}
+.yapeBenefitsPro .tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}
+.yapeBenefitsPro .tabs button{border-radius:999px!important;font-weight:950!important;white-space:nowrap!important}
+.yapeBenefitsPro .tabs button.active{background:linear-gradient(135deg,var(--benefit-purple),#7c3aed)!important;color:#fff!important;border-color:transparent!important}
+.featuredCard{min-width:185px;border:1px solid #efe7ff;background:#fff;border-radius:18px;padding:12px;display:grid;text-align:left;gap:7px;box-shadow:0 14px 34px rgba(42,24,70,.10);position:relative;cursor:pointer;scroll-snap-align:start}
+.featuredCard>strong{height:92px;border-radius:15px;background:linear-gradient(135deg,#f5e8ff,#fff 55%,#ecfeff);display:grid;place-items:center;font-size:46px;margin-top:8px}
+.featuredCard>b{font-size:14px;line-height:1.18;color:var(--benefit-ink)}
+.featuredCard>small{font-size:16px;font-weight:950;color:#5b21b6}
+.discountBadge{position:absolute;left:12px;top:10px;background:#fde047;color:#4a044e;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:950;z-index:2}
+.yapeBenefitsPro .benefitToolbar{background:#fff;border:1px solid #efe7ff;border-radius:18px;padding:12px 14px;margin-top:10px;box-shadow:0 10px 26px rgba(42,24,70,.06)}
+.yapeBenefitsPro .opportunityGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.yapeBenefitsPro .opportunityCard{border-color:#efe7ff!important;border-radius:20px!important;box-shadow:0 13px 34px rgba(42,24,70,.09)!important}
+.yapeBenefitsPro .opportunityVisual{height:132px!important;background:linear-gradient(135deg,#f5e8ff,#ffffff 54%,#ecfeff)!important}
+.yapeBenefitsPro .opportunityVisual span{font-size:55px!important}
+.yapeBenefitsPro .opportunityVisual i{background:#fde047!important;color:#4a044e!important;border-radius:999px!important;left:12px!important;top:12px!important;bottom:auto!important;font-size:10px!important}
+.yapeBenefitsPro .opportunityBody{padding:14px!important}
+.yapeBenefitsPro .opportunityType{color:#7c3aed!important}
+.yapeBenefitsPro .opportunityBody h3{font-size:15px!important;line-height:1.2!important;color:var(--benefit-ink)!important;margin:8px 0 6px!important}
+.yapeBenefitsPro .ownerName,.yapeBenefitsPro .locationLine,.yapeBenefitsPro .expiry{color:var(--benefit-muted)!important;font-size:12px!important}
+.yapeBenefitsPro .priceLine b{color:#5b21b6!important;font-size:20px!important}
+.yapeBenefitsPro .priceLine del{font-size:12px!important;color:#9ca3af!important}
+.yapeBenefitsPro .cardActions{grid-template-columns:1fr!important}
+.yapeBenefitsPro .cardActions .primary,.yapeBenefitsPro .primary.full{background:linear-gradient(135deg,#10b981,#14b8a6)!important;border:0!important;color:#fff!important;box-shadow:0 10px 24px rgba(20,184,166,.23)!important;border-radius:13px!important}
+.yapeBenefitsPro .cardActions .ghost{border-color:#efe7ff!important;border-radius:13px!important;color:#5b21b6!important;background:#faf5ff!important}
+.yapeBenefitsPro .benefitActionWorkspace .card,.yapeBenefitsPro .benefitCreateModal,.yapeBenefitsPro .detailModal{border-radius:22px!important}
+.yapeBenefitsPro .benefitActionList article{border-color:#efe7ff!important;box-shadow:0 8px 22px rgba(42,24,70,.06)!important}
+
+@media(max-width:1150px){
+  .yapeBenefitsPro .opportunityGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:860px){
+  .yapeBenefitsPro{padding-bottom:88px!important}
+  .yapeBenefitsPro .yapeBenefitsHero{margin:0 -4px!important;padding:18px!important;border-radius:0 0 24px 24px!important}
+  .yapeBenefitsTop{display:block}.yapeBenefitsTop .benefitCreateButton{margin-top:12px;width:100%!important}
+  .yapeBenefitsTop h1{font-size:24px!important}.yapeBenefitsTop p{font-size:13px!important}
+  .yapePromoBanner{min-height:118px;border-radius:19px;padding:18px}.yapePromoBanner strong{font-size:21px}.yapePromoBanner>b{font-size:38px;padding:9px 12px}
+  .brandScroller button{min-width:76px}.brandScroller span{width:52px;height:52px;font-size:22px}
+  .sectionLine h2{font-size:19px!important}
+  .yapeStats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .yapeBenefitsPro .opportunityGrid{display:flex!important;overflow-x:auto;gap:13px;padding:2px 3px 10px;scroll-snap-type:x proximity;scrollbar-width:thin}
+  .yapeBenefitsPro .opportunityCard{min-width:205px;max-width:205px;scroll-snap-align:start}
+  .yapeBenefitsPro .opportunityVisual{height:118px!important}.yapeBenefitsPro .opportunityVisual span{font-size:48px!important}
+  .yapeBenefitsPro .benefitToolbar{align-items:flex-start;gap:9px;flex-direction:column}.yapeBenefitsPro .benefitToolbar .ghost{width:100%}
+  .featuredCard{min-width:170px}.featuredCard>strong{height:86px;font-size:42px}
+  .benefitActionWorkspace{grid-template-columns:1fr!important}.benefitActionList article{grid-template-columns:1fr!important}.benefitActionList article code,.benefitActionList article button{grid-column:auto!important}
+  .benefitCreateModal{border-radius:22px 22px 0 0!important;align-self:end;max-height:88vh!important;width:100%!important;padding:18px!important}.modalBackdrop{align-items:end!important;place-items:end center!important;padding:0!important}
+}
+@media(max-width:460px){
+  .yapeBenefitsPro .yapeBenefitsHero{padding:16px!important}.yapeBenefitsTop h1{font-size:22px!important}.yapeBenefitsPro .yapeSearch{height:48px!important}
+  .yapePromoBanner{display:block}.yapePromoBanner>b{display:inline-block;margin-top:12px;font-size:30px}.yapePromoBanner strong{font-size:20px}
+  .yapeStats{display:none!important}.brandScroller{gap:8px}.brandScroller button{min-width:67px}.brandScroller span{width:48px;height:48px;font-size:20px}.brandScroller small{font-size:11px}
+  .yapeBenefitsPro .tabs button{font-size:12px!important;padding:8px 11px!important}
+}
