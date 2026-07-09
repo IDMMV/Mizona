@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   BadgeCheck, Bookmark, BookmarkCheck, BriefcaseBusiness, ChevronRight, Clock3,
   Flag, Grid2X2, Headphones, Heart, HelpCircle, Home, MapPin, MessageCircle,
@@ -80,7 +80,16 @@ export default function Marketplace({ setPage }){
   const [form,setForm]=useState(emptyForm);
   const [toast,setToast]=useState('');
   const [error,setError]=useState('');
+  const sectionRefs = useRef({});
   useEffect(()=>subscribeLocalCommerce(setSnapshot),[]);
+  const goMarketBlock = (target) => {
+    setTab('home');
+    setMarketTab(target);
+    window.setTimeout(() => {
+      sectionRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 90);
+  };
+
   const favoriteListings=useMemo(()=>new Set(snapshot.myListingFavoriteIds),[snapshot.myListingFavoriteIds]);
   const favoriteBusinesses=useMemo(()=>new Set(snapshot.myBusinessFavoriteIds),[snapshot.myBusinessFavoriteIds]);
   const normalizedQuery=query.trim().toLowerCase();
@@ -114,29 +123,29 @@ export default function Marketplace({ setPage }){
       <section className="mkCTopHero">
         <div className="mkCHeroHead"><div><p className="eyebrow">Marketplace + Promos + Comunidad</p><h1>Todo lo que tu zona necesita, en un solo lugar</h1><p>Compra, vende, encuentra servicios, guarda beneficios y conversa con negocios verificados de tu comunidad.</p></div><button onClick={()=>setShowPublish(true)}><ShoppingBag size={18}/> Vender</button></div>
         <div className="mkCSearchRow"><div className="mkCSearch"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busca productos, servicios, negocios o promos..."/></div><button className="mkCLocation"><MapPin size={18}/> {profile?.zone||'Ventanilla'}</button></div>
-        <div className="mkCModeTabs"><button className={marketTab==='products'?'active':''} onClick={()=>setMarketTab('products')}><ShoppingBag size={17}/>Productos</button><button className={marketTab==='services'?'active':''} onClick={()=>setMarketTab('services')}><BriefcaseBusiness size={17}/>Servicios</button><button className={marketTab==='community'?'active':''} onClick={()=>setMarketTab('community')}><Store size={17}/>Comunidad</button><button className={marketTab==='promos'?'active':''} onClick={()=>setMarketTab('promos')}><TicketPercent size={17}/>Promos</button></div>
+        <div className="mkCModeTabs"><button className={marketTab==='products'?'active':''} onClick={()=>goMarketBlock('products')}><ShoppingBag size={17}/>Productos</button><button className={marketTab==='services'?'active':''} onClick={()=>goMarketBlock('services')}><BriefcaseBusiness size={17}/>Servicios</button><button className={marketTab==='community'?'active':''} onClick={()=>goMarketBlock('community')}><Store size={17}/>Comunidad</button><button className={marketTab==='promos'?'active':''} onClick={()=>goMarketBlock('promos')}><TicketPercent size={17}/>Promos</button></div>
       </section>
-      <section className="mkCBanner"><div><span>🎁</span><p>Promos de tu comunidad</p><h2>Descuentos exclusivos para vecinos, colegios y comités</h2><button onClick={()=>{setMarketTab('promos');setTab('home');}}>Ver promociones</button></div><div className="mkCBannerGift">%</div></section>
+      <section className="mkCBanner"><div><span>🎁</span><p>Promos de tu comunidad</p><h2>Descuentos exclusivos para vecinos, colegios y comités</h2><button onClick={()=>goMarketBlock('promos')}>Ver promociones</button></div><div className="mkCBannerGift">%</div></section>
       <CategoryChips category={category} setCategory={setCategory}/>
-      {marketTab==='products'&&<>
-        <SectionTitle title="Negocios verificados de tu zona" action="Ver negocios" onAction={()=>setMarketTab('community')}/>
+      {marketTab==='products'&&<div ref={el=>sectionRefs.current.products=el} className="mkCContentBlock">
+        <SectionTitle title="Negocios verificados de tu zona" action="Ver negocios" onAction={()=>goMarketBlock('community')}/>
         <div className="mkCBusinessRail">{verifiedBusinesses.map(biz=><BusinessCard key={biz.id} biz={biz} onOpen={openBusiness} favorite={favoriteBusinesses.has(biz.id)} onFavorite={toggleLocalBusinessFavorite}/>)}</div>
         <SectionTitle title="Cerca de ti" action="Ver todos" onAction={()=>setTab('categories')}/>
         <div className="mkCProductGrid">{nearListings.map(item=><ListingCard key={item.id} item={item} onOpen={openListing} onFavorite={toggleLocalListingFavorite} favorite={favoriteListings.has(item.id)}/>)}</div>
-      </>}
-      {marketTab==='services'&&<>
+      </div>}
+      {marketTab==='services'&&<div ref={el=>sectionRefs.current.services=el} className="mkCContentBlock">
         <SectionTitle title="Servicios locales recomendados" action="Publicar servicio" onAction={()=>{setForm({...emptyForm,category:'services',condition:'Servicio'});setShowPublish(true);}}/>
         <div className="mkCProductGrid">{services.map(item=><ListingCard key={item.id} item={item} onOpen={openListing} onFavorite={toggleLocalListingFavorite} favorite={favoriteListings.has(item.id)}/>)}</div>
-      </>}
-      {marketTab==='community'&&<>
+      </div>}
+      {marketTab==='community'&&<div ref={el=>sectionRefs.current.community=el} className="mkCContentBlock">
         <SectionTitle title="Negocios y emprendimientos de tu comunidad" action="Verificados" onAction={()=>setOnlyVerified(v=>!v)}/>
         <div className="mkCBusinessGrid">{businesses.map(biz=><BusinessCard key={biz.id} biz={biz} onOpen={openBusiness} favorite={favoriteBusinesses.has(biz.id)} onFavorite={toggleLocalBusinessFavorite}/>)}</div>
-      </>}
-      {marketTab==='promos'&&<>
+      </div>}
+      {marketTab==='promos'&&<div ref={el=>sectionRefs.current.promos=el} className="mkCContentBlock">
         <SectionTitle title="Promos conectadas a Beneficios" action="Abrir Beneficios" onAction={()=>setPage?.('benefits')}/>
         <div className="mkCPromoGrid">{promoSeeds.map(promo=><PromoCard key={promo.id} promo={promo} onOpen={()=>setPage?.('benefits')}/>)}</div>
         <div className="mkCInfoStrip"><Truck size={19}/><b>Entrega local</b><span>Coordina entrega por MiZona Chat o MiZona Ride.</span><ShieldCheck size={19}/><b>Pago seguro</b><span>Prioriza pago contra entrega y negocios verificados.</span></div>
-      </>}
+      </div>}
     </>}
 
     {tab==='categories'&&<section className="mkCPanel"><div className="mkCPageHead"><h1>Categorías</h1><div className="mkCSearch compact"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar categoría o publicación"/></div></div><div className="mkCCategoryGrid">{categories.filter(c=>c.id!=='all').map(c=><button key={c.id} onClick={()=>{setCategory(c.id);setTab('home');}}><span>{c.icon}</span><b>{c.label}</b><ChevronRight size={20}/></button>)}</div></section>}

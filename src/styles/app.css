@@ -1121,3 +1121,60 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   body.mizona-chat-fullscreen .conversationHeader>div:nth-child(3)>b{font-size:14px!important}
   body.mizona-chat-fullscreen .conversationHeader>div:nth-child(3)>span{font-size:10px!important}
 }
+
+/* ETAPA 30.25 - Marketplace web pro compacto */
+.marketplaceC23{padding-bottom:118px;scroll-padding-bottom:120px;}
+.marketplaceC23 .mkCTopHero{padding:18px 20px;border-radius:22px;gap:12px;}
+.marketplaceC23 .mkCHeroHead h1{font-size:clamp(22px,2.2vw,30px);line-height:1.12;}
+.marketplaceC23 .mkCHeroHead p{font-size:14px;max-width:760px;}
+.marketplaceC23 .mkCSearch{min-height:44px;}
+.marketplaceC23 .mkCModeTabs button{padding:8px 12px;font-size:13px;}
+.marketplaceC23 .mkCBanner{padding:16px 18px;border-radius:20px;min-height:122px;}
+.marketplaceC23 .mkCBanner h2{font-size:clamp(20px,2vw,26px);margin:4px 0 10px;}
+.marketplaceC23 .mkCBannerGift{width:104px;height:104px;font-size:48px;}
+.marketplaceC23 .mkCCategoryChips{gap:8px;padding-bottom:10px;}
+.marketplaceC23 .mkCCategoryChips button{min-width:84px;min-height:66px;padding:8px 10px;border-radius:15px;font-size:12px;}
+.marketplaceC23 .mkCCategoryChips button span{font-size:18px;}
+.marketplaceC23 .mkCBusinessCard{min-width:205px;padding:10px;border-radius:16px;}
+.marketplaceC23 .mkCBizLogo{width:42px;height:42px;border-radius:13px;}
+.marketplaceC23 .mkCBizLogo span{font-size:22px;}
+.marketplaceC23 .mkCProductGrid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+.marketplaceC23 .mkCProductCard{border-radius:17px;}
+.marketplaceC23 .mkCProductVisual{height:104px;}
+.marketplaceC23 .mkCProductVisual span{font-size:40px;}
+.marketplaceC23 .mkCProductVisual b{font-size:10px;padding:4px 8px;}
+.marketplaceC23 .mkCProductBody{padding:11px;gap:5px;}
+.marketplaceC23 .mkCProductBody h3{font-size:14px;min-height:34px;}
+.marketplaceC23 .mkCProductBody strong{font-size:17px;}
+.marketplaceC23 .mkCProductBody p,.marketplaceC23 .mkCProductBody small{font-size:11px;}
+.marketplaceC23 .mkCProductBody button{padding:8px 10px;font-size:12px;}
+.marketplaceC23 .mkCPromoGrid{grid-template-columns:repeat(auto-fill,minmax(245px,1fr));}
+.marketplaceC23 .mkCPromoVisual{min-height:104px;}
+.marketplaceC23 .mkCPromoVisual span{font-size:42px;}
+.marketplaceC23 .mkCContentBlock{scroll-margin-top:96px;}
+.marketplaceC23 .mkCBottomNav{position:fixed;left:calc(var(--sidebar-w, 280px) + 24px);right:24px;bottom:0;margin:0;border-radius:20px 20px 0 0;z-index:45;box-shadow:0 -14px 35px rgba(15,23,42,.12);}
+.sidebarCollapsed .marketplaceC23 .mkCBottomNav,.appShell.sidebarCollapsed .marketplaceC23 .mkCBottomNav{left:96px;}
+.marketplaceC23 .mkCBottomNav button{padding:8px 5px;min-height:54px;}
+.marketplaceC23 .mkCBottomNav svg{width:18px;height:18px;}
+.marketplaceC23 .mkCBottomNav span{font-size:11px;}
+@media(max-width:900px){
+  .marketplaceC23{padding-bottom:104px;}
+  .marketplaceC23 .mkCBottomNav{left:0;right:0;bottom:0;border-radius:18px 18px 0 0;}
+  .marketplaceC23 .mkCTopHero{padding:16px;border-radius:22px;}
+  .marketplaceC23 .mkCBanner{min-height:auto;}
+  .marketplaceC23 .mkCProductGrid,.marketplaceC23 .mkCPromoGrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;}
+  .marketplaceC23 .mkCProductCard{min-width:178px;max-width:178px;scroll-snap-align:start;}
+  .marketplaceC23 .mkCPromoCard{min-width:240px;max-width:240px;}
+  .marketplaceC23 .mkCProductVisual{height:96px;}
+  .marketplaceC23 .mkCProductVisual span{font-size:36px;}
+}
+@media(max-width:560px){
+  .marketplaceC23 .mkCHeroHead h1{font-size:22px;}
+  .marketplaceC23 .mkCBanner h2{font-size:20px;}
+  .marketplaceC23 .mkCCategoryChips button{min-width:76px;min-height:58px;font-size:10.5px;}
+  .marketplaceC23 .mkCProductCard{min-width:165px;max-width:165px;}
+  .marketplaceC23 .mkCProductVisual{height:88px;}
+  .marketplaceC23 .mkCProductVisual span{font-size:32px;}
+  .marketplaceC23 .mkCProductBody h3{font-size:13px;min-height:32px;}
+  .marketplaceC23 .mkCBottomNav{padding-bottom:max(8px,env(safe-area-inset-bottom));}
+}
