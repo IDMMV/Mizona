@@ -24,12 +24,15 @@ const MODULE_STORAGE_KEY = 'mizona-v8-module-config';
 const PROFILE_STORAGE_KEY = 'mizona-v8-profile';
 const DATA_MODE_KEY = 'mizona-v8-data-mode-v13';
 const TERMS_VERSION = '2026-07';
-const UI_COLOR_KEY = 'mizona-v8-ui-color';
+const UI_COLOR_KEY = 'mizona-v8-ui-color-cache';
 const UI_MODE_KEY = 'mizona-v8-ui-mode';
 
+function normalizeUiColor(value) {
+  return ['green', 'blue', 'purple'].includes(value) ? value : 'green';
+}
+
 function readUiColor() {
-  const saved = localStorage.getItem(UI_COLOR_KEY);
-  return ['green', 'blue', 'purple'].includes(saved) ? saved : 'green';
+  return normalizeUiColor(localStorage.getItem(UI_COLOR_KEY));
 }
 
 function readUiMode() {
@@ -154,6 +157,44 @@ export function AppProvider({ children }) {
     try { setNotifications(await loadCloudNotifications(userId)); }
     catch (error) { setBackendMessage(`Notificaciones usando respaldo local: ${error.message}`); }
   }, [cloudActive]);
+
+  const applyPlatformAppearance = useCallback(value => {
+    const nextColor = normalizeUiColor(value?.ui_color || value?.theme_color || value?.color);
+    localStorage.setItem(UI_COLOR_KEY, nextColor);
+    setUiColorState(nextColor);
+    return nextColor;
+  }, []);
+
+  const loadPlatformAppearance = useCallback(async () => {
+    if (!supabase || !cloudActive) return { persisted: false, local: true };
+    const { data, error } = await supabase
+      .from('platform_settings')
+      .select('value')
+      .eq('key', 'appearance')
+      .maybeSingle();
+    if (error) {
+      setBackendMessage(`Apariencia global pendiente de Supabase: ${error.message}`);
+      return { persisted: false, error };
+    }
+    if (data?.value) applyPlatformAppearance(data.value);
+    return { persisted: true, value: data?.value || null };
+  }, [applyPlatformAppearance, cloudActive]);
+
+  const loadUserAppearance = useCallback(async userId => {
+    if (!supabase || !cloudActive || !userId) return { persisted: false, local: true };
+    const { data, error } = await supabase
+      .from('user_ui_preferences')
+      .select('ui_mode')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error) return { persisted: false, error };
+    if (data?.ui_mode) {
+      const next = data.ui_mode === 'dark' ? 'dark' : 'light';
+      localStorage.setItem(UI_MODE_KEY, next);
+      setUiModeState(next);
+    }
+    return { persisted: true, value: data || null };
+  }, [cloudActive]);
   const [syncQueueCount, setSyncQueueCount] = useState(() => listLocalSyncQueue().length);
 
   const refreshLocalIndicators = useCallback(() => {
@@ -228,6 +269,23 @@ export function AppProvider({ children }) {
     refreshCloudNotifications(session.user.id);
     return subscribeCloudNotifications(session.user.id, () => refreshCloudNotifications(session.user.id));
   }, [cloudActive, session?.user?.id, refreshCloudNotifications]);
+
+  useEffect(() => {
+    if (!cloudActive || !supabase) return undefined;
+    loadPlatformAppearance();
+    const channel = supabase
+      .channel('mizona-platform-appearance')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'platform_settings', filter: 'key=eq.appearance' }, payload => {
+        if (payload?.new?.value) applyPlatformAppearance(payload.new.value);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [applyPlatformAppearance, cloudActive, loadPlatformAppearance]);
+
+  useEffect(() => {
+    if (!cloudActive || !session?.user?.id) return;
+    loadUserAppearance(session.user.id);
+  }, [cloudActive, loadUserAppearance, session?.user?.id]);
 
   useEffect(() => {
     if (!cloudActive) {
@@ -463,19 +521,56 @@ export function AppProvider({ children }) {
   }, []);
 
 
-  const setUiColor = useCallback(color => {
-    const next = ['green', 'blue', 'purple'].includes(color) ? color : 'green';
+  const setUiColor = useCallback(async color => {
+    const next = normalizeUiColor(color);
     localStorage.setItem(UI_COLOR_KEY, next);
     setUiColorState(next);
-    return next;
-  }, []);
 
-  const setUiMode = useCallback(mode => {
+    if (!cloudActive || !supabase) {
+      setBackendMessage('Color aplicado solo en este dispositivo. Activa Supabase para hacerlo global.');
+      return { persisted: false, local: true, color: next };
+    }
+    if (!session?.user || !['admin', 'super_admin'].includes(profile.role)) {
+      setBackendMessage('Solo un administrador puede cambiar el color global de MiZona.');
+      return { persisted: false, unauthorized: true, color: next };
+    }
+
+    const now = new Date().toISOString();
+    const { error } = await supabase.from('platform_settings').upsert({
+      key: 'appearance',
+      value: {
+        ui_color: next,
+        allowed_colors: ['green', 'blue', 'purple'],
+        mode_policy: 'personal',
+        note: 'El color es global para toda la plataforma. El modo noche es preferencia personal por dispositivo.',
+        updated_by: profile.username || session.user.id,
+        updated_at: now
+      },
+      updated_by: session.user.id,
+      updated_at: now
+    }, { onConflict: 'key' });
+    if (error) throw error;
+    setBackendMessage(`Color global actualizado: ${next === 'green' ? 'Verde fresco' : next === 'blue' ? 'Azul moderno' : 'Morado suave'}.`);
+    return { persisted: true, color: next };
+  }, [cloudActive, profile.role, profile.username, session?.user]);
+
+  const setUiMode = useCallback(async mode => {
     const next = mode === 'dark' ? 'dark' : 'light';
     localStorage.setItem(UI_MODE_KEY, next);
     setUiModeState(next);
-    return next;
-  }, []);
+
+    if (!cloudActive || !supabase || !session?.user?.id) return { persisted: false, local: true, mode: next };
+    const { error } = await supabase.from('user_ui_preferences').upsert({
+      user_id: session.user.id,
+      ui_mode: next,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+    if (error) {
+      setBackendMessage(`Modo noche aplicado en este dispositivo, pero no se guardó en Supabase: ${error.message}`);
+      return { persisted: false, error, mode: next };
+    }
+    return { persisted: true, mode: next };
+  }, [cloudActive, session?.user?.id]);
 
   const unreadNotifications = notifications.filter(item => !item.read).length;
   const isAuthenticated = Boolean(session?.user);
@@ -505,6 +600,8 @@ export function AppProvider({ children }) {
     uiMode,
     setUiColor,
     setUiMode,
+    loadPlatformAppearance,
+    loadUserAppearance,
     online,
     notifications,
     unreadNotifications,
@@ -522,7 +619,7 @@ export function AppProvider({ children }) {
     refreshProfile: () => session?.user && loadProfile(session.user),
     refreshModules: loadModules,
     refreshCloudNotifications
-  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, uiColor, uiMode, setUiColor, setUiMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, refreshCloudNotifications, updateModuleStatus, resetModules]);
+  }), [moduleConfig, profile, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile, session, isAuthenticated, isAdmin, authLoading, cloudActive, backendMessage, dataMode, setDataMode, uiColor, uiMode, setUiColor, setUiMode, online, notifications, unreadNotifications, syncQueueCount, refreshLocalIndicators, signUp, signIn, signOut, resetPassword, updatePassword, saveProfile, loadProfile, loadModules, refreshCloudNotifications, updateModuleStatus, resetModules, loadPlatformAppearance, loadUserAppearance]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
