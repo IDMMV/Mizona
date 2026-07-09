@@ -191,6 +191,15 @@ export default function Chat({ setPage }) {
   const messageEnd = useRef(null);
 
   const selected = useMemo(() => conversations.find(item => item.id === selectedId) || null, [conversations, selectedId]);
+  const isMobileViewport = () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches;
+
+  useEffect(() => {
+    if (!isMobileViewport()) return;
+    sessionStorage.removeItem('mizona-chat-open-conversation');
+    setMobileConversation(false);
+    setSelectedId(null);
+    setTab('chats');
+  }, []);
 
   useEffect(() => {
     const active = mobileConversation && Boolean(selectedId);
@@ -222,11 +231,17 @@ export default function Chat({ setPage }) {
     setContacts(nextContacts);
     setRequests(nextRequests);
     setConversations(nextConversations);
-    const pendingOpen = sessionStorage.getItem('mizona-chat-open-conversation');
+    const mobile = isMobileViewport();
+    const pendingOpen = mobile ? null : sessionStorage.getItem('mizona-chat-open-conversation');
     if (pendingOpen && nextConversations.some(item => item.id === pendingOpen)) {
       sessionStorage.removeItem('mizona-chat-open-conversation');
       setSelectedId(pendingOpen);
       setMobileConversation(true);
+      setTab('chats');
+      return;
+    }
+    if (mobile && !mobileConversation) {
+      setSelectedId(null);
       setTab('chats');
       return;
     }
@@ -274,6 +289,7 @@ export default function Chat({ setPage }) {
 
   const showChatList = () => {
     setMobileConversation(false);
+    setSelectedId(null);
     setTab('chats');
     setSearchText('');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
