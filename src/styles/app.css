@@ -1491,3 +1491,333 @@ body.mizona-chat-immersive .chatRealPage>.chatNotice{display:none!important;}
 .businessSuitePage .posProduct span{font-size:34px!important;}
 @media(max-width:980px){.chatRealPage .chatWorkspace{grid-template-columns:1fr!important}.floatingReceiptPrint{right:14px;bottom:86px;padding:12px 14px}.floatingReceiptPrint span{display:none}.businessSuitePage .businessSuiteHero{padding:18px!important}.businessSuitePage .businessSuiteHero h1{font-size:26px!important}}
 @media(max-width:760px){.chatRealPage .conversationHeader{height:62px!important;min-height:62px!important;grid-template-columns:38px 38px minmax(0,1fr) auto auto 38px!important;padding:8px!important}.chatRealPage .conversationHeader .chatAvatar{width:38px!important;height:38px!important}.chatRealPage .chatViewListBtn{max-width:58px!important;overflow:hidden!important}.chatRealPage .messageRow{max-width:88%!important}.chatRealPage .messageStream{padding:12px 10px!important}.chatRealPage .messageBubble p{font-size:14.5px!important}.imageAttachmentCard img{max-width:245px!important}.receiptPaperPro{width:min(92vw,360px)!important}.businessSuitePage .posProduct b{font-size:17px!important}.businessSuitePage .posProduct span{font-size:30px!important}}
+
+
+/* =========================================================
+   ETAPA 30.30 - Pulido final móvil / chat / business
+   - Chat pantalla completa blanco tipo WhatsApp
+   - Barra inferior oculta en chat y modo negocio limpio
+   - Logos/hero más compactos en celular
+   - Textos uniformes y acciones de caja separadas
+   ========================================================= */
+
+:root{
+  --mz-font-base: clamp(14px, 0.92vw, 16px);
+  --mz-title-mobile: clamp(24px, 7vw, 36px);
+  --mz-section-title: clamp(20px, 3vw, 28px);
+}
+
+/* Tipografía general más uniforme */
+body, input, select, textarea, button{
+  font-size: var(--mz-font-base);
+}
+h1, .moduleHero h1, .pageHero h1, .businessHero h1, .chatPageHeader h1{
+  letter-spacing: -0.035em;
+}
+.moduleHero h1, .pageHero h1, .businessHero h1{
+  font-size: clamp(28px, 4vw, 46px)!important;
+}
+.moduleHero p, .pageHero p, .businessHero p{
+  font-size: clamp(14px, 1.25vw, 17px)!important;
+  line-height: 1.45!important;
+}
+
+/* Encabezados compactos en móvil */
+@media (max-width: 760px){
+  .moduleHero, .pageHero, .businessHero, .heroCard, .dashboardHero{
+    min-height: unset!important;
+    padding: 24px 20px!important;
+    border-radius: 22px!important;
+    margin: 14px 12px!important;
+  }
+  .moduleHero h1, .pageHero h1, .businessHero h1, .dashboardHero h1{
+    font-size: var(--mz-title-mobile)!important;
+    line-height: 1.08!important;
+  }
+  .moduleHero .heroIcon, .pageHero .heroIcon, .businessHero .heroIcon{
+    width: 54px!important;
+    height: 54px!important;
+    font-size: 28px!important;
+  }
+  .moduleHero .heroStats, .pageHero .heroStats, .businessHero .heroStats{
+    grid-template-columns: 1fr 1fr!important;
+    gap: 10px!important;
+  }
+  .moduleHero .heroStat, .pageHero .heroStat, .businessHero .heroStat{
+    min-height: 72px!important;
+    padding: 12px!important;
+  }
+  .tabRow, .tabsRow, .pillTabs, .moduleTabs{
+    gap: 8px!important;
+    padding: 8px 12px!important;
+    overflow-x:auto!important;
+    scrollbar-width: thin;
+  }
+  .tabRow button, .tabsRow button, .pillTabs button, .moduleTabs button{
+    min-height: 42px!important;
+    padding: 10px 16px!important;
+    font-size: 14px!important;
+    white-space: nowrap!important;
+  }
+}
+
+/* Business: tarjetas de productos más compactas */
+.businessSuitePage .posProduct{
+  gap: 14px!important;
+}
+.businessSuitePage .posProduct b{
+  font-size: clamp(17px, 1.35vw, 21px)!important;
+}
+.businessSuitePage .posProduct .productEmoji,
+.businessSuitePage .posProduct .emoji{
+  font-size: clamp(28px, 4vw, 42px)!important;
+}
+.businessSuitePage .posProduct .price,
+.businessSuitePage .posProduct strong{
+  font-size: clamp(18px, 1.7vw, 24px)!important;
+}
+@media (max-width:760px){
+  .businessSuitePage .posProduct{
+    min-height: 104px!important;
+    padding: 16px!important;
+    border-radius: 18px!important;
+  }
+  .businessSuitePage .posProduct b{font-size:20px!important;}
+  .businessSuitePage .posProduct small{font-size:14px!important;}
+  .businessSuitePage .businessHero{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+  .businessSuitePage .kioskPanel, .businessSuitePage .businessHeroActions{
+    gap:8px!important;
+  }
+  .businessSuitePage .kioskPanel button, .businessSuitePage .businessHeroActions button{
+    min-height:42px!important;
+    padding:9px 12px!important;
+    font-size:14px!important;
+  }
+}
+
+/* Caja: cobrar e imprimir separados */
+.posActionRow{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 160px!important;
+  gap:12px!important;
+  align-items:stretch!important;
+}
+.posActionRow .finishSale{margin-top:0!important;}
+.printReceiptBtn{
+  margin:0!important;
+  border:1px solid #cddbe3!important;
+  background:#fff!important;
+  color:#17324a!important;
+  border-radius:16px!important;
+  padding:12px 14px!important;
+  font-weight:900!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+}
+.printReceiptBtn:disabled{opacity:.45!important;filter:grayscale(.2);}
+@media (max-width:760px){
+  .posActionRow{grid-template-columns:1fr!important;}
+  .printReceiptBtn{min-height:50px!important;}
+}
+
+/* Chat 30.30: siempre limpio y a pantalla completa al abrir conversación */
+.chatRealPage{
+  --chat-list-bg:#ffffff;
+  --chat-line:#edf2f4;
+  background:#fff!important;
+}
+.chatRealPage .chatPageHeader{
+  padding:22px 26px!important;
+  border-radius:24px!important;
+  min-height:unset!important;
+}
+.chatRealPage .chatPageHeader h1{
+  font-size:clamp(28px,3.4vw,42px)!important;
+}
+.chatRealPage .chatWorkspace{
+  overflow:hidden!important;
+}
+.chatRealPage .chatDirectory{
+  min-width:340px!important;
+}
+.chatRealPage .conversationHeader{
+  min-height:70px!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:4!important;
+}
+.chatRealPage .messageStream{
+  min-height:0!important;
+  overflow:auto!important;
+  padding-bottom:18px!important;
+}
+.chatRealPage .messageBubble{
+  max-width:min(78%, 560px)!important;
+}
+.chatRealPage .imageAttachmentCard img{
+  max-width:min(360px, 72vw)!important;
+}
+.chatRealPage .messageComposer{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:4!important;
+}
+
+/* Chat sin barras de MiZona al entrar a conversación */
+body.mizona-chat-fullscreen .topbar,
+body.mizona-chat-fullscreen .mobileBottomNav,
+body.mizona-chat-immersive .topbar,
+body.mizona-chat-immersive .mobileBottomNav{
+  display:none!important;
+}
+body.mizona-chat-fullscreen main,
+body.mizona-chat-immersive main{
+  margin-left:0!important;
+  width:100%!important;
+}
+body.mizona-chat-fullscreen .content,
+body.mizona-chat-immersive .content{
+  padding:0!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+}
+body.mizona-chat-fullscreen .chatRealPage,
+body.mizona-chat-immersive .chatRealPage{
+  height:100dvh!important;
+  min-height:100dvh!important;
+}
+body.mizona-chat-fullscreen .chatWorkspace,
+body.mizona-chat-immersive .chatWorkspace{
+  height:100dvh!important;
+  min-height:100dvh!important;
+  border-radius:0!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Lista de chats estilo WhatsApp claro */
+.chatDirectoryHeaderBar b{font-size:22px!important;}
+.chatRealPage .conversationList>button{
+  min-height:76px!important;
+  padding:12px 16px!important;
+}
+.chatRealPage .conversationList>button b{
+  font-size:17px!important;
+}
+.chatRealPage .conversationList>button small{
+  max-width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.chatRealPage .chatAvatar{
+  width:50px!important;
+  height:50px!important;
+}
+.chatRealPage .chatAvatar.small{
+  width:34px!important;
+  height:34px!important;
+}
+
+/* Móvil: conversación ocupa TODA la pantalla */
+@media (max-width:760px){
+  .chatRealPage{
+    padding:0!important;
+  }
+  .chatRealPage .chatPageHeader,
+  .chatRealPage .chatLocalModeNotice,
+  .chatRealPage .chatSafetyGrid{
+    display:none!important;
+  }
+  .chatRealPage .chatWorkspace{
+    height:100dvh!important;
+    border-radius:0!important;
+    border:0!important;
+  }
+  .chatRealPage .chatDirectory{
+    min-width:100%!important;
+    width:100%!important;
+  }
+  .chatRealPage.mobileChatListMode .chatDirectory{
+    inset:0!important;
+    width:100%!important;
+  }
+  .chatRealPage.mobileChatFullscreen .chatConversation{
+    inset:0!important;
+    height:100dvh!important;
+    width:100%!important;
+  }
+  .chatRealPage .conversationHeader{
+    min-height:64px!important;
+    padding:8px 8px!important;
+    grid-template-columns:42px 42px minmax(0,1fr) auto auto 42px!important;
+  }
+  .chatRealPage .conversationHeader .chatAvatar{
+    width:40px!important;
+    height:40px!important;
+  }
+  .chatRealPage .conversationHeader>div:nth-child(3)>b{
+    font-size:15px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .chatRealPage .conversationHeader>div:nth-child(3)>span{
+    font-size:11px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .chatRealPage .chatViewListBtn{
+    font-size:0!important;
+    width:42px!important;
+    min-width:42px!important;
+    height:42px!important;
+    padding:0!important;
+    border-radius:14px!important;
+  }
+  .chatRealPage .chatViewListBtn::before{
+    content:'☰';
+    font-size:20px!important;
+    line-height:1;
+  }
+  .chatRealPage .chatViewListBtn.secondary::before{
+    content:'×';
+    font-size:24px!important;
+  }
+  .chatRealPage .retentionBanner{
+    min-height:42px!important;
+    padding:8px 14px!important;
+    font-size:13px!important;
+    line-height:1.25!important;
+  }
+  .chatRealPage .messageStream{
+    padding:12px 10px!important;
+    height:calc(100dvh - 64px - 42px - 72px)!important;
+  }
+  .chatRealPage .messageBubble{
+    max-width:82%!important;
+    padding:10px 12px!important;
+  }
+  .chatRealPage .messageBubble p{
+    font-size:16px!important;
+  }
+  .chatRealPage .messageComposer{
+    min-height:72px!important;
+    padding:9px 8px!important;
+  }
+  .chatRealPage .messageComposer>input:not([type=file]){
+    min-height:50px!important;
+    font-size:16px!important;
+  }
+  .chatRealPage .messageComposer>button,
+  .chatRealPage .messageComposer .iconBtn{
+    width:50px!important;
+    height:50px!important;
+  }
+}
