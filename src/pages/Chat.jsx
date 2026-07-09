@@ -189,6 +189,7 @@ export default function Chat({ setPage }) {
   const [searchText, setSearchText] = useState('');
   const fileInput = useRef(null);
   const messageEnd = useRef(null);
+  const pushedMobileChatState = useRef(false);
 
   const selected = useMemo(() => conversations.find(item => item.id === selectedId) || null, [conversations, selectedId]);
   const isMobileViewport = () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches;
@@ -196,9 +197,31 @@ export default function Chat({ setPage }) {
   useEffect(() => {
     if (!isMobileViewport()) return;
     sessionStorage.removeItem('mizona-chat-open-conversation');
-    setMobileConversation(false);
-    setSelectedId(null);
-    setTab('chats');
+    const state = window.history.state || {};
+    if (state.chatView !== 'conversation') {
+      setMobileConversation(false);
+      setSelectedId(null);
+      setTab('chats');
+    }
+
+    const onPopState = event => {
+      const next = event.state || {};
+      if ((next.mizonaPage || next.mzPage) !== 'chat') return;
+      if (next.chatView === 'conversation' && next.chatConversationId) {
+        pushedMobileChatState.current = true;
+        setSelectedId(next.chatConversationId);
+        setMobileConversation(true);
+      } else {
+        pushedMobileChatState.current = false;
+        setMobileConversation(false);
+        setSelectedId(null);
+        setTab('chats');
+        setSearchText('');
+      }
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   useEffect(() => {
@@ -245,6 +268,12 @@ export default function Chat({ setPage }) {
       setTab('chats');
       return;
     }
+    if (mobile) {
+      if (mobileConversation && selectedId && nextConversations.some(item => item.id === selectedId)) return;
+      if (!mobileConversation) return;
+      setSelectedId(null);
+      return;
+    }
     if (!keepSelection || !selectedId) setSelectedId(nextConversations[0]?.id || null);
     else if (!nextConversations.some(item => item.id === selectedId)) setSelectedId(nextConversations[0]?.id || null);
   };
@@ -284,7 +313,21 @@ export default function Chat({ setPage }) {
   const openConversation = id => {
     if (!id) return;
     setSelectedId(id);
-    setMobileConversation(true);
+    if (isMobileViewport()) {
+      const current = window.history.state || {};
+      if (current.chatView !== 'conversation' || current.chatConversationId !== id) {
+        window.history.pushState(
+          { ...current, mizonaPage: 'chat', mzPage: 'chat', chatView: 'conversation', chatConversationId: id },
+          '',
+          `#chat/${id}`
+        );
+        pushedMobileChatState.current = true;
+      }
+      setMobileConversation(true);
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);
+    } else {
+      setMobileConversation(false);
+    }
   };
 
   const showChatList = () => {
@@ -292,7 +335,19 @@ export default function Chat({ setPage }) {
     setSelectedId(null);
     setTab('chats');
     setSearchText('');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    if (isMobileViewport()) {
+      const state = window.history.state || {};
+      if (state.chatView === 'conversation' && pushedMobileChatState.current) {
+        pushedMobileChatState.current = false;
+        window.history.back();
+        return;
+      }
+      if (state.chatView === 'conversation') {
+        window.history.replaceState({ mizonaPage: 'chat', mzPage: 'chat' }, '', '#chat');
+      }
+      pushedMobileChatState.current = false;
+    }
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);
   };
 
   const startDirect = async contact => {
@@ -301,9 +356,8 @@ export default function Chat({ setPage }) {
     try {
       const id = await startDirectConversation(contact.id);
       await refreshLists(true);
-      setSelectedId(id);
-      setMobileConversation(true);
       setTab('chats');
+      openConversation(id);
     } catch (error) {
       setNotice(error.message);
     } finally {
@@ -461,6 +515,6 @@ export default function Chat({ setPage }) {
     </div>
 
     {showSearch && <ContactSearch onChanged={() => refreshLists(true)} onClose={() => setShowSearch(false)}/>}
-    {showGroup && !isStudent && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); setSelectedId(id); setMobileConversation(true); }} onClose={() => setShowGroup(false)}/>}
+    {showGroup && !isStudent && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); openConversation(id); }} onClose={() => setShowGroup(false)}/>}
   </div>;
 }

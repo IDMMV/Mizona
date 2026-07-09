@@ -1237,3 +1237,48 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   .pushRealHero p,.financeHero p{font-size:12.5px!important;}
   .chatRealPage.mobileChatListMode .chatWorkspace{height:calc(100dvh - 160px)!important;border-radius:18px!important;}
 }
+
+/* ETAPA 30.27 · Retroceso Android + pantallas móviles más limpias */
+@media(max-width:760px){
+  /* La app aprovecha mejor toda la pantalla del celular en cada pestaña */
+  .app main{min-height:100dvh!important;background:#f6fbf9!important;overflow-x:hidden!important;}
+  .topbar{height:64px!important;min-height:64px!important;padding:8px 12px!important;gap:8px!important;box-shadow:0 8px 22px rgba(15,23,42,.05)!important;}
+  .topbar .searchBox{height:42px!important;border-radius:15px!important;padding:0 10px!important;font-size:13px!important;}
+  .topbar .sidebarMasterToggle,.topbar .iconBtn{width:42px!important;height:42px!important;min-width:42px!important;border-radius:15px!important;padding:0!important;justify-content:center!important;}
+  .content{padding:10px 12px 92px!important;min-height:calc(100dvh - 64px)!important;}
+
+  /* Encabezados realmente compactos: no deben ocupar media pantalla */
+  .hero,.smartHero,.committeeHero,.businessSuiteHero,.businessHero,.campusHero,.communityHeroReal,.pageHero,.labHero,.notificationHero,.rideHero,.aiHero,.benefitsHero,.mkCTopHero,.pushRealHero,.financeHero,.marketHero{
+    min-height:auto!important;max-height:none!important;padding:14px!important;border-radius:20px!important;margin:0 0 12px!important;gap:10px!important;
+  }
+  .hero h1,.smartHero h1,.committeeHero h1,.businessSuiteHero h1,.businessHero h1,.campusHero h1,.communityHeroReal h1,.pageHero h1,.labHero h1,.notificationHero h1,.rideHero h1,.aiHero h1,.benefitsHero h1,.mkCTopHero h1,.pushRealHero h1,.financeHero h1,.marketHero h1{
+    font-size:20px!important;line-height:1.15!important;margin:2px 0 5px!important;letter-spacing:-.025em!important;
+  }
+  .hero p,.smartHero p,.committeeHero p,.businessSuiteHero p,.businessHero p,.campusHero p,.communityHeroReal p,.pageHero p,.labHero p,.notificationHero p,.rideHero p,.aiHero p,.benefitsHero p,.mkCTopHero p,.pushRealHero p,.financeHero p,.marketHero p{
+    font-size:12.5px!important;line-height:1.35!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;
+  }
+  .eyebrow{font-size:9.5px!important;letter-spacing:.11em!important;}
+  .heroIcon,.committeeHeroIcon,.communityHeroIcon,.aiHeroVisual{width:44px!important;height:44px!important;min-width:44px!important;border-radius:14px!important;transform:none!important;}
+  .heroIcon svg,.committeeHeroIcon svg,.communityHeroIcon svg,.financeHero .heroIcon svg{width:22px!important;height:22px!important;}
+  .financeHero .heroIcon,.financeHero svg[width='42'],.financeHero svg[height='42']{max-width:44px!important;max-height:44px!important;}
+  .campusHeroStats,.rideHeroStats,.businessHeroStats,.notificationHeroStats,.heroStats,.marketHeroStats{gap:8px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .campusHeroStats span,.rideHeroStats span,.businessHeroStats span,.notificationHeroStats span,.heroStats span,.marketHeroStats span{padding:8px!important;border-radius:13px!important;font-size:11px!important;}
+  .campusHeroStats b,.rideHeroStats b,.businessHeroStats b,.notificationHeroStats b,.heroStats b,.marketHeroStats b{font-size:16px!important;}
+
+  /* Pestañas internas más tipo app y sin cortar contenido */
+  .tabs,.committeeTabs,.businessTabs,.rideTabs,.campusTabs,.mkCModeTabs,.mkCCategoryChips{overflow-x:auto!important;flex-wrap:nowrap!important;scrollbar-width:thin!important;scroll-snap-type:x proximity!important;}
+  .tabs button,.committeeTabs button,.businessTabs button,.rideTabs button,.campusTabs button,.mkCModeTabs button,.mkCCategoryChips button{white-space:nowrap!important;min-height:36px!important;padding:8px 11px!important;font-size:12px!important;scroll-snap-align:start!important;}
+
+  /* Chat lista: pantalla de entrada real, antes de abrir cualquier conversación */
+  .chatRealPage.mobileChatListMode .chatWorkspace{height:calc(100dvh - 154px)!important;border-radius:18px!important;}
+  .chatRealPage.mobileChatListMode .chatDirectoryTop{position:sticky!important;top:0!important;background:#fff!important;z-index:5!important;border-bottom:1px solid #dceee8!important;}
+  .chatRealPage.mobileChatListMode .conversationList{overflow-y:auto!important;overscroll-behavior:contain!important;}
+  .chatRealPage.mobileChatListMode .conversationList>button{min-height:70px!important;border-radius:15px!important;}
+
+  /* Chat conversación: la tecla atrás del celular vuelve a la lista, no cambia de pestaña */
+  body.mizona-chat-fullscreen .chatRealPage{height:100dvh!important;min-height:100dvh!important;}
+  body.mizona-chat-fullscreen .chatWorkspace{height:100dvh!important;}
+  body.mizona-chat-fullscreen .conversationHeader{height:64px!important;min-height:64px!important;grid-template-columns:42px 40px minmax(0,1fr) 78px 40px!important;}
+  body.mizona-chat-fullscreen .retentionBanner{min-height:38px!important;padding:8px 12px!important;font-size:11.5px!important;}
+  body.mizona-chat-fullscreen .messageComposer{min-height:66px!important;grid-template-columns:44px minmax(0,1fr) 48px!important;}
+}
