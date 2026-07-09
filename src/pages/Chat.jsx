@@ -191,6 +191,12 @@ export default function Chat({ setPage }) {
   const messageEnd = useRef(null);
 
   const selected = useMemo(() => conversations.find(item => item.id === selectedId) || null, [conversations, selectedId]);
+
+  useEffect(() => {
+    const active = mobileConversation && Boolean(selectedId);
+    document.body.classList.toggle('mizona-chat-fullscreen', active);
+    return () => document.body.classList.remove('mizona-chat-fullscreen');
+  }, [mobileConversation, selectedId]);
   const receivedPending = requests.filter(item => item.direction === 'received' && item.status === 'pending');
   const isStudent = String(profile?.account_type || profile?.type || profile?.role || '').toLowerCase().includes('student') || String(profile?.role || '').toLowerCase().includes('alumno');
   const conversationName = item => item?.type === 'direct' ? item.peer_display_name || item.peer_username || 'Conversación' : item?.title || 'Grupo';
@@ -261,9 +267,16 @@ export default function Chat({ setPage }) {
   useEffect(() => messageEnd.current?.scrollIntoView({ behavior: 'smooth' }), [messages]);
 
   const openConversation = id => {
+    if (!id) return;
     setSelectedId(id);
     setMobileConversation(true);
+  };
+
+  const showChatList = () => {
+    setMobileConversation(false);
     setTab('chats');
+    setSearchText('');
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
   };
 
   const startDirect = async contact => {
@@ -354,13 +367,13 @@ export default function Chat({ setPage }) {
     <div><ShieldCheck size={48}/><h1>MiZona Chat protegido</h1><p>Inicia sesión para buscar contactos, recibir invitaciones y conversar de forma segura.</p><button onClick={() => setPage('settings')}>Ingresar o crear cuenta</button></div>
   </div>;
 
-  return <div className="chatRealPage">
+  return <div className={`chatRealPage ${mobileConversation && selectedId ? 'mobileChatFullscreen' : 'mobileChatListMode'}`}>
     <div className="chatPageHeader">
       <div><span>{isStudent ? 'CHAT SEGURO PARA ESTUDIANTES' : 'ETAPA 14 · LABORATORIO MULTIUSUARIO'}</span><h1>MiZona Chat</h1><p>{isStudent ? 'Elige chats, grupos, contactos o solicitudes permitidas. No quedas encerrado en una conversación.' : 'Prueba conversaciones reales entre perfiles locales usando varias pestañas.'}</p></div>
       <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button>{!isStudent && <button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button>}<button onClick={() => setShowSearch(true)}><UserPlus size={17}/> {isStudent ? 'Buscar permitido' : 'Agregar contacto'}</button></div>
     </div>
 
-    {!backendConnected && <ChatNotice kind="success">Modo local multiusuario activo. Cada pestaña puede usar un perfil diferente y los cambios se comparten en este navegador.</ChatNotice>}
+    {!backendConnected && <div className="chatLocalModeNotice"><ChatNotice kind="success">Modo local multiusuario activo. Los cambios se comparten en este navegador.</ChatNotice></div>}
     {notice && <ChatNotice kind={notice.includes('bloqueado') || notice.includes('Reporte enviado') ? 'success' : 'danger'}>{notice}</ChatNotice>}
 
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>
@@ -392,11 +405,11 @@ export default function Chat({ setPage }) {
       <section className="chatConversation">
         {selected ? <>
           <header className="conversationHeader">
-            <button className="iconBtn chatBack" onClick={() => setMobileConversation(false)}><ChevronLeft/></button>
+            <button className="iconBtn chatBack" onClick={showChatList}><ChevronLeft/></button>
             <Avatar name={conversationName(selected)} image={selected.peer_avatar_url}/>
             <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type?.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'} · elimina mensajes en {selected.retention_days || 7} días</span></div>
-            <button className="chatViewListBtn" type="button" onClick={() => setMobileConversation(false)}>Ver chats</button>
-            <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); setMobileConversation(false); } }}><MoreVertical/></button>
+            <button className="chatViewListBtn" type="button" onClick={showChatList}>Ver chats</button>
+            <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); showChatList(); } }}><MoreVertical/></button>
           </header>
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
           <div className="messageStream">
