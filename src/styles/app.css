@@ -476,3 +476,144 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
 .themeInfoBox{margin-top:14px;border:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 10%,var(--panel)),var(--panel));border-radius:18px;padding:14px 16px;display:grid;gap:4px;color:var(--ink)}
 .themeInfoBox b{font-size:14px;color:var(--brand)}
 .themeInfoBox span{font-size:12px;color:var(--muted)}
+
+/* ==========================================================
+   Etapa 30.16 · Tema global limpio
+   Objetivo: evitar mezcla de colores antiguos en banners,
+   pestañas, botones y textos cuando se cambia el tema.
+   ========================================================== */
+.app.theme-green{
+  --bg:#f5faf8;--panel:#ffffff;--ink:#17324a;--heading:#0f2f44;--muted:#64748b;
+  --brand:#16a34a;--brand2:#14b8a6;--brand3:#0f766e;--accent:#f59e0b;
+  --line:#dceee8;--dark:#083344;--soft:#ecfdf5;--soft2:#f0fdfa;
+  --shadow:0 18px 42px rgba(15,85,70,.085);
+}
+.app.theme-blue{
+  --bg:#f5f8ff;--panel:#ffffff;--ink:#14233c;--heading:#0f2b55;--muted:#64748b;
+  --brand:#1769ff;--brand2:#0ea5e9;--brand3:#1d4ed8;--accent:#f59e0b;
+  --line:#dbe7ff;--dark:#0d2242;--soft:#eff6ff;--soft2:#f0f9ff;
+  --shadow:0 18px 42px rgba(23,105,255,.09);
+}
+.app.theme-purple{
+  --bg:#faf7ff;--panel:#ffffff;--ink:#24183a;--heading:#28164f;--muted:#70637f;
+  --brand:#7c3aed;--brand2:#06b6d4;--brand3:#6d28d9;--accent:#f59e0b;
+  --line:#eadcff;--dark:#23143f;--soft:#f5f3ff;--soft2:#ecfeff;
+  --shadow:0 18px 42px rgba(124,58,237,.10);
+}
+.app.mode-dark{
+  --bg:#0b1220;--panel:#101a2b;--ink:#e9f2ff;--heading:#f8fbff;--muted:#9fb0c8;
+  --line:#213149;--soft:#111f33;--soft2:#0f2430;--dark:#08111f;
+  --shadow:0 18px 44px rgba(0,0,0,.32);
+}
+
+/* Base de lectura: menos negro duro y tamaños más compactos */
+.app{background:var(--bg)!important;color:var(--ink)!important;letter-spacing:-.01em}
+.app h1,.app h2,.app h3,.app h4{color:var(--heading);letter-spacing:-.035em;line-height:1.12}
+.app .page h1,.app .pageTitle h1{font-size:clamp(22px,2.25vw,30px)!important;font-weight:800!important}
+.app .card h2,.app .card h3{font-size:clamp(17px,1.5vw,21px)!important;font-weight:760!important}
+.app .muted,.app p,.app small,.app .list{color:var(--muted)}
+
+/* Banners globales: todos respetan el tema seleccionado */
+.app .hero,
+.app .committeeHero,
+.app .businessHero,
+.app .rideHero,
+.app .benefitsHero,
+.app .businessKioskPanel,
+.app .kioskHeader{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--brand3) 43%,var(--brand2) 100%)!important;
+  color:#fff!important;
+  border:0!important;
+  box-shadow:0 18px 45px color-mix(in srgb,var(--brand) 20%,transparent)!important;
+}
+.app .hero h1,
+.app .committeeHero h1,
+.app .businessHero h1,
+.app .rideHero h1,
+.app .benefitsHero h1,
+.app .businessKioskPanel h1,
+.app .businessKioskPanel h2,
+.app .kioskHeader h1,
+.app .kioskHeader h2{
+  color:#fff!important;text-shadow:none!important;font-weight:820!important;
+}
+.app .hero p,.app .committeeHero p,.app .businessHero p,.app .rideHero p,.app .benefitsHero p,
+.app .hero .eyebrow,.app .committeeHero .eyebrow,.app .businessHero .eyebrow,.app .rideHero .eyebrow,.app .benefitsHero .eyebrow{
+  color:rgba(255,255,255,.88)!important;
+}
+.app .heroStats span,.app .savingBox{
+  background:rgba(255,255,255,.15)!important;border-color:rgba(255,255,255,.23)!important;color:#fff!important;
+}
+
+/* Botones y pestañas: sin azul fijo cuando el tema es verde/morado */
+.app .primary,.app button.primary,.app .full.primary,
+.app .logoutTopTextBtn:not(.danger),.app .pushPermissionBox button{
+  background:linear-gradient(135deg,var(--brand),var(--brand2))!important;
+  color:#fff!important;border-color:transparent!important;
+}
+.app .tabs button.active,
+.app .committeeTabs button.active,
+.app .businessTabs button.active,
+.app .rideTabs button.active,
+.app .accountTabs button.active,
+.app .accessTabs button.active{
+  background:linear-gradient(135deg,var(--brand3),var(--brand))!important;
+  border-color:var(--brand)!important;color:#fff!important;
+  box-shadow:0 10px 24px color-mix(in srgb,var(--brand) 20%,transparent)!important;
+}
+.app .tabs button,
+.app .committeeTabs button,
+.app .businessTabs button,
+.app .rideTabs button,
+.app .accountTabs button,
+.app .accessTabs button{
+  color:var(--ink)!important;background:var(--panel)!important;border-color:var(--line)!important;
+}
+.app .quick:hover,.app .iconBtn:hover,.app .ghost:hover{border-color:color-mix(in srgb,var(--brand) 38%,var(--line))!important}
+
+/* Tarjetas, tablas, formularios */
+.app .card,.app .quick,.app .timelineItem,.app .chatBox,.app .thread,
+.app .moduleMini>div,.app .adminTable>div,.app .stats span,.app .soon,
+.app input,.app select,.app textarea,.app .field,.app .searchBox,
+.app .iconBtn,.app .profileBtn,.app .zoneBtn,.app .ghost{
+  background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important;
+}
+.app .card,.app .quick,.app .timelineItem,.app .chatBox,.app .thread{box-shadow:var(--shadow)!important}
+.app .quick{font-weight:760!important;color:var(--heading)!important}
+.app .adminTable>div:first-child,.app .tableHead,.app thead tr{background:var(--soft)!important;color:var(--heading)!important}
+.app .pill.active{background:color-mix(in srgb,var(--brand) 16%,#fff)!important;color:var(--brand3)!important}
+.app .chips span{background:var(--soft)!important;color:var(--brand3)!important}
+
+/* Menú lateral y navegación */
+.app .sidebar{background:linear-gradient(180deg,var(--dark),#07111f)!important}
+.app .navItem{color:rgba(255,255,255,.88)!important}
+.app .navItem:hover,.app .navItem.active{
+  background:rgba(255,255,255,.12)!important;box-shadow:inset 4px 0 0 var(--brand)!important;color:#fff!important;
+}
+.app .logo{background:linear-gradient(135deg,var(--brand),var(--accent))!important}
+.app .bar i,.app .progressRows i span{background:linear-gradient(90deg,var(--brand),var(--brand2))!important}
+
+/* Íconos con contraste controlado por tema */
+.app .navItem svg,.app .cardHead svg,.app .quick svg,.app .moduleIcon svg,
+.app .pageTitle svg,.app .stats svg{color:var(--brand)!important}
+.app.theme-green .quick:nth-child(3n+2) svg,.app.theme-green .card:nth-child(3n+2) svg{color:#0ea5a4!important}
+.app.theme-green .quick:nth-child(3n+3) svg,.app.theme-green .card:nth-child(3n+3) svg{color:#f59e0b!important}
+
+/* Modo noche consistente */
+.app.mode-dark .topbar,.app.mode-dark .searchBox,.app.mode-dark .iconBtn,.app.mode-dark .profileBtn,.app.mode-dark .zoneBtn,.app.mode-dark .ghost,
+.app.mode-dark .card,.app.mode-dark .quick,.app.mode-dark .timelineItem,.app.mode-dark .chatBox,.app.mode-dark .thread,
+.app.mode-dark .moduleMini>div,.app.mode-dark .adminTable>div,
+.app.mode-dark input,.app.mode-dark select,.app.mode-dark textarea,.app.mode-dark .field{
+  background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important;
+}
+.app.mode-dark .adminTable>div:first-child,.app.mode-dark .tableHead,.app.mode-dark thead tr{background:#111f33!important}
+.app.mode-dark .quick,.app.mode-dark .card{box-shadow:var(--shadow)!important}
+
+/* Responsive más compacto */
+@media(max-width:760px){
+  .app .hero,.app .committeeHero,.app .businessHero,.app .rideHero,.app .benefitsHero{padding:16px!important;border-radius:20px!important}
+  .app .hero h1,.app .committeeHero h1,.app .businessHero h1,.app .rideHero h1,.app .benefitsHero h1{font-size:clamp(20px,6vw,25px)!important}
+  .app .heroStats span{padding:9px 10px!important;font-size:12px!important}
+  .app .quick{padding:12px 13px!important;border-radius:16px!important;min-height:48px!important}
+  .app .tabs button,.app .committeeTabs button,.app .businessTabs button,.app .rideTabs button{font-size:12px!important;padding:8px 10px!important}
+}
