@@ -41,6 +41,7 @@ function App() {
   })();
   const [page, setPageState] = useState(initialPage);
   const isPoppingRef = useRef(false);
+  const firstAuthRedirectRef = useRef(false);
 
   useEffect(() => {
     if (!window.history.state?.mizonaPage) {
@@ -68,6 +69,30 @@ function App() {
     });
   }, []);
   const { backendConnected, isAdmin, profile, dataMode, isAuthenticated, authLoading } = useApp();
+
+  const replacePage = useCallback(value => {
+    if (!value) return;
+    setPageState(value);
+    window.history.replaceState({ mizonaPage: value, mzPage: value }, '', `#${value}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    if (authLoading) return;
+
+    if (!isAuthenticated) {
+      firstAuthRedirectRef.current = false;
+      if (page !== 'settings') replacePage('settings');
+      return;
+    }
+
+    if (!firstAuthRedirectRef.current) {
+      firstAuthRedirectRef.current = true;
+      const hashPage = window.location.hash?.replace('#', '').split('/')[0];
+      if (!hashPage || hashPage === 'settings' || page === 'settings') replacePage('panel');
+    }
+  }, [authLoading, isAuthenticated, page, replacePage]);
+
   const pages = {
     panel: <Panel setPage={setPage}/>,
     community: <Community setPage={setPage}/>,
