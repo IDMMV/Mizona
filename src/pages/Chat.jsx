@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle, Ban, Check, ChevronLeft, CircleUserRound, Download, File,
-  FileUp, Image, Info, Loader2, MessageCircle, MessageSquarePlus, MoreVertical,
-  Paperclip, Plus, RefreshCw, Search, Send, ShieldCheck, SlidersHorizontal, UserPlus, Users, X
+  FileUp, Image, Info, Loader2, Maximize2, MessageCircle, MessageSquarePlus,
+  Minimize2, MoreVertical, Palette, Paperclip, Plus, RefreshCw, Search, Send,
+  ShieldCheck, SlidersHorizontal, UserPlus, Users, X
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { listCommunities, listMyMemberships, loadCommunityBundle } from '../lib/community';
 import {
-  blockChatUser, createChatGroup, demoRequests, findChatProfileExact, leaveConversation,
+  blockChatUser, createChatGroup, findChatProfileExact, leaveConversation,
   loadChatContacts, loadChatRequests, loadConversations, loadMessages, markConversationRead,
-  openChatAttachment, reportChatItem, reviewContactRequest, sendChatFile, sendContactRequest,
-  sendTextMessage, startDirectConversation, subscribeToChat
+  openChatAttachment, reportChatItem, resolveChatAttachmentUrl, reviewContactRequest, sendChatFile,
+  sendContactRequest, sendTextMessage, startDirectConversation, subscribeToChat
 } from '../lib/chat';
 
 const formatTime = value => {
@@ -30,16 +31,67 @@ const formatBytes = value => {
 
 const initials = value => String(value || 'U').split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
 
+const CHAT_THEME_DEFAULT = {
+  accent: '#25d366',
+  background: '#efeae2',
+  wallpaper: 'radial-gradient(circle at 25% 20%, rgba(37,211,102,.10), transparent 0 32%), radial-gradient(circle at 80% 0%, rgba(14,165,233,.10), transparent 0 26%), linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.88))',
+  surface: '#ffffff',
+  header: '#ffffff',
+  composer: '#ffffff',
+  text: '#111b21',
+  subtext: '#667781'
+};
+
+const CHAT_ACCENTS = ['#25d366', '#0ea5e9', '#8b5cf6', '#ef4444', '#f59e0b'];
+const CHAT_WALLPAPERS = [
+  { id: 'soft', label: 'Suave', value: CHAT_THEME_DEFAULT.wallpaper },
+  { id: 'mint', label: 'Menta', value: 'radial-gradient(circle at 20% 20%, rgba(45,212,191,.14), transparent 0 30%), radial-gradient(circle at 80% 0%, rgba(16,185,129,.12), transparent 0 26%), linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.92))' },
+  { id: 'sky', label: 'Cielo', value: 'radial-gradient(circle at 20% 20%, rgba(59,130,246,.15), transparent 0 30%), radial-gradient(circle at 80% 0%, rgba(125,211,252,.18), transparent 0 26%), linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.92))' },
+  { id: 'sand', label: 'Arena', value: 'radial-gradient(circle at 20% 20%, rgba(245,158,11,.12), transparent 0 28%), radial-gradient(circle at 80% 0%, rgba(234,179,8,.10), transparent 0 24%), linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.92))' }
+];
+
 function Avatar({ name, image, small = false }) {
-  return <div className={`chatAvatar ${small ? 'small' : ''}`}>
-    {image ? <img src={image} alt=""/> : initials(name)}
-  </div>;
+  return <div className={`chatAvatar ${small ? 'small' : ''}`}>{image ? <img src={image} alt=""/> : initials(name)}</div>;
 }
 
 function ChatNotice({ kind = 'info', children }) {
-  return <div className={`chatNotice ${kind}`}>
-    {kind === 'danger' ? <AlertTriangle size={17}/> : kind === 'success' ? <Check size={17}/> : <Info size={17}/>}<span>{children}</span>
-  </div>;
+  return <div className={`chatNotice ${kind}`}>{kind === 'danger' ? <AlertTriangle size={17}/> : kind === 'success' ? <Check size={17}/> : <Info size={17}/>}<span>{children}</span></div>;
+}
+
+function AttachmentPreview({ attachment, onNotice }) {
+  const isImage = String(attachment?.mime_type || '').startsWith('image/');
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl = null;
+    if (!isImage || !attachment?.storage_path) return undefined;
+    resolveChatAttachmentUrl(attachment.storage_path)
+      .then(url => {
+        if (!active) {
+          if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
+          return;
+        }
+        objectUrl = url;
+        setPreviewUrl(url);
+      })
+      .catch(() => setPreviewUrl(null));
+    return () => {
+      active = false;
+      if (objectUrl?.startsWith('blob:')) URL.revokeObjectURL(objectUrl);
+    };
+  }, [attachment?.id, attachment?.storage_path, isImage]);
+
+  if (isImage) {
+    return <button className="imageAttachmentCard" type="button" onClick={() => previewUrl ? window.open(previewUrl, '_blank', 'noopener,noreferrer') : onNotice?.('La imagen aún se está preparando.') }>
+      {previewUrl ? <img src={previewUrl} alt={attachment.file_name || 'Imagen del chat'}/> : <div className="imageAttachmentPlaceholder"><Image size={24}/><span>Cargando imagen…</span></div>}
+      <small>{attachment.file_name || 'Imagen'} · {formatBytes(attachment.size_bytes)}</small>
+    </button>;
+  }
+
+  return <button className="attachmentCard" onClick={() => attachment.storage_path ? openChatAttachment(attachment.storage_path).catch(error => onNotice?.(error.message)) : onNotice?.('Archivo de demostración.') }>
+    <File size={22}/><span><b>{attachment.file_name}</b><small>{formatBytes(attachment.size_bytes)} · enlace privado</small></span><Download size={17}/>
+  </button>;
 }
 
 function ContactSearch({ onChanged, onClose }) {
@@ -187,12 +239,54 @@ export default function Chat({ setPage }) {
   const [showGroup, setShowGroup] = useState(false);
   const [mobileConversation, setMobileConversation] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [immersiveMode, setImmersiveMode] = useState(true);
+  const [showThemePanel, setShowThemePanel] = useState(false);
+  const [chatTheme, setChatTheme] = useState(() => {
+    try {
+      return { ...CHAT_THEME_DEFAULT, ...(JSON.parse(localStorage.getItem(`mizona-chat-theme-${profile?.username || profile?.id || 'local'}`) || '{}') || {}) };
+    } catch {
+      return CHAT_THEME_DEFAULT;
+    }
+  });
   const fileInput = useRef(null);
+  const wallpaperInput = useRef(null);
   const messageEnd = useRef(null);
   const pushedMobileChatState = useRef(false);
+  const chatThemeKey = `mizona-chat-theme-${profile?.username || profile?.id || 'local'}`;
 
   const selected = useMemo(() => conversations.find(item => item.id === selectedId) || null, [conversations, selectedId]);
   const isMobileViewport = () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches;
+  const isStudent = String(profile?.account_type || profile?.type || profile?.role || '').toLowerCase().includes('student') || String(profile?.role || '').toLowerCase().includes('alumno');
+  const receivedPending = requests.filter(item => item.direction === 'received' && item.status === 'pending');
+  const conversationName = item => item?.type === 'direct' ? item.peer_display_name || item.peer_username || 'Conversación' : item?.title || 'Grupo';
+
+  const directConversations = useMemo(() => conversations.filter(item => item.type === 'direct'), [conversations]);
+  const groupConversations = useMemo(() => conversations.filter(item => item.type !== 'direct'), [conversations]);
+
+  const filteredConversations = useMemo(() => {
+    const source = tab === 'groups' ? groupConversations : conversations;
+    const q = searchText.trim().toLowerCase();
+    if (!q) return source;
+    return source.filter(item => [conversationName(item), item.last_message, item.peer_username, item.title].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
+  }, [tab, groupConversations, conversations, searchText]);
+
+  const filteredContacts = useMemo(() => {
+    const q = searchText.trim().toLowerCase();
+    if (!q) return contacts;
+    return contacts.filter(item => [item.display_name, item.username, item.zone].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
+  }, [contacts, searchText]);
+
+  const updateChatTheme = patch => setChatTheme(current => ({ ...current, ...patch }));
+  const chatThemeStyle = {
+    '--chat-accent': chatTheme.accent || CHAT_THEME_DEFAULT.accent,
+    '--chat-bg': chatTheme.background || CHAT_THEME_DEFAULT.background,
+    '--chat-surface': chatTheme.surface || CHAT_THEME_DEFAULT.surface,
+    '--chat-header': chatTheme.header || CHAT_THEME_DEFAULT.header,
+    '--chat-composer': chatTheme.composer || CHAT_THEME_DEFAULT.composer,
+    '--chat-text': chatTheme.text || CHAT_THEME_DEFAULT.text,
+    '--chat-subtext': chatTheme.subtext || CHAT_THEME_DEFAULT.subtext,
+    '--chat-wallpaper': chatTheme.wallpaper || CHAT_THEME_DEFAULT.wallpaper
+  };
 
   useEffect(() => {
     if (!isMobileViewport()) return;
@@ -203,7 +297,6 @@ export default function Chat({ setPage }) {
       setSelectedId(null);
       setTab('chats');
     }
-
     const onPopState = event => {
       const next = event.state || {};
       if ((next.mizonaPage || next.mzPage) !== 'chat') return;
@@ -219,7 +312,6 @@ export default function Chat({ setPage }) {
         setSearchText('');
       }
     };
-
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
@@ -229,111 +321,88 @@ export default function Chat({ setPage }) {
     document.body.classList.toggle('mizona-chat-fullscreen', active);
     return () => document.body.classList.remove('mizona-chat-fullscreen');
   }, [mobileConversation, selectedId]);
-  const receivedPending = requests.filter(item => item.direction === 'received' && item.status === 'pending');
-  const isStudent = String(profile?.account_type || profile?.type || profile?.role || '').toLowerCase().includes('student') || String(profile?.role || '').toLowerCase().includes('alumno');
-  const conversationName = item => item?.type === 'direct' ? item.peer_display_name || item.peer_username || 'Conversación' : item?.title || 'Grupo';
-  const directConversations = useMemo(() => conversations.filter(item => item.type === 'direct'), [conversations]);
-  const groupConversations = useMemo(() => conversations.filter(item => item.type !== 'direct'), [conversations]);
-  const filteredConversations = useMemo(() => {
-    const source = tab === 'groups' ? groupConversations : conversations;
-    const q = searchText.trim().toLowerCase();
-    if (!q) return source;
-    return source.filter(item => [conversationName(item), item.last_message, item.peer_username, item.title].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
-  }, [tab, conversations, groupConversations, searchText]);
-  const filteredContacts = useMemo(() => {
-    const q = searchText.trim().toLowerCase();
-    if (!q) return contacts;
-    return contacts.filter(item => [item.display_name, item.username, item.zone].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
-  }, [contacts, searchText]);
+
+  useEffect(() => {
+    document.body.classList.toggle('mizona-chat-immersive', immersiveMode);
+    return () => document.body.classList.remove('mizona-chat-immersive');
+  }, [immersiveMode]);
+
+  useEffect(() => {
+    localStorage.setItem(chatThemeKey, JSON.stringify(chatTheme));
+  }, [chatTheme, chatThemeKey]);
 
   const refreshLists = async (keepSelection = true) => {
     setNotice('');
-    const [nextContacts, nextRequests, nextConversations] = await Promise.all([
-      loadChatContacts(), loadChatRequests(), loadConversations()
-    ]);
-    setContacts(nextContacts);
-    setRequests(nextRequests);
-    setConversations(nextConversations);
-    const mobile = isMobileViewport();
-    const pendingOpen = mobile ? null : sessionStorage.getItem('mizona-chat-open-conversation');
-    if (pendingOpen && nextConversations.some(item => item.id === pendingOpen)) {
-      sessionStorage.removeItem('mizona-chat-open-conversation');
-      setSelectedId(pendingOpen);
-      setMobileConversation(true);
-      setTab('chats');
-      return;
+    setLoading(true);
+    try {
+      const [contactList, requestList, conversationList] = await Promise.all([loadChatContacts(), loadChatRequests(), loadConversations()]);
+      setContacts(contactList || []);
+      setRequests(requestList || []);
+      setConversations(conversationList || []);
+      const nextSelectedId = keepSelection ? selectedId : (keepSelection && conversationList?.[0]?.id);
+      if (keepSelection && selectedId) {
+        const found = (conversationList || []).find(item => item.id === selectedId);
+        if (found) {
+          setMessages(await loadMessages(selectedId));
+          await markConversationRead(selectedId);
+        } else {
+          setSelectedId(null);
+          setMessages([]);
+          setMobileConversation(false);
+        }
+      } else if (!keepSelection) {
+        setSelectedId(null);
+        setMessages([]);
+        setMobileConversation(false);
+      } else if (!selectedId && conversationList?.length) {
+        setSelectedId(nextSelectedId || null);
+      }
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setLoading(false);
     }
-    if (mobile && !mobileConversation) {
-      setSelectedId(null);
-      setTab('chats');
-      return;
-    }
-    if (mobile) {
-      if (mobileConversation && selectedId && nextConversations.some(item => item.id === selectedId)) return;
-      if (!mobileConversation) return;
-      setSelectedId(null);
-      return;
-    }
-    if (!keepSelection || !selectedId) setSelectedId(nextConversations[0]?.id || null);
-    else if (!nextConversations.some(item => item.id === selectedId)) setSelectedId(nextConversations[0]?.id || null);
   };
 
-  useEffect(() => {
-    if (backendConnected && !isAuthenticated) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    refreshLists(false).catch(error => setNotice(error.message)).finally(() => setLoading(false));
-  }, [backendConnected, isAuthenticated, user?.id]);
+  useEffect(() => { refreshLists(true); }, []);
 
   useEffect(() => {
-    if (!selectedId) return setMessages([]);
-    loadMessages(selectedId)
-      .then(data => { setMessages(data); markConversationRead(selectedId).catch(() => {}); })
-      .catch(error => setNotice(error.message));
+    const unsubscribe = subscribeToChat(async () => {
+      const contactList = await loadChatContacts();
+      const requestList = await loadChatRequests();
+      const conversationList = await loadConversations();
+      setContacts(contactList || []);
+      setRequests(requestList || []);
+      setConversations(conversationList || []);
+      if (selectedId) {
+        setMessages(await loadMessages(selectedId));
+        await markConversationRead(selectedId);
+      }
+    });
+    return () => unsubscribe?.();
   }, [selectedId]);
 
   useEffect(() => {
-    const cleanup = subscribeToChat({
-      userId: user?.id,
-      conversationId: selectedId,
-      onConversationChange: () => refreshLists(true).catch(() => {}),
-      onRequestChange: () => refreshLists(true).catch(() => {}),
-      onMessageChange: () => {
-        loadMessages(selectedId).then(setMessages).catch(() => {});
-        refreshLists(true).catch(() => {});
-      }
-    });
-    return cleanup;
-  }, [user?.id, selectedId]);
+    messageEnd.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages]);
 
-  useEffect(() => messageEnd.current?.scrollIntoView({ behavior: 'smooth' }), [messages]);
-
-  const openConversation = id => {
-    if (!id) return;
+  const openConversation = async id => {
     setSelectedId(id);
+    setNotice('');
+    setMessages(await loadMessages(id));
+    await markConversationRead(id);
+    setTab('chats');
     if (isMobileViewport()) {
-      const current = window.history.state || {};
-      if (current.chatView !== 'conversation' || current.chatConversationId !== id) {
-        window.history.pushState(
-          { ...current, mizonaPage: 'chat', mzPage: 'chat', chatView: 'conversation', chatConversationId: id },
-          '',
-          `#chat/${id}`
-        );
+      setMobileConversation(true);
+      if (!pushedMobileChatState.current || window.history.state?.chatConversationId !== id) {
+        window.history.pushState({ mizonaPage: 'chat', mzPage: 'chat', chatView: 'conversation', chatConversationId: id }, '', `#chat-${id}`);
         pushedMobileChatState.current = true;
       }
-      setMobileConversation(true);
       setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);
-    } else {
-      setMobileConversation(false);
     }
   };
 
   const showChatList = () => {
-    // Botón interno tipo WhatsApp: vuelve a la lista sin salir del módulo Chat.
-    // No usamos history.back() aquí porque en algunos celulares el navegador salta
-    // a la pestaña anterior de MiZona. La tecla física Atrás sí conserva su flujo.
     setMobileConversation(false);
     setSelectedId(null);
     setTab('chats');
@@ -393,6 +462,15 @@ export default function Chat({ setPage }) {
     }
   };
 
+  const uploadWallpaper = event => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => updateChatTheme({ wallpaper: `url("${reader.result}")` });
+    reader.readAsDataURL(file);
+  };
+
   const review = async (request, action) => {
     setLoading(true);
     try {
@@ -427,15 +505,12 @@ export default function Chat({ setPage }) {
     }
   };
 
+  if (backendConnected && !isAuthenticated) return <div className="chatLoginGate"><div><ShieldCheck size={48}/><h1>MiZona Chat protegido</h1><p>Inicia sesión para buscar contactos, recibir invitaciones y conversar de forma segura.</p><button onClick={() => setPage('settings')}>Ingresar o crear cuenta</button></div></div>;
 
-  if (backendConnected && !isAuthenticated) return <div className="chatLoginGate">
-    <div><ShieldCheck size={48}/><h1>MiZona Chat protegido</h1><p>Inicia sesión para buscar contactos, recibir invitaciones y conversar de forma segura.</p><button onClick={() => setPage('settings')}>Ingresar o crear cuenta</button></div>
-  </div>;
-
-  return <div className={`chatRealPage ${mobileConversation && selectedId ? 'mobileChatFullscreen' : 'mobileChatListMode'}`}>
+  return <div className={`chatRealPage ${mobileConversation && selectedId ? 'mobileChatFullscreen' : 'mobileChatListMode'} ${immersiveMode ? 'chatImmersiveMode' : 'chatWindowMode'}`} style={chatThemeStyle}>
     <div className="chatPageHeader">
       <div><span>{isStudent ? 'CHAT SEGURO PARA ESTUDIANTES' : 'ETAPA 14 · LABORATORIO MULTIUSUARIO'}</span><h1>MiZona Chat</h1><p>{isStudent ? 'Elige chats, grupos, contactos o solicitudes permitidas. No quedas encerrado en una conversación.' : 'Prueba conversaciones reales entre perfiles locales usando varias pestañas.'}</p></div>
-      <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button>{!isStudent && <button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button>}<button onClick={() => setShowSearch(true)}><UserPlus size={17}/> {isStudent ? 'Buscar permitido' : 'Agregar contacto'}</button></div>
+      <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button>{!isStudent && <button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button>}<button onClick={() => setShowSearch(true)}><UserPlus size={17}/> {isStudent ? 'Buscar permitido' : 'Agregar contacto'}</button><button className="secondary" onClick={() => setShowThemePanel(true)}><Palette size={17}/> Tema</button>{immersiveMode ? <button className="secondary" onClick={() => setImmersiveMode(false)}><Minimize2 size={17}/> Salir pantalla completa</button> : <button className="secondary" onClick={() => setImmersiveMode(true)}><Maximize2 size={17}/> Pantalla completa</button>}</div>
     </div>
 
     {!backendConnected && <div className="chatLocalModeNotice"><ChatNotice kind="success">Modo local multiusuario activo. Los cambios se comparten en este navegador.</ChatNotice></div>}
@@ -444,6 +519,10 @@ export default function Chat({ setPage }) {
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>
       <aside className="chatDirectory">
         <div className="chatDirectoryTop">
+          <div className="chatDirectoryHeaderBar">
+            <div><b>MiZona Chat</b><span>{tab === 'groups' ? 'Grupos y conversaciones' : tab === 'contacts' ? 'Tus contactos' : tab === 'requests' ? 'Solicitudes pendientes' : 'Tus chats recientes'}</span></div>
+            <div className="chatDirectoryHeaderActions"><button type="button" className="iconBtn" onClick={() => setShowThemePanel(true)} title="Cambiar tema"><Palette size={17}/></button>{immersiveMode ? <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(false)}><Minimize2 size={16}/> Salir</button> : <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(true)}><Maximize2 size={16}/> Full</button>}</div>
+          </div>
           <div className="chatSearchBar"><Search size={17}/><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder="Buscar conversación o usuario"/><button type="button" title="Filtros"><SlidersHorizontal size={16}/></button></div>
           {isStudent && <ChatNotice kind="success">Solo verás contactos y grupos aprobados para tu cuenta estudiantil.</ChatNotice>}
           <div className="chatTabs">
@@ -454,17 +533,7 @@ export default function Chat({ setPage }) {
           </div>
         </div>
 
-        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">
-          {filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}>
-            <Avatar name={conversationName(item)} image={item.peer_avatar_url}/>
-            <span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (item.last_message || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${item.last_message || 'Sin mensajes recientes'}`}</small></span>
-            <em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em>
-          </button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}
-        </div> : tab === 'contacts' ? <div className="contactListReal">
-          {filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}
-        </div> : <div className="requestListReal">
-          {requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}
-        </div>}
+        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">{filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}><Avatar name={conversationName(item)} image={item.peer_avatar_url}/><span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (item.last_message || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${item.last_message || 'Sin mensajes recientes'}`}</small></span><em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em></button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}</div> : tab === 'contacts' ? <div className="contactListReal">{filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}</div> : <div className="requestListReal">{requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}</div>}
       </aside>
 
       <section className="chatConversation">
@@ -473,7 +542,8 @@ export default function Chat({ setPage }) {
             <button className="iconBtn chatBack" onClick={showChatList}><ChevronLeft/></button>
             <Avatar name={conversationName(selected)} image={selected.peer_avatar_url}/>
             <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type?.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'} · elimina mensajes en {selected.retention_days || 7} días</span></div>
-            <button className="chatViewListBtn" type="button" onClick={showChatList}>Ver chats</button>
+            <button className="chatViewListBtn" type="button" onClick={showChatList}>Chats</button>
+            {immersiveMode ? <button className="chatViewListBtn secondary" type="button" onClick={() => setImmersiveMode(false)}>Salir</button> : <button className="chatViewListBtn secondary" type="button" onClick={() => setImmersiveMode(true)}>Full</button>}
             <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); showChatList(); } }}><MoreVertical/></button>
           </header>
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
@@ -484,9 +554,7 @@ export default function Chat({ setPage }) {
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
                   {!own && <b>{message.sender_display_name}</b>}
                   {message.body && <p>{message.body}</p>}
-                  {Array.isArray(message.attachments) && message.attachments.map(attachment => <button key={attachment.id} className="attachmentCard" onClick={() => attachment.storage_path ? openChatAttachment(attachment.storage_path).catch(error => setNotice(error.message)) : setNotice('Archivo de demostración.')}>
-                    {String(attachment.mime_type || '').startsWith('image/') ? <Image size={22}/> : <File size={22}/>}<span><b>{attachment.file_name}</b><small>{formatBytes(attachment.size_bytes)} · enlace privado</small></span><Download size={17}/>
-                  </button>)}
+                  {Array.isArray(message.attachments) && message.attachments.map(attachment => <AttachmentPreview key={attachment.id} attachment={attachment} onNotice={setNotice}/>)}
                   <small>{formatTime(message.created_at)}{message.expires_at && ` · vence ${new Date(message.expires_at).toLocaleDateString('es-PE')}`}{message.sync_status === 'local_only' && ' · guardado local'}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
               </div>;
@@ -503,13 +571,17 @@ export default function Chat({ setPage }) {
       </section>
     </div>
 
-    <div className="chatSafetyGrid">
-      <article><ShieldCheck/><div><b>Protección escolar</b><span>Las cuentas estudiantiles solo se encuentran dentro de relaciones escolares válidas.</span></div></article>
-      <article><FileUp/><div><b>Archivos privados</b><span>Hasta 25 MB, con enlaces temporales y acceso exclusivo para integrantes.</span></div></article>
-      <article><Ban/><div><b>Bloquear y reportar</b><span>El bloqueo elimina el contacto y detiene nuevas solicitudes.</span></div></article>
-    </div>
+    <div className="chatSafetyGrid"><article><ShieldCheck/><div><b>Protección escolar</b><span>Las cuentas estudiantiles solo se encuentran dentro de relaciones escolares válidas.</span></div></article><article><FileUp/><div><b>Archivos privados</b><span>Hasta 25 MB, con enlaces temporales y acceso exclusivo para integrantes.</span></div></article><article><Ban/><div><b>Bloquear y reportar</b><span>El bloqueo elimina el contacto y detiene nuevas solicitudes.</span></div></article></div>
 
     {showSearch && <ContactSearch onChanged={() => refreshLists(true)} onClose={() => setShowSearch(false)}/>}
     {showGroup && !isStudent && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); openConversation(id); }} onClose={() => setShowGroup(false)}/>}
+    {showThemePanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowThemePanel(false)}>
+      <div className="chatModal themePanel">
+        <div className="chatModalHeader"><div><span>PERSONALIZACIÓN</span><h2>Tema del chat</h2><p>Elige color y fondo tipo WhatsApp.</p></div><button className="iconBtn" onClick={() => setShowThemePanel(false)}><X size={19}/></button></div>
+        <div className="themeSection"><b>Color principal</b><div className="themeColorRow">{CHAT_ACCENTS.map(color => <button key={color} type="button" className={`themeColorDot ${chatTheme.accent === color ? 'active' : ''}`} style={{ background: color }} onClick={() => updateChatTheme({ accent: color })}/>)}</div></div>
+        <div className="themeSection"><b>Fondos</b><div className="themeWallpaperGrid">{CHAT_WALLPAPERS.map(item => <button key={item.id} type="button" className={`themeWallpaper ${chatTheme.wallpaper === item.value ? 'active' : ''}`} style={{ backgroundImage: item.value }} onClick={() => updateChatTheme({ wallpaper: item.value })}><span>{item.label}</span></button>)}<button type="button" className="themeWallpaper upload" onClick={() => wallpaperInput.current?.click()}><Image size={20}/><span>Foto</span></button></div><input ref={wallpaperInput} type="file" hidden accept="image/*" onChange={uploadWallpaper}/></div>
+        <div className="formActions"><button type="button" className="secondary" onClick={() => updateChatTheme(CHAT_THEME_DEFAULT)}>Restablecer</button><button type="button" onClick={() => setShowThemePanel(false)}>Listo</button></div>
+      </div>
+    </div>}
   </div>;
 }

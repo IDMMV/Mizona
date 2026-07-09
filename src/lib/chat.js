@@ -12,6 +12,7 @@ import {
   leaveLocalConversation,
   markLocalConversationRead,
   openLocalAttachment,
+  getLocalFile,
   reportLocalChatItem,
   reviewLocalContactRequest,
   sendLocalChatFile,
@@ -184,12 +185,24 @@ export async function sendChatFile({ conversationId, file, userId }) {
   return messageId;
 }
 
-export async function openChatAttachment(storagePath) {
-  if (String(storagePath || '').startsWith('local:') || useLocal()) return openLocalAttachment(storagePath);
+export async function resolveChatAttachmentUrl(storagePath) {
+  if (!storagePath) return null;
+  if (String(storagePath || '').startsWith('local:') || useLocal()) {
+    const fileId = String(storagePath || '').replace(/^[l]ocal:/, '');
+    const record = await getLocalFile(fileId);
+    if (!record?.blob) return null;
+    return URL.createObjectURL(record.blob);
+  }
   const { data, error } = await supabase.storage.from('chat-files').createSignedUrl(storagePath, 120);
   if (error) throw error;
-  if (!data?.signedUrl) throw new Error('No fue posible preparar la descarga.');
-  window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+  return data?.signedUrl || null;
+}
+
+export async function openChatAttachment(storagePath) {
+  if (String(storagePath || '').startsWith('local:') || useLocal()) return openLocalAttachment(storagePath);
+  const url = await resolveChatAttachmentUrl(storagePath);
+  if (!url) throw new Error('No fue posible preparar la descarga.');
+  window.open(url, '_blank', 'noopener,noreferrer');
   return true;
 }
 

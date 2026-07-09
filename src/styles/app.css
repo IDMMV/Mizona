@@ -1363,3 +1363,131 @@ button{letter-spacing:-.01em}.danger,.deleteBtn{color:#dc2626!important}.logoutT
   body.mizona-chat-fullscreen .messageComposer>input:not([type=file])::placeholder{color:#9ca3af!important;}
   body.mizona-chat-fullscreen .messageComposer>button:last-child{background:#22c55e!important;color:#052e16!important;border-radius:999px!important;width:54px!important;height:50px!important;}
 }
+
+/* ETAPA 30.29 - Chat WhatsApp blanco + pantalla completa + caja/imprimir */
+body.mizona-chat-immersive .topbar,
+body.mizona-chat-immersive .mobileBottomNav{display:none!important;}
+body.mizona-chat-immersive main{margin-left:290px;width:calc(100% - 290px)!important;}
+body.mizona-chat-immersive .content{padding:0!important;height:100dvh!important;min-height:100dvh!important;}
+body.mizona-chat-immersive .chatRealPage{height:100dvh!important;min-height:100dvh!important;}
+body.mizona-chat-immersive .chatWorkspace{height:100dvh!important;min-height:100dvh!important;border-radius:0!important;border:0!important;box-shadow:none!important;}
+body.mizona-chat-immersive .chatPageHeader,
+body.mizona-chat-immersive .chatLocalModeNotice,
+body.mizona-chat-immersive .chatSafetyGrid,
+body.mizona-chat-immersive .chatRealPage>.chatNotice{display:none!important;}
+.chatRealPage{--chat-accent:#25d366;--chat-bg:#efeae2;--chat-surface:#fff;--chat-header:#fff;--chat-composer:#fff;--chat-text:#111b21;--chat-subtext:#667781;--chat-wallpaper:none;background:var(--chat-surface)!important;color:var(--chat-text)!important;}
+.chatDirectoryHeaderBar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.chatDirectoryHeaderBar b{display:block;font-size:20px;color:var(--chat-text);}
+.chatDirectoryHeaderBar span{display:block;color:var(--chat-subtext);font-size:12px;margin-top:4px;}
+.chatDirectoryHeaderActions{display:flex;align-items:center;gap:8px;}
+.chatFullscreenToggle{border:1px solid #d8e2e8;background:#fff;border-radius:999px;padding:10px 14px;display:flex;align-items:center;gap:6px;font-weight:700;color:#0f5132;cursor:pointer;}
+.chatRealPage .chatWorkspace{background:var(--chat-surface)!important;}
+.chatRealPage .chatDirectory{background:var(--chat-surface)!important;border-right:1px solid #e3ecef!important;}
+.chatRealPage .chatDirectoryTop{background:var(--chat-surface)!important;border-bottom:1px solid #e3ecef!important;}
+.chatRealPage .chatSearchBar{background:#f0f2f5!important;border:1px solid #e5edf1!important;border-radius:999px!important;}
+.chatRealPage .chatSearchBar input{color:var(--chat-text)!important;background:transparent!important;}
+.chatRealPage .chatSearchBar input::placeholder{color:var(--chat-subtext)!important;}
+.chatRealPage .chatTabs button{background:#fff!important;border:1px solid #d8e2e8!important;color:var(--chat-subtext)!important;border-radius:999px!important;}
+.chatRealPage .chatTabs button.active{background:color-mix(in srgb, var(--chat-accent) 14%, white)!important;border-color:transparent!important;color:#0f5132!important;}
+.chatRealPage .conversationList,.chatRealPage .contactListReal,.chatRealPage .requestListReal{background:#fff!important;padding-bottom:24px!important;}
+.chatRealPage .conversationList>button,.chatRealPage .contactListReal article,.chatRealPage .requestListReal article{background:#fff!important;border-bottom:1px solid #eef3f4!important;border-radius:0!important;box-shadow:none!important;}
+.chatRealPage .conversationList>button.active,.chatRealPage .conversationList>button:hover{background:#f5fbf8!important;}
+.chatRealPage .conversationList>button b,.chatRealPage .contactListReal article b,.chatRealPage .requestListReal article b{font-size:16px!important;color:var(--chat-text)!important;font-weight:700!important;}
+.chatRealPage .conversationList>button small,.chatRealPage .contactListReal article span,.chatRealPage .requestListReal article span{color:var(--chat-subtext)!important;font-size:13px!important;}
+.chatRealPage .conversationList>button>em{color:#22c55e!important;font-size:12px!important;}
+.chatRealPage .conversationList>button>em i{background:var(--chat-accent)!important;color:#fff!important;}
+.chatRealPage .chatAvatar{background:#dfe7ea!important;color:#17324a!important;border-radius:999px!important;}
+.chatRealPage .chatConversation{background:var(--chat-bg)!important;color:var(--chat-text)!important;}
+.chatRealPage .conversationHeader{background:var(--chat-header)!important;border-bottom:1px solid #e3ecef!important;color:var(--chat-text)!important;}
+.chatRealPage .conversationHeader>div:nth-child(3)>b{color:var(--chat-text)!important;font-size:16px!important;}
+.chatRealPage .conversationHeader>div:nth-child(3)>span{color:var(--chat-subtext)!important;font-size:12px!important;}
+.chatRealPage .chatBack,.chatRealPage .conversationHeader .iconBtn,.chatRealPage .chatViewListBtn{background:#fff!important;color:var(--chat-text)!important;border:1px solid #d8e2e8!important;}
+.chatRealPage .chatViewListBtn{border-radius:999px!important;padding:9px 12px!important;font-size:12px!important;font-weight:700!important;}
+.chatRealPage .chatViewListBtn.secondary{color:#0f5132!important;}
+.chatRealPage .retentionBanner{background:#edfdf4!important;border-bottom:1px solid #d8f2e1!important;color:#1f7a47!important;justify-content:center!important;}
+.chatRealPage .messageStream{background-image:var(--chat-wallpaper)!important;background-color:var(--chat-bg)!important;background-size:cover!important;background-position:center!important;}
+.chatRealPage .messageBubble{background:#fff!important;color:var(--chat-text)!important;border:1px solid #e4ecee!important;border-radius:16px 16px 16px 4px!important;box-shadow:0 4px 10px rgba(0,0,0,.04)!important;}
+.chatRealPage .messageRow.own .messageBubble{background:color-mix(in srgb, var(--chat-accent) 16%, white)!important;border-color:transparent!important;border-radius:16px 16px 4px 16px!important;}
+.chatRealPage .messageBubble>b{color:#128c7e!important;font-size:12px!important;}
+.chatRealPage .messageBubble p{font-size:15px!important;line-height:1.45!important;}
+.chatRealPage .messageBubble>small{color:var(--chat-subtext)!important;font-size:11px!important;}
+.chatRealPage .messageComposer{background:var(--chat-composer)!important;border-top:1px solid #e3ecef!important;}
+.chatRealPage .messageComposer .iconBtn{background:#fff!important;border:1px solid #d8e2e8!important;color:#51636b!important;border-radius:16px!important;}
+.chatRealPage .messageComposer>input:not([type=file]){background:#fff!important;border:1px solid #d8e2e8!important;color:var(--chat-text)!important;border-radius:16px!important;}
+.chatRealPage .messageComposer>button:last-child{background:var(--chat-accent)!important;color:#fff!important;border:0!important;border-radius:16px!important;}
+.imageAttachmentCard{display:grid;gap:8px;border:0;background:transparent;padding:0;margin:8px 0 4px;width:100%;text-align:left;cursor:pointer;}
+.imageAttachmentCard img{width:100%;max-width:280px;max-height:340px;object-fit:cover;border-radius:14px;border:1px solid #d8e2e8;display:block;}
+.imageAttachmentCard small{color:var(--chat-subtext);font-size:11px;padding:0 4px 2px;}
+.imageAttachmentPlaceholder{width:240px;max-width:100%;height:180px;border-radius:14px;border:1px dashed #bdd5df;background:#f7fbfc;color:var(--chat-subtext);display:grid;place-items:center;gap:6px;padding:14px;}
+.themePanel{max-width:420px!important;}
+.themeSection{display:grid;gap:12px;margin:12px 0 18px;}
+.themeColorRow{display:flex;gap:10px;flex-wrap:wrap;}
+.themeColorDot{width:36px;height:36px;border-radius:999px;border:3px solid #fff;box-shadow:0 0 0 1px #d5e2e7;cursor:pointer;}
+.themeColorDot.active{box-shadow:0 0 0 2px #0f172a;}
+.themeWallpaperGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.themeWallpaper{height:88px;border-radius:16px;border:1px solid #d8e2e8;background-size:cover;background-position:center;padding:10px;display:flex;align-items:flex-end;justify-content:flex-start;cursor:pointer;overflow:hidden;}
+.themeWallpaper span{background:rgba(255,255,255,.88);padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#17324a;}
+.themeWallpaper.active{box-shadow:0 0 0 2px var(--chat-accent);} 
+.themeWallpaper.upload{background:#f4f7f8;display:grid;place-items:center;color:#52646c;}
+.themeWallpaper.upload span{background:transparent;padding:0;}
+.posActionRow{display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:12px;margin-top:14px;}
+.printReceiptBtn{margin-top:10px;border:1px solid #cddbe3;background:#fff;color:#17324a;border-radius:14px;padding:11px 16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.printReceiptBtn:disabled{opacity:.55;cursor:not-allowed;}
+.businessSuitePage,.businessSuitePage button,.businessSuitePage input,.businessSuitePage select,.chatRealPage,.chatRealPage button,.chatRealPage input{font-size:15px!important;}
+.businessSuitePage .posProduct b{font-size:19px!important;line-height:1.25!important;}
+.businessSuitePage .posProduct small,.businessSuitePage .cartItem small{font-size:13px!important;}
+.businessSuitePage .cartItem b,.businessSuitePage .cartTotals b,.businessSuitePage .cartHead b{font-size:15px!important;}
+.businessSuitePage .grandTotal{font-size:18px!important;}
+@media (max-width: 980px){body.mizona-chat-immersive main{margin-left:0!important;width:100%!important;} .chatDirectoryHeaderBar b{font-size:18px!important;} .themeWallpaperGrid{grid-template-columns:1fr 1fr;} .posActionRow{grid-template-columns:1fr 140px;} .chatRealPage .conversationHeader{grid-template-columns:42px 40px minmax(0,1fr) auto auto 42px!important;gap:8px!important;} }
+@media (max-width: 760px){body.mizona-chat-immersive .content{height:100dvh!important;} .chatRealPage.mobileChatListMode,.chatRealPage.mobileChatFullscreen{padding:0!important;background:#fff!important;} .chatRealPage.mobileChatListMode .chatWorkspace,.chatRealPage.mobileChatFullscreen .chatWorkspace{height:100dvh!important;border-radius:0!important;} .chatRealPage.mobileChatListMode .chatDirectory{position:absolute!important;inset:0!important;z-index:4!important;} .chatRealPage.mobileChatFullscreen .chatConversation{position:absolute!important;inset:0!important;z-index:5!important;visibility:visible!important;transform:none!important;pointer-events:auto!important;} .chatRealPage.mobileChatListMode .chatConversation{transform:translateX(105%)!important;visibility:hidden!important;pointer-events:none!important;} .chatRealPage .conversationHeader{grid-template-columns:38px 38px minmax(0,1fr) auto auto 38px!important;padding:10px 8px!important;} .chatRealPage .chatViewListBtn{padding:8px 10px!important;font-size:11px!important;} .chatRealPage .messageStream{padding:12px!important;} .chatRealPage .messageComposer{grid-template-columns:46px minmax(0,1fr) 52px!important;padding:10px 8px!important;} .chatFullscreenToggle{padding:9px 12px!important;font-size:12px!important;} .posActionRow{grid-template-columns:1fr;} .printReceiptBtn{margin-top:0;} }
+
+/* ETAPA 30.30 - Refinamiento visual WhatsApp claro, boleta elegante y botón lateral */
+.chatRealPage .chatWorkspace{display:grid!important;grid-template-columns:minmax(330px,390px) minmax(0,1fr)!important;}
+.chatRealPage .chatDirectoryHeaderBar{padding:2px 2px 0!important;}
+.chatRealPage .chatDirectoryHeaderBar b{font-size:22px!important;font-weight:900!important;letter-spacing:-.03em!important;}
+.chatRealPage .chatSearchBar{height:46px!important;padding:0 14px!important;box-shadow:inset 0 0 0 1px rgba(15,23,42,.02)!important;}
+.chatRealPage .chatTabs{display:flex!important;gap:8px!important;overflow-x:auto!important;padding:10px 0 2px!important;scrollbar-width:none!important;}
+.chatRealPage .chatTabs::-webkit-scrollbar{display:none!important;}
+.chatRealPage .chatTabs button{min-width:max-content!important;height:38px!important;padding:0 14px!important;}
+.chatRealPage .conversationList>button{min-height:74px!important;padding:10px 12px!important;display:grid!important;grid-template-columns:52px minmax(0,1fr) auto!important;gap:12px!important;align-items:center!important;}
+.chatRealPage .conversationList>button span{min-width:0!important;}
+.chatRealPage .conversationList>button span b,.chatRealPage .conversationList>button span small{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;display:block!important;}
+.chatRealPage .conversationHeader{height:64px!important;min-height:64px!important;padding:8px 12px!important;display:grid!important;grid-template-columns:44px 42px minmax(0,1fr) auto auto 42px!important;gap:9px!important;align-items:center!important;}
+.chatRealPage .conversationHeader .chatAvatar{width:42px!important;height:42px!important;}
+.chatRealPage .conversationHeader>div:nth-child(3){min-width:0!important;}
+.chatRealPage .conversationHeader>div:nth-child(3)>b,.chatRealPage .conversationHeader>div:nth-child(3)>span{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;display:block!important;}
+.chatRealPage .messageStream{padding:18px 22px!important;gap:8px!important;}
+.chatRealPage .messageRow{display:flex!important;align-items:flex-end!important;gap:8px!important;margin:3px 0!important;max-width:78%!important;}
+.chatRealPage .messageRow.own{margin-left:auto!important;justify-content:flex-end!important;}
+.chatRealPage .messageBubble{position:relative!important;padding:8px 10px 5px!important;min-width:92px!important;}
+.chatRealPage .messageBubble:after{content:'';position:absolute;bottom:0;width:10px;height:12px;background:inherit;border:inherit;}
+.chatRealPage .messageRow:not(.own) .messageBubble:after{left:-6px;border-top:0;border-right:0;border-radius:0 0 0 10px;transform:skewX(-28deg);}
+.chatRealPage .messageRow.own .messageBubble:after{right:-6px;border-top:0;border-left:0;border-radius:0 0 10px 0;transform:skewX(28deg);}
+.chatRealPage .messageBubble p{margin:0 0 2px!important;font-size:15px!important;}
+.chatRealPage .messageBubble>small{display:block!important;text-align:right!important;margin-top:2px!important;}
+.chatRealPage .messageComposer{min-height:68px!important;padding:10px 14px!important;gap:10px!important;align-items:center!important;}
+.chatRealPage .messageComposer>input:not([type=file]){height:46px!important;padding:0 15px!important;font-size:16px!important;}
+.chatRealPage .messageComposer .iconBtn{height:46px!important;width:46px!important;min-width:46px!important;}
+.chatRealPage .messageComposer>button:last-child{height:48px!important;width:52px!important;min-width:52px!important;}
+.imageAttachmentCard img{max-width:320px!important;box-shadow:0 6px 18px rgba(15,23,42,.09)!important;}
+.floatingReceiptPrint{position:fixed;right:22px;bottom:96px;z-index:80;border:0;background:linear-gradient(135deg,#12805c,#14b8a6);color:#fff;border-radius:999px;padding:13px 17px;box-shadow:0 18px 35px rgba(15,118,110,.26);display:flex;align-items:center;gap:9px;font-weight:900;cursor:pointer;}
+.receiptPaperPro{border-radius:18px!important;border:1px solid #d8e6e2!important;box-shadow:0 24px 60px rgba(15,23,42,.18)!important;padding:28px 24px 22px!important;position:relative!important;overflow:hidden!important;background:linear-gradient(180deg,#fff,#fbfffd)!important;}
+.receiptRibbon{position:absolute;top:0;left:0;right:0;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;text-align:center;font-size:12px;font-weight:900;letter-spacing:.16em;padding:9px 12px;}
+.receiptPaperPro h2{margin-top:24px!important;font-size:20px!important;letter-spacing:-.02em!important;color:#102f3f!important;text-align:center!important;}
+.receiptPaperPro p{font-size:12px!important;color:#52646c!important;text-align:center!important;margin:3px 0!important;}
+.receiptPaperPro hr{border:0;border-top:1px dashed #bad1cc;margin:12px 0!important;}
+.receiptPaperPro> b{display:block;text-align:center;background:#eefaf5;color:#0f766e;border-radius:999px;padding:8px 12px;margin:8px 0;font-size:13px!important;}
+.receiptPaperPro .receiptLine{font-size:13px!important;padding:5px 0!important;}
+.receiptPaperPro .receiptLine.total{font-size:17px!important;border-top:1px solid #e2ede9;margin-top:6px;padding-top:10px!important;}
+.receiptPaperPro .primary.full{background:linear-gradient(135deg,#0f766e,#14b8a6)!important;border-radius:14px!important;}
+.businessSuitePage .businessSuiteHero{padding:22px!important;border-radius:22px!important;}
+.businessSuitePage .businessSuiteHero h1{font-size:30px!important;}
+.businessSuitePage .businessSuiteHero p{font-size:14px!important;}
+.businessSuitePage .businessHeroStats b{font-size:19px!important;}
+.businessSuitePage .businessKioskTop{font-size:14px!important;}
+.businessSuitePage .kitchenBoard article h3{font-size:18px!important;}
+.businessSuitePage .kitchenBoard article p{font-size:15px!important;line-height:1.35!important;}
+.businessSuitePage .posProduct{min-height:118px!important;grid-template-columns:58px minmax(0,1fr)!important;}
+.businessSuitePage .posProduct span{font-size:34px!important;}
+@media(max-width:980px){.chatRealPage .chatWorkspace{grid-template-columns:1fr!important}.floatingReceiptPrint{right:14px;bottom:86px;padding:12px 14px}.floatingReceiptPrint span{display:none}.businessSuitePage .businessSuiteHero{padding:18px!important}.businessSuitePage .businessSuiteHero h1{font-size:26px!important}}
+@media(max-width:760px){.chatRealPage .conversationHeader{height:62px!important;min-height:62px!important;grid-template-columns:38px 38px minmax(0,1fr) auto auto 38px!important;padding:8px!important}.chatRealPage .conversationHeader .chatAvatar{width:38px!important;height:38px!important}.chatRealPage .chatViewListBtn{max-width:58px!important;overflow:hidden!important}.chatRealPage .messageRow{max-width:88%!important}.chatRealPage .messageStream{padding:12px 10px!important}.chatRealPage .messageBubble p{font-size:14.5px!important}.imageAttachmentCard img{max-width:245px!important}.receiptPaperPro{width:min(92vw,360px)!important}.businessSuitePage .posProduct b{font-size:17px!important}.businessSuitePage .posProduct span{font-size:30px!important}}
