@@ -238,6 +238,7 @@ export default function Chat({ setPage }) {
   const [showSearch, setShowSearch] = useState(false);
   const [showGroup, setShowGroup] = useState(false);
   const [mobileConversation, setMobileConversation] = useState(false);
+  const [openingConversation, setOpeningConversation] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [immersiveMode, setImmersiveMode] = useState(true);
   const [showThemePanel, setShowThemePanel] = useState(false);
@@ -319,7 +320,7 @@ export default function Chat({ setPage }) {
   useEffect(() => {
     const active = mobileConversation && Boolean(selectedId);
     document.body.classList.toggle('mizona-chat-fullscreen', active);
-    return () => document.body.classList.remove('mizona-chat-fullscreen');
+    return () => document.body.classList.remove('mizona-chat-fullscreen', 'mizona-chat-opening');
   }, [mobileConversation, selectedId]);
 
   useEffect(() => {
@@ -387,22 +388,37 @@ export default function Chat({ setPage }) {
   }, [messages]);
 
   const openConversation = async id => {
-    setSelectedId(id);
     setNotice('');
-    setMessages(await loadMessages(id));
-    await markConversationRead(id);
+    setSelectedId(id);
     setTab('chats');
+    setOpeningConversation(true);
+
     if (isMobileViewport()) {
+      // ETAPA 30.31: activar pantalla completa antes de cargar mensajes.
+      // Así el navegador no muestra una tarjeta blanca intermedia.
+      document.body.classList.add('mizona-chat-fullscreen', 'mizona-chat-opening');
       setMobileConversation(true);
+      setMessages([]);
       if (!pushedMobileChatState.current || window.history.state?.chatConversationId !== id) {
         window.history.pushState({ mizonaPage: 'chat', mzPage: 'chat', chatView: 'conversation', chatConversationId: id }, '', `#chat-${id}`);
         pushedMobileChatState.current = true;
       }
-      setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+    }
+
+    try {
+      const loaded = await loadMessages(id);
+      setMessages(loaded);
+      await markConversationRead(id);
+    } finally {
+      setOpeningConversation(false);
+      document.body.classList.remove('mizona-chat-opening');
     }
   };
 
   const showChatList = () => {
+    setOpeningConversation(false);
+    document.body.classList.remove('mizona-chat-opening');
     setMobileConversation(false);
     setSelectedId(null);
     setTab('chats');
@@ -507,7 +523,7 @@ export default function Chat({ setPage }) {
 
   if (backendConnected && !isAuthenticated) return <div className="chatLoginGate"><div><ShieldCheck size={48}/><h1>MiZona Chat protegido</h1><p>Inicia sesión para buscar contactos, recibir invitaciones y conversar de forma segura.</p><button onClick={() => setPage('settings')}>Ingresar o crear cuenta</button></div></div>;
 
-  return <div className={`chatRealPage ${mobileConversation && selectedId ? 'mobileChatFullscreen' : 'mobileChatListMode'} ${immersiveMode ? 'chatImmersiveMode' : 'chatWindowMode'}`} style={chatThemeStyle}>
+  return <div className={`chatRealPage ${mobileConversation && selectedId ? 'mobileChatFullscreen' : 'mobileChatListMode'} ${openingConversation ? 'openingChat' : ''} ${immersiveMode ? 'chatImmersiveMode' : 'chatWindowMode'}`} style={chatThemeStyle}>
     <div className="chatPageHeader">
       <div><span>{isStudent ? 'CHAT SEGURO PARA ESTUDIANTES' : 'ETAPA 14 · LABORATORIO MULTIUSUARIO'}</span><h1>MiZona Chat</h1><p>{isStudent ? 'Elige chats, grupos, contactos o solicitudes permitidas. No quedas encerrado en una conversación.' : 'Prueba conversaciones reales entre perfiles locales usando varias pestañas.'}</p></div>
       <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button>{!isStudent && <button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button>}<button onClick={() => setShowSearch(true)}><UserPlus size={17}/> {isStudent ? 'Buscar permitido' : 'Agregar contacto'}</button><button className="secondary" onClick={() => setShowThemePanel(true)}><Palette size={17}/> Tema</button>{immersiveMode ? <button className="secondary" onClick={() => setImmersiveMode(false)}><Minimize2 size={17}/> Salir pantalla completa</button> : <button className="secondary" onClick={() => setImmersiveMode(true)}><Maximize2 size={17}/> Pantalla completa</button>}</div>
@@ -548,7 +564,8 @@ export default function Chat({ setPage }) {
           </header>
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
           <div className="messageStream">
-            {messages.length ? messages.map(message => {
+            {openingConversation && <div className="chatOpenSkeleton"><Loader2 className="spin" size={22}/><span>Abriendo conversación…</span></div>}
+            {!openingConversation && messages.length ? messages.map(message => {
               const own = message.sender_id === user?.id || message.sender_username === profile.username;
               return <div key={message.id} className={`messageRow ${own ? 'own' : ''}`}>
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
@@ -558,7 +575,7 @@ export default function Chat({ setPage }) {
                   <small>{formatTime(message.created_at)}{message.expires_at && ` · vence ${new Date(message.expires_at).toLocaleDateString('es-PE')}`}{message.sync_status === 'local_only' && ' · guardado local'}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
               </div>;
-            }) : <div className="emptyConversation"><MessageCircle size={43}/><h3>Inicia la conversación</h3><p>Recuerda no compartir contraseñas, códigos bancarios ni información privada.</p></div>}
+            }) : openingConversation ? null : <div className="emptyConversation"><MessageCircle size={43}/><h3>Inicia la conversación</h3><p>Recuerda no compartir contraseñas, códigos bancarios ni información privada.</p></div>}
             <div ref={messageEnd}/>
           </div>
           <form className="messageComposer" onSubmit={submitMessage}>

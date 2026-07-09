@@ -1821,3 +1821,75 @@ body.mizona-chat-immersive .chatWorkspace{
     height:50px!important;
   }
 }
+
+
+/* =========================================================
+   ETAPA 30.31 - Chat sin parpadeo blanco
+   ========================================================= */
+
+/* El body toma inmediatamente el mismo fondo del chat antes de que React pinte la conversación. */
+body.mizona-chat-opening,
+body.mizona-chat-fullscreen{
+  background:#efeae2!important;
+  overflow:hidden!important;
+}
+body.mizona-chat-opening main,
+body.mizona-chat-opening .content{
+  background:#efeae2!important;
+}
+
+/* La conversación queda montada con fondo estable, no blanco, mientras cargan mensajes. */
+.chatRealPage.openingChat .chatConversation,
+.chatRealPage.openingChat .messageStream{
+  background-color:var(--chat-bg)!important;
+  background-image:var(--chat-wallpaper)!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+.chatRealPage.openingChat .chatConversation{
+  opacity:1!important;
+  transform:none!important;
+}
+.chatOpenSkeleton{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  gap:10px;
+  color:var(--chat-subtext);
+  background:transparent;
+  z-index:2;
+  pointer-events:none;
+}
+.chatOpenSkeleton svg{
+  color:var(--chat-accent);
+}
+.chatOpenSkeleton span{
+  background:rgba(255,255,255,.82);
+  border:1px solid #d8e2e8;
+  border-radius:999px;
+  padding:9px 14px;
+  font-weight:800;
+  font-size:13px;
+}
+
+/* Transición corta: entra suave sin mostrar blanco. */
+.chatRealPage.mobileChatFullscreen .chatConversation{
+  animation:mzChatEnter .14s ease-out both;
+}
+@keyframes mzChatEnter{
+  from{opacity:.94;transform:translateX(10px);}
+  to{opacity:1;transform:translateX(0);}
+}
+
+@media (max-width:760px){
+  body.mizona-chat-opening .chatRealPage,
+  body.mizona-chat-opening .chatWorkspace,
+  body.mizona-chat-opening .chatConversation{
+    background:#efeae2!important;
+  }
+  .chatOpenSkeleton{
+    top:106px;
+    bottom:72px;
+  }
+}
