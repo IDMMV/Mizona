@@ -698,7 +698,7 @@ export default function Chat({ setPage }) {
       <aside className="chatDirectory">
         <div className="chatDirectoryTop">
           <div className="chatDirectoryHeaderBar chatTopCompact">
-            <div><b><span>MiZona</span> Chat</b><span>{tab === 'groups' ? 'Grupos y conversaciones' : tab === 'contacts' ? 'Tus contactos' : tab === 'requests' ? 'Solicitudes pendientes' : 'Tus chats recientes'}</span></div>
+            <div><b>MiZona Chat</b><span>{tab === 'groups' ? 'Grupos y conversaciones' : tab === 'contacts' ? 'Tus contactos' : tab === 'requests' ? 'Solicitudes pendientes' : 'Tus chats recientes'}</span></div>
             <div className="chatDirectoryHeaderActions">
               <button type="button" className="chatSettingsBtn" onClick={() => setShowSettingsPanel(true)} title="Ajustes"><Settings size={16}/> Ajustes</button>
               {immersiveMode ? <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(false)}><Minimize2 size={16}/> Salir</button> : <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(true)}><Maximize2 size={16}/> Full</button>}
@@ -722,11 +722,11 @@ export default function Chat({ setPage }) {
           <header className="conversationHeader">
             <button className="iconBtn chatBack" onClick={showChatList}><ChevronLeft/></button>
             <Avatar name={conversationName(selected)} image={selected.peer_avatar_url}/>
-            <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type?.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'} · elimina mensajes en {selected.retention_days || 7} días</span></div>
+            <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type?.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'}</span></div>
             
             <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); showChatList(); } }}><MoreVertical/></button>
           </header>
-          <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
+          <div className="retentionBanner"><ShieldCheck size={16}/> Retención segura: mensajes y archivos hasta {selected.retention_days || 7} días.</div>
           <div className="messageStream">
             {showOpeningSkeleton && <div className="chatOpenSkeleton"><Loader2 className="spin" size={22}/><span>Abriendo conversación…</span></div>}
             {!openingConversation && groupedMessages.length ? groupedMessages.map(item => {
@@ -770,7 +770,7 @@ export default function Chat({ setPage }) {
 
     {showSettingsPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowSettingsPanel(false)}>
       <div className="chatModal chatSettingsPanel">
-        <div className="chatModalHeader"><div><span>MI ZONA CHAT 30.33</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
+        <div className="chatModalHeader"><div><span>MI ZONA CHAT 30.44</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
         <input ref={profilePhotoInput} type="file" hidden accept="image/*" onChange={uploadProfilePhoto}/>
         <section className="settingsProfileCard">
           <button type="button" className="settingsAvatar" onClick={() => profilePhotoInput.current?.click()}>{profileDraft.avatar ? <img src={profileDraft.avatar} alt="perfil"/> : <Camera size={26}/>}<span><Camera size={13}/></span></button>

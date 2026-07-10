@@ -5647,3 +5647,711 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
     font-size:22px;
   }
 }
+
+
+/* =========================================================
+   ETAPA 30.44 · UI REAL MÓVIL
+   Corrección real de lo observado por el usuario:
+   - Chat sin título duplicado ni botones mal ubicados
+   - Conversación oscura completa
+   - Botón enviar al lado del micrófono
+   - Comités/Business/Marketplace/Ride/Campus con cards móviles más parecidas al mockup
+   - Se eliminan franjas visuales y cortes horizontales innecesarios
+   ========================================================= */
+
+@media (max-width: 760px){
+  html, body, #root{
+    width:100%!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    background:#f5fbf8!important;
+  }
+
+  .content{
+    padding:12px 12px 96px!important;
+  }
+
+  .topbar{
+    position:sticky!important;
+    top:0!important;
+    z-index:80!important;
+    background:rgba(255,255,255,.96)!important;
+    backdrop-filter:blur(18px)!important;
+    border-bottom:1px solid rgba(15,118,110,.08)!important;
+  }
+
+  .topbar .searchBox{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    border-radius:24px!important;
+    background:#fff!important;
+    box-shadow:0 8px 22px rgba(15,23,42,.05)!important;
+  }
+
+  .topbar .userPill,
+  .topbar .connectionBadge{
+    display:none!important;
+  }
+
+  .mobileBottomNav{
+    position:fixed!important;
+    bottom:0!important;
+    left:0!important;
+    right:0!important;
+    z-index:1000!important;
+    background:rgba(255,255,255,.97)!important;
+    backdrop-filter:blur(18px)!important;
+    border-top:1px solid rgba(15,118,110,.12)!important;
+    box-shadow:0 -14px 34px rgba(15,23,42,.08)!important;
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  .mobileBottomNav button{
+    border-radius:18px!important;
+    min-height:58px!important;
+  }
+
+  .mobileBottomNav button.active{
+    background:#e3f7ef!important;
+    color:#0f766e!important;
+  }
+
+  /* Hero móvil unificado */
+  .committeeHero,
+  .newCommitteeHero,
+  .businessSuiteHero,
+  .businessHero,
+  .rideHero,
+  .campusHero,
+  .benefitsHero,
+  .mkCTopHero,
+  .communityHeroReal,
+  .financeHero,
+  .pageHero,
+  .notificationHero,
+  .labHero,
+  .aiHero{
+    border-radius:26px!important;
+    padding:22px!important;
+    margin:10px 0 16px!important;
+    background:linear-gradient(135deg,#06343c 0%,#0f766e 55%,#19c89d 100%)!important;
+    color:#fff!important;
+    box-shadow:0 22px 52px rgba(15,118,110,.20)!important;
+    overflow:hidden!important;
+    position:relative!important;
+    min-height:auto!important;
+  }
+
+  .committeeHero h1,
+  .newCommitteeHero h1,
+  .businessSuiteHero h1,
+  .businessHero h1,
+  .rideHero h1,
+  .campusHero h1,
+  .benefitsHero h1,
+  .mkCTopHero h1,
+  .communityHeroReal h1,
+  .financeHero h1,
+  .pageHero h1,
+  .notificationHero h1,
+  .labHero h1,
+  .aiHero h1{
+    font-size:27px!important;
+    line-height:1.08!important;
+    color:#fff!important;
+    margin:4px 0 8px!important;
+  }
+
+  .committeeHero p,
+  .newCommitteeHero p,
+  .businessSuiteHero p,
+  .businessHero p,
+  .rideHero p,
+  .campusHero p,
+  .benefitsHero p,
+  .mkCTopHero p,
+  .communityHeroReal p,
+  .financeHero p,
+  .pageHero p,
+  .notificationHero p,
+  .labHero p,
+  .aiHero p{
+    font-size:15px!important;
+    line-height:1.35!important;
+    color:rgba(255,255,255,.88)!important;
+    -webkit-line-clamp:3!important;
+  }
+
+  .committeeHero .eyebrow,
+  .newCommitteeHero .eyebrow,
+  .businessSuiteHero .eyebrow,
+  .businessHero .eyebrow,
+  .rideHero .eyebrow,
+  .campusHero .eyebrow,
+  .benefitsHero .eyebrow,
+  .mkCTopHero .eyebrow,
+  .communityHeroReal .eyebrow{
+    color:rgba(255,255,255,.72)!important;
+    font-weight:950!important;
+    letter-spacing:.18em!important;
+  }
+
+  .tabs{
+    background:transparent!important;
+    border:0!important;
+    display:flex!important;
+    gap:10px!important;
+    overflow-x:auto!important;
+    padding:2px 0 14px!important;
+    margin:0 0 8px!important;
+    scroll-snap-type:x mandatory!important;
+  }
+
+  .tabs button{
+    flex:0 0 auto!important;
+    scroll-snap-align:start!important;
+    border-radius:18px!important;
+    min-height:50px!important;
+    padding:12px 16px!important;
+    background:#fff!important;
+    border:1px solid rgba(15,118,110,.14)!important;
+    box-shadow:0 8px 20px rgba(15,23,42,.04)!important;
+    font-size:15px!important;
+    color:#1f3344!important;
+  }
+
+  .tabs button.active{
+    background:#0f8f72!important;
+    color:#fff!important;
+    border-color:#0f8f72!important;
+    box-shadow:0 12px 26px rgba(15,118,110,.22)!important;
+  }
+
+  .card,
+  .Card,
+  .mkCPanel,
+  .posFilters,
+  .cartPanel,
+  .committeeUnifiedModule39,
+  .businessSearch,
+  .committeeForm,
+  .financeKpis39{
+    border-radius:24px!important;
+    border:1px solid rgba(15,118,110,.12)!important;
+    box-shadow:0 14px 34px rgba(15,23,42,.06)!important;
+  }
+
+  /* Comités: finanzas y archivos como módulos internos claros */
+  .committeeFinancePage .committeeUnifiedModule39{
+    background:#ecfbf5!important;
+    padding:24px!important;
+    margin-bottom:14px!important;
+  }
+
+  .committeeUnifiedModule39 h2{
+    font-size:25px!important;
+    margin:0 0 8px!important;
+    color:#113044!important;
+  }
+
+  .committeeUnifiedModule39 p{
+    font-size:16px!important;
+    line-height:1.4!important;
+    color:#64748b!important;
+  }
+
+  .segmented39{
+    display:flex!important;
+    overflow-x:auto!important;
+    gap:10px!important;
+    padding:2px 0 12px!important;
+  }
+
+  .segmented39 button{
+    flex:0 0 auto!important;
+    border:1px solid rgba(15,118,110,.16)!important;
+    background:#fff!important;
+    color:#113044!important;
+    border-radius:18px!important;
+    padding:12px 18px!important;
+    font-weight:950!important;
+  }
+
+  .segmented39 button.active{
+    background:#0f8f72!important;
+    color:#fff!important;
+    border-color:#0f8f72!important;
+  }
+
+  .financeKpis39,
+  .committeeKpis{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+
+  .financeKpis39 span,
+  .committeeKpis span{
+    background:#fff!important;
+    border-radius:18px!important;
+    padding:14px!important;
+  }
+
+  .committeeCalendar{
+    min-width:760px!important;
+  }
+
+  .committeeCalendarWrap,
+  .committeeCalendarScroller{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+
+  /* MiZona Chat 30.44 real */
+  body.mizona-chat-app,
+  body.mizona-chat-fullscreen{
+    background:#071316!important;
+  }
+
+  body.mizona-chat-app .topbar,
+  body.mizona-chat-app .mobileBottomNav,
+  body.mizona-chat-fullscreen .topbar,
+  body.mizona-chat-fullscreen .mobileBottomNav{
+    display:none!important;
+  }
+
+  body.mizona-chat-app .content,
+  body.mizona-chat-fullscreen .content{
+    padding:0!important;
+    background:#071316!important;
+    min-height:100dvh!important;
+  }
+
+  body.mizona-chat-app .chatRealPage,
+  body.mizona-chat-fullscreen .chatRealPage{
+    position:fixed!important;
+    inset:0!important;
+    z-index:9999!important;
+    width:100vw!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    overflow:hidden!important;
+    background:#071316!important;
+    color:#e9edef!important;
+  }
+
+  body.mizona-chat-app .chatWorkspace,
+  body.mizona-chat-fullscreen .chatWorkspace{
+    height:100dvh!important;
+    min-height:100dvh!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    background:#071316!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryTop:before,
+  body.mizona-chat-fullscreen .chatDirectoryTop:before{
+    content:none!important;
+    display:none!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact,
+  body.mizona-chat-fullscreen .chatDirectoryHeaderBar.chatTopCompact{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:10px!important;
+    padding:18px 16px 12px!important;
+    margin:0!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact>div:first-child b,
+  body.mizona-chat-fullscreen .chatDirectoryHeaderBar.chatTopCompact>div:first-child b{
+    display:block!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    font-size:34px!important;
+    line-height:1.02!important;
+    color:#fff!important;
+    letter-spacing:-.055em!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact>div:first-child b span,
+  body.mizona-chat-fullscreen .chatDirectoryHeaderBar.chatTopCompact>div:first-child b span{
+    display:inline!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact>div:first-child>span,
+  body.mizona-chat-fullscreen .chatDirectoryHeaderBar.chatTopCompact>div:first-child>span{
+    display:block!important;
+    color:#aebac1!important;
+    font-size:14px!important;
+    margin-top:6px!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderActions,
+  body.mizona-chat-fullscreen .chatDirectoryHeaderActions{
+    display:flex!important;
+    gap:10px!important;
+  }
+
+  body.mizona-chat-app .chatSettingsBtn,
+  body.mizona-chat-app .chatFullscreenToggle,
+  body.mizona-chat-fullscreen .chatSettingsBtn,
+  body.mizona-chat-fullscreen .chatFullscreenToggle{
+    width:54px!important;
+    height:54px!important;
+    min-width:54px!important;
+    padding:0!important;
+    border-radius:20px!important;
+    font-size:0!important;
+    background:#101d22!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+    color:#e9edef!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+
+  body.mizona-chat-app .chatSettingsBtn svg,
+  body.mizona-chat-app .chatFullscreenToggle svg,
+  body.mizona-chat-fullscreen .chatSettingsBtn svg,
+  body.mizona-chat-fullscreen .chatFullscreenToggle svg{
+    width:24px!important;
+    height:24px!important;
+  }
+
+  body.mizona-chat-app .chatDirectory,
+  body.mizona-chat-app .chatDirectoryTop,
+  body.mizona-chat-app .conversationList,
+  body.mizona-chat-fullscreen .chatDirectory,
+  body.mizona-chat-fullscreen .chatDirectoryTop,
+  body.mizona-chat-fullscreen .conversationList{
+    background:#071316!important;
+    color:#e9edef!important;
+  }
+
+  body.mizona-chat-app .chatSearchBar,
+  body.mizona-chat-fullscreen .chatSearchBar{
+    margin:0 16px 10px!important;
+    height:56px!important;
+    border-radius:28px!important;
+    background:#1d2b33!important;
+    border:0!important;
+  }
+
+  body.mizona-chat-app .chatSearchBar input,
+  body.mizona-chat-fullscreen .chatSearchBar input{
+    color:#e9edef!important;
+    font-size:16px!important;
+  }
+
+  body.mizona-chat-app .chatTabs,
+  body.mizona-chat-fullscreen .chatTabs{
+    display:flex!important;
+    gap:10px!important;
+    overflow-x:auto!important;
+    background:#071316!important;
+    border:0!important;
+    padding:12px 16px!important;
+  }
+
+  body.mizona-chat-app .chatTabs button,
+  body.mizona-chat-fullscreen .chatTabs button{
+    flex:0 0 auto!important;
+    min-height:48px!important;
+    padding:12px 18px!important;
+    border-radius:999px!important;
+    background:#101d22!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+    color:#cbd5e1!important;
+    font-size:14px!important;
+  }
+
+  body.mizona-chat-app .chatTabs button.active,
+  body.mizona-chat-fullscreen .chatTabs button.active{
+    background:#0f8f72!important;
+    color:#fff!important;
+    border-color:#0f8f72!important;
+  }
+
+  body.mizona-chat-app .conversationList{
+    padding:0 12px 24px!important;
+  }
+
+  body.mizona-chat-app .conversationList>button,
+  body.mizona-chat-fullscreen .conversationList>button{
+    min-height:82px!important;
+    grid-template-columns:58px minmax(0,1fr) auto!important;
+    padding:12px 10px!important;
+    margin:2px 0!important;
+    border:0!important;
+    border-radius:20px!important;
+    color:#fff!important;
+    background:transparent!important;
+  }
+
+  body.mizona-chat-app .conversationList>button.active,
+  body.mizona-chat-app .conversationList>button:hover{
+    background:#111f25!important;
+  }
+
+  body.mizona-chat-app .conversationList>button b,
+  body.mizona-chat-fullscreen .conversationList>button b{
+    color:#fff!important;
+    font-size:19px!important;
+  }
+
+  body.mizona-chat-app .conversationList>button small,
+  body.mizona-chat-fullscreen .conversationList>button small{
+    color:#aebac1!important;
+    font-size:14px!important;
+  }
+
+  body.mizona-chat-app .conversationList>button>em,
+  body.mizona-chat-fullscreen .conversationList>button>em{
+    color:#25d366!important;
+    font-size:13px!important;
+  }
+
+  body.mizona-chat-app .chatAvatar,
+  body.mizona-chat-fullscreen .chatAvatar{
+    border-radius:50%!important;
+    background:#1d2b33!important;
+    color:#fff!important;
+  }
+
+  body.mizona-chat-app .chatConversation,
+  body.mizona-chat-fullscreen .chatConversation{
+    background:#071316!important;
+    color:#e9edef!important;
+  }
+
+  body.mizona-chat-app .conversationHeader,
+  body.mizona-chat-fullscreen .conversationHeader{
+    height:76px!important;
+    min-height:76px!important;
+    background:#071316!important;
+    color:#fff!important;
+    border:0!important;
+    grid-template-columns:52px 50px minmax(0,1fr) 44px!important;
+    gap:8px!important;
+    padding:10px 12px!important;
+  }
+
+  body.mizona-chat-app .conversationHeader>div:nth-child(3)>b,
+  body.mizona-chat-fullscreen .conversationHeader>div:nth-child(3)>b{
+    color:#fff!important;
+    font-size:19px!important;
+    font-weight:950!important;
+  }
+
+  body.mizona-chat-app .conversationHeader>div:nth-child(3)>span,
+  body.mizona-chat-fullscreen .conversationHeader>div:nth-child(3)>span{
+    color:#aebac1!important;
+    font-size:13px!important;
+  }
+
+  body.mizona-chat-app .retentionBanner,
+  body.mizona-chat-fullscreen .retentionBanner{
+    background:#0d2d22!important;
+    color:#b6f2cf!important;
+    border:0!important;
+    justify-content:flex-start!important;
+    min-height:42px!important;
+    font-size:13px!important;
+    padding:8px 14px!important;
+  }
+
+  body.mizona-chat-app .messageStream,
+  body.mizona-chat-fullscreen .messageStream{
+    background:#071316!important;
+    background-image:radial-gradient(circle at 18% 5%,rgba(34,197,94,.06),transparent 28%)!important;
+    padding:14px 12px 104px!important;
+    gap:12px!important;
+  }
+
+  body.mizona-chat-app .messageRow,
+  body.mizona-chat-fullscreen .messageRow{
+    max-width:88%!important;
+  }
+
+  body.mizona-chat-app .messageBubble,
+  body.mizona-chat-fullscreen .messageBubble{
+    background:#15272e!important;
+    color:#e9edef!important;
+    border:0!important;
+    border-radius:18px 18px 18px 5px!important;
+    box-shadow:none!important;
+    font-size:16px!important;
+  }
+
+  body.mizona-chat-app .messageRow.own .messageBubble,
+  body.mizona-chat-fullscreen .messageRow.own .messageBubble{
+    background:#00a884!important;
+    color:#fff!important;
+    border-radius:18px 18px 5px 18px!important;
+  }
+
+  body.mizona-chat-app .messageComposer,
+  body.mizona-chat-fullscreen .messageComposer{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    display:grid!important;
+    grid-template-columns:48px minmax(0,1fr) 48px 48px!important;
+    gap:8px!important;
+    align-items:center!important;
+    min-height:72px!important;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))!important;
+    background:#071316!important;
+    border-top:1px solid rgba(255,255,255,.08)!important;
+    z-index:50!important;
+  }
+
+  body.mizona-chat-app .messageComposer input[type="text"],
+  body.mizona-chat-app .messageComposer input:not([type=file]),
+  body.mizona-chat-fullscreen .messageComposer input[type="text"],
+  body.mizona-chat-fullscreen .messageComposer input:not([type=file]){
+    height:50px!important;
+    min-height:50px!important;
+    border-radius:999px!important;
+    background:#1d2b33!important;
+    color:#fff!important;
+    border:0!important;
+    padding:0 18px!important;
+    font-size:16px!important;
+  }
+
+  body.mizona-chat-app .messageComposer .iconBtn,
+  body.mizona-chat-app .messageComposer button,
+  body.mizona-chat-fullscreen .messageComposer .iconBtn,
+  body.mizona-chat-fullscreen .messageComposer button{
+    width:48px!important;
+    height:48px!important;
+    min-width:48px!important;
+    min-height:48px!important;
+    border-radius:50%!important;
+    padding:0!important;
+    margin:0!important;
+    display:grid!important;
+    place-items:center!important;
+    position:static!important;
+  }
+
+  body.mizona-chat-app .messageComposer .sendBtnChat40,
+  body.mizona-chat-fullscreen .messageComposer .sendBtnChat40{
+    background:#00a884!important;
+    color:#fff!important;
+    opacity:1!important;
+  }
+
+  /* Business tipo tarjeta de app */
+  .businessSuitePage{
+    padding-bottom:96px!important;
+  }
+
+  .businessSuitePage .businessSuiteHero{
+    display:block!important;
+    padding:20px!important;
+    min-height:0!important;
+  }
+
+  .businessSuitePage .businessSelector{
+    width:100%!important;
+    border-radius:22px!important;
+    background:rgba(255,255,255,.15)!important;
+    padding:16px!important;
+  }
+
+  .businessSuitePage .businessHeroStats,
+  .businessKpis{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+
+  .businessKpis>span{
+    border-radius:18px!important;
+    padding:14px!important;
+  }
+
+  .posLayout{
+    display:block!important;
+  }
+
+  .posProductGrid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+  }
+
+  .posProduct{
+    min-height:124px!important;
+    border-radius:24px!important;
+    display:grid!important;
+    grid-template-columns:76px minmax(0,1fr)!important;
+    gap:4px 14px!important;
+    align-items:center!important;
+    padding:18px!important;
+  }
+
+  .posProduct>span{
+    grid-row:1/4!important;
+    font-size:46px!important;
+  }
+
+  .posProduct b{
+    font-size:22px!important;
+  }
+
+  .cartPanel{
+    position:relative!important;
+    top:auto!important;
+    margin-top:14px!important;
+  }
+
+  /* Marketplace / Beneficios / Campus / Ride: reducir cortes y hacerlo card móvil */
+  .mkCTopHero,
+  .benefitsHero,
+  .campusHero,
+  .rideHero{
+    margin-inline:0!important;
+  }
+
+  .mkCProductGrid,
+  .mkCPromoGrid,
+  .mkCBusinessScroller,
+  .brandScroller,
+  .categoryScroller,
+  .rideTabs,
+  .campusTabs{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    scroll-snap-type:x mandatory!important;
+  }
+
+  .mkCProductCard,
+  .mkCPromoCard,
+  .mkCBusinessCard,
+  .benefitCard,
+  .courseCard{
+    min-width:260px!important;
+    scroll-snap-align:start!important;
+    border-radius:24px!important;
+  }
+
+  /* Evita que módulos queden cortados a la derecha en móvil */
+  .page,
+  .businessSuitePage,
+  .marketplaceC23,
+  .campusPage,
+  .ridePage,
+  .benefitsPage,
+  .committeeFinancePage{
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+}

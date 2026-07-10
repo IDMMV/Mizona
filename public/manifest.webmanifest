@@ -1,8 +1,8 @@
 {
-  "name": "MiZona Enterprise V8 30.43.11",
+  "name": "MiZona Enterprise V8 30.44",
   "short_name": "MiZona",
   "description": "MiZona: comunidad, comités, chat, pagos, negocios, movilidad y beneficios en una sola app.",
-  "start_url": "/?v=304311",
+  "start_url": "/?v=304400",
   "display": "standalone",
   "background_color": "#f6fbf9",
   "theme_color": "#0f766e",
