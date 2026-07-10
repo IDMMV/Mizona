@@ -2,7 +2,7 @@ export const STUDENT_MODULES = new Set([
   'panel', 'community', 'chat', 'notifications', 'personalFinance', 'transfer', 'campus', 'settings'
 ]);
 
-export const ADMIN_ONLY_MODULES = new Set(['admin', 'localLab', 'blueprint', 'sync', 'cloudCenter', 'quality', 'gateway', 'cloudLaunch']);
+export const ADMIN_ONLY_MODULES = new Set(['admin', 'architecture', 'localLab', 'blueprint', 'sync', 'cloudCenter', 'quality', 'gateway', 'cloudLaunch']);
 
 export function isStudentProfile(profile) {
   return profile?.accountType === 'student' || profile?.account_type === 'student' || profile?.schoolRole === 'student' || profile?.school_role === 'student';
@@ -55,13 +55,13 @@ export function profileAudienceLabel(profile, { ownsBusiness = false } = {}) {
 export const ROLE_ACCESS_MATRIX = {
   super_admin: {
     label: 'Super administrador',
-    modules: ['panel','community','committees','chat','notifications','personalFinance','transfer','benefits','marketplace','business','campus','ride','rideDelivery','ai','verification','payments','gateway','sync','cloudCenter','cloudLaunch','quality','admin','settings'],
+    modules: ['panel','community','committees','chat','notifications','personalFinance','transfer','benefits','marketplace','business','campus','ride','rideDelivery','ai','verification','payments','gateway','sync','cloudCenter','cloudLaunch','quality','admin','architecture','settings'],
     canInvite: true,
     canManageModules: true
   },
   platform_admin: {
     label: 'Administrador de plataforma',
-    modules: ['panel','community','committees','chat','notifications','benefits','marketplace','business','ride','rideDelivery','verification','payments','admin','settings'],
+    modules: ['panel','community','committees','chat','notifications','benefits','marketplace','business','ride','rideDelivery','verification','payments','admin','architecture','settings'],
     canInvite: true,
     canManageModules: true
   },

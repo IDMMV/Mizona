@@ -3432,3 +3432,197 @@ body.mizona-chat-app .chatSettingsBtn{
     grid-template-columns:repeat(7, minmax(260px, 1fr));
   }
 }
+
+
+/* =========================================================
+   ETAPA 30.37 - Arquitectura Supabase + Firebase
+   ========================================================= */
+
+.architecturePage37{
+  display:grid;
+  gap:18px;
+}
+.architectureHero37{
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) 360px;
+  gap:20px;
+  padding:28px;
+  border-radius:32px;
+  background:linear-gradient(135deg,#061414,#0c2e48 55%,#3b1207);
+  color:#e9edef;
+}
+.architectureHero37 h1{
+  font-size:clamp(34px,5vw,58px);
+  margin:8px 0;
+}
+.architectureHero37 p{
+  color:#c6d4da;
+}
+.architectureHeroActions37{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.architectureHeroActions37 button{
+  border:0;
+  border-radius:16px;
+  min-height:46px;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  background:#00a884;
+  color:white;
+}
+.architectureHeroActions37 .secondary{
+  background:#fff;
+  color:#0f172a;
+}
+.architectureStatus37{
+  display:grid;
+  gap:12px;
+}
+.architectureStatus37 article{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:24px;
+  background:rgba(255,255,255,.08);
+  padding:18px;
+  display:grid;
+  gap:8px;
+}
+.architectureStatus37 svg{
+  color:#25d366;
+}
+.architectureStatus37 b{
+  font-size:22px;
+}
+.architectureStatus37 span{
+  color:#c6d4da;
+}
+.architectureGrid37{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.architectureList37,
+.firebasePlan37{
+  display:grid;
+  gap:10px;
+}
+.architectureList37 article,
+.firebasePlan37 article{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  border:1px solid #e5edf1;
+  border-radius:18px;
+  padding:13px;
+  background:#fff;
+}
+.architectureList37 svg,
+.firebasePlan37 svg{
+  color:#00a884;
+}
+.architectureList37 b,
+.firebasePlan37 b{
+  display:block;
+}
+.architectureList37 span,
+.firebasePlan37 span{
+  color:#64748b;
+}
+.firebasePlan37 em{
+  font-style:normal;
+  color:#92400e;
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:12px;
+  font-weight:900;
+}
+.tablePlan37{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:10px;
+}
+.tablePlan37 article{
+  display:grid;
+  gap:5px;
+  border:1px solid #e5edf1;
+  border-radius:16px;
+  padding:12px;
+  background:#f8fafc;
+}
+.tablePlan37 code{
+  color:#047857;
+  font-weight:900;
+}
+.tablePlan37 span{
+  color:#64748b;
+}
+.firebaseKeys37{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:10px;
+}
+.firebaseKeys37 article{
+  display:grid;
+  grid-template-columns:24px minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  border:1px solid #e5edf1;
+  border-radius:16px;
+  padding:12px;
+  background:#fff;
+}
+.firebaseKeys37 span{
+  color:#64748b;
+  font-size:12px;
+  font-weight:900;
+}
+.phaseGrid37{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.phaseGrid37 article{
+  border:1px solid #e5edf1;
+  border-radius:20px;
+  padding:16px;
+  background:#fff;
+}
+.phaseGrid37 svg{
+  color:#00a884;
+}
+.phaseGrid37 span{
+  display:block;
+  color:#64748b;
+  font-weight:900;
+  margin-top:8px;
+}
+.phaseGrid37 b{
+  display:block;
+  margin-top:4px;
+}
+@media(max-width:760px){
+  .architectureHero37,
+  .architectureGrid37{
+    grid-template-columns:1fr;
+  }
+  .architectureHero37{
+    padding:22px;
+    border-radius:26px;
+  }
+  .architectureList37 article,
+  .firebasePlan37 article{
+    grid-template-columns:34px minmax(0,1fr);
+  }
+  .firebasePlan37 em{
+    grid-column:2;
+    justify-self:start;
+  }
+}

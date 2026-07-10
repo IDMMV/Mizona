@@ -32,6 +32,7 @@ import Committees from './pages/Committees';
 import CloudLaunch from './pages/CloudLaunch';
 import CloudAuthGate from './pages/CloudAuthGate';
 import PersonalFinance from './pages/PersonalFinance';
+import ArchitectureCenter from './pages/ArchitectureCenter';
 import { canAccessModule } from './lib/permissions';
 
 function App() {
@@ -120,6 +121,7 @@ function App() {
     cloudLaunch: <CloudLaunch setPage={setPage}/>,
     quality: <QualityCenter/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
+    architecture: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <ArchitectureCenter setPage={setPage}/>,
     settings: <Account/>,
     blueprint: <Blueprint/>
   };
