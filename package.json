@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-etapa30-43-2-fix-vercel-registry",
-  "version": "8.30.43-2",
+  "name": "mizona-enterprise-v8-etapa30-43-4-fix-vercel-node20-supabase",
+  "version": "8.30.43-4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "latest",
+    "@supabase/supabase-js": "2.45.4",
     "@vitejs/plugin-react": "latest",
     "lucide-react": "latest",
     "react": "latest",
@@ -18,6 +18,5 @@
   },
   "engines": {
     "node": "20.x"
-  },
-  "packageManager": "npm@10.9.2"
+  }
 }

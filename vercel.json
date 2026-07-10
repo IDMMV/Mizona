@@ -2,6 +2,6 @@
   "version": 2,
   "framework": "vite",
   "installCommand": "npm install --registry=https://registry.npmjs.org/ --legacy-peer-deps --no-audit --no-fund",
-  "buildCommand": "npm run build",
+  "buildCommand": "npx vite build",
   "outputDirectory": "dist"
 }
