@@ -76,8 +76,8 @@ Incluye:
 
 Esta etapa crea la base. Todavía no convierte todos los módulos al 100% real, pero deja el camino limpio para:
 
-- 30.44 Chat real con Supabase
-- 30.45 Marketplace y pedidos reales
+- 30.46.1 Chat real con Supabase
+- 30.46.1 Marketplace y pedidos reales
 - 30.46 Comité real
 - 30.47 Firebase push
 - 30.48 Archivos reales en Storage

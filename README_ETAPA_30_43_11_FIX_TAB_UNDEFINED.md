@@ -1,4 +1,4 @@
-# MiZona Enterprise V8 - Etapa 30.43.11 Fix tab is not defined
+# MiZona Enterprise V8 - Etapa 30.46.1 Fix tab is not defined
 
 ## Problema corregido
 
@@ -39,5 +39,5 @@ dist
 Después de publicar abrir:
 
 ```text
-/?v=304311
+/?v=304601
 ```

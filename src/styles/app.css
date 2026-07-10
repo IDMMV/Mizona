@@ -5650,7 +5650,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 
 
 /* =========================================================
-   ETAPA 30.44 · UI REAL MÓVIL
+   ETAPA 30.46.1 · UI REAL MÓVIL
    Corrección real de lo observado por el usuario:
    - Chat sin título duplicado ni botones mal ubicados
    - Conversación oscura completa
@@ -5908,7 +5908,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
     -webkit-overflow-scrolling:touch!important;
   }
 
-  /* MiZona Chat 30.44 real */
+  /* MiZona Chat 30.46.1 real */
   body.mizona-chat-app,
   body.mizona-chat-fullscreen{
     background:#071316!important;
@@ -6358,7 +6358,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 
 
 /* =========================================================
-   ETAPA 30.45 · AJUSTE REAL CHAT + PESTAÑAS
+   ETAPA 30.46.1 · AJUSTE REAL CHAT + PESTAÑAS
    - Salir del chat lleva realmente al panel
    - Barra superior de Comités reducida a 7 pestañas reales
    - Apariencia más cercana al mockup aprobado

@@ -1,4 +1,4 @@
-# MiZona Enterprise V8 - Etapa 30.45 ajuste real chat y pestañas
+# MiZona Enterprise V8 - Etapa 30.46.1 ajuste real chat y pestañas
 
 ## Correcciones aplicadas
 
@@ -38,5 +38,5 @@ dist
 Abrir después de publicar:
 
 ```
-/?v=304500
+/?v=304601
 ```

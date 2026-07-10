@@ -1,4 +1,4 @@
-# MiZona Enterprise V8 - Etapa 30.43.10 Fix Boot React Diagnóstico
+# MiZona Enterprise V8 - Etapa 30.46.1 Fix Boot React Diagnóstico
 
 ## Problema
 
@@ -36,7 +36,7 @@ dist
 Después de publicar abrir:
 
 ```text
-/?v=304310
+/?v=304601
 ```
 
 Si aparece una pantalla de error, copiar ese texto o mandar captura.

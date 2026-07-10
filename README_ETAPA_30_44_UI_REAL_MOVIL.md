@@ -1,4 +1,4 @@
-# MiZona Enterprise V8 - Etapa 30.44 UI real móvil
+# MiZona Enterprise V8 - Etapa 30.46.1 UI real móvil
 
 ## Qué corrige
 
@@ -51,5 +51,5 @@ dist
 Abrir después de publicar:
 
 ```text
-/?v=304400
+/?v=304601
 ```

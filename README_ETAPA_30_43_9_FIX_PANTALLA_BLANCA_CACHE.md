@@ -1,4 +1,4 @@
-# MiZona Enterprise V8 - Etapa 30.43.9 Fix Pantalla Blanca / Caché
+# MiZona Enterprise V8 - Etapa 30.46.1 Fix Pantalla Blanca / Caché
 
 ## Problema corregido
 
@@ -11,7 +11,7 @@ Esto puede ocurrir por:
 
 ## Cambios aplicados
 
-- Se actualizó el título a 30.43.9.
+- Se actualizó el título a 30.46.1.
 - Se agregó pantalla de carga visible en `index.html`.
 - Se agregó captura de error de arranque en `src/main.jsx`.
 - Se desactiva el Service Worker principal de MiZona.
@@ -45,7 +45,7 @@ Redeploy without cache
 Abrir la web con:
 
 ```text
-https://TU-DOMINIO.vercel.app/?v=30439
+https://TU-DOMINIO.vercel.app/?v=304601
 ```
 
 Si es PWA instalada, cerrar, borrar caché o desinstalar/instalar nuevamente.
