@@ -1,21 +1,25 @@
-const CACHE = 'mizona-v8-etapa27-calidad-piloto';
-const CORE = ['/', '/manifest.webmanifest'];
-self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())));
-self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(fetch(event.request).then(response => {
-    const copy = response.clone();
-    caches.open(CACHE).then(cache => cache.put(event.request, copy));
-    return response;
-  }).catch(() => caches.match(event.request).then(cached => cached || caches.match('/'))));
+const CACHE_VERSION = 'mizona-v8-etapa30-43-9-reset';
+
+self.addEventListener('install', event => {
+  event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener('push', event => {
-  const data = event.data ? event.data.json() : { title: 'MiZona', body: 'Tienes una nueva notificación.' };
-  event.waitUntil(self.registration.showNotification(data.title || 'MiZona', { body: data.body || '', icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', data: data.url || '/' }));
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.map(key => caches.delete(key))))
+      .then(() => self.clients.claim())
+  );
 });
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data || '/'));
+
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => {
+    if (event.request.mode === 'navigate') {
+      return new Response('<!doctype html><title>MiZona</title><body style="font-family:system-ui;padding:24px"><h1>MiZona sin conexión</h1><p>Vuelve a conectarte y actualiza.</p></body>', {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      });
+    }
+    return new Response('', { status: 504, statusText: 'Sin conexión' });
+  }));
 });

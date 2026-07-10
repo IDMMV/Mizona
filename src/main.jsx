@@ -131,12 +131,59 @@ function App() {
   return <Shell page={denied ? 'panel' : page} setPage={setPage}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</Shell>;
 }
 
-createRoot(document.getElementById('root')).render(
-  <ErrorBoundary>
-    <AppProvider><App/></AppProvider>
-  </ErrorBoundary>
-);
+const rootElement = document.getElementById('root');
 
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(error => console.warn('Service worker no registrado', error)));
+function showBootError(error) {
+  console.error('MiZona boot error', error);
+  if (!rootElement) return;
+  rootElement.innerHTML = `
+    <div style="min-height:100vh;display:grid;place-items:center;background:#f6fbf9;color:#0f2534;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:24px;text-align:center">
+      <div style="max-width:560px;background:white;border:1px solid #dbe9e3;border-radius:28px;padding:28px;box-shadow:0 16px 40px rgba(15,23,42,.08)">
+        <div style="width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#0f766e,#14b8a6);display:grid;place-items:center;color:white;font-weight:900;font-size:26px;margin:0 auto 18px">MZ</div>
+        <h1 style="margin:0 0 10px;font-size:26px">MiZona no pudo iniciar</h1>
+        <p style="color:#64748b;margin:0 0 14px">Se detectó un error al cargar la aplicación. Esto evita que la pantalla quede en blanco.</p>
+        <pre style="white-space:pre-wrap;text-align:left;background:#0f172a;color:#e2e8f0;border-radius:16px;padding:14px;max-height:180px;overflow:auto">${String(error?.message || error || 'Error desconocido')}</pre>
+        <button onclick="location.reload()" style="margin-top:14px;border:0;background:#0f766e;color:white;border-radius:16px;padding:12px 18px;font-weight:900">Volver a cargar</button>
+      </div>
+    </div>
+  `;
+}
+
+try {
+  if (!rootElement) throw new Error('No se encontró el contenedor principal #root.');
+  createRoot(rootElement).render(
+    <ErrorBoundary>
+      <AppProvider><App/></AppProvider>
+    </ErrorBoundary>
+  );
+} catch (error) {
+  showBootError(error);
+}
+
+// Etapa 30.43.9:
+// Se desactiva el Service Worker de la app principal para eliminar cachés antiguos
+// que pueden dejar pantalla blanca o mezclar versiones. Firebase Messaging conserva
+// su propio service worker cuando se active desde el módulo de notificaciones.
+async function resetLegacyMizonaCache() {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs
+        .filter(reg => !String(reg.active?.scriptURL || '').includes('firebase-messaging-sw.js'))
+        .map(reg => reg.unregister()));
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys
+        .filter(key => String(key).toLowerCase().includes('mizona'))
+        .map(key => caches.delete(key)));
+    }
+    console.info('MiZona 30.43.9: caché legacy limpiado.');
+  } catch (error) {
+    console.warn('MiZona 30.43.9: no se pudo limpiar caché legacy', error);
+  }
+}
+
+if (import.meta.env.PROD) {
+  window.addEventListener('load', resetLegacyMizonaCache);
 }
