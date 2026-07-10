@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-etapa30-46-1-fix-version-install",
-  "version": "8.30.46-1",
+  "name": "mizona-enterprise-v8-etapa30-46-2-fix-build-chat-syntax",
+  "version": "8.30.46-2",
   "private": true,
   "type": "module",
   "scripts": {

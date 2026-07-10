@@ -519,7 +519,8 @@ export default function Chat({ setPage }) {
     setShowEventPanel(false);
     setSearchText('');
     setTab('chats');
-    try { window.history.pushState({ mizonaPage: 'panel', mzPage: 'panel' }, '', '#panel'); } catch {}\n    setPage?.('panel');
+    try { window.history.pushState({ mizonaPage: 'panel', mzPage: 'panel' }, '', '#panel'); } catch {}
+    setPage?.('panel');
   };
 
   const startDirect = async contact => {
