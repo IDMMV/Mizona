@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-echo "MiZona Vercel install: limpiando locks y caché npm..."
-
+echo "MiZona install: limpiando locks y caché npm..."
 rm -f package-lock.json npm-shrinkwrap.json yarn.lock pnpm-lock.yaml
 
 npm config set registry https://registry.npmjs.org/
@@ -11,6 +10,5 @@ npm config delete proxy || true
 npm config delete https-proxy || true
 npm cache clean --force || true
 
-echo "MiZona Vercel install: instalando dependencias desde npm público..."
-
+echo "MiZona install: instalando dependencias desde npm público..."
 npm install --registry=https://registry.npmjs.org/ --cache=/tmp/mizona-npm-cache --prefer-online --legacy-peer-deps --no-audit --no-fund

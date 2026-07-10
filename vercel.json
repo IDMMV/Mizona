@@ -1,7 +1,7 @@
 {
   "version": 2,
   "framework": "vite",
-  "installCommand": "rm -f package-lock.json npm-shrinkwrap.json yarn.lock pnpm-lock.yaml && npm config set registry https://registry.npmjs.org/ && npm config set package-lock false && npm config delete proxy || true && npm config delete https-proxy || true && npm cache clean --force || true && npm install --registry=https://registry.npmjs.org/ --cache=/tmp/mizona-npm-cache --prefer-online --legacy-peer-deps --no-audit --no-fund",
+  "installCommand": "bash scripts/vercel-install.sh",
   "buildCommand": "npx vite build",
   "outputDirectory": "dist"
 }
