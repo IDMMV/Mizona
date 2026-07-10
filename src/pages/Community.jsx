@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertCircle, Building2, CalendarDays, Check, ChevronLeft, CircleUserRound,
-  Download, FileText, GraduationCap, LoaderCircle, LockKeyhole, Megaphone,
+  Download, FileText, GraduationCap, Image, LoaderCircle, LockKeyhole, Megaphone,
   Plus, RefreshCw, Search, ShieldCheck, Upload, UserCheck, UserPlus, Users, X
 } from 'lucide-react';
 import Card from '../components/Card';
@@ -88,6 +88,11 @@ const DEMO_BUNDLE = {
   events: [
     { id: 'e1', title: 'Jornada comunitaria', description: 'Limpieza y ordenamiento del parque.', location: 'Parque principal', starts_at: new Date(Date.now() + 86400000 * 2).toISOString(), audience: 'public', status: 'published' }
   ],
+  photos: [
+    { id:'ph1', title:'Actividad del comité', emoji:'📸', date:new Date().toISOString(), author:'Administrador' },
+    { id:'ph2', title:'Reunión general', emoji:'🏫', date:new Date(Date.now()-86400000).toISOString(), author:'Comunidad' },
+    { id:'ph3', title:'Entrega de documentos', emoji:'🗂️', date:new Date(Date.now()-86400000*3).toISOString(), author:'Secretaría' }
+  ],
   rooms: [
     { id: 'r1', name: '5.º A', grade: 'Quinto', section: 'A', teacher_id: null },
     { id: 'r2', name: '2.º B', grade: 'Segundo', section: 'B', teacher_id: null }
@@ -113,6 +118,7 @@ const detailTabs = [
   { id: 'events', label: 'Eventos', icon: '📅' },
   { id: 'members', label: 'Miembros', icon: '👥' },
   { id: 'rooms', label: 'Aulas', icon: '🏫' },
+  { id: 'photos', label: 'Fotos', icon: '📸' },
   { id: 'documents', label: 'Documentos', icon: '📁' }
 ];
 
@@ -476,6 +482,7 @@ function CommunityDetail(props) {
       {detailTab === 'events' && <EventsPanel bundle={bundle} canPublish={canPublish} busy={busy} onCreate={onCreateEvent}/>} 
       {detailTab === 'members' && <MembersPanel members={bundle.members} canManage={canManage} busy={busy} currentUserId={user?.id} onReview={onReviewMember}/>} 
       {detailTab === 'rooms' && <RoomsPanel rooms={bundle.rooms} canPublish={canPublish} busy={busy} onCreate={onCreateRoom} setPage={setPage}/>} 
+      {detailTab === 'photos' && <PhotosPanel photos={bundle.photos || DEMO_BUNDLE.photos || []} canUpload={isActiveMember}/>} 
       {detailTab === 'documents' && <DocumentsPanel documents={bundle.documents} canUpload={isActiveMember} busy={busy} onUpload={onUploadDocument} onDownload={onDownloadDocument}/>} 
     </>}
   </div>;
@@ -515,6 +522,7 @@ function CommunityHome({ community, bundle, canPublish, onChangeTab }) {
         <div><b>{community.member_count || 0}</b><span>Miembros</span></div>
         <div><b>{bundle.announcements.length}</b><span>Comunicados</span></div>
         <div><b>{bundle.events.length}</b><span>Eventos</span></div>
+        <div><b>{(bundle.photos || DEMO_BUNDLE.photos || []).length}</b><span>Fotos</span></div>
         <div><b>{bundle.documents.length}</b><span>Documentos</span></div>
       </div>
     </Card>
@@ -606,6 +614,22 @@ function RoomForm({ busy, onCancel, onSubmit }) {
   </form>;
 }
 
+
+function PhotosPanel({ photos = [], canUpload }) {
+  const [localPhotos, setLocalPhotos] = useState(photos);
+  const addDemoPhoto = () => setLocalPhotos(current => [{ id: `local-photo-${Date.now()}`, title: 'Nueva foto de la comunidad', emoji: '📷', date: new Date().toISOString(), author: 'Miembro' }, ...current]);
+  return <div className="communityPanel">
+    <SectionHeader title="Fotos de la comunidad" subtitle="Galería visual para actividades, reuniones, eventos y recuerdos importantes." action={canUpload && <button className="primary" onClick={addDemoPhoto}><Image size={17}/> Agregar foto</button>}/>
+    <div className="communityPhotoGrid">{localPhotos.map(photo => <article key={photo.id}>
+      <div className="communityPhotoThumb"><span>{photo.emoji || '📸'}</span></div>
+      <b>{photo.title}</b>
+      <small>{photo.author || 'Comunidad'} · {formatDate(photo.date || photo.created_at, true)}</small>
+      <button className="ghost">Ver / descargar</button>
+    </article>)}</div>
+    {!localPhotos.length && <EmptyState icon="📸" title="Todavía no hay fotos" text="Cuando subas fotos de actividades, eventos o reuniones aparecerán aquí."/>}
+  </div>;
+}
+
 function DocumentsPanel({ documents, canUpload, busy, onUpload, onDownload }) {
   const [showForm, setShowForm] = useState(false);
   return <div className="communitySectionStack">
@@ -630,7 +654,11 @@ function CreateCommunityModal({ busy, onClose, onSubmit }) {
       <div className="communityModalHeader"><div><span className="eyebrow">NUEVA COMUNIDAD</span><h2>Crear una comunidad</h2><p>En modo local, los administradores la activan de inmediato; otros perfiles envían una solicitud pendiente.</p></div><button type="button" className="iconBtn" onClick={onClose}><X size={20}/></button></div>
       <div className="formGrid2"><label>Nombre<input value={values.name} onChange={event => setValues({ ...values, name: event.target.value })} minLength={3} maxLength={100} required placeholder="Ejemplo: Colegio San Martín"/></label><label>Tipo<select value={values.type} onChange={event => setValues({ ...values, type: event.target.value })}>{Object.entries(TYPE_META).map(([value, meta]) => <option key={value} value={value}>{meta.label}</option>)}</select></label><label>Zona o distrito<input value={values.zone} onChange={event => setValues({ ...values, zone: event.target.value })} placeholder="Ventanilla, Callao"/></label><label>Visibilidad<select value={values.visibility} onChange={event => setValues({ ...values, visibility: event.target.value })}><option value="public">Pública</option><option value="private">Privada</option><option value="school">Escolar</option></select></label><label>Forma de ingreso<select value={values.joinMode} onChange={event => setValues({ ...values, joinMode: event.target.value })}><option value="request">Con aprobación</option><option value="open">Ingreso abierto</option><option value="code">Con código</option><option value="invite">Solo invitación</option></select></label>{values.type === 'school' && <label>Nivel escolar<select value={values.schoolLevel} onChange={event => setValues({ ...values, schoolLevel: event.target.value })}><option>Inicial</option><option>Primaria</option><option>Secundaria</option><option>Primaria y secundaria</option><option>Completo</option></select></label>}{values.joinMode === 'code' && <label>Código inicial<input value={values.inviteCode} onChange={event => setValues({ ...values, inviteCode: event.target.value })} minLength={4} required placeholder="Mínimo 4 caracteres"/></label>}</div>
       <label>Descripción<textarea value={values.description} onChange={event => setValues({ ...values, description: event.target.value })} rows={4} placeholder="Explica para quién es la comunidad y qué objetivo tiene."/></label>
-      <div className="communityModalInfo"><ShieldCheck size={18}/><span>El propietario administra integrantes y contenido. Los perfiles administradores también pueden aprobar solicitudes pendientes.</span></div>
+      <div className="communityModalHelp">
+        <div><ShieldCheck size={18}/><b>Visibilidad</b><p><strong>Pública:</strong> aparece en búsqueda. <strong>Privada:</strong> solo se entra con invitación o aprobación. <strong>Escolar:</strong> comunidad protegida para colegio/aulas.</p></div>
+        <div><UserCheck size={18}/><b>Forma de ingreso</b><p><strong>Con aprobación:</strong> el administrador acepta. <strong>Ingreso abierto:</strong> entran directo. <strong>Con código:</strong> necesitan código. <strong>Solo invitación:</strong> el dueño agrega.</p></div>
+      </div>
+      <div className="communityModalInfo"><ShieldCheck size={18}/><span>El propietario administra integrantes, fotos, documentos y contenido. Los administradores también pueden aprobar solicitudes pendientes.</span></div>
       <div className="formActions"><button type="button" className="ghost" onClick={onClose}>Cancelar</button><button className="primary" disabled={busy}>{busy ? <LoaderCircle className="spin" size={17}/> : <Plus size={17}/>} Guardar comunidad</button></div>
     </form>
   </div>;

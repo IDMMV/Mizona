@@ -32,7 +32,7 @@ export async function listMyMemberships(userId) {
 
 export async function createCommunity(values) {
   const client = requireBackend();
-  const { data: communityId, error: createError } = await client.rpc('create_community_request', {
+  const payload = {
     p_name: String(values.name || '').trim(),
     p_type: values.type || 'neighborhood',
     p_zone: String(values.zone || '').trim() || null,
@@ -41,8 +41,15 @@ export async function createCommunity(values) {
     p_join_mode: values.joinMode || 'request',
     p_school_level: values.type === 'school' ? (values.schoolLevel || null) : null,
     p_invite_code: values.joinMode === 'code' ? String(values.inviteCode || '').trim() : null
-  });
-  if (createError) throw createError;
+  };
+  const { data: communityId, error: createError } = await client.rpc('create_community_request', payload);
+  if (createError) {
+    const message = String(createError.message || createError.details || createError.hint || '');
+    if (message.includes('gen_salt')) {
+      throw new Error('Supabase necesita activar la extensión pgcrypto para crear códigos seguros. Solución: en Supabase SQL ejecuta: create extension if not exists pgcrypto;');
+    }
+    throw createError;
+  }
 
   const { data, error } = await client
     .from('communities')

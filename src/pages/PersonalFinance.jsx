@@ -123,19 +123,23 @@ export default function PersonalFinance() {
     }
   };
 
-  return <div className="page personalFinancePage">
-    <div className="hero compact financeHero">
+  return <div className="page personalFinancePage financeComiteStyle38">
+    <section className="financeHero38">
       <div>
-        <span className="eyebrow">Etapa 30</span>
-        <h1>Mis gastos personales</h1>
-        <p>Cada usuario administra sus propios ingresos, gastos, ahorros, metas y presupuestos. Nadie ve los datos de otra cuenta.</p>
+        <span className="eyebrow">MIS GASTOS</span>
+        <h1>Control personal de ingresos, gastos y metas</h1>
+        <p>Una vista más clara tipo comité: registra movimientos, consulta historial, revisa tu dashboard y exporta tu información.</p>
       </div>
-      <div className="heroIcon"><PiggyBank/></div>
-    </div>
+      <div className="financeHeroCard38">
+        <PiggyBank size={42}/>
+        <b>{money(summary.balance)}</b>
+        <span>Disponible del mes</span>
+      </div>
+    </section>
 
-    <div className="financePrivacy"><ShieldCheck/><div><b>Privado por usuario</b><span>{dataMode === 'cloud' && backendConnected ? 'Preparado para guardar en Supabase con RLS por propietario.' : 'En modo local se guarda separado por perfil en este navegador.'}</span></div></div>
+    <div className="financePrivacy financePrivacy38"><ShieldCheck/><div><b>Privado por usuario</b><span>{dataMode === 'cloud' && backendConnected ? 'Preparado para guardar en Supabase con RLS por propietario.' : 'En modo local se guarda separado por perfil en este navegador.'}</span></div><button className="ghost" onClick={exportCsv}><Download size={16}/> Exportar Excel</button></div>
 
-    <Tabs value={tab} onChange={setTab} items={[{ id: 'dashboard', label: 'Resumen' }, { id: 'movements', label: 'Movimientos' }, { id: 'budgets', label: 'Presupuestos' }, { id: 'goals', label: 'Metas' }, { id: 'backup', label: 'Respaldo' }]}/>
+    <Tabs value={tab} onChange={setTab} items={[{ id: 'dashboard', label: 'Dashboard' }, { id: 'movements', label: 'Registrar / consultar' }, { id: 'budgets', label: 'Presupuestos' }, { id: 'goals', label: 'Metas' }, { id: 'backup', label: 'Importar / exportar' }]}/>
     {message && <p className="accountMessage">{message}</p>}
 
     {tab === 'dashboard' && <>

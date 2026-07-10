@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle, Ban, BarChart3, CalendarDays, Camera, Check, ChevronLeft,
-  CircleUserRound, ClipboardCheck, Contact, Download, File, FileText, Image,
+  CircleUserRound, ClipboardCheck, Contact, Download, File, FileText, FileUp, Image,
   Info, Link, ListTodo, Loader2, MapPin, Maximize2, MessageCircle,
   MessageSquarePlus, Mic, Minimize2, MoreVertical, Palette, Paperclip, Phone,
   Plus, RefreshCw, Search, Send, Settings, ShieldCheck, ShoppingBag,

@@ -3626,3 +3626,264 @@ body.mizona-chat-app .chatSettingsBtn{
     justify-self:start;
   }
 }
+
+
+/* =========================================================
+   ETAPA 30.38 - Observaciones UI y estabilidad
+   ========================================================= */
+
+.communityModalHelp{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:14px 0;
+}
+.communityModalHelp>div{
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+  padding:14px;
+  border-radius:18px;
+  background:#eef6ff;
+  color:#0f3a68;
+}
+.communityModalHelp b{
+  display:block;
+}
+.communityModalHelp p{
+  grid-column:2;
+  margin:0;
+  color:#31577d;
+  line-height:1.45;
+}
+.communityPhotoGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:14px;
+}
+.communityPhotoGrid article{
+  border:1px solid #d9eee8;
+  border-radius:22px;
+  padding:12px;
+  background:#fff;
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.communityPhotoThumb{
+  height:150px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#e0f2fe,#dcfce7);
+  font-size:48px;
+  margin-bottom:10px;
+}
+.communityPhotoGrid b{
+  display:block;
+}
+.communityPhotoGrid small{
+  display:block;
+  color:#64748b;
+  margin:4px 0 10px;
+}
+.transferExplainPage38{
+  display:grid;
+  gap:18px;
+}
+.transferHero38{
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) 320px;
+  gap:20px;
+  padding:28px;
+  border-radius:32px;
+  background:linear-gradient(135deg,#061414,#0d3b3a);
+  color:#e9edef;
+}
+.transferHero38 h1{
+  font-size:clamp(34px,5vw,56px);
+  margin:8px 0;
+}
+.transferHero38 p{
+  color:#c7d7d9;
+}
+.transferHeroActions38{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.transferHeroActions38 button{
+  border:0;
+  border-radius:16px;
+  min-height:46px;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#00a884;
+  color:white;
+  font-weight:900;
+}
+.transferHeroActions38 .secondary{
+  background:white;
+  color:#0f172a;
+}
+.transferDemoCard38{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:rgba(255,255,255,.08);
+  padding:22px;
+  display:grid;
+  gap:8px;
+  align-content:center;
+}
+.transferDemoCard38 svg{
+  color:#25d366;
+}
+.transferDemoCard38 b{
+  font-size:24px;
+}
+.transferSteps38{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.transferSteps38 article{
+  border:1px solid #d9eee8;
+  border-radius:22px;
+  padding:16px;
+  background:#fff;
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.transferSteps38 svg{
+  color:#00a884;
+}
+.transferSteps38 b{
+  display:block;
+  margin:8px 0 4px;
+}
+.transferSteps38 span{
+  color:#64748b;
+}
+.transferDrop38{
+  display:grid;
+  place-items:center;
+  gap:8px;
+  text-align:center;
+}
+.transferDrop38 svg{
+  color:#00a884;
+}
+.transferUseGrid38{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.transferUseGrid38 article{
+  border:1px solid #e5edf1;
+  border-radius:16px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#f8fafc;
+  font-weight:800;
+}
+.transferUseGrid38 svg{
+  color:#00a884;
+}
+.transferFiles38 button{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.financeComiteStyle38 .tabs,
+.financeComiteStyle38 .tabBar{
+  margin-top:14px;
+}
+.financeHero38{
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) 260px;
+  gap:18px;
+  padding:26px;
+  border-radius:32px;
+  background:linear-gradient(135deg,#061414,#0e3f38);
+  color:#e9edef;
+  margin-bottom:14px;
+}
+.financeHero38 h1{
+  font-size:clamp(32px,5vw,52px);
+  margin:8px 0;
+}
+.financeHero38 p{
+  color:#c7d7d9;
+}
+.financeHeroCard38{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:rgba(255,255,255,.08);
+  padding:22px;
+  display:grid;
+  gap:8px;
+}
+.financeHeroCard38 svg{
+  color:#25d366;
+}
+.financeHeroCard38 b{
+  font-size:28px;
+  color:#25d366;
+}
+.financePrivacy38{
+  border:1px solid #d9eee8;
+  border-radius:20px;
+  padding:14px;
+  background:#f0fdf4;
+}
+.financePrivacy38 button{
+  margin-left:auto;
+}
+.profileBtnPhoto38{
+  gap:8px!important;
+}
+.topProfileAvatar38{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#1d4ed8,#00a884);
+  color:white;
+  overflow:hidden;
+  flex:0 0 auto;
+}
+.topProfileAvatar38 img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+@media(max-width:760px){
+  .communityModalHelp,
+  .transferHero38,
+  .transferSteps38,
+  .financeHero38{
+    grid-template-columns:1fr;
+  }
+  .transferUseGrid38{
+    grid-template-columns:1fr;
+  }
+  .transferHero38,
+  .financeHero38{
+    padding:22px;
+    border-radius:26px;
+  }
+  .financePrivacy38{
+    display:grid!important;
+    grid-template-columns:28px minmax(0,1fr);
+  }
+  .financePrivacy38 button{
+    grid-column:1 / -1;
+    margin-left:0;
+    width:100%;
+  }
+}
