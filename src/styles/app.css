@@ -3887,3 +3887,1763 @@ body.mizona-chat-app .chatSettingsBtn{
     width:100%;
   }
 }
+
+
+/* =========================================================
+   ETAPA 30.39 - Comité depurado Excel + Dashboard
+   ========================================================= */
+.committeeExcelBar39,
+.committeeUnifiedModule39{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  border:1px solid #d9eee8;
+  background:#f0fdf4;
+  border-radius:22px;
+  padding:14px 16px;
+  margin:12px 0;
+}
+.committeeExcelBar39 span,
+.committeeUnifiedModule39 p{
+  color:#047857;
+  font-weight:800;
+}
+.committeeExcelBar39>div,
+.committeeUnifiedModule39 .buttonWrap{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.committeeExcelBar39 button,
+.segmented39 button{
+  border:1px solid #d9eee8;
+  border-radius:14px;
+  min-height:38px;
+  padding:9px 12px;
+  font-weight:900;
+  background:#fff;
+  color:#0f172a;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.committeeExcelBar39 .primary,
+.segmented39 .active{
+  background:#00a884;
+  color:#fff;
+  border-color:#00a884;
+}
+.committeeUnifiedModule39 h2{
+  margin:0 0 4px;
+}
+.segmented39{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  background:#f8fafc;
+  border:1px solid #e5edf1;
+  border-radius:20px;
+  padding:8px;
+  margin-bottom:14px;
+}
+.financeKpis39,
+.reportKpis39{
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))!important;
+}
+.committeeCalendar39{
+  overflow-x:auto;
+}
+.committeeCalendar39 section{
+  cursor:pointer;
+  min-height:96px;
+  transition:.18s ease;
+}
+.committeeCalendar39 section:hover{
+  background:#ecfdf5;
+  transform:translateY(-1px);
+}
+.committeeCalendar39 .selectedDay39{
+  background:#d1fae5!important;
+  border:2px solid #00a884!important;
+  box-shadow:0 10px 24px rgba(0,168,132,.14);
+}
+.committeeCalendar39 section em{
+  display:block;
+  margin-top:4px;
+  color:#047857;
+  font-style:normal;
+  font-size:11px;
+  font-weight:900;
+}
+.calendarAgenda39{
+  margin-top:14px;
+}
+.reportsDashboard39{
+  display:grid;
+  gap:16px;
+}
+.barChart39{
+  display:grid;
+  gap:14px;
+}
+.barChart39 article{
+  display:grid;
+  grid-template-columns:110px minmax(0,1fr) 120px;
+  gap:10px;
+  align-items:center;
+}
+.barChart39 i{
+  height:18px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#00a884,#33d1a6);
+}
+.barChart39 i.danger{
+  background:linear-gradient(90deg,#ef4444,#fca5a5);
+}
+.barChart39 i.ok{
+  background:linear-gradient(90deg,#2563eb,#93c5fd);
+}
+.barChart39 b{
+  text-align:right;
+}
+.donutFake39{
+  min-height:190px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  border-radius:22px;
+  background:radial-gradient(circle at center,#fff 0 38%,transparent 39%),conic-gradient(#00a884 0 45%,#3b82f6 45% 70%,#f59e0b 70% 86%,#ef4444 86% 100%);
+  color:#0f172a;
+}
+.donutFake39 svg{
+  display:none;
+}
+.donutFake39 b{
+  display:block;
+  font-size:24px;
+}
+@media(max-width:760px){
+  .committeeExcelBar39,
+  .committeeUnifiedModule39{
+    display:grid;
+  }
+  .committeeExcelBar39>div,
+  .committeeUnifiedModule39 .buttonWrap{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .committeeExcelBar39 button,
+  .committeeUnifiedModule39 button,
+  .segmented39 button{
+    width:100%;
+    justify-content:center;
+  }
+  .committeeCalendar39{
+    display:grid!important;
+    grid-template-columns:repeat(7,minmax(54px,1fr))!important;
+    font-size:12px;
+  }
+  .committeeCalendar39 section{
+    min-height:74px;
+    padding:6px!important;
+  }
+  .committeeCalendar39 section span{
+    font-size:10px;
+    line-height:1.1;
+    max-height:24px;
+    overflow:hidden;
+  }
+  .barChart39 article{
+    grid-template-columns:1fr;
+  }
+  .barChart39 b{
+    text-align:left;
+  }
+}
+
+
+/* =========================================================
+   ETAPA 30.40 - MiZona Chat corrección WhatsApp móvil
+   ========================================================= */
+
+/* Ajustes: que los botones se comporten como opciones claras */
+.chatSettingsPanel .settingsBlock button{
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:2!important;
+}
+
+/* Lista del chat: compactar encabezado para que Ajustes y Salir no queden abajo */
+body.mizona-chat-app .chatRealPage{
+  background:#071316!important;
+}
+body.mizona-chat-app .chatPageHeader{
+  display:none!important;
+}
+body.mizona-chat-app .chatDirectory{
+  background:#071316!important;
+  color:#e9edef!important;
+}
+body.mizona-chat-app .chatDirectoryTop{
+  background:#071316!important;
+}
+body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact{
+  padding-top:8px!important;
+  align-items:start!important;
+}
+body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact>div:first-child b{
+  font-size:34px!important;
+  line-height:1!important;
+  color:#e9edef!important;
+}
+body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact>div:first-child span{
+  color:#aebac1!important;
+}
+body.mizona-chat-app .chatDirectoryHeaderActions{
+  align-items:center!important;
+  padding-top:0!important;
+}
+
+/* Conversación completa en oscuro */
+body.mizona-chat-app .chatConversation,
+body.mizona-chat-app .mobileChatFullscreen .chatConversation{
+  background:#071316!important;
+  color:#e9edef!important;
+}
+body.mizona-chat-app .conversationTopBar{
+  background:#071316!important;
+  color:#e9edef!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+  min-height:72px!important;
+}
+body.mizona-chat-app .conversationTopBar .avatar,
+body.mizona-chat-app .conversationTopBar .chatAvatar,
+body.mizona-chat-app .messageRow .avatar,
+body.mizona-chat-app .messageRow .chatAvatar{
+  background:#1d2b33!important;
+  color:#e9edef!important;
+}
+body.mizona-chat-app .conversationTopBar b{
+  color:#e9edef!important;
+}
+body.mizona-chat-app .conversationTopBar span{
+  color:#aebac1!important;
+}
+
+/* No mostrar botones Chats / Salir dentro de la conversación */
+body.mizona-chat-app .chatConversation .chatViewListBtn{
+  display:none!important;
+}
+
+/* Mensajes oscuros y fondo consistente */
+body.mizona-chat-app .messageStream{
+  background:#071316!important;
+  color:#e9edef!important;
+  padding-bottom:96px!important;
+}
+body.mizona-chat-app .messageBubble{
+  background:#15272e!important;
+  color:#e9edef!important;
+  box-shadow:none!important;
+}
+body.mizona-chat-app .messageRow.own .messageBubble{
+  background:#00a884!important;
+  color:white!important;
+}
+body.mizona-chat-app .messageBubble b{
+  color:#25d366!important;
+}
+body.mizona-chat-app .messageRow.own .messageBubble b{
+  color:white!important;
+}
+body.mizona-chat-app .messageBubble small{
+  color:rgba(255,255,255,.72)!important;
+}
+body.mizona-chat-app .retentionBanner{
+  background:#0e2a20!important;
+  color:#b8f7d0!important;
+  border-color:rgba(37,211,102,.18)!important;
+}
+
+/* Composer: enviar al lado del micrófono y todo en una sola línea */
+body.mizona-chat-app .messageComposer{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:20!important;
+  display:grid!important;
+  grid-template-columns:48px minmax(0,1fr) 48px 48px!important;
+  gap:8px!important;
+  align-items:center!important;
+  background:#071316!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom, 0px))!important;
+}
+body.mizona-chat-app .messageComposer input[type="text"],
+body.mizona-chat-app .messageComposer input:not([type]){
+  background:#1d2b33!important;
+  color:#e9edef!important;
+  border:0!important;
+  border-radius:999px!important;
+  min-height:48px!important;
+  padding:0 18px!important;
+}
+body.mizona-chat-app .messageComposer .iconBtn,
+body.mizona-chat-app .messageComposer button{
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  min-height:48px!important;
+  border-radius:50%!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+}
+body.mizona-chat-app .messageComposer .sendBtnChat40{
+  background:#00a884!important;
+  color:white!important;
+  opacity:1!important;
+  transform:none!important;
+}
+body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
+  background:#263942!important;
+  color:#6f858d!important;
+}
+
+/* En móvil: que no aparezca franja blanca ni botón enviar abajo */
+@media(max-width:760px){
+  body.mizona-chat-app,
+  body.mizona-chat-app #root,
+  body.mizona-chat-app .app,
+  body.mizona-chat-app main{
+    background:#071316!important;
+  }
+  body.mizona-chat-app .chatRealPage{
+    height:100dvh!important;
+    overflow:hidden!important;
+  }
+  body.mizona-chat-app .chatWorkspace{
+    height:100dvh!important;
+  }
+  body.mizona-chat-app .conversationTopBar{
+    padding:8px 10px!important;
+    grid-template-columns:52px 44px minmax(0,1fr) 44px!important;
+  }
+  body.mizona-chat-app .conversationTopBar .iconBtn:not(.chatBack):last-child{
+    opacity:.9!important;
+  }
+  body.mizona-chat-app .messageStream{
+    height:auto!important;
+    overflow-y:auto!important;
+  }
+  body.mizona-chat-app .messageComposer{
+    grid-template-columns:48px minmax(0,1fr) 48px 48px!important;
+    width:100%!important;
+  }
+  body.mizona-chat-app .messageComposer button{
+    position:static!important;
+  }
+  body.mizona-chat-app .messageComposer .sendBtnChat40{
+    order:4!important;
+  }
+  body.mizona-chat-app .messageComposer .iconBtn[title="Audio"]{
+    order:3!important;
+  }
+}
+
+/* =========================================================
+   ETAPA 30.41 - Refinado total UI móvil para todos los módulos
+   Inspiración: layout limpio tipo app, cards redondeadas,
+   héroes destacados, tabs deslizables y mejor orden general.
+   ========================================================= */
+
+:root{
+  --mz-mobile-bg:#f3f7f6;
+  --mz-mobile-card:#ffffff;
+  --mz-mobile-line:#dbe9e3;
+  --mz-mobile-shadow:0 12px 30px rgba(11,33,44,.08);
+  --mz-mobile-hero:linear-gradient(135deg,#08354a 0%,#0f7f74 55%,#2fd1b2 100%);
+  --mz-mobile-hero-dark:linear-gradient(135deg,#071316 0%,#0b2932 45%,#0ca37a 100%);
+  --mz-mobile-accent:#0aa37f;
+}
+
+@media(max-width:760px){
+  html,body{background:var(--mz-mobile-bg)!important;}
+  .app{background:var(--mz-mobile-bg)!important;}
+  main{background:var(--mz-mobile-bg)!important;}
+  .content{
+    padding:10px 12px calc(var(--mz-nav-mobile-h,78px) + 16px)!important;
+    background:var(--mz-mobile-bg)!important;
+  }
+  .page{
+    display:grid;
+    gap:14px;
+  }
+  .page h1{
+    font-size:22px!important;
+    line-height:1.12!important;
+    letter-spacing:-.02em;
+  }
+  .page p{line-height:1.35}
+  .pageTitle,
+  .sectionHeader,
+  .sectionLine,
+  .communitySectionHeader,
+  .committeeToolbar,
+  .benefitToolbar,
+  .businessToolbar{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    flex-wrap:wrap!important;
+  }
+
+  /* Topbar móvil similar a app nativa */
+  .topbar{
+    position:sticky!important;
+    top:0!important;
+    z-index:45!important;
+    height:74px!important;
+    min-height:74px!important;
+    padding:12px!important;
+    gap:10px!important;
+    background:rgba(255,255,255,.96)!important;
+    border-bottom:1px solid var(--mz-mobile-line)!important;
+    box-shadow:0 8px 24px rgba(11,33,44,.05)!important;
+    backdrop-filter:blur(16px)!important;
+  }
+  .topbar .sidebarMasterToggle,
+  .topbar .iconBtn{
+    width:56px!important;
+    min-width:56px!important;
+    height:56px!important;
+    border-radius:20px!important;
+    border:1px solid var(--mz-mobile-line)!important;
+    background:#fff!important;
+    box-shadow:none!important;
+  }
+  .topbar .searchBox{
+    flex:1!important;
+    min-width:0!important;
+    height:56px!important;
+    border-radius:20px!important;
+    padding:0 14px!important;
+    background:#fff!important;
+    border:1px solid var(--mz-mobile-line)!important;
+  }
+  .topbar .searchBox input{
+    font-size:15px!important;
+  }
+  .topbar .searchBox input::placeholder{
+    color:#6f7f7d!important;
+    opacity:1!important;
+  }
+  .topbar .profileBtn,
+  .topbar .runtimeBadge,
+  .topbar .zoneBtn{display:none!important;}
+
+  /* Navegación inferior más limpia */
+  .mobileBottomNav{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:55!important;
+    display:grid!important;
+    grid-template-columns:repeat(5,1fr)!important;
+    gap:6px!important;
+    background:rgba(255,255,255,.98)!important;
+    border-top:1px solid var(--mz-mobile-line)!important;
+    box-shadow:0 -10px 28px rgba(11,33,44,.08)!important;
+    padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 10px)!important;
+    height:auto!important;
+  }
+  .mobileBottomNav button{
+    min-height:58px!important;
+    border-radius:18px!important;
+    gap:5px!important;
+    color:#6d7a8e!important;
+    font-size:11px!important;
+    font-weight:900!important;
+  }
+  .mobileBottomNav button.active{
+    background:#eaf6f1!important;
+    color:#148565!important;
+  }
+  .mobileBottomNav button.active svg{color:#148565!important;}
+
+  /* Cards y bloques generales */
+  .card,
+  .quick,
+  .moduleMini>div,
+  .adminTable>div,
+  .notificationList article,
+  .communityCardReal,
+  .opportunityCard,
+  .placeGrid article,
+  .placeCard,
+  .courseCard,
+  .learningCard,
+  .posProduct,
+  .trackingCard,
+  .deliveryRuleCard,
+  .deliveryStatusCard,
+  .deliveryFlowCard,
+  .deliveryAdminCard,
+  .deliveryConfigCard,
+  .communityPanel,
+  .communityStat,
+  .cashSummary,
+  .cashSessionPanel,
+  .cartPanel,
+  .customerList article,
+  .workerList article,
+  .expenseList article,
+  .notificationHeroStats span,
+  .smartMetricGrid article,
+  .smartModules article,
+  .topProducts article,
+  .transferDemoCard38,
+  .campusInlinePanel,
+  .campusAssignmentCard,
+  .certificateCard,
+  .businessModePanel,
+  .businessNotice,
+  .businessError,
+  .mkCPanel,
+  .mkCBusinessCard,
+  .mkCPromoCard,
+  .mkCProductBody,
+  .mkCProductVisual,
+  .mkCBanner,
+  .mkCContentBlock,
+  .commerceMiniList article,
+  .businessSearchPanel,
+  .notificationMain,
+  .announcementTop,
+  .nextEventCard,
+  .communityPhotoThumb,
+  .memberRowReal,
+  .roomGridReal article{
+    background:var(--mz-mobile-card)!important;
+    border:1px solid var(--mz-mobile-line)!important;
+    border-radius:24px!important;
+    box-shadow:var(--mz-mobile-shadow)!important;
+  }
+
+  /* Héroes principales */
+  .smartHero,
+  .benefitsHero,
+  .businessHero,
+  .businessSuiteHero,
+  .campusHero,
+  .rideHero,
+  .rideDeliveryHero,
+  .committeeHero,
+  .newCommitteeHero,
+  .communityHeroReal,
+  .notificationHero,
+  .transferHero38,
+  .ordersHero35,
+  .mkCTopHero,
+  .businessMarketHero36,
+  .panelSmartPage .hero,
+  .communityDemoNotice,
+  .businessHeroStats,
+  .rideHeroStats,
+  .campusHeroStats,
+  .benefitStats,
+  .committeeKpis,
+  .smartMetricGrid{
+    border-radius:30px!important;
+  }
+  .smartHero,
+  .benefitsHero,
+  .businessHero,
+  .businessSuiteHero,
+  .campusHero,
+  .rideHero,
+  .rideDeliveryHero,
+  .committeeHero,
+  .newCommitteeHero,
+  .communityHeroReal,
+  .transferHero38,
+  .ordersHero35,
+  .mkCTopHero,
+  .businessMarketHero36{
+    background:var(--mz-mobile-hero)!important;
+    color:#fff!important;
+    padding:22px 18px!important;
+    box-shadow:0 20px 40px rgba(6,64,73,.18)!important;
+    overflow:hidden!important;
+  }
+  .smartHero *,
+  .benefitsHero *,
+  .businessHero *,
+  .businessSuiteHero *,
+  .campusHero *,
+  .rideHero *,
+  .rideDeliveryHero *,
+  .committeeHero *,
+  .newCommitteeHero *,
+  .communityHeroReal *,
+  .transferHero38 *,
+  .ordersHero35 *,
+  .mkCTopHero *,
+  .businessMarketHero36 *{
+    color:inherit;
+  }
+  .smartHero .eyebrow,
+  .benefitsHero .eyebrow,
+  .businessHero .eyebrow,
+  .businessSuiteHero .eyebrow,
+  .campusHero .eyebrow,
+  .rideHero .eyebrow,
+  .rideDeliveryHero .eyebrow,
+  .committeeHero .eyebrow,
+  .newCommitteeHero .eyebrow,
+  .communityHeroReal .eyebrow,
+  .transferHero38 .eyebrow,
+  .ordersHero35 .eyebrow,
+  .mkCTopHero .eyebrow,
+  .businessMarketHero36 .eyebrow{
+    color:rgba(255,255,255,.74)!important;
+  }
+  .smartHero p,
+  .benefitsHero p,
+  .businessHero p,
+  .businessSuiteHero p,
+  .campusHero p,
+  .rideHero p,
+  .rideDeliveryHero p,
+  .committeeHero p,
+  .newCommitteeHero p,
+  .communityHeroReal p,
+  .transferHero38 p,
+  .ordersHero35 p,
+  .mkCTopHero p,
+  .businessMarketHero36 p{
+    color:rgba(255,255,255,.88)!important;
+  }
+
+  /* Stats dentro del hero */
+  .heroStats,
+  .businessHeroStats,
+  .rideHeroStats,
+  .campusHeroStats,
+  .committeeKpis,
+  .smartMetricGrid,
+  .benefitStats,
+  .notificationHeroStats,
+  .businessKpis{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+    min-width:0!important;
+    width:100%!important;
+  }
+  .heroStats span,
+  .businessHeroStats span,
+  .rideHeroStats span,
+  .campusHeroStats span,
+  .committeeKpis span,
+  .smartMetricGrid article,
+  .benefitStats span,
+  .notificationHeroStats span,
+  .businessKpis span{
+    background:rgba(255,255,255,.14)!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+    color:#fff!important;
+    border-radius:20px!important;
+    padding:14px 12px!important;
+    box-shadow:none!important;
+  }
+
+  /* Formularios y toolbars */
+  .field,
+  input,
+  select,
+  textarea,
+  .businessSearch,
+  .businessSearch input,
+  .adminSearch,
+  .adminSearch input,
+  .communitySearch,
+  .communitySearch input,
+  .benefitSearch,
+  .benefitSearch input,
+  .mkCSearch,
+  .mkCSearch input,
+  .chatSearchBar,
+  .chatSearchBar input{
+    border-radius:18px!important;
+  }
+  .field,
+  input,
+  select,
+  textarea{
+    min-height:48px!important;
+    font-size:16px!important;
+  }
+  textarea{min-height:110px!important;}
+  .primary,
+  .secondary,
+  .ghost,
+  .benefitCreateButton,
+  .placeActions button,
+  .heroActions button,
+  .heroActions a,
+  .modalActions button,
+  .communityHeroActions button,
+  .transferHeroActions38 button,
+  .businessHero button,
+  .businessMarketHero36 button,
+  .campusHero button,
+  .rideHero button,
+  .rideDeliveryHero button,
+  .mkHeroActions button,
+  .mkHeroActions a{
+    min-height:48px!important;
+    border-radius:18px!important;
+    font-weight:900!important;
+  }
+
+  /* Tabs y rails tipo app */
+  .tabs,
+  .chatTabs,
+  .actionsTabs,
+  .paymentViewTabs,
+  .mkCModeTabs,
+  .mkCCategoryChips,
+  .categoryRail,
+  .brandScroller,
+  .featuredScroller,
+  .commerceMiniList,
+  .communityToolbar,
+  .communityHeroActions{
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar,
+  .chatTabs::-webkit-scrollbar,
+  .actionsTabs::-webkit-scrollbar,
+  .paymentViewTabs::-webkit-scrollbar,
+  .mkCModeTabs::-webkit-scrollbar,
+  .mkCCategoryChips::-webkit-scrollbar,
+  .categoryRail::-webkit-scrollbar,
+  .brandScroller::-webkit-scrollbar,
+  .featuredScroller::-webkit-scrollbar,
+  .commerceMiniList::-webkit-scrollbar,
+  .communityToolbar::-webkit-scrollbar,
+  .communityHeroActions::-webkit-scrollbar{display:none;}
+  .tabs button,
+  .chatTabs button,
+  .actionsTabs button,
+  .paymentViewTabs button,
+  .mkCModeTabs button,
+  .mkCCategoryChips button,
+  .categoryRail button,
+  .brandScroller button,
+  .communityToolbar button,
+  .communityHeroActions button{
+    flex:0 0 auto!important;
+    min-height:46px!important;
+    border-radius:18px!important;
+    padding:10px 14px!important;
+  }
+
+  /* Grids principales */
+  .quickGrid,
+  .grid2,
+  .grid3,
+  .businessLayout,
+  .campusLayout,
+  .trackingLayout,
+  .rideRequestLayout,
+  .communitySummaryGrid,
+  .communityHomeGrid,
+  .deliveryGrid,
+  .deliveryOptionsGrid,
+  .paymentCards,
+  .participantGrid,
+  .courseGrid,
+  .learningGrid,
+  .certificateGrid,
+  .placeGrid,
+  .opportunityGrid,
+  .mkCBusinessGrid,
+  .mkCPromoGrid,
+  .mkCProductGrid,
+  .communityGrid,
+  .adminKpis,
+  .smartOverview,
+  .smartModules,
+  .moduleStatusGrid,
+  .businessKpis,
+  .communityPhotoGrid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:14px!important;
+  }
+
+  /* Secciones de beneficios */
+  .yapePromoBanner,
+  .mkCBanner,
+  .communityDemoNotice,
+  .localModeStrip,
+  .businessMarketNotice36,
+  .rideTrust,
+  .transferSteps38,
+  .transferUseGrid38 article,
+  .chatLocalModeNotice,
+  .retentionBanner,
+  .communityModalHelp,
+  .pushPermissionVisiblePanel,
+  .pushPermissionHero,
+  .pushPermissionBox{
+    border-radius:24px!important;
+    box-shadow:var(--mz-mobile-shadow)!important;
+  }
+
+  .yapePromoBanner{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    align-items:end!important;
+    gap:12px!important;
+    background:linear-gradient(135deg,#7d16d3 0%,#c129ff 50%,#8f16d9 100%)!important;
+    border-radius:30px!important;
+    padding:20px!important;
+  }
+  .yapePromoBanner span{background:#ffd426!important;color:#572100!important;border-radius:999px!important;padding:8px 12px!important;width:max-content!important;font-weight:900!important;}
+  .yapePromoBanner strong{display:block;font-size:1.8rem!important;line-height:1.08!important;margin-top:12px!important;}
+  .yapePromoBanner small{display:block;color:rgba(255,255,255,.86)!important;margin-top:6px!important;}
+  .yapePromoBanner b{font-size:3.4rem!important;line-height:1!important;background:#18cfbf!important;color:#fff!important;border-radius:22px!important;padding:12px 18px!important;}
+
+  /* Business / marketplace / store */
+  .businessSearchPanel,
+  .mkCPanel,
+  .mkCBusinessCard,
+  .mkCPromoCard,
+  .mkCProductGrid article,
+  .placeGrid article,
+  .businessModePanel,
+  .businessSelector,
+  .cartPanel,
+  .cashSummary,
+  .inventoryTable,
+  .kitchenBoard,
+  .receiptPaper{
+    padding:16px!important;
+  }
+  .businessSearch,
+  .mkCSearch,
+  .communitySearch,
+  .benefitSearch,
+  .chatSearchBar,
+  .adminSearch{
+    background:#fff!important;
+    border:1px solid var(--mz-mobile-line)!important;
+    box-shadow:var(--mz-mobile-shadow)!important;
+  }
+  .categoryRail,
+  .mkCCategoryChips,
+  .brandScroller{
+    gap:10px!important;
+    padding-bottom:2px!important;
+  }
+  .categoryRail button,
+  .mkCCategoryChips button,
+  .brandScroller button{
+    background:#fff!important;
+    border:1px solid var(--mz-mobile-line)!important;
+    border-radius:20px!important;
+    min-width:92px!important;
+    min-height:74px!important;
+    padding:10px 12px!important;
+    display:grid!important;
+    place-items:center!important;
+    gap:8px!important;
+    box-shadow:var(--mz-mobile-shadow)!important;
+  }
+  .categoryRail button.active,
+  .mkCCategoryChips button.active,
+  .tabs button.active,
+  .chatTabs button.active,
+  .actionsTabs button.active,
+  .paymentViewTabs button.active,
+  .communityToolbar button.active,
+  .communityHeroActions button.active{
+    background:#159a72!important;
+    color:#fff!important;
+    border-color:#159a72!important;
+  }
+
+  /* MiZona Chat móvil, más parecido al mockup */
+  body.mizona-chat-app,
+  body.mizona-chat-app .content,
+  body.mizona-chat-app main,
+  body.mizona-chat-app .chatRealPage,
+  body.mizona-chat-app .chatDirectory,
+  body.mizona-chat-app .chatConversation,
+  body.mizona-chat-app .messageStream{
+    background:#071316!important;
+    color:#e8f1ef!important;
+  }
+  body.mizona-chat-app .chatRealPage{padding:0!important;gap:0!important;}
+  body.mizona-chat-app .chatDirectoryTop{
+    padding:18px 14px 8px!important;
+    background:#071316!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact{
+    display:grid!important;
+    grid-template-columns:1fr auto auto!important;
+    gap:10px!important;
+    align-items:center!important;
+    margin-bottom:12px!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact > div:first-child{
+    min-width:0!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact > div:first-child b{
+    font-size:1.95rem!important;
+    color:#fff!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact > div:first-child span{
+    color:#9bb0b3!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderActions,
+  body.mizona-chat-app .chatHeaderActions{
+    display:flex!important;
+    align-items:center!important;
+    gap:10px!important;
+  }
+  body.mizona-chat-app .chatSettingsBtn,
+  body.mizona-chat-app .chatDirectoryHeaderActions .iconBtn,
+  body.mizona-chat-app .chatHeaderActions .iconBtn,
+  body.mizona-chat-app .conversationTopBar .iconBtn{
+    width:48px!important;
+    height:48px!important;
+    min-width:48px!important;
+    border-radius:18px!important;
+    border:1px solid rgba(255,255,255,.14)!important;
+    background:rgba(255,255,255,.04)!important;
+    color:#fff!important;
+    box-shadow:none!important;
+  }
+  body.mizona-chat-app .chatSearchBar{
+    height:54px!important;
+    border-radius:18px!important;
+    background:#15232e!important;
+    border:1px solid rgba(255,255,255,.08)!important;
+    box-shadow:none!important;
+  }
+  body.mizona-chat-app .chatSearchBar input{
+    color:#fff!important;
+  }
+  body.mizona-chat-app .chatSearchBar input::placeholder{
+    color:#9bb0b3!important;
+  }
+  body.mizona-chat-app .chatTabs,
+  body.mizona-chat-app .actionsTabs{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    gap:10px!important;
+    padding-bottom:4px!important;
+  }
+  body.mizona-chat-app .chatTabs button,
+  body.mizona-chat-app .actionsTabs button{
+    min-height:44px!important;
+    padding:10px 16px!important;
+    border-radius:18px!important;
+    background:transparent!important;
+    border:1px solid rgba(255,255,255,.3)!important;
+    color:#dbe6e9!important;
+  }
+  body.mizona-chat-app .chatTabs button.active,
+  body.mizona-chat-app .actionsTabs button.active{
+    background:#0f9b72!important;
+    border-color:#0f9b72!important;
+    color:#fff!important;
+  }
+  body.mizona-chat-app .conversationList,
+  body.mizona-chat-app .contactListReal,
+  body.mizona-chat-app .requestListReal{
+    display:grid!important;
+    gap:8px!important;
+    padding:6px 0 100px!important;
+    background:#071316!important;
+  }
+  body.mizona-chat-app .conversationList > button,
+  body.mizona-chat-app .contactListReal > button,
+  body.mizona-chat-app .requestListReal > button,
+  body.mizona-chat-app .conversationHeader,
+  body.mizona-chat-app .contactActions{
+    background:transparent!important;
+    border-bottom:1px solid rgba(255,255,255,.05)!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    color:#fff!important;
+  }
+  body.mizona-chat-app .conversationTopBar{
+    background:#071316!important;
+    border-bottom:1px solid rgba(255,255,255,.08)!important;
+    padding:10px 12px!important;
+  }
+  body.mizona-chat-app .messageStream{padding:14px 12px 100px!important;}
+  body.mizona-chat-app .messageBubble{
+    border-radius:18px!important;
+    box-shadow:none!important;
+  }
+  body.mizona-chat-app .messageComposer{
+    grid-template-columns:44px minmax(0,1fr) 44px 44px!important;
+    gap:8px!important;
+    background:#071316!important;
+    border-top:1px solid rgba(255,255,255,.08)!important;
+    padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+  }
+  body.mizona-chat-app .messageComposer input{
+    background:#17242d!important;
+    color:#fff!important;
+    min-height:46px!important;
+    border-radius:999px!important;
+  }
+  body.mizona-chat-app .messageComposer .iconBtn,
+  body.mizona-chat-app .messageComposer button{
+    width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;border-radius:50%!important;
+  }
+  body.mizona-chat-app .messageComposer .sendBtnChat40{background:#12a56b!important;}
+
+  /* Comunidad / Comité */
+  .communityGrid,
+  .committeeUnifiedModule39,
+  .committeeCalendar,
+  .communityPanel,
+  .communityPhotoGrid,
+  .announcementListReal,
+  .eventTimelineReal,
+  .documentListReal,
+  .memberListReal{
+    gap:14px!important;
+  }
+  .communityPhotoGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .communityPhotoThumb{min-height:132px!important;display:grid!important;place-items:center!important;}
+
+  /* Smart panel / admin */
+  .smartMetricGrid,
+  .moduleStatusGrid,
+  .smartModules,
+  .smartOverview,
+  .adminKpis{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  /* Tablas o listados */
+  .adminTableWrap,
+  .inventoryTable,
+  .orderList35,
+  .orderItems35,
+  .businessOrderItems36{
+    overflow:auto!important;
+    border-radius:22px!important;
+  }
+
+  /* Helpers */
+  .wide,.primary.wide,.secondary.wide,.ghost.wide{width:100%!important;}
+  .modalBackdrop{padding:12px!important;}
+  .communityModal,
+  .benefitCreateModal,
+  .businessModal,
+  .marketModal,
+  .courseModal,
+  .lessonModal,
+  .chatModal{
+    border-radius:26px!important;
+    width:min(100%, 100vw - 12px)!important;
+    max-height:calc(100dvh - 24px)!important;
+  }
+}
+
+@media(max-width:430px){
+  .heroStats,
+  .businessHeroStats,
+  .rideHeroStats,
+  .campusHeroStats,
+  .committeeKpis,
+  .smartMetricGrid,
+  .benefitStats,
+  .notificationHeroStats,
+  .businessKpis,
+  .smartOverview,
+  .smartModules,
+  .moduleStatusGrid,
+  .adminKpis{grid-template-columns:1fr 1fr!important;}
+  .topbar .sidebarMasterToggle,
+  .topbar .iconBtn{width:52px!important;min-width:52px!important;height:52px!important;}
+  .topbar .searchBox{height:52px!important;}
+  .communityPhotoGrid{grid-template-columns:1fr 1fr!important;}
+  .yapePromoBanner strong{font-size:1.55rem!important;}
+  .yapePromoBanner b{font-size:2.8rem!important;}
+}
+
+
+/* =========================================================
+   ETAPA 30.42 - Chat + Business + Marketplace Pro móvil
+   ========================================================= */
+
+@media(max-width:760px){
+
+  /* ---------------------------
+     1) MiZona Chat Pro
+     --------------------------- */
+
+  body.mizona-chat-app .chatRealPage{
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryTop::before{
+    content:"";
+    display:block;
+    height:4px;
+    width:54px;
+    border-radius:999px;
+    background:rgba(255,255,255,.18);
+    margin:0 auto 14px;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact{
+    grid-template-columns:1fr 48px 48px!important;
+    align-items:center!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact > div:first-child b::after{
+    content:"";
+    display:block;
+    width:48px;
+    height:5px;
+    margin-top:10px;
+    border-radius:999px;
+    background:#12a56b;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderActions{
+    display:contents!important;
+  }
+
+  body.mizona-chat-app .chatSettingsBtn{
+    font-size:0!important;
+    padding:0!important;
+  }
+
+  body.mizona-chat-app .chatSettingsBtn svg{
+    width:22px!important;
+    height:22px!important;
+  }
+
+  body.mizona-chat-app .chatFullscreenToggle{
+    font-size:0!important;
+    padding:0!important;
+  }
+
+  body.mizona-chat-app .chatFullscreenToggle svg{
+    width:22px!important;
+    height:22px!important;
+  }
+
+  body.mizona-chat-app .chatTabs{
+    margin-top:14px!important;
+    padding-bottom:8px!important;
+  }
+
+  body.mizona-chat-app .chatTabs button{
+    min-width:86px!important;
+    justify-content:center!important;
+    box-shadow:none!important;
+  }
+
+  body.mizona-chat-app .conversationList > button{
+    min-height:82px!important;
+    padding:12px 4px!important;
+    display:grid!important;
+    grid-template-columns:58px minmax(0,1fr) auto!important;
+    column-gap:12px!important;
+    align-items:center!important;
+  }
+
+  body.mizona-chat-app .conversationList .avatar,
+  body.mizona-chat-app .conversationList .chatAvatar{
+    width:58px!important;
+    height:58px!important;
+    border-radius:50%!important;
+    background:#1d2b33!important;
+    color:#fff!important;
+    font-weight:950!important;
+    font-size:18px!important;
+  }
+
+  body.mizona-chat-app .conversationList b,
+  body.mizona-chat-app .conversationList strong{
+    color:#fff!important;
+    font-size:18px!important;
+    letter-spacing:-.01em!important;
+  }
+
+  body.mizona-chat-app .conversationList span,
+  body.mizona-chat-app .conversationList small,
+  body.mizona-chat-app .conversationList p{
+    color:#9fb1b7!important;
+  }
+
+  body.mizona-chat-app .conversationList time,
+  body.mizona-chat-app .conversationList em{
+    color:#25d366!important;
+    font-style:normal!important;
+    font-weight:800!important;
+  }
+
+  body.mizona-chat-app .conversationTopBar{
+    grid-template-columns:48px 52px minmax(0,1fr) 48px!important;
+    min-height:70px!important;
+    position:sticky!important;
+    top:0!important;
+    z-index:25!important;
+  }
+
+  body.mizona-chat-app .conversationTopBar .avatar,
+  body.mizona-chat-app .conversationTopBar .chatAvatar{
+    width:52px!important;
+    height:52px!important;
+    border-radius:50%!important;
+  }
+
+  body.mizona-chat-app .conversationTopBar b{
+    max-width:170px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+
+  body.mizona-chat-app .chatDateSeparator span{
+    background:#2a353d!important;
+    color:#eaf4f3!important;
+    box-shadow:0 10px 24px rgba(0,0,0,.18)!important;
+  }
+
+  body.mizona-chat-app .messageRow{
+    margin:8px 0!important;
+  }
+
+  body.mizona-chat-app .messageBubble{
+    max-width:82vw!important;
+    padding:12px 14px 8px!important;
+    font-size:16px!important;
+    line-height:1.35!important;
+  }
+
+  body.mizona-chat-app .messageRow.own .messageBubble{
+    border-radius:20px 20px 6px 20px!important;
+  }
+
+  body.mizona-chat-app .messageRow:not(.own) .messageBubble{
+    border-radius:20px 20px 20px 6px!important;
+  }
+
+  body.mizona-chat-app .chatAttachmentSheet{
+    border-radius:30px 30px 0 0!important;
+    background:#0b141a!important;
+    border-color:rgba(255,255,255,.08)!important;
+  }
+
+  body.mizona-chat-app .attachGrid{
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:12px!important;
+  }
+
+  body.mizona-chat-app .attachGrid button{
+    background:#111f26!important;
+    border:1px solid rgba(255,255,255,.07)!important;
+    border-radius:22px!important;
+  }
+
+  body.mizona-chat-app .chatActionsPanel .actionsTabs{
+    background:#0f1d24!important;
+    border:1px solid rgba(255,255,255,.08)!important;
+    border-radius:22px!important;
+  }
+
+  body.mizona-chat-app .chatActionsPanel .actionBlock{
+    background:#0f1d24!important;
+    border-color:rgba(255,255,255,.08)!important;
+    color:#dce8ea!important;
+  }
+
+  body.mizona-chat-app .chatActionsPanel .actionBlock h3,
+  body.mizona-chat-app .chatActionsPanel .actionBlock b{
+    color:#fff!important;
+  }
+
+  body.mizona-chat-app .chatActionsPanel .actionBlock span,
+  body.mizona-chat-app .chatActionsPanel .actionBlock p{
+    color:#a9bbbf!important;
+  }
+
+  body.mizona-chat-app .chatSettingsPanel{
+    border-radius:30px 30px 0 0!important;
+  }
+
+  body.mizona-chat-app .settingsBlock{
+    border-radius:24px!important;
+    box-shadow:0 10px 24px rgba(15,23,42,.06)!important;
+  }
+
+
+  /* ---------------------------
+     2) MiZona Business Pro
+     --------------------------- */
+
+  .businessSuitePage{
+    gap:16px!important;
+  }
+
+  .businessSuiteHero{
+    position:relative!important;
+    min-height:520px!important;
+    display:grid!important;
+    align-content:start!important;
+    gap:18px!important;
+  }
+
+  .businessSuiteHero::after{
+    content:"";
+    position:absolute;
+    right:-40px;
+    bottom:-45px;
+    width:210px;
+    height:210px;
+    border-radius:50%;
+    background:rgba(255,255,255,.09);
+    pointer-events:none;
+  }
+
+  .businessSuiteHero h1{
+    font-size:2.35rem!important;
+    line-height:1.05!important;
+    max-width:13ch!important;
+  }
+
+  .businessSuiteHero .eyebrow{
+    font-size:.82rem!important;
+    font-weight:950!important;
+  }
+
+  .businessSelector{
+    background:rgba(255,255,255,.14)!important;
+    border:1px solid rgba(255,255,255,.16)!important;
+    color:#fff!important;
+    box-shadow:none!important;
+  }
+
+  .businessSelector select,
+  .businessSelector input{
+    background:#fff!important;
+    color:#172033!important;
+    border-radius:20px!important;
+    min-height:58px!important;
+    font-size:18px!important;
+    font-weight:900!important;
+  }
+
+  .businessKpis{
+    margin-top:8px!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+
+  .businessKpis span{
+    min-height:88px!important;
+    display:grid!important;
+    align-content:center!important;
+    text-align:center!important;
+  }
+
+  .businessKpis b{
+    font-size:1.65rem!important;
+    color:#fff!important;
+  }
+
+  .businessRoleStrip,
+  .businessKioskSwitch,
+  .businessModePanel{
+    border-radius:26px!important;
+  }
+
+  .businessKioskSwitch{
+    background:#fff!important;
+    border:1px solid var(--mz-mobile-line)!important;
+    box-shadow:var(--mz-mobile-shadow)!important;
+    padding:18px!important;
+  }
+
+  .businessKioskSwitch h2{
+    font-size:1.4rem!important;
+    line-height:1.2!important;
+  }
+
+  .businessKioskSwitch button,
+  .businessModePanel button,
+  .posActionRow button,
+  .paymentMethods button{
+    min-height:52px!important;
+    border-radius:18px!important;
+  }
+
+  .posLayout{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:14px!important;
+  }
+
+  .posProductGrid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+
+  .posProduct{
+    min-height:136px!important;
+    display:grid!important;
+    align-content:space-between!important;
+    padding:14px!important;
+    border-radius:22px!important;
+  }
+
+  .cartPanel{
+    position:sticky!important;
+    bottom:calc(var(--mz-nav-mobile-h,78px) + 8px)!important;
+    z-index:18!important;
+  }
+
+  .kitchenBoard{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:14px!important;
+  }
+
+  .marketOrdersBusiness36{
+    gap:14px!important;
+  }
+
+  .marketOrderColumns36{
+    display:flex!important;
+    overflow-x:auto!important;
+    gap:12px!important;
+    padding-bottom:8px!important;
+    scrollbar-width:none!important;
+  }
+
+  .marketOrderColumns36::-webkit-scrollbar{display:none!important;}
+
+  .marketOrderColumns36>section{
+    min-width:280px!important;
+    flex:0 0 280px!important;
+    border-radius:24px!important;
+  }
+
+
+  /* ---------------------------
+     3) Marketplace / Mi Tienda Pro
+     --------------------------- */
+
+  .marketplacePage{
+    gap:14px!important;
+  }
+
+  .mkCTopHero{
+    min-height:460px!important;
+    display:grid!important;
+    align-content:start!important;
+    gap:16px!important;
+    position:relative!important;
+  }
+
+  .mkCTopHero::after{
+    content:"🛒";
+    position:absolute;
+    right:18px;
+    bottom:18px;
+    font-size:76px;
+    opacity:.16;
+  }
+
+  .mkCHeroHead{
+    display:grid!important;
+    gap:12px!important;
+  }
+
+  .mkCHeroHead h1{
+    font-size:2rem!important;
+    line-height:1.05!important;
+    max-width:14ch!important;
+  }
+
+  .mkHeroActions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+
+  .mkHeroActions button,
+  .mkHeroActions a{
+    width:100%!important;
+    justify-content:center!important;
+    background:#fff!important;
+    color:#0f2534!important;
+    border:0!important;
+  }
+
+  .mkHeroActions .primary,
+  .mkHeroActions button:last-child{
+    background:#13aa81!important;
+    color:#fff!important;
+  }
+
+  .mkCSearchRow{
+    display:grid!important;
+    gap:10px!important;
+  }
+
+  .mkCSearch{
+    min-height:58px!important;
+    border-radius:22px!important;
+    box-shadow:none!important;
+  }
+
+  .mkCLocation{
+    min-height:54px!important;
+    border-radius:22px!important;
+    background:rgba(255,255,255,.12)!important;
+    border:1px solid rgba(255,255,255,.16)!important;
+    color:#fff!important;
+  }
+
+  .mkCModeTabs{
+    display:flex!important;
+    gap:10px!important;
+    overflow-x:auto!important;
+    scrollbar-width:none!important;
+  }
+
+  .mkCModeTabs::-webkit-scrollbar{display:none!important;}
+
+  .mkCModeTabs button{
+    flex:0 0 auto!important;
+    min-width:118px!important;
+    min-height:52px!important;
+    border-radius:18px!important;
+    background:rgba(255,255,255,.10)!important;
+    color:#fff!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+  }
+
+  .mkCModeTabs button.active{
+    background:#fff!important;
+    color:#0d6b53!important;
+  }
+
+  .mkCBanner{
+    background:linear-gradient(135deg,#0d4f9d,#126dd3)!important;
+    color:#fff!important;
+    padding:22px!important;
+  }
+
+  .mkCBanner h2{
+    color:#fff!important;
+    font-size:1.65rem!important;
+    line-height:1.1!important;
+  }
+
+  .mkCBanner button{
+    width:max-content!important;
+    background:#fff!important;
+    color:#0d6b53!important;
+  }
+
+  .mkCCategoryChips{
+    display:flex!important;
+    overflow-x:auto!important;
+    gap:10px!important;
+    padding-bottom:4px!important;
+  }
+
+  .mkCCategoryChips button{
+    min-width:108px!important;
+    min-height:78px!important;
+    font-size:15px!important;
+  }
+
+  .mkCProductGrid,
+  .mkCBusinessGrid,
+  .mkCPromoGrid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:14px!important;
+  }
+
+  .mkCProductBody h3,
+  .mkCBusinessCard h3,
+  .mkCPromoCard h3{
+    font-size:1.15rem!important;
+  }
+
+  .mkCBottomNav{
+    position:sticky!important;
+    bottom:calc(var(--mz-nav-mobile-h,78px) + 8px)!important;
+    z-index:18!important;
+    background:#fff!important;
+    border:1px solid var(--mz-mobile-line)!important;
+    border-radius:24px!important;
+    box-shadow:var(--mz-mobile-shadow)!important;
+    padding:8px!important;
+  }
+
+  .mkCBottomNav button{
+    min-height:58px!important;
+    border-radius:18px!important;
+  }
+
+
+  /* ---------------------------
+     4) Campus / Ride / Delivery Pro móvil
+     --------------------------- */
+
+  .campusHero,
+  .rideHero,
+  .rideDeliveryHero{
+    min-height:420px!important;
+  }
+
+  .campusHero h1,
+  .rideHero h1,
+  .rideDeliveryHero h1{
+    font-size:2.1rem!important;
+    line-height:1.06!important;
+  }
+
+  .campusControls,
+  .rideTrackingActions,
+  .heroActions,
+  .servicePicker{
+    display:flex!important;
+    overflow-x:auto!important;
+    gap:10px!important;
+    scrollbar-width:none!important;
+  }
+
+  .campusControls::-webkit-scrollbar,
+  .rideTrackingActions::-webkit-scrollbar,
+  .heroActions::-webkit-scrollbar,
+  .servicePicker::-webkit-scrollbar{display:none!important;}
+
+  .campusControls button,
+  .rideTrackingActions button,
+  .heroActions button,
+  .servicePicker button{
+    flex:0 0 auto!important;
+    min-width:132px!important;
+    white-space:nowrap!important;
+  }
+
+
+  /* ---------------------------
+     5) Corregir textos cortados / overflow general
+     --------------------------- */
+
+  .page,
+  .content,
+  .smartHero,
+  .benefitsHero,
+  .businessHero,
+  .businessSuiteHero,
+  .campusHero,
+  .rideHero,
+  .rideDeliveryHero,
+  .mkCTopHero,
+  .communityHeroReal,
+  .committeeHero{
+    max-width:100vw!important;
+    overflow:hidden!important;
+  }
+
+  h1,h2,h3,p,span,b,strong,small{
+    overflow-wrap:anywhere;
+  }
+
+  .tabs,
+  .categoryRail,
+  .mkCCategoryChips,
+  .mkCModeTabs,
+  .brandScroller,
+  .businessToolbar,
+  .campusControls,
+  .rideTrackingActions,
+  .servicePicker{
+    max-width:100%!important;
+  }
+}
+
+
+/* =========================================================
+   ETAPA 30.43 - Núcleo real Supabase
+   ========================================================= */
+
+.coreGrid43{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  margin:16px 0;
+}
+.coreGrid43 article{
+  border:1px solid #d9eee8;
+  border-radius:20px;
+  padding:16px;
+  background:#f0fdf4;
+}
+.coreGrid43 b{
+  display:block;
+  font-size:28px;
+  color:#047857;
+}
+.coreGrid43 span{
+  color:#475569;
+  font-weight:800;
+}
+.coreTablePlan43{
+  margin-top:14px;
+}
+.coreSteps43 article span{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:14px;
+  background:#00a884;
+  color:white;
+}
+@media(max-width:760px){
+  .coreGrid43{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .coreGrid43 article{
+    border-radius:18px;
+    padding:14px;
+  }
+  .coreGrid43 b{
+    font-size:22px;
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-etapa30-38-observaciones-ui-fix",
-  "version": "8.30.38",
+  "name": "mizona-enterprise-v8-etapa30-43-nucleo-real-supabase",
+  "version": "8.30.43",
   "private": true,
   "type": "module",
   "scripts": {

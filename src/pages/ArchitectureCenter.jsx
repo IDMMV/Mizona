@@ -5,6 +5,7 @@ import {
 import Card from '../components/Card';
 import { hasSupabase } from '../lib/supabase';
 import { firebaseEnabled, getFirebasePlan, getFirebasePublicConfig } from '../lib/firebaseConfig';
+import { CORE_TABLES_3043, CORE_MODULES_3043, getCoreNextSteps } from '../lib/mizonaCore';
 
 const supabaseTables = [
   ['market_orders', 'Pedidos registrados del Marketplace'],
@@ -88,5 +89,24 @@ export default function ArchitectureCenter({ setPage }) {
         {nextPhases.map(([phase,title,Icon]) => <article key={phase}><Icon/><span>{phase}</span><b>{title}</b></article>)}
       </div>
     </Card>
+    <Card title="Núcleo real 30.43 en Supabase" icon="🧱">
+      <p className="muted">Esta etapa deja una base oficial para que Chat, Marketplace, Business, Comités, Comunidad, Notificaciones y Archivos usen la misma estructura real.</p>
+      <div className="coreGrid43">
+        <article><b>{CORE_TABLES_3043.length}</b><span>Tablas principales mz_*</span></article>
+        <article><b>{CORE_MODULES_3043.length}</b><span>Módulos oficiales</span></article>
+        <article><b>RLS</b><span>Políticas por usuario, miembro y administrador</span></article>
+        <article><b>Realtime</b><span>Mensajes, pedidos y notificaciones</span></article>
+      </div>
+      <div className="tablePlan37 coreTablePlan43">
+        {CORE_TABLES_3043.map(name => <article key={name}><code>{name}</code><span>Tabla del núcleo real MiZona 30.43</span></article>)}
+      </div>
+    </Card>
+
+    <Card title="Pasos para activar el núcleo real" icon="✅">
+      <div className="phaseGrid37 coreSteps43">
+        {getCoreNextSteps().map((step, index) => <article key={step}><span>{index + 1}</span><b>{step}</b></article>)}
+      </div>
+    </Card>
+
   </div>;
 }

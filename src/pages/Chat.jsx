@@ -723,8 +723,7 @@ export default function Chat({ setPage }) {
             <button className="iconBtn chatBack" onClick={showChatList}><ChevronLeft/></button>
             <Avatar name={conversationName(selected)} image={selected.peer_avatar_url}/>
             <div><b>{conversationName(selected)}</b><span>{selected.type === 'direct' ? `@${String(selected.peer_username || '').toUpperCase()}` : selected.type?.includes('school') ? 'Grupo escolar protegido' : 'Grupo privado'} · elimina mensajes en {selected.retention_days || 7} días</span></div>
-            <button className="chatViewListBtn" type="button" onClick={showChatList}>Chats</button>
-            {immersiveMode ? <button className="chatViewListBtn secondary" type="button" onClick={() => setImmersiveMode(false)}>Salir</button> : <button className="chatViewListBtn secondary" type="button" onClick={() => setImmersiveMode(true)}>Full</button>}
+            
             <button className="iconBtn" onClick={async () => { if (window.confirm('¿Salir de esta conversación?')) { await leaveConversation(selected.id); await refreshLists(false); showChatList(); } }}><MoreVertical/></button>
           </header>
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
@@ -750,7 +749,7 @@ export default function Chat({ setPage }) {
             <button type="button" className="iconBtn" title="Adjuntar" onClick={() => setShowAttachPanel(true)} disabled={sending}><Paperclip size={20}/></button>
             <input value={composer} onChange={event => setComposer(event.target.value)} placeholder="Escribe un mensaje seguro..." maxLength={5000}/>
             <button type="button" className="iconBtn" title="Audio" onClick={() => sendSpecialText('🎙️ Nota de voz\nPendiente de grabación desde el dispositivo.')} disabled={sending}><Mic size={20}/></button>
-            <button disabled={sending || !composer.trim()}>{sending ? <Loader2 className="spin" size={20}/> : <Send size={20}/>}</button>
+            <button className="sendBtnChat40" disabled={sending || !composer.trim()}>{sending ? <Loader2 className="spin" size={20}/> : <Send size={20}/>}</button>
           </form>
         </> : <div className="noConversationSelected"><div><MessageCircle size={58}/><h2>Selecciona una conversación</h2><p>También puedes crear un grupo o buscar a una persona por su usuario exacto.</p><button onClick={() => setShowSearch(true)}><UserPlus size={18}/> Agregar contacto</button></div></div>}
       </section>
@@ -783,14 +782,14 @@ export default function Chat({ setPage }) {
           </div>
         </section>
         <section className="settingsBlock"><h3>Apariencia</h3>
-          <button type="button" onClick={() => setShowThemePanel(true)}><Palette size={18}/><span>Tema, color y fondo del chat</span><ChevronLeft className="chevRight" size={18}/></button>
-          <button type="button" onClick={() => updateChatTheme({ background: '#0b141a', surface: '#111b21', header: '#111b21', composer: '#111b21', text: '#e9edef', subtext: '#aebac1' })}><ShieldCheck size={18}/><span>Activar modo oscuro</span></button>
-          <button type="button" onClick={() => updateChatTheme(CHAT_THEME_DEFAULT)}><RefreshCw size={18}/><span>Restablecer apariencia</span></button>
+          <button type="button" onClick={() => { setShowSettingsPanel(false); setShowThemePanel(true); }}><Palette size={18}/><span>Tema, color y fondo del chat</span><ChevronLeft className="chevRight" size={18}/></button>
+          <button type="button" onClick={() => { updateChatTheme({ background: '#071316', surface: '#0b1f24', header: '#071316', composer: '#071316', text: '#e9edef', subtext: '#aebac1', bubbleOwn: '#00a884', bubbleOther: '#15272e' }); setNotice('Modo oscuro aplicado al chat.'); }}><ShieldCheck size={18}/><span>Activar modo oscuro</span></button>
+          <button type="button" onClick={() => { updateChatTheme(CHAT_THEME_DEFAULT); setNotice('Apariencia restablecida.'); }}><RefreshCw size={18}/><span>Restablecer apariencia</span></button>
         </section>
         <section className="settingsBlock"><h3>Contactos</h3>
           <button type="button" onClick={() => { setShowSettingsPanel(false); setShowSearch(true); }}><UserPlus size={18}/><span>Agregar usuario</span></button>
-          <button type="button" onClick={inviteFriend}><Link size={18}/><span>Invitar amigo con código</span></button>
-          <button type="button" onClick={() => setNotice('Próximo: administrar quién puede agregarte o escribirte.')}><Users size={18}/><span>Administrar contactos</span></button>
+          <button type="button" onClick={() => { inviteFriend(); setShowSettingsPanel(false); }}><Link size={18}/><span>Invitar amigo con código</span></button>
+          <button type="button" onClick={() => { setShowSettingsPanel(false); setTab('contacts'); showChatList(); }}><Users size={18}/><span>Administrar contactos</span></button>
         </section>
         <section className="settingsBlock"><h3>Privacidad y seguridad</h3>
           <button type="button" onClick={() => setNotice('Privacidad: se podrá elegir quién ve tu foto, frase y estado.')}><ShieldCheck size={18}/><span>Quién puede escribirme</span></button>
