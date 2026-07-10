@@ -15,6 +15,7 @@ import Marketplace from './pages/Marketplace';
 import Campus from './pages/Campus';
 import BusinessSuite from './pages/BusinessSuite';
 import Ride from './pages/Ride';
+import RideDelivery from './pages/RideDelivery';
 import AiAssistant from './pages/AiAssistant';
 import Payments from './pages/Payments';
 import GatewayCenter from './pages/GatewayCenter';
@@ -109,6 +110,7 @@ function App() {
     business: <BusinessSuite/>,
     campus: <Campus/>,
     ride: <Ride/>,
+    rideDelivery: <RideDelivery setPage={setPage}/>,
     ai: <AiAssistant setPage={setPage}/>,
     verification: <Verification/>,
     payments: <Payments/>,

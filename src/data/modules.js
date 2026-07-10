@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog, WalletCards } from 'lucide-react';
+import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog, WalletCards, Truck } from 'lucide-react';
 
 export const statusLabel = {
   active: 'Activo',
@@ -29,6 +29,7 @@ export const modules = [
   { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'active', phase: 'Etapa 19', audience: 'Negocios y emprendimientos' },
   { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Etapa 18', audience: 'Estudiantes, familias y negocios' },
   { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos' },
+  { id: 'rideDelivery', label: 'Zona Ride Delivery', icon: Truck, status: 'soon', phase: 'Etapa 30.34', audience: 'Administradores y motorizados' },
   { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Etapa 21', audience: 'Adultos y organizaciones' },
   { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },
   { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo' },

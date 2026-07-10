@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  AlertTriangle, Ban, Check, ChevronLeft, CircleUserRound, Download, File,
-  FileUp, Image, Info, Loader2, Maximize2, MessageCircle, MessageSquarePlus,
-  Minimize2, MoreVertical, Palette, Paperclip, Plus, RefreshCw, Search, Send,
-  ShieldCheck, SlidersHorizontal, UserPlus, Users, X
+  AlertTriangle, Ban, BarChart3, CalendarDays, Camera, Check, ChevronLeft,
+  CircleUserRound, ClipboardCheck, Contact, Download, File, FileText, Image,
+  Info, Link, ListTodo, Loader2, MapPin, Maximize2, MessageCircle,
+  MessageSquarePlus, Mic, Minimize2, MoreVertical, Palette, Paperclip, Phone,
+  Plus, RefreshCw, Search, Send, Settings, ShieldCheck, ShoppingBag,
+  SlidersHorizontal, Star, Store, UserPlus, Users, X, Zap
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { listCommunities, listMyMemberships, loadCommunityBundle } from '../lib/community';
@@ -21,6 +23,24 @@ const formatTime = value => {
   if (date.toDateString() === today.toDateString()) return date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
   return date.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
 };
+
+const formatMessageHour = value => {
+  if (!value) return '';
+  return new Date(value).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+};
+
+const formatChatDateLabel = value => {
+  if (!value) return '';
+  const date = new Date(value);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+  if (date.toDateString() === today.toDateString()) return 'Hoy';
+  if (date.toDateString() === yesterday.toDateString()) return 'Ayer';
+  return date.toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' });
+};
+
+const mapsUrl = (lat, lng) => `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 
 const formatBytes = value => {
   const bytes = Number(value || 0);
@@ -239,9 +259,25 @@ export default function Chat({ setPage }) {
   const [showGroup, setShowGroup] = useState(false);
   const [mobileConversation, setMobileConversation] = useState(false);
   const [openingConversation, setOpeningConversation] = useState(false);
+  const [showOpeningSkeleton, setShowOpeningSkeleton] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [immersiveMode, setImmersiveMode] = useState(true);
   const [showThemePanel, setShowThemePanel] = useState(false);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
+  const [showAttachPanel, setShowAttachPanel] = useState(false);
+  const [showActionsPanel, setShowActionsPanel] = useState(false);
+  const [showLocationPanel, setShowLocationPanel] = useState(false);
+  const [showPollPanel, setShowPollPanel] = useState(false);
+  const [showEventPanel, setShowEventPanel] = useState(false);
+  const [profileDraft, setProfileDraft] = useState(() => {
+    try {
+      return { displayName: profile?.display_name || profile?.username || 'Mi perfil', status: 'Disponible', avatar: '', ...(JSON.parse(localStorage.getItem(`mizona-chat-profile-${profile?.username || profile?.id || 'local'}`) || '{}') || {}) };
+    } catch {
+      return { displayName: profile?.display_name || profile?.username || 'Mi perfil', status: 'Disponible', avatar: '' };
+    }
+  });
+  const [pollDraft, setPollDraft] = useState({ question: '', options: ['Sí', 'No'], multiple: false, results: true });
+  const [eventDraft, setEventDraft] = useState({ title: '', date: '', time: '', place: '', description: '' });
   const [chatTheme, setChatTheme] = useState(() => {
     try {
       return { ...CHAT_THEME_DEFAULT, ...(JSON.parse(localStorage.getItem(`mizona-chat-theme-${profile?.username || profile?.id || 'local'}`) || '{}') || {}) };
@@ -250,10 +286,12 @@ export default function Chat({ setPage }) {
     }
   });
   const fileInput = useRef(null);
+  const profilePhotoInput = useRef(null);
   const wallpaperInput = useRef(null);
   const messageEnd = useRef(null);
   const pushedMobileChatState = useRef(false);
   const chatThemeKey = `mizona-chat-theme-${profile?.username || profile?.id || 'local'}`;
+  const chatProfileKey = `mizona-chat-profile-${profile?.username || profile?.id || 'local'}`;
 
   const selected = useMemo(() => conversations.find(item => item.id === selectedId) || null, [conversations, selectedId]);
   const isMobileViewport = () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches;
@@ -263,6 +301,21 @@ export default function Chat({ setPage }) {
 
   const directConversations = useMemo(() => conversations.filter(item => item.type === 'direct'), [conversations]);
   const groupConversations = useMemo(() => conversations.filter(item => item.type !== 'direct'), [conversations]);
+
+  const groupedMessages = useMemo(() => {
+    const items = [];
+    let lastKey = '';
+    messages.forEach(message => {
+      const date = new Date(message.created_at || Date.now());
+      const key = date.toDateString();
+      if (key !== lastKey) {
+        items.push({ type: 'date', id: `date-${key}`, label: formatChatDateLabel(date) });
+        lastKey = key;
+      }
+      items.push({ type: 'message', id: message.id, message });
+    });
+    return items;
+  }, [messages]);
 
   const filteredConversations = useMemo(() => {
     const source = tab === 'groups' ? groupConversations : conversations;
@@ -329,8 +382,27 @@ export default function Chat({ setPage }) {
   }, [immersiveMode]);
 
   useEffect(() => {
+    // ETAPA 30.32: el chat completo se comporta como una app fullscreen real.
+    document.body.classList.add('mizona-chat-app');
+    return () => document.body.classList.remove('mizona-chat-app', 'mizona-chat-opening', 'mizona-chat-fullscreen');
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem(chatThemeKey, JSON.stringify(chatTheme));
   }, [chatTheme, chatThemeKey]);
+
+  useEffect(() => {
+    localStorage.setItem(chatProfileKey, JSON.stringify(profileDraft));
+  }, [profileDraft, chatProfileKey]);
+
+  useEffect(() => {
+    if (!openingConversation) {
+      setShowOpeningSkeleton(false);
+      return undefined;
+    }
+    const timer = window.setTimeout(() => setShowOpeningSkeleton(true), 120);
+    return () => window.clearTimeout(timer);
+  }, [openingConversation]);
 
   const refreshLists = async (keepSelection = true) => {
     setNotice('');
@@ -348,12 +420,12 @@ export default function Chat({ setPage }) {
           await markConversationRead(selectedId);
         } else {
           setSelectedId(null);
-          setMessages([]);
+          // Mantener el contenido anterior hasta que cargue el nuevo evita flash blanco.
           setMobileConversation(false);
         }
       } else if (!keepSelection) {
         setSelectedId(null);
-        setMessages([]);
+        // Mantener el contenido anterior hasta que cargue el nuevo evita flash blanco.
         setMobileConversation(false);
       } else if (!selectedId && conversationList?.length) {
         setSelectedId(nextSelectedId || null);
@@ -398,7 +470,7 @@ export default function Chat({ setPage }) {
       // Así el navegador no muestra una tarjeta blanca intermedia.
       document.body.classList.add('mizona-chat-fullscreen', 'mizona-chat-opening');
       setMobileConversation(true);
-      setMessages([]);
+      // Mantener el contenido anterior hasta que cargue el nuevo evita flash blanco.
       if (!pushedMobileChatState.current || window.history.state?.chatConversationId !== id) {
         window.history.pushState({ mizonaPage: 'chat', mzPage: 'chat', chatView: 'conversation', chatConversationId: id }, '', `#chat-${id}`);
         pushedMobileChatState.current = true;
@@ -418,6 +490,7 @@ export default function Chat({ setPage }) {
 
   const showChatList = () => {
     setOpeningConversation(false);
+    setShowOpeningSkeleton(false);
     document.body.classList.remove('mizona-chat-opening');
     setMobileConversation(false);
     setSelectedId(null);
@@ -463,14 +536,27 @@ export default function Chat({ setPage }) {
   };
 
   const uploadFile = async event => {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files || []);
     event.target.value = '';
-    if (!file || !selectedId) return;
+    if (!files.length || !selectedId) return;
+    const imageCount = files.filter(file => file.type.startsWith('image/')).length;
+    if (imageCount > 20) {
+      setNotice('Solo puedes enviar hasta 20 fotos por mensaje.');
+      return;
+    }
+    const videoCount = files.filter(file => file.type.startsWith('video/')).length;
+    if (videoCount > 1) {
+      setNotice('Por ahora solo se permite 1 video por mensaje.');
+      return;
+    }
     setSending(true);
     try {
-      await sendChatFile({ conversationId: selectedId, file, userId: user.id });
+      for (const file of files) {
+        await sendChatFile({ conversationId: selectedId, file, userId: user.id });
+      }
       setMessages(await loadMessages(selectedId));
       await refreshLists(true);
+      setShowAttachPanel(false);
     } catch (error) {
       setNotice(error.message);
     } finally {
@@ -485,6 +571,82 @@ export default function Chat({ setPage }) {
     const reader = new FileReader();
     reader.onload = () => updateChatTheme({ wallpaper: `url("${reader.result}")` });
     reader.readAsDataURL(file);
+  };
+
+  const uploadProfilePhoto = event => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setProfileDraft(current => ({ ...current, avatar: String(reader.result || '') }));
+    reader.readAsDataURL(file);
+  };
+
+  const sendSpecialText = async text => {
+    if (!selectedId) {
+      setNotice('Selecciona una conversación primero.');
+      return;
+    }
+    setSending(true);
+    try {
+      await sendTextMessage(selectedId, text);
+      setMessages(await loadMessages(selectedId));
+      await refreshLists(true);
+      setShowAttachPanel(false);
+      setShowPollPanel(false);
+      setShowEventPanel(false);
+      setShowLocationPanel(false);
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const sendCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setNotice('Tu navegador no permite compartir ubicación.');
+      return;
+    }
+    setNotice('Obteniendo ubicación...');
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        const url = mapsUrl(latitude, longitude);
+        sendSpecialText(`📍 Ubicación actual\n${url}\nHora: ${new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`);
+      },
+      () => setNotice('No se pudo obtener tu ubicación. Revisa los permisos del navegador.'),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 15000 }
+    );
+  };
+
+  const sendLiveLocationDemo = minutes => {
+    sendSpecialText(`🛰️ Ubicación en tiempo real solicitada\nDuración: ${minutes} minutos\nEstado: pendiente de activar permisos de ubicación en el dispositivo.`);
+  };
+
+  const createPoll = () => {
+    const options = pollDraft.options.map(item => item.trim()).filter(Boolean);
+    if (!pollDraft.question.trim() || options.length < 2) {
+      setNotice('La encuesta necesita una pregunta y mínimo 2 opciones.');
+      return;
+    }
+    sendSpecialText(`📊 Encuesta\n${pollDraft.question.trim()}\n${options.map((option, index) => `${index + 1}. ${option}`).join('\n')}\n${pollDraft.multiple ? 'Permite varias respuestas' : 'Una sola respuesta'} · ${pollDraft.results ? 'Resultados visibles' : 'Resultados ocultos'}`);
+    setPollDraft({ question: '', options: ['Sí', 'No'], multiple: false, results: true });
+  };
+
+  const createEvent = () => {
+    if (!eventDraft.title.trim()) {
+      setNotice('El evento necesita un título.');
+      return;
+    }
+    sendSpecialText(`📅 Evento\n${eventDraft.title.trim()}\nFecha: ${eventDraft.date || 'por definir'} ${eventDraft.time || ''}\nLugar: ${eventDraft.place || 'por definir'}\n${eventDraft.description || ''}`.trim());
+    setEventDraft({ title: '', date: '', time: '', place: '', description: '' });
+  };
+
+  const inviteFriend = () => {
+    const code = `MZ-${String(profile?.username || profile?.id || 'USER').slice(0, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`;
+    navigator.clipboard?.writeText(code).catch(() => {});
+    setNotice(`Código de invitación generado: ${code}`);
   };
 
   const review = async (request, action) => {
@@ -535,9 +697,12 @@ export default function Chat({ setPage }) {
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>
       <aside className="chatDirectory">
         <div className="chatDirectoryTop">
-          <div className="chatDirectoryHeaderBar">
-            <div><b>MiZona Chat</b><span>{tab === 'groups' ? 'Grupos y conversaciones' : tab === 'contacts' ? 'Tus contactos' : tab === 'requests' ? 'Solicitudes pendientes' : 'Tus chats recientes'}</span></div>
-            <div className="chatDirectoryHeaderActions"><button type="button" className="iconBtn" onClick={() => setShowThemePanel(true)} title="Cambiar tema"><Palette size={17}/></button>{immersiveMode ? <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(false)}><Minimize2 size={16}/> Salir</button> : <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(true)}><Maximize2 size={16}/> Full</button>}</div>
+          <div className="chatDirectoryHeaderBar chatTopCompact">
+            <div><b><span>MiZona</span> Chat</b><span>{tab === 'groups' ? 'Grupos y conversaciones' : tab === 'contacts' ? 'Tus contactos' : tab === 'requests' ? 'Solicitudes pendientes' : 'Tus chats recientes'}</span></div>
+            <div className="chatDirectoryHeaderActions">
+              <button type="button" className="chatSettingsBtn" onClick={() => setShowSettingsPanel(true)} title="Ajustes"><Settings size={16}/> Ajustes</button>
+              {immersiveMode ? <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(false)}><Minimize2 size={16}/> Salir</button> : <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(true)}><Maximize2 size={16}/> Full</button>}
+            </div>
           </div>
           <div className="chatSearchBar"><Search size={17}/><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder="Buscar conversación o usuario"/><button type="button" title="Filtros"><SlidersHorizontal size={16}/></button></div>
           {isStudent && <ChatNotice kind="success">Solo verás contactos y grupos aprobados para tu cuenta estudiantil.</ChatNotice>}
@@ -564,24 +729,27 @@ export default function Chat({ setPage }) {
           </header>
           <div className="retentionBanner"><ShieldCheck size={16}/> Tus mensajes y archivos se eliminan automáticamente después de {selected.retention_days || 7} días.</div>
           <div className="messageStream">
-            {openingConversation && <div className="chatOpenSkeleton"><Loader2 className="spin" size={22}/><span>Abriendo conversación…</span></div>}
-            {!openingConversation && messages.length ? messages.map(message => {
+            {showOpeningSkeleton && <div className="chatOpenSkeleton"><Loader2 className="spin" size={22}/><span>Abriendo conversación…</span></div>}
+            {!openingConversation && groupedMessages.length ? groupedMessages.map(item => {
+              if (item.type === 'date') return <div key={item.id} className="chatDateSeparator"><span>{item.label}</span></div>;
+              const message = item.message;
               const own = message.sender_id === user?.id || message.sender_username === profile.username;
               return <div key={message.id} className={`messageRow ${own ? 'own' : ''}`}>
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
                   {!own && <b>{message.sender_display_name}</b>}
                   {message.body && <p>{message.body}</p>}
                   {Array.isArray(message.attachments) && message.attachments.map(attachment => <AttachmentPreview key={attachment.id} attachment={attachment} onNotice={setNotice}/>)}
-                  <small>{formatTime(message.created_at)}{message.expires_at && ` · vence ${new Date(message.expires_at).toLocaleDateString('es-PE')}`}{message.sync_status === 'local_only' && ' · guardado local'}</small>
+                  <small>{formatMessageHour(message.created_at)}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
               </div>;
             }) : openingConversation ? null : <div className="emptyConversation"><MessageCircle size={43}/><h3>Inicia la conversación</h3><p>Recuerda no compartir contraseñas, códigos bancarios ni información privada.</p></div>}
             <div ref={messageEnd}/>
           </div>
           <form className="messageComposer" onSubmit={submitMessage}>
-            <input ref={fileInput} type="file" hidden onChange={uploadFile} accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip"/>
-            <button type="button" className="iconBtn" title="Adjuntar archivo" onClick={() => fileInput.current?.click()} disabled={sending}><Paperclip size={20}/></button>
+            <input ref={fileInput} type="file" hidden multiple onChange={uploadFile} accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip"/>
+            <button type="button" className="iconBtn" title="Adjuntar" onClick={() => setShowAttachPanel(true)} disabled={sending}><Paperclip size={20}/></button>
             <input value={composer} onChange={event => setComposer(event.target.value)} placeholder="Escribe un mensaje seguro..." maxLength={5000}/>
+            <button type="button" className="iconBtn" title="Audio" onClick={() => sendSpecialText('🎙️ Nota de voz\nPendiente de grabación desde el dispositivo.')} disabled={sending}><Mic size={20}/></button>
             <button disabled={sending || !composer.trim()}>{sending ? <Loader2 className="spin" size={20}/> : <Send size={20}/>}</button>
           </form>
         </> : <div className="noConversationSelected"><div><MessageCircle size={58}/><h2>Selecciona una conversación</h2><p>También puedes crear un grupo o buscar a una persona por su usuario exacto.</p><button onClick={() => setShowSearch(true)}><UserPlus size={18}/> Agregar contacto</button></div></div>}
@@ -600,5 +768,107 @@ export default function Chat({ setPage }) {
         <div className="formActions"><button type="button" className="secondary" onClick={() => updateChatTheme(CHAT_THEME_DEFAULT)}>Restablecer</button><button type="button" onClick={() => setShowThemePanel(false)}>Listo</button></div>
       </div>
     </div>}
+
+    {showSettingsPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowSettingsPanel(false)}>
+      <div className="chatModal chatSettingsPanel">
+        <div className="chatModalHeader"><div><span>MI ZONA CHAT 30.33</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
+        <input ref={profilePhotoInput} type="file" hidden accept="image/*" onChange={uploadProfilePhoto}/>
+        <section className="settingsProfileCard">
+          <button type="button" className="settingsAvatar" onClick={() => profilePhotoInput.current?.click()}>{profileDraft.avatar ? <img src={profileDraft.avatar} alt="perfil"/> : <Camera size={26}/>}<span><Camera size={13}/></span></button>
+          <div>
+            <label>Nombre visible</label>
+            <input value={profileDraft.displayName} onChange={event => setProfileDraft(current => ({ ...current, displayName: event.target.value }))}/>
+            <label>Frase / estado</label>
+            <input value={profileDraft.status} onChange={event => setProfileDraft(current => ({ ...current, status: event.target.value }))}/>
+          </div>
+        </section>
+        <section className="settingsBlock"><h3>Apariencia</h3>
+          <button type="button" onClick={() => setShowThemePanel(true)}><Palette size={18}/><span>Tema, color y fondo del chat</span><ChevronLeft className="chevRight" size={18}/></button>
+          <button type="button" onClick={() => updateChatTheme({ background: '#0b141a', surface: '#111b21', header: '#111b21', composer: '#111b21', text: '#e9edef', subtext: '#aebac1' })}><ShieldCheck size={18}/><span>Activar modo oscuro</span></button>
+          <button type="button" onClick={() => updateChatTheme(CHAT_THEME_DEFAULT)}><RefreshCw size={18}/><span>Restablecer apariencia</span></button>
+        </section>
+        <section className="settingsBlock"><h3>Contactos</h3>
+          <button type="button" onClick={() => { setShowSettingsPanel(false); setShowSearch(true); }}><UserPlus size={18}/><span>Agregar usuario</span></button>
+          <button type="button" onClick={inviteFriend}><Link size={18}/><span>Invitar amigo con código</span></button>
+          <button type="button" onClick={() => setNotice('Próximo: administrar quién puede agregarte o escribirte.')}><Users size={18}/><span>Administrar contactos</span></button>
+        </section>
+        <section className="settingsBlock"><h3>Privacidad y seguridad</h3>
+          <button type="button" onClick={() => setNotice('Privacidad: se podrá elegir quién ve tu foto, frase y estado.')}><ShieldCheck size={18}/><span>Quién puede escribirme</span></button>
+          <button type="button" onClick={() => setNotice('Regla activa: máximo 20 fotos por envío.')}><Image size={18}/><span>Límite de fotos: 20 por envío</span></button>
+        </section>
+      </div>
+    </div>}
+
+    {showAttachPanel && <div className="chatAttachmentSheetBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowAttachPanel(false)}>
+      <div className="chatAttachmentSheet">
+        <div className="sheetHandle"/><button className="iconBtn sheetClose" type="button" onClick={() => setShowAttachPanel(false)}><X size={18}/></button>
+        <div className="attachGrid">
+          <button type="button" onClick={() => fileInput.current?.click()}><span className="attachIcon purple"><Camera/></span>Fotos y videos</button>
+          <button type="button" onClick={() => fileInput.current?.click()}><span className="attachIcon green"><FileText/></span>Documento</button>
+          <button type="button" onClick={() => fileInput.current?.click()}><span className="attachIcon pink"><Mic/></span>Audio</button>
+          <button type="button" onClick={() => setShowLocationPanel(true)}><span className="attachIcon mint"><MapPin/></span>Ubicación</button>
+          <button type="button" onClick={() => sendSpecialText('👤 Contacto compartido\nNombre: por seleccionar\nTeléfono: por agregar')}><span className="attachIcon blue"><Contact/></span>Contacto</button>
+          <button type="button" onClick={() => setShowPollPanel(true)}><span className="attachIcon orange"><BarChart3/></span>Encuesta</button>
+          <button type="button" onClick={() => setShowEventPanel(true)}><span className="attachIcon red"><CalendarDays/></span>Evento</button>
+          <button type="button" onClick={() => sendSpecialText('🧾 Pedido registrado\nProducto/servicio: por definir\nEstado: pendiente de confirmar')}><span className="attachIcon indigo"><ShoppingBag/></span>Pedido</button>
+          <button type="button" onClick={() => sendSpecialText('🏪 Catálogo\nEl proveedor compartirá productos o servicios disponibles.')}><span className="attachIcon teal"><Store/></span>Catálogo</button>
+          <button className="quickReplyBtn" type="button" onClick={() => sendSpecialText('⚡ Respuesta rápida\nGracias por escribir. Te confirmo en unos minutos.') }><Zap size={16}/> Respuesta rápida</button>
+        </div>
+      </div>
+    </div>}
+
+    {showActionsPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowActionsPanel(false)}>
+      <div className="chatModal chatActionsPanel">
+        <div className="chatModalHeader"><div><span>CENTRO DE ACCIONES</span><h2>Acciones del chat</h2><p>Todo lo importante de esta conversación en un solo lugar.</p></div><button className="iconBtn" onClick={() => setShowActionsPanel(false)}><X size={19}/></button></div>
+        <div className="actionsTabs">
+          <button className="active"><ListTodo size={17}/> Resumen</button>
+          <button><ShoppingBag size={17}/> Pedidos</button>
+          <button><BarChart3 size={17}/> Encuestas</button>
+          <button><CalendarDays size={17}/> Eventos</button>
+          <button><File size={17}/> Archivos</button>
+        </div>
+        <section className="actionBlock"><h3>Pendientes</h3>
+          <article><ClipboardCheck/><div><b>Confirmar recibido</b><span>Pedido registrado o entrega pendiente.</span></div><button>Confirmar</button></article>
+          <article><BarChart3/><div><b>Votar encuesta</b><span>Encuestas activas del grupo o conversación.</span></div><button>Votar</button></article>
+          <article><Star/><div><b>Calificar proveedor</b><span>Después de recibir un producto o servicio.</span></div><button>Calificar</button></article>
+        </section>
+        <section className="actionBlock"><h3>Resumen automático</h3>
+          <p>Hoy se enviaron {messages.length} mensajes. Esta sección reunirá pedidos, ubicaciones, archivos, encuestas, eventos y acuerdos sin buscarlos manualmente.</p>
+        </section>
+      </div>
+    </div>}
+
+    {showLocationPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowLocationPanel(false)}>
+      <div className="chatModal locationPanel">
+        <div className="chatModalHeader"><div><span>UBICACIÓN</span><h2>Compartir ubicación</h2><p>Comparte tu ubicación actual o tiempo real con personas de confianza.</p></div><button className="iconBtn" onClick={() => setShowLocationPanel(false)}><X size={19}/></button></div>
+        <button className="locationOption" type="button" onClick={sendCurrentLocation}><MapPin/><div><b>Enviar mi ubicación actual</b><span>Envía tu punto exacto de este momento y abre Google Maps.</span></div></button>
+        <div className="locationOption passive"><MapPin/><div><b>Compartir ubicación en tiempo real</b><span>Disponible como base. El seguimiento continuo se activará con permisos y temporizador.</span></div></div>
+        <div className="durationGrid"><button onClick={() => sendLiveLocationDemo(15)}>15 minutos</button><button onClick={() => sendLiveLocationDemo(60)}>1 hora</button><button onClick={() => sendLiveLocationDemo(480)}>8 horas</button></div>
+      </div>
+    </div>}
+
+    {showPollPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowPollPanel(false)}>
+      <div className="chatModal pollPanel">
+        <div className="chatModalHeader"><div><span>ENCUESTA</span><h2>Nueva encuesta</h2><p>Se crea y se vota dentro del mismo chat.</p></div><button className="iconBtn" onClick={() => setShowPollPanel(false)}><X size={19}/></button></div>
+        <label>Pregunta</label><input value={pollDraft.question} onChange={event => setPollDraft(current => ({ ...current, question: event.target.value }))} placeholder="¿Qué día hacemos la reunión?"/>
+        <label>Opciones</label>{pollDraft.options.map((option, index) => <div className="pollOptionRow" key={index}><input value={option} onChange={event => setPollDraft(current => ({ ...current, options: current.options.map((item, i) => i === index ? event.target.value : item) }))}/><button type="button" onClick={() => setPollDraft(current => ({ ...current, options: current.options.filter((_, i) => i !== index) }))}><X size={15}/></button></div>)}
+        <button type="button" className="secondary" onClick={() => setPollDraft(current => ({ ...current, options: [...current.options, ''] }))}>Agregar opción</button>
+        <label className="switchRow"><span>Permitir varias respuestas</span><input type="checkbox" checked={pollDraft.multiple} onChange={event => setPollDraft(current => ({ ...current, multiple: event.target.checked }))}/></label>
+        <label className="switchRow"><span>Mostrar resultados a todos</span><input type="checkbox" checked={pollDraft.results} onChange={event => setPollDraft(current => ({ ...current, results: event.target.checked }))}/></label>
+        <div className="formActions"><button type="button" onClick={createPoll}>Crear encuesta</button></div>
+      </div>
+    </div>}
+
+    {showEventPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowEventPanel(false)}>
+      <div className="chatModal eventPanel">
+        <div className="chatModalHeader"><div><span>EVENTO</span><h2>Crear evento</h2><p>Ideal para reuniones, entregas, clases o actividades.</p></div><button className="iconBtn" onClick={() => setShowEventPanel(false)}><X size={19}/></button></div>
+        <label>Título</label><input value={eventDraft.title} onChange={event => setEventDraft(current => ({ ...current, title: event.target.value }))} placeholder="Reunión de padres"/>
+        <div className="twoCols"><div><label>Fecha</label><input type="date" value={eventDraft.date} onChange={event => setEventDraft(current => ({ ...current, date: event.target.value }))}/></div><div><label>Hora</label><input type="time" value={eventDraft.time} onChange={event => setEventDraft(current => ({ ...current, time: event.target.value }))}/></div></div>
+        <label>Lugar</label><input value={eventDraft.place} onChange={event => setEventDraft(current => ({ ...current, place: event.target.value }))} placeholder="Casa comunal"/>
+        <label>Descripción</label><textarea value={eventDraft.description} onChange={event => setEventDraft(current => ({ ...current, description: event.target.value }))} placeholder="Detalle del evento"/>
+        <div className="formActions"><button type="button" onClick={createEvent}>Enviar evento</button></div>
+      </div>
+    </div>}
+
   </div>;
 }

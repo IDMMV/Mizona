@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Banknote, BarChart3, CheckCircle2, ChefHat, ClipboardList, Clock3, CreditCard,
+  AlertTriangle, Banknote, BarChart3, CheckCircle2, ChefHat, ClipboardList, Clock3, CreditCard,
   Download, Minus, Package, Plus, Printer, Receipt, Search, Settings, ShoppingCart,
-  Store, Trash2, UserPlus, Users, WalletCards, XCircle
+  Store, Trash2, Truck, UserPlus, Users, WalletCards, XCircle
 } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
@@ -73,8 +73,19 @@ export default function BusinessSuite(){
   const [kioskMode,setKioskMode]=useState(false);
   const [kioskView,setKioskView]=useState('tv');
   const [kioskLocked,setKioskLocked]=useState(true);
+  const [marketOrders,setMarketOrders]=useState(()=>{
+    try{return JSON.parse(localStorage.getItem('mizona-market-orders-v3035')||'[]');}catch{return [];}
+  });
 
   useEffect(()=>subscribeLocalBusiness(()=>{setVersion(v=>v+1);refreshLocalIndicators?.();}),[refreshLocalIndicators]);
+  useEffect(()=>{
+    const load=()=>{try{setMarketOrders(JSON.parse(localStorage.getItem('mizona-market-orders-v3035')||'[]'));}catch{setMarketOrders([]);}};
+    load();
+    const onStorage=event=>{if(event.key==='mizona-market-orders-v3035')load();};
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('mizona-market-orders-updated', load);
+    return ()=>{window.removeEventListener('storage', onStorage);window.removeEventListener('mizona-market-orders-updated', load);};
+  },[]);
   useEffect(()=>{
     document.body.classList.toggle('businessKioskActive', kioskMode);
     return ()=>document.body.classList.remove('businessKioskActive');
@@ -121,7 +132,7 @@ export default function BusinessSuite(){
   const tabs=[
     {id:'dashboard',label:'Resumen',icon:'📊'},
     ...(can(role,'manager','cashier','waiter')?[{id:'pos',label:'Caja / POS',icon:'🧾'}]:[]),
-    ...(can(role,'manager','cashier','cook','waiter')?[{id:'kitchen',label:'Pedidos / Cocina',icon:'👨‍🍳'}]:[]),
+    ...(can(role,'manager','cashier','cook','waiter')?[{id:'kitchen',label:'Pedidos / Cocina',icon:'👨‍🍳'},{id:'marketOrders',label:'Pedidos Marketplace',icon:'🛒'}]:[]),
     ...(can(role,'manager')?[{id:'inventory',label:'Inventario',icon:'📦'}]:[]),
     ...(can(role,'manager','cashier')?[{id:'customers',label:'Clientes',icon:'👥'}]:[]),
     ...(can(role,'manager')?[{id:'workers',label:'Personal',icon:'🧑‍💼'},{id:'expenses',label:'Gastos',icon:'💸'},{id:'reports',label:'Reportes',icon:'📈'}]:[])
@@ -141,7 +152,25 @@ export default function BusinessSuite(){
     if(document.fullscreenElement)document.exitFullscreen?.().catch(()=>{});
   };
 
-  const statusNext={received:'preparing',preparing:'ready',ready:'delivered'};
+  const marketStatusNext={registrado:'aceptado',aceptado:'preparando',preparando:'en_camino',en_camino:'entregado'};
+  const marketStatusLabel={registrado:'Registrado',aceptado:'Aceptado',preparando:'Preparando',en_camino:'En camino',entregado:'Entregado',recibido:'Recibido',calificado:'Calificado',cancelado:'Cancelado'};
+  const persistMarketOrders=next=>{
+    setMarketOrders(next);
+    localStorage.setItem('mizona-market-orders-v3035', JSON.stringify(next));
+    window.dispatchEvent(new Event('mizona-market-orders-updated'));
+  };
+  const updateMarketOrder=(id,patch)=>{
+    const next=marketOrders.map(order=>order.id===id?{...order,...patch,updated_at:new Date().toISOString()}:order);
+    persistMarketOrders(next);
+    setNotice('Pedido Marketplace actualizado.');
+  };
+  const businessMarketOrders=marketOrders.filter(order=>{
+    const currentName=String(snapshot?.business?.name||'').toLowerCase();
+    const provider=String(order.provider||'').toLowerCase();
+    return provider.includes(currentName)||currentName.includes(provider)||true;
+  });
+
+    const statusNext={received:'preparing',preparing:'ready',ready:'delivered'};
   const today=snapshot.sales.filter(x=>x.created_at.slice(0,10)===new Date().toISOString().slice(0,10));
   const topProducts=Object.values(today.flatMap(sale=>{const order=snapshot.orders.find(o=>o.id===sale.order_id);return order?.items||[];}).reduce((acc,item)=>{acc[item.name]=acc[item.name]||{name:item.name,qty:0,total:0};acc[item.name].qty+=item.qty;acc[item.name].total+=item.qty*item.price;return acc;},{})).sort((a,b)=>b.qty-a.qty).slice(0,5);
 
@@ -179,6 +208,29 @@ export default function BusinessSuite(){
     </>}
 
     {tab==='pos'&&<div className="posLayout"><section><div className="posFilters"><div className="businessSearch"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar producto..."/></div><div className="chips">{categories.map(x=><button key={x} className={category===x?'active':''} onClick={()=>setCategory(x)}>{x}</button>)}</div></div><div className="posProductGrid">{filtered.map(product=><button key={product.id} className="posProduct" disabled={product.track_stock&&product.stock<=0} onClick={()=>add(product)}><span>{product.emoji}</span><b>{product.name}</b><small>Stock: {product.stock} {product.unit}</small><strong>{money(product.price)}</strong></button>)}</div></section><aside className="cartPanel"><div className="cartHead"><div><ShoppingCart size={20}/><b>Pedido actual</b></div><button onClick={()=>setCart([])}><Trash2 size={16}/></button></div><div className="orderMeta"><select value={orderType} onChange={e=>setOrderType(e.target.value)}><option value="counter">Mostrador</option><option value="table">Mesa</option><option value="delivery">Delivery</option><option value="pickup">Recojo</option></select><input value={table} onChange={e=>setTable(e.target.value)} placeholder="Mesa o referencia"/><select value={selectedCustomer} onChange={e=>setSelectedCustomer(e.target.value)}><option value="">Cliente ocasional</option>{snapshot.customers.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Nombre para pedido"/></div><div className="cartItems">{!cart.length&&<div className="emptyCart">Selecciona productos para crear el pedido.</div>}{cart.map(item=><div className="cartItem" key={item.product_id}><span>{item.emoji}</span><div><b>{item.name}</b><small>{money(item.price)} c/u</small></div><div className="qty"><button onClick={()=>quantity(item.product_id,-1)}><Minus size={14}/></button><b>{item.qty}</b><button onClick={()=>quantity(item.product_id,1)}><Plus size={14}/></button></div><strong>{money(item.price*item.qty)}</strong></div>)}</div><div className="cartTotals"><span>Subtotal sin IGV<b>{money(total-tax)}</b></span><span>IGV incluido ({snapshot.business.igv_rate}%)<b>{money(tax)}</b></span><span className="grandTotal">Total<b>{money(total)}</b></span></div><div className="paymentMethods"><button className={payment==='cash'?'active':''} onClick={()=>setPayment('cash')}><Banknote/>Efectivo</button><button className={payment==='digital'?'active':''} onClick={()=>setPayment('digital')}><CreditCard/>Tarjeta/Yape</button></div>{payment==='cash'&&<><label className="cashField">Efectivo recibido<input type="number" min="0" value={cash} onChange={e=>setCash(e.target.value)} placeholder="0.00"/></label><div className="changeBox"><span>Vuelto</span><b>{money(change)}</b></div></>}<div className="posActionRow"><button className="primary full finishSale" onClick={finishSale}><Receipt size={18}/>Cobrar venta</button><button className="secondary printReceiptBtn" disabled={!lastReceipt} onClick={()=>setShowReceipt(true)}><Printer size={18}/>Imprimir</button></div></aside></div>}
+
+    {tab==='marketOrders'&&<div className="marketOrdersBusiness36">
+      <section className="businessMarketHero36">
+        <div><p className="eyebrow">Etapa 30.36 · Marketplace conectado</p><h2>Pedidos recibidos desde Marketplace</h2><p>El negocio acepta, prepara y actualiza estados. El cliente lo verá desde Mis pedidos.</p></div>
+        <div><b>{businessMarketOrders.length}</b><span>pedidos registrados</span></div>
+      </section>
+      <div className="marketOrderColumns36">
+        {['registrado','aceptado','preparando','en_camino','entregado','recibido','calificado'].map(status=><section key={status}>
+          <header><b>{marketStatusLabel[status]}</b><small>{businessMarketOrders.filter(order=>order.status===status).length} pedidos</small></header>
+          {businessMarketOrders.filter(order=>order.status===status).map(order=><article key={order.id} className={`businessMarketOrderCard36 status-${status}`}>
+            <div className="orderTop36"><div><span>{order.id}</span><h3>{order.provider}</h3><p>{order.deliveryMode} · {new Date(order.created_at).toLocaleString('es-PE')}</p></div><strong>{money(order.total)}</strong></div>
+            <div className="businessOrderItems36">{order.items.map(item=><p key={item.id}><b>{item.qty}×</b> {item.title} <span>{money(item.price)}</span></p>)}</div>
+            {order.rating&&<div className="businessRating36">⭐ {order.rating.stars}/5 · {order.rating.comment||'Sin comentario'} {order.problem&&<em>· problema reportado</em>}</div>}
+            <div className="businessOrderActions36">
+              {marketStatusNext[order.status]&&<button onClick={()=>updateMarketOrder(order.id,{status:marketStatusNext[order.status]})}>{order.status==='registrado'?'Aceptar pedido':order.status==='aceptado'?'Pasar a preparación':order.status==='preparando'?'Enviar / listo':'Marcar entregado'}</button>}
+              {!['recibido','calificado','cancelado'].includes(order.status)&&<button className="secondary" onClick={()=>updateMarketOrder(order.id,{status:'cancelado',problem:true})}>Cancelar</button>}
+            </div>
+          </article>)}
+          {!businessMarketOrders.some(order=>order.status===status)&&<div className="emptyColumn">Sin pedidos</div>}
+        </section>)}
+      </div>
+      <div className="businessMarketNotice36"><AlertTriangle/><p><b>Importante:</b> esta conexión usa pedidos locales del Marketplace para prueba. La siguiente etapa puede sincronizarlos en Supabase para que cliente y proveedor los vean desde distintos dispositivos.</p></div>
+    </div>}
 
     {tab==='kitchen'&&<div className="kitchenBoard">{['received','preparing','ready','delivered'].map(status=><section key={status}><header><span>{status==='received'?<ClipboardList/>:status==='preparing'?<ChefHat/>:status==='ready'?<CheckCircle2/>:<Receipt/>}</span><div><b>{statusLabel[status]}</b><small>{snapshot.orders.filter(x=>x.status===status).length} pedidos</small></div></header><div>{snapshot.orders.filter(x=>x.status===status).map(order=><article key={order.id}><div><b>{order.code}</b><em><Clock3 size={13}/>{Math.max(0,Math.round((Date.now()-new Date(order.created_at))/60000))} min</em></div><h3>{order.table}</h3><p>{order.items.map(x=>`${x.qty}× ${x.name}`).join(' · ')}</p><strong>{money(order.total)}</strong>{statusNext[status]&&<button onClick={()=>safe(()=>updateLocalBusinessOrderStatus(businessId,order.id,statusNext[status]))}>{status==='received'?'Iniciar preparación':status==='preparing'?'Marcar listo':'Entregar / concluir'}</button>}</article>)}{!snapshot.orders.some(x=>x.status===status)&&<div className="emptyColumn">Sin pedidos</div>}</div></section>)}</div>}
 

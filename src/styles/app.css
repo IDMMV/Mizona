@@ -1893,3 +1893,1542 @@ body.mizona-chat-opening .content{
     bottom:72px;
   }
 }
+
+
+/* =========================================================
+   ETAPA 30.32 - Chat app fullscreen real
+   Corrige:
+   - franja blanca inferior en celular
+   - parpadeo al abrir conversación
+   - listado y conversación como app tipo WhatsApp
+   ========================================================= */
+
+html:has(body.mizona-chat-app),
+body.mizona-chat-app{
+  width:100%;
+  height:100%;
+  min-height:100%;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  background:#071414!important;
+}
+
+body.mizona-chat-app .appShell,
+body.mizona-chat-app main,
+body.mizona-chat-app .content,
+body.mizona-chat-app #root{
+  background:#071414!important;
+}
+
+/* El chat se vuelve una capa fija. Así no depende del alto del contenido anterior. */
+body.mizona-chat-app .chatRealPage{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+  z-index:9999!important;
+  padding:0!important;
+  margin:0!important;
+  background:#071414!important;
+  color:#e9edef!important;
+  isolation:isolate!important;
+}
+
+/* Fallback para celulares Android donde 100dvh parpadea con barras del sistema */
+@supports (height: 100svh){
+  body.mizona-chat-app .chatRealPage,
+  body.mizona-chat-app .chatWorkspace,
+  body.mizona-chat-app .chatDirectory,
+  body.mizona-chat-app .chatConversation{
+    height:100svh!important;
+    min-height:100svh!important;
+    max-height:100svh!important;
+  }
+}
+@supports (height: 100dvh){
+  body.mizona-chat-app .chatRealPage,
+  body.mizona-chat-app .chatWorkspace,
+  body.mizona-chat-app .chatDirectory,
+  body.mizona-chat-app .chatConversation{
+    height:100dvh!important;
+    min-height:100dvh!important;
+    max-height:100dvh!important;
+  }
+}
+
+/* Nada de MiZona visible debajo del chat */
+body.mizona-chat-app .topbar,
+body.mizona-chat-app .mobileBottomNav,
+body.mizona-chat-app aside,
+body.mizona-chat-app .sidebar,
+body.mizona-chat-app .bottomNav,
+body.mizona-chat-app .appBottomNav{
+  display:none!important;
+}
+
+body.mizona-chat-app main{
+  margin-left:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+body.mizona-chat-app .content{
+  padding:0!important;
+  margin:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+/* Workspace ocupa toda la pantalla. El fondo se pinta antes de lista/conversación. */
+body.mizona-chat-app .chatWorkspace{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  background:#071414!important;
+  display:grid!important;
+  grid-template-columns:minmax(0, 380px) minmax(0, 1fr)!important;
+}
+
+/* Ocultar tarjetas superiores dentro de app chat */
+body.mizona-chat-app .chatPageHeader,
+body.mizona-chat-app .chatLocalModeNotice,
+body.mizona-chat-app .chatSafetyGrid,
+body.mizona-chat-app .chatRealPage > .chatNotice{
+  display:none!important;
+}
+
+/* LISTA DE CHATS: llenar toda la pantalla, sin franja blanca */
+body.mizona-chat-app .chatDirectory{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  background:#071414!important;
+  color:#e9edef!important;
+  border:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+body.mizona-chat-app .chatDirectoryTop{
+  flex:0 0 auto!important;
+  background:#071414!important;
+  color:#e9edef!important;
+  border:0!important;
+  padding:28px 18px 12px!important;
+}
+
+body.mizona-chat-app .chatDirectoryHeaderBar{
+  margin-bottom:14px!important;
+}
+
+body.mizona-chat-app .chatDirectoryHeaderBar b{
+  color:#e9edef!important;
+  font-size:24px!important;
+  opacity:.98!important;
+}
+
+body.mizona-chat-app .chatDirectoryHeaderBar span{
+  color:#9aa7ad!important;
+}
+
+body.mizona-chat-app .chatFullscreenToggle{
+  background:#f5fbf8!important;
+  color:#0f5132!important;
+  border:0!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.18)!important;
+}
+
+body.mizona-chat-app .chatSearchBar{
+  background:#1f2c33!important;
+  border:0!important;
+  color:#e9edef!important;
+  min-height:54px!important;
+}
+
+body.mizona-chat-app .chatSearchBar input{
+  color:#e9edef!important;
+  font-size:16px!important;
+}
+
+body.mizona-chat-app .chatSearchBar input::placeholder{
+  color:#aebac1!important;
+}
+
+body.mizona-chat-app .chatTabs{
+  flex-wrap:nowrap!important;
+  overflow-x:auto!important;
+  padding-bottom:2px!important;
+}
+
+body.mizona-chat-app .chatTabs button{
+  background:transparent!important;
+  color:#d1d7db!important;
+  border:1px solid rgba(233,237,239,.72)!important;
+  min-height:44px!important;
+  white-space:nowrap!important;
+}
+
+body.mizona-chat-app .chatTabs button.active{
+  background:#128c7e!important;
+  color:#fff!important;
+  border-color:#128c7e!important;
+}
+
+body.mizona-chat-app .conversationList,
+body.mizona-chat-app .contactListReal,
+body.mizona-chat-app .requestListReal{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+  background:#071414!important;
+  padding:10px 14px calc(22px + env(safe-area-inset-bottom, 0px))!important;
+  scrollbar-width:thin;
+}
+
+body.mizona-chat-app .conversationList > button,
+body.mizona-chat-app .contactListReal article,
+body.mizona-chat-app .requestListReal article{
+  background:#071414!important;
+  color:#e9edef!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  min-height:78px!important;
+}
+
+body.mizona-chat-app .conversationList > button:hover,
+body.mizona-chat-app .conversationList > button.active{
+  background:#111f26!important;
+}
+
+body.mizona-chat-app .conversationList > button b,
+body.mizona-chat-app .contactListReal article b,
+body.mizona-chat-app .requestListReal article b{
+  color:#fff!important;
+  font-size:17px!important;
+}
+
+body.mizona-chat-app .conversationList > button small,
+body.mizona-chat-app .contactListReal article span,
+body.mizona-chat-app .requestListReal article span{
+  color:#aebac1!important;
+}
+
+body.mizona-chat-app .conversationList > button em{
+  color:#25d366!important;
+}
+
+body.mizona-chat-app .chatAvatar{
+  background:#1f2c33!important;
+  color:#e9edef!important;
+}
+
+/* CONVERSACIÓN: fondo estable y sin blanco */
+body.mizona-chat-app .chatConversation{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  background:var(--chat-bg, #efeae2)!important;
+  color:var(--chat-text, #111b21)!important;
+  display:grid!important;
+  grid-template-rows:auto auto minmax(0, 1fr) auto!important;
+}
+
+body.mizona-chat-app .conversationHeader{
+  grid-row:1!important;
+  position:relative!important;
+  top:auto!important;
+  min-height:62px!important;
+  background:#fff!important;
+  color:#111b21!important;
+  border-bottom:1px solid #e3ecef!important;
+  z-index:4!important;
+}
+
+body.mizona-chat-app .retentionBanner{
+  grid-row:2!important;
+  min-height:40px!important;
+  background:#edfdf4!important;
+  color:#1f7a47!important;
+  border:0!important;
+  z-index:3!important;
+}
+
+body.mizona-chat-app .messageStream{
+  grid-row:3!important;
+  position:relative!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:auto!important;
+  background-color:var(--chat-bg, #efeae2)!important;
+  background-image:var(--chat-wallpaper)!important;
+  background-size:cover!important;
+  background-position:center!important;
+  padding:14px 12px!important;
+  overscroll-behavior:contain!important;
+}
+
+body.mizona-chat-app .messageComposer{
+  grid-row:4!important;
+  position:relative!important;
+  bottom:auto!important;
+  min-height:66px!important;
+  background:#fff!important;
+  border-top:1px solid #e3ecef!important;
+  padding-bottom:max(9px, env(safe-area-inset-bottom, 0px))!important;
+  z-index:4!important;
+}
+
+/* Durante carga no se borra pantalla ni aparece blanco */
+body.mizona-chat-app .chatRealPage.openingChat .chatConversation,
+body.mizona-chat-app .chatRealPage.openingChat .messageStream{
+  background-color:var(--chat-bg, #efeae2)!important;
+}
+
+/* En móvil: lista y conversación son dos pantallas absolutas */
+@media (max-width:760px){
+  body.mizona-chat-app .chatWorkspace{
+    grid-template-columns:1fr!important;
+  }
+
+  body.mizona-chat-app .chatDirectory,
+  body.mizona-chat-app .chatConversation{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    max-height:100%!important;
+  }
+
+  body.mizona-chat-app .chatRealPage.mobileChatListMode .chatDirectory{
+    visibility:visible!important;
+    transform:none!important;
+    pointer-events:auto!important;
+    z-index:3!important;
+  }
+
+  body.mizona-chat-app .chatRealPage.mobileChatListMode .chatConversation{
+    visibility:hidden!important;
+    transform:translateX(100%)!important;
+    pointer-events:none!important;
+    z-index:1!important;
+  }
+
+  body.mizona-chat-app .chatRealPage.mobileChatFullscreen .chatDirectory{
+    visibility:hidden!important;
+    transform:translateX(-18px)!important;
+    pointer-events:none!important;
+    z-index:1!important;
+  }
+
+  body.mizona-chat-app .chatRealPage.mobileChatFullscreen .chatConversation{
+    visibility:visible!important;
+    transform:none!important;
+    pointer-events:auto!important;
+    z-index:4!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryTop{
+    padding:28px 18px 12px!important;
+  }
+
+  body.mizona-chat-app .chatDirectoryHeaderBar b{
+    font-size:23px!important;
+  }
+
+  body.mizona-chat-app .conversationHeader{
+    grid-template-columns:42px 42px minmax(0,1fr) auto auto 42px!important;
+    padding:8px!important;
+  }
+
+  body.mizona-chat-app .messageStream{
+    padding:12px 10px!important;
+  }
+
+  body.mizona-chat-app .messageComposer{
+    grid-template-columns:48px minmax(0,1fr) 54px!important;
+    padding:8px 8px max(8px, env(safe-area-inset-bottom, 0px))!important;
+  }
+}
+
+/* La lista también necesita cubrir zona segura inferior */
+@media (max-width:760px){
+  body.mizona-chat-app .conversationList::after,
+  body.mizona-chat-app .contactListReal::after,
+  body.mizona-chat-app .requestListReal::after{
+    content:'';
+    display:block;
+    height:calc(30px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+
+/* =========================================================
+   ETAPA 30.33 - MiZona Chat acciones avanzadas
+   ========================================================= */
+
+.chatTopCompact b span{color:#25d366!important}
+.chatSettingsBtn{
+  border:1px solid rgba(255,255,255,.25)!important;
+  background:#101b22!important;
+  color:#e9edef!important;
+  border-radius:18px!important;
+  padding:10px 14px!important;
+  font-weight:900!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-height:42px!important;
+}
+body.mizona-chat-app .chatSettingsBtn{
+  background:#101b22!important;
+  color:#e9edef!important;
+}
+.chatDateSeparator{
+  display:flex;
+  justify-content:center;
+  margin:12px 0;
+  pointer-events:none;
+}
+.chatDateSeparator span{
+  background:rgba(17,27,33,.82);
+  color:#e9edef;
+  font-size:13px;
+  font-weight:800;
+  padding:7px 14px;
+  border-radius:999px;
+  box-shadow:0 6px 20px rgba(0,0,0,.15);
+}
+.messageBubble small{
+  display:block!important;
+  text-align:right!important;
+  margin-top:4px!important;
+  opacity:.72!important;
+  font-size:12px!important;
+}
+.messageComposer{
+  grid-template-columns:48px minmax(0,1fr) 48px 54px!important;
+}
+.chatAttachmentSheetBackdrop{
+  position:fixed;
+  inset:0;
+  z-index:10050;
+  background:rgba(0,0,0,.26);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+.chatAttachmentSheet{
+  width:min(720px,100vw);
+  background:#0b141a;
+  color:#e9edef;
+  border-radius:28px 28px 0 0;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 -24px 80px rgba(0,0,0,.42);
+  padding:16px 18px max(22px, env(safe-area-inset-bottom, 0px));
+  position:relative;
+}
+.sheetHandle{
+  width:52px;
+  height:5px;
+  border-radius:999px;
+  background:#70818a;
+  margin:0 auto 16px;
+}
+.sheetClose{
+  position:absolute!important;
+  top:14px;
+  right:16px;
+}
+.attachGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.attachGrid button{
+  border:0;
+  background:transparent;
+  color:#dce4e8;
+  min-height:82px;
+  border-radius:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-weight:800;
+}
+.attachGrid button:hover{
+  background:#111f26;
+}
+.attachIcon{
+  width:54px;
+  height:54px;
+  border-radius:19px;
+  display:grid;
+  place-items:center;
+  color:white;
+  box-shadow:0 8px 20px rgba(0,0,0,.24);
+}
+.attachIcon svg{width:24px;height:24px}
+.attachIcon.purple{background:#6d4aff}
+.attachIcon.green{background:#05a884}
+.attachIcon.pink{background:#e64980}
+.attachIcon.mint{background:#00a884}
+.attachIcon.blue{background:#1d9bf0}
+.attachIcon.orange{background:#f59e0b}
+.attachIcon.red{background:#f43f5e}
+.attachIcon.indigo{background:#4f46e5}
+.attachIcon.teal{background:#0d9488}
+.quickReplyBtn{
+  grid-column:2 / span 2;
+  min-height:54px!important;
+  background:#111f26!important;
+  border-radius:22px!important;
+  flex-direction:row!important;
+}
+.chatSettingsPanel,
+.chatActionsPanel,
+.locationPanel,
+.pollPanel,
+.eventPanel{
+  width:min(680px,94vw)!important;
+  max-height:min(88vh,780px)!important;
+  overflow:auto!important;
+}
+.settingsProfileCard{
+  display:grid;
+  grid-template-columns:92px minmax(0,1fr);
+  gap:16px;
+  border:1px solid #e9eef2;
+  background:#fff;
+  border-radius:22px;
+  padding:16px;
+  margin:12px 0;
+}
+.settingsAvatar{
+  width:84px;
+  height:84px;
+  border-radius:50%;
+  border:0;
+  background:#0b141a;
+  color:white;
+  position:relative;
+  overflow:hidden;
+}
+.settingsAvatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.settingsAvatar span{
+  position:absolute;
+  right:2px;
+  bottom:2px;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#00a884;
+  color:white;
+}
+.settingsProfileCard label,
+.pollPanel label,
+.eventPanel label{
+  display:block;
+  color:#667781;
+  font-size:12px;
+  font-weight:900;
+  margin:8px 0 5px;
+  text-transform:uppercase;
+}
+.settingsProfileCard input,
+.pollPanel input,
+.eventPanel input,
+.eventPanel textarea{
+  width:100%;
+  border:1px solid #dce6eb;
+  border-radius:14px;
+  padding:11px 13px;
+  background:#f8fafb;
+  color:#111b21;
+}
+.eventPanel textarea{
+  min-height:90px;
+  resize:vertical;
+}
+.settingsBlock{
+  border:1px solid #e9eef2;
+  background:#fff;
+  border-radius:22px;
+  padding:12px;
+  margin-top:12px;
+}
+.settingsBlock h3,
+.actionBlock h3{
+  margin:2px 4px 10px;
+  color:#111b21;
+  font-size:15px;
+}
+.settingsBlock button,
+.locationOption{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  background:#f7fafb;
+  color:#111b21;
+  min-height:54px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:850;
+  text-align:left;
+  margin:6px 0;
+}
+.settingsBlock button svg,
+.locationOption svg{
+  color:#00a884;
+  flex:0 0 auto;
+}
+.chevRight{
+  margin-left:auto;
+  transform:rotate(180deg);
+  color:#90a4ae!important;
+}
+.actionsTabs{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  background:#f3f6f8;
+  border-radius:18px;
+  padding:8px;
+  margin:12px 0;
+}
+.actionsTabs button{
+  border:0;
+  border-radius:14px;
+  background:transparent;
+  min-height:54px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-weight:850;
+  color:#455a64;
+}
+.actionsTabs button.active{
+  background:#6d4aff;
+  color:white;
+}
+.actionBlock{
+  border:1px solid #e9eef2;
+  border-radius:22px;
+  background:#fff;
+  padding:14px;
+  margin-top:12px;
+}
+.actionBlock article{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-top:1px solid #edf2f4;
+}
+.actionBlock article:first-of-type{border-top:0}
+.actionBlock article>svg{
+  color:#00a884;
+}
+.actionBlock article b{display:block;color:#111b21}
+.actionBlock article span,
+.actionBlock p{color:#667781}
+.actionBlock article button,
+.durationGrid button{
+  border:0;
+  border-radius:12px;
+  background:#00a884;
+  color:white;
+  padding:9px 12px;
+  font-weight:900;
+}
+.locationOption{
+  border:1px solid #e5edf1;
+}
+.locationOption.passive{
+  opacity:.8;
+}
+.durationGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+.pollOptionRow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 44px;
+  gap:8px;
+  margin:8px 0;
+}
+.pollOptionRow button{
+  border:0;
+  border-radius:12px;
+  background:#eef3f6;
+}
+.switchRow{
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+  text-transform:none!important;
+  font-size:14px!important;
+  color:#111b21!important;
+}
+.twoCols{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+@media(max-width:760px){
+  body.mizona-chat-app .chatDirectoryTop{
+    padding-top:max(22px, env(safe-area-inset-top, 0px))!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderBar{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:10px!important;
+    align-items:center!important;
+  }
+  body.mizona-chat-app .chatDirectoryHeaderActions{
+    display:flex!important;
+    gap:8px!important;
+  }
+  .chatSettingsBtn,
+  body.mizona-chat-app .chatFullscreenToggle{
+    min-height:38px!important;
+    border-radius:16px!important;
+    padding:8px 10px!important;
+    font-size:13px!important;
+  }
+  body.mizona-chat-app .chatSearchBar{
+    min-height:50px!important;
+  }
+  .attachGrid{
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+  }
+  .attachGrid button{
+    min-height:84px;
+    font-size:12px;
+  }
+  .attachIcon{
+    width:50px;
+    height:50px;
+    border-radius:18px;
+  }
+  .quickReplyBtn{
+    grid-column:1 / -1;
+  }
+  .messageComposer{
+    grid-template-columns:48px minmax(0,1fr) 44px 52px!important;
+  }
+  .chatSettingsPanel,
+  .chatActionsPanel,
+  .locationPanel,
+  .pollPanel,
+  .eventPanel{
+    width:100vw!important;
+    height:100svh!important;
+    max-height:100svh!important;
+    border-radius:0!important;
+  }
+  .settingsProfileCard{
+    grid-template-columns:76px minmax(0,1fr);
+  }
+  .settingsAvatar{
+    width:68px;
+    height:68px;
+  }
+  .actionsTabs{
+    grid-template-columns:repeat(5, minmax(64px,1fr));
+    overflow-x:auto;
+  }
+  .actionsTabs button{
+    font-size:12px;
+  }
+  .twoCols,
+  .durationGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* =========================================================
+   ETAPA 30.34 - Permisos, Marketplace y Zona Ride Delivery
+   ========================================================= */
+
+.mkHeroActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.mkHeroActions .secondary{
+  background:#ffffff!important;
+  color:#0f172a!important;
+  border:1px solid rgba(15,23,42,.12)!important;
+}
+.listingCardActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.listingCardActions button{
+  min-height:40px!important;
+  padding:8px!important;
+}
+.listingCardActions button:last-child{
+  background:#ecfdf5!important;
+  color:#047857!important;
+}
+.mkCartModal{
+  width:min(760px,94vw)!important;
+  max-height:min(88vh,780px)!important;
+  overflow:auto!important;
+}
+.cartProviderList{
+  display:grid;
+  gap:14px;
+  margin:16px 0;
+}
+.cartProviderGroup{
+  border:1px solid #e5edf1;
+  border-radius:20px;
+  padding:14px;
+  background:#fff;
+}
+.cartProviderGroup h3{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin:0 0 10px;
+}
+.cartLine{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr) auto 38px;
+  align-items:center;
+  gap:10px;
+  padding:10px 0;
+  border-top:1px solid #eef3f6;
+}
+.cartLine:first-of-type{
+  border-top:0;
+}
+.cartLine>span{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  background:#f1f5f9;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  overflow:hidden;
+}
+.cartLine img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.cartLine b{
+  display:block;
+}
+.cartLine small{
+  color:#64748b;
+}
+.cartQty{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid #dbe7ee;
+  border-radius:999px;
+  padding:4px;
+}
+.cartQty button,
+.cartRemove{
+  border:0;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:#eef6f4;
+  color:#047857;
+  font-weight:900;
+}
+.cartRemove{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.cartTotals{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0 0;
+  color:#475569;
+}
+.cartGrandTotal{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid #e5edf1;
+  margin-top:14px;
+  padding-top:14px;
+}
+.cartGrandTotal strong{
+  font-size:24px;
+  color:#059669;
+}
+.rideDeliveryHero{
+  display:grid;
+  grid-template-columns:minmax(0,1.4fr) 360px;
+  gap:20px;
+  padding:28px;
+  border-radius:30px;
+  background:linear-gradient(135deg,#071414,#0f2f2b);
+  color:#e9edef;
+  margin-bottom:20px;
+}
+.rideDeliveryHero h1{
+  font-size:clamp(34px,5vw,58px);
+  margin:8px 0;
+}
+.rideDeliveryHero p{
+  color:#b9c7cc;
+}
+.heroActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.heroActions button{
+  border:0;
+  border-radius:16px;
+  min-height:46px;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  background:#00a884;
+  color:white;
+}
+.heroActions .secondary{
+  background:#fff;
+  color:#0f172a;
+}
+.deliveryStatusCard{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:rgba(255,255,255,.08);
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.deliveryStatusCard span{
+  display:flex;
+  gap:7px;
+  color:#fde68a;
+  font-weight:900;
+}
+.deliveryGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.deliveryRuleCard svg{
+  color:#00a884;
+}
+.deliveryRuleCard span{
+  color:#64748b;
+  font-weight:900;
+  font-size:12px;
+  text-transform:uppercase;
+}
+.deliveryOptionsGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.deliveryOptionsGrid article{
+  border:1px solid #e5edf1;
+  border-radius:18px;
+  padding:16px;
+  background:#fff;
+}
+.deliveryOptionsGrid article svg{
+  color:#00a884;
+}
+.deliveryOptionsGrid .locked{
+  background:#fff7ed;
+  border-color:#fed7aa;
+}
+.deliveryFlow{
+  display:grid;
+  gap:10px;
+}
+.deliveryFlow article{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  gap:12px;
+  align-items:start;
+}
+.deliveryFlow strong{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:#00a884;
+  color:white;
+}
+.deliveryHonestNotice{
+  margin-top:14px;
+  display:flex;
+  gap:12px;
+  padding:14px;
+  border-radius:18px;
+  background:#ecfdf5;
+  color:#064e3b;
+}
+.deliveryAdminCard{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.deliveryAdminCard>div{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.adminPermissions34{
+  display:grid;
+  gap:16px;
+}
+.roleMatrixGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:12px;
+  margin-top:14px;
+}
+.roleMatrixCard{
+  border:1px solid #e5edf1;
+  border-radius:18px;
+  padding:14px;
+  background:#fff;
+}
+.roleMatrixCard>span{
+  color:#64748b;
+  font-weight:900;
+  font-size:12px;
+  text-transform:uppercase;
+}
+.roleMatrixCard div{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:10px;
+}
+.roleMatrixCard b,
+.permissionActions span{
+  border-radius:999px;
+  background:#eef6f4;
+  color:#047857;
+  padding:6px 9px;
+  font-size:12px;
+}
+.permissionActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:14px 0;
+}
+.permissionExample{
+  background:#f8fafc;
+  border-radius:18px;
+  padding:14px;
+}
+@media(max-width:760px){
+  .mkHeroActions{
+    justify-content:stretch;
+  }
+  .mkHeroActions button{
+    flex:1;
+  }
+  .listingCardActions,
+  .rideDeliveryHero,
+  .deliveryGrid,
+  .deliveryOptionsGrid,
+  .deliveryAdminCard{
+    grid-template-columns:1fr;
+  }
+  .cartLine{
+    grid-template-columns:42px minmax(0,1fr);
+  }
+  .cartQty,
+  .cartRemove{
+    grid-column:2;
+  }
+  .rideDeliveryHero{
+    padding:22px;
+    border-radius:24px;
+  }
+}
+
+
+/* =========================================================
+   ETAPA 30.35 - Pedidos registrados, recibido y reputación
+   ========================================================= */
+
+.orders35{
+  padding-bottom:88px!important;
+}
+.ordersHero35{
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) auto;
+  gap:16px;
+  align-items:center;
+  padding:22px;
+  border-radius:28px;
+  background:linear-gradient(135deg,#071414,#0e3f38);
+  color:#e9edef;
+  margin-bottom:18px;
+}
+.ordersHero35 h1{
+  font-size:clamp(30px,5vw,48px);
+  margin:4px 0;
+}
+.ordersHero35 p{
+  color:#b9c7cc;
+}
+.orderStats35{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.orderStats35 span{
+  min-width:92px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px;
+  background:rgba(255,255,255,.08);
+  padding:12px;
+  text-align:center;
+  color:#cfe8df;
+}
+.orderStats35 b{
+  display:block;
+  font-size:24px;
+  color:#25d366;
+}
+.orderList35{
+  display:grid;
+  gap:16px;
+}
+.orderCard35{
+  background:#fff;
+  border:1px solid #e5edf1;
+  border-radius:24px;
+  padding:16px;
+  box-shadow:0 10px 34px rgba(15,23,42,.08);
+}
+.orderHead35{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+.orderHead35 span{
+  color:#64748b;
+  font-size:12px;
+  font-weight:900;
+}
+.orderHead35 h3{
+  margin:4px 0;
+}
+.orderHead35 p{
+  color:#64748b;
+  margin:0;
+}
+.orderHead35>b{
+  text-transform:capitalize;
+  background:#ecfdf5;
+  color:#047857;
+  padding:8px 12px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.orderItems35{
+  display:grid;
+  gap:8px;
+  margin:14px 0;
+}
+.orderItems35>div{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  padding:8px;
+  border-radius:16px;
+  background:#f8fafc;
+}
+.orderItems35 span{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:#eef3f6;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  font-size:22px;
+}
+.orderItems35 img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.orderItems35 p{
+  margin:0;
+}
+.orderItems35 small{
+  display:block;
+  color:#64748b;
+}
+.orderTotals35{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-top:1px solid #edf2f4;
+  border-bottom:1px solid #edf2f4;
+}
+.orderTotals35 strong{
+  color:#059669;
+  font-size:20px;
+}
+.orderTimeline35{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:12px 0;
+}
+.orderTimeline35 span{
+  flex:0 0 auto;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#f1f5f9;
+  color:#64748b;
+  font-size:11px;
+  font-weight:900;
+  text-transform:capitalize;
+}
+.orderTimeline35 span.done{
+  background:#dcfce7;
+  color:#047857;
+}
+.orderActions35{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:8px;
+}
+.orderActions35 button{
+  border:0;
+  border-radius:14px;
+  min-height:42px;
+  padding:10px 12px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.orderActions35 .primary{
+  background:#00a884;
+  color:white;
+}
+.orderActions35 .secondary{
+  background:#eef6f4;
+  color:#047857;
+}
+.orderActions35 .dangerSoft{
+  background:#fff1f2;
+  color:#be123c;
+}
+.ratingResult35{
+  display:flex;
+  gap:7px;
+  align-items:center;
+  color:#92400e;
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  border-radius:14px;
+  padding:10px;
+}
+.providerTrust35{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin:14px 0;
+  padding:14px;
+  border-radius:18px;
+  background:#eefdf7;
+  color:#064e3b;
+}
+.providerTrust35 svg{
+  flex:0 0 auto;
+  color:#059669;
+}
+.providerTrust35 b{
+  display:block;
+}
+.providerTrust35 span{
+  color:#047857;
+}
+.rateModal35{
+  width:min(560px,94vw)!important;
+}
+.starsPicker35{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin:18px 0;
+}
+.starsPicker35 button{
+  border:0;
+  background:#f1f5f9;
+  color:#cbd5e1;
+  border-radius:16px;
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+}
+.starsPicker35 button.active{
+  background:#fef3c7;
+  color:#f59e0b;
+}
+.problemCheck35{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  background:#f8fafc;
+  border-radius:14px;
+  padding:12px;
+  font-weight:800;
+}
+.ratingComment35{
+  width:100%;
+  min-height:110px;
+  border:1px solid #dbe7ee;
+  border-radius:18px;
+  margin-top:12px;
+  padding:14px;
+  resize:vertical;
+}
+@media(max-width:760px){
+  .ordersHero35,
+  .orderStats35{
+    grid-template-columns:1fr;
+  }
+  .orderStats35{
+    display:grid;
+  }
+  .orderActions35 button{
+    flex:1 1 100%;
+    justify-content:center;
+  }
+}
+
+
+/* =========================================================
+   ETAPA 30.36 - Business recibe pedidos Marketplace
+   ========================================================= */
+
+.marketOrdersBusiness36{
+  display:grid;
+  gap:18px;
+}
+.businessMarketHero36{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 180px;
+  gap:16px;
+  align-items:center;
+  padding:22px;
+  border-radius:28px;
+  background:linear-gradient(135deg,#071414,#0e3f38);
+  color:#e9edef;
+}
+.businessMarketHero36 h2{
+  font-size:clamp(26px,4vw,42px);
+  margin:4px 0;
+}
+.businessMarketHero36 p{
+  color:#b9c7cc;
+}
+.businessMarketHero36>div:last-child{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  background:rgba(255,255,255,.08);
+  padding:18px;
+  text-align:center;
+}
+.businessMarketHero36 b{
+  display:block;
+  font-size:34px;
+  color:#25d366;
+}
+.marketOrderColumns36{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(240px,1fr));
+  gap:14px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+.marketOrderColumns36>section{
+  min-width:240px;
+  background:#f8fafc;
+  border:1px solid #e5edf1;
+  border-radius:22px;
+  padding:12px;
+}
+.marketOrderColumns36 header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.marketOrderColumns36 header b{
+  text-transform:capitalize;
+}
+.marketOrderColumns36 header small{
+  color:#64748b;
+}
+.businessMarketOrderCard36{
+  background:#fff;
+  border:1px solid #e5edf1;
+  border-radius:18px;
+  padding:12px;
+  margin-bottom:10px;
+  box-shadow:0 8px 24px rgba(15,23,42,.07);
+}
+.orderTop36{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.orderTop36 span{
+  font-size:11px;
+  color:#64748b;
+  font-weight:900;
+}
+.orderTop36 h3{
+  margin:4px 0;
+  font-size:16px;
+}
+.orderTop36 p{
+  margin:0;
+  color:#64748b;
+  font-size:12px;
+}
+.orderTop36 strong{
+  color:#059669;
+  white-space:nowrap;
+}
+.businessOrderItems36{
+  border-top:1px solid #edf2f4;
+  border-bottom:1px solid #edf2f4;
+  margin:10px 0;
+  padding:8px 0;
+}
+.businessOrderItems36 p{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin:5px 0;
+  font-size:13px;
+}
+.businessOrderItems36 span{
+  color:#059669;
+}
+.businessRating36{
+  border-radius:14px;
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  color:#92400e;
+  padding:8px;
+  font-size:13px;
+  margin-bottom:8px;
+}
+.businessRating36 em{
+  font-style:normal;
+  color:#be123c;
+}
+.businessOrderActions36{
+  display:grid;
+  gap:8px;
+}
+.businessOrderActions36 button{
+  border:0;
+  border-radius:14px;
+  min-height:38px;
+  padding:9px;
+  background:#00a884;
+  color:white;
+  font-weight:900;
+}
+.businessOrderActions36 .secondary{
+  background:#fff1f2;
+  color:#be123c;
+}
+.businessMarketNotice36{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:14px;
+  border-radius:18px;
+  background:#fffbeb;
+  color:#92400e;
+  border:1px solid #fde68a;
+}
+.businessMarketNotice36 svg{
+  flex:0 0 auto;
+}
+@media(max-width:760px){
+  .businessMarketHero36{
+    grid-template-columns:1fr;
+  }
+  .marketOrderColumns36{
+    grid-template-columns:repeat(7, minmax(260px, 1fr));
+  }
+}
