@@ -261,7 +261,7 @@ export default function Chat({ setPage }) {
   const [openingConversation, setOpeningConversation] = useState(false);
   const [showOpeningSkeleton, setShowOpeningSkeleton] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [immersiveMode, setImmersiveMode] = useState(true);
+  const [immersiveMode, setImmersiveMode] = useState(false);
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
   const [showAttachPanel, setShowAttachPanel] = useState(false);
@@ -503,6 +503,25 @@ export default function Chat({ setPage }) {
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 0);
   };
 
+  const exitChat = () => {
+    pushedMobileChatState.current = false;
+    setOpeningConversation(false);
+    setShowOpeningSkeleton(false);
+    document.body.classList.remove('mizona-chat-opening', 'mizona-chat-fullscreen', 'mizona-chat-immersive');
+    setMobileConversation(false);
+    setSelectedId(null);
+    setShowSettingsPanel(false);
+    setShowThemePanel(false);
+    setShowAttachPanel(false);
+    setShowActionsPanel(false);
+    setShowLocationPanel(false);
+    setShowPollPanel(false);
+    setShowEventPanel(false);
+    setSearchText('');
+    setTab('chats');
+    try { window.history.pushState({ mizonaPage: 'panel', mzPage: 'panel' }, '', '#panel'); } catch {}\n    setPage?.('panel');
+  };
+
   const startDirect = async contact => {
     setLoading(true);
     setNotice('');
@@ -687,7 +706,7 @@ export default function Chat({ setPage }) {
 
   return <div className={`chatRealPage ${mobileConversation && selectedId ? 'mobileChatFullscreen' : 'mobileChatListMode'} ${openingConversation ? 'openingChat' : ''} ${immersiveMode ? 'chatImmersiveMode' : 'chatWindowMode'}`} style={chatThemeStyle}>
     <div className="chatPageHeader">
-      <div><span>{isStudent ? 'CHAT SEGURO PARA ESTUDIANTES' : 'ETAPA 14 · LABORATORIO MULTIUSUARIO'}</span><h1>MiZona Chat</h1><p>{isStudent ? 'Elige chats, grupos, contactos o solicitudes permitidas. No quedas encerrado en una conversación.' : 'Prueba conversaciones reales entre perfiles locales usando varias pestañas.'}</p></div>
+      <div><span>{isStudent ? 'CHAT SEGURO PARA ESTUDIANTES' : 'ETAPA 14 · LABORATORIO MULTIUSUARIO'}</span><h1>MiZona Chat</h1><p>{isStudent ? 'Elige chats, grupos, contactos o solicitudes permitidas. Puedes volver al panel cuando quieras con el botón Salir.' : 'Prueba conversaciones reales entre perfiles locales usando varias pestañas.'}</p></div>
       <div className="chatHeaderActions"><button className="secondary" onClick={() => refreshLists(true)}><RefreshCw size={17}/> Actualizar</button>{!isStudent && <button onClick={() => setShowGroup(true)}><MessageSquarePlus size={17}/> Nuevo grupo</button>}<button onClick={() => setShowSearch(true)}><UserPlus size={17}/> {isStudent ? 'Buscar permitido' : 'Agregar contacto'}</button><button className="secondary" onClick={() => setShowThemePanel(true)}><Palette size={17}/> Tema</button>{immersiveMode ? <button className="secondary" onClick={() => setImmersiveMode(false)}><Minimize2 size={17}/> Salir pantalla completa</button> : <button className="secondary" onClick={() => setImmersiveMode(true)}><Maximize2 size={17}/> Pantalla completa</button>}</div>
     </div>
 
@@ -701,7 +720,8 @@ export default function Chat({ setPage }) {
             <div><b>MiZona Chat</b><span>{tab === 'groups' ? 'Grupos y conversaciones' : tab === 'contacts' ? 'Tus contactos' : tab === 'requests' ? 'Solicitudes pendientes' : 'Tus chats recientes'}</span></div>
             <div className="chatDirectoryHeaderActions">
               <button type="button" className="chatSettingsBtn" onClick={() => setShowSettingsPanel(true)} title="Ajustes"><Settings size={16}/> Ajustes</button>
-              {immersiveMode ? <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(false)}><Minimize2 size={16}/> Salir</button> : <button type="button" className="chatFullscreenToggle" onClick={() => setImmersiveMode(true)}><Maximize2 size={16}/> Full</button>}
+              {!isStudent && <button type="button" className="chatCreateBtn" onClick={() => setShowGroup(true)} title="Nuevo grupo"><Plus size={16}/> Nuevo</button>}
+              <button type="button" className="chatExitBtn" onClick={exitChat} title="Salir del chat"><X size={16}/> Salir</button>
             </div>
           </div>
           <div className="chatSearchBar"><Search size={17}/><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder="Buscar conversación o usuario"/><button type="button" title="Filtros"><SlidersHorizontal size={16}/></button></div>

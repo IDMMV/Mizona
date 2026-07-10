@@ -56,7 +56,7 @@ export default function Shell({ page, setPage, children }) {
         const Icon = module.icon;
         const active = module.id !== 'more' && page === module.id;
         return <button key={module.id} className={active ? 'active' : ''} onClick={() => module.target === 'menu' ? setOpen(true) : setPage(module.id)}>
-          <Icon size={19}/><span>{module.label}</span>
+          <Icon size={19}/><span>{module.id === 'panel' ? 'Inicio' : module.id === 'committees' ? 'Comités' : module.id === 'chat' ? 'Chat' : module.id === 'business' ? 'Business' : module.label}</span>
         </button>;
       })}
     </div>

@@ -185,7 +185,7 @@ export default function Marketplace({ setPage }){
   const chooseImage=event=>{const file=event.target.files?.[0];if(!file)return;if(file.size>1200000){fail('La imagen debe pesar menos de 1.2 MB.');event.target.value='';return;}const reader=new FileReader();reader.onload=()=>setForm(current=>({...current,image_data:String(reader.result),image:'🖼️'}));reader.onerror=()=>fail('No se pudo leer la imagen.');reader.readAsDataURL(file);};
   const setStatus=(id,status)=>{try{updateLocalListingStatus(id,status);setSelected(null);notify(status==='sold'?'Publicación marcada como vendida.':`Estado actualizado: ${status}.`);}catch(e){fail(e);}};
 
-  return <div className="page marketplacePage marketplaceC23">
+  return <div className="page marketMock46  marketplacePage marketplaceC23">
     {tab==='home'&&<>
       <section className="mkCTopHero">
         <div className="mkCHeroHead"><div><p className="eyebrow">Marketplace + pedidos registrados</p><h1>Productos, servicios y proveedores en tu zona</h1><p>Compra, conversa con el proveedor, registra tu pedido y confirma recibido para crear reputación real.</p></div><div className="mkHeroActions"><button className="secondary" onClick={()=>setShowCart(true)}><ShoppingCart size={18}/> Carrito ({cart.length})</button><button onClick={()=>setShowPublish(true)}><ShoppingBag size={18}/> Vender</button></div></div>
