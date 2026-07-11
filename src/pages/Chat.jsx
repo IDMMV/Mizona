@@ -71,33 +71,6 @@ const CHAT_WALLPAPERS = [
 ];
 
 function Avatar({ name, image, small = false }) {
-
-  useEffect(()=>{
-    try{
-      const saved=JSON.parse(localStorage.getItem('mizona_chat_poll_votes')||'{}');
-      if(saved&&typeof saved==='object')setPollVotes(saved);
-    }catch{}
-  },[]);
-
-  const parsePollMessage=(body='')=>{
-    const text=String(body||'');
-    if(!text.includes('📊 Encuesta'))return null;
-    const lines=text.split('\n').map(x=>x.trim()).filter(Boolean);
-    const rawTitle=lines.find(x=>/^Pregunta:/i.test(x)) || lines[1] || 'Encuesta';
-    const title=rawTitle.replace(/^Pregunta:\s*/i,'');
-    const options=lines.filter(x=>/^\d+\.\s*/.test(x)).map(x=>x.replace(/^\d+\.\s*/,'').trim()).filter(Boolean);
-    return {title,options:options.length?options:['Sí','No']};
-  };
-
-  const votePollLocal=(messageId,option)=>{
-    setPollVotes(prev=>{
-      const key=String(messageId||Date.now());
-      const next={...prev,[key]:{selected:option,at:new Date().toISOString()}};
-      try{localStorage.setItem('mizona_chat_poll_votes',JSON.stringify(next));}catch{}
-      return next;
-    });
-  };
-
   return <div className={`chatAvatar ${small ? 'small' : ''}`}>{image ? <img src={image} alt=""/> : initials(name)}</div>;
 }
 
@@ -279,7 +252,6 @@ export default function Chat({ setPage }) {
   const [selectedId, setSelectedId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [composer, setComposer] = useState('');
-  const [pollVotes, setPollVotes] = useState({});
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [notice, setNotice] = useState('');
@@ -678,7 +650,7 @@ export default function Chat({ setPage }) {
       setNotice('La encuesta necesita una pregunta y mínimo 2 opciones.');
       return;
     }
-    sendSpecialText(`📊 Encuesta\nPregunta: ${pollDraft.question.trim()}\n${options.map((option, index) => `${index + 1}. ${option}`).join('\n')}\n${pollDraft.multiple ? 'Permite varias respuestas' : 'Una sola respuesta'} · ${pollDraft.results ? 'Resultados visibles' : 'Resultados ocultos'}`);
+    sendSpecialText(`📊 Encuesta\n${pollDraft.question.trim()}\n${options.map((option, index) => `${index + 1}. ${option}`).join('\n')}\n${pollDraft.multiple ? 'Permite varias respuestas' : 'Una sola respuesta'} · ${pollDraft.results ? 'Resultados visibles' : 'Resultados ocultos'}`);
     setPollDraft({ question: '', options: ['Sí', 'No'], multiple: false, results: true });
   };
 
@@ -785,7 +757,7 @@ export default function Chat({ setPage }) {
               return <div key={message.id} className={`messageRow ${own ? 'own' : ''}`}>
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
                   {!own && <b>{message.sender_display_name}</b>}
-                  {message.body && (parsePollMessage(message.body)?(()=>{const poll=parsePollMessage(message.body);const key=message.id||message.created_at;const vote=pollVotes[key]||{};return <div className="pollCard47"><strong>📊 {poll.title}</strong><div className="pollOptions47">{poll.options.map((option,idx)=><button type="button" key={option+idx} className={vote.selected===option?'selected':''} onClick={()=>votePollLocal(key,option)}><span>{option}</span><em>{vote.selected===option?'Tu voto':'Votar'}</em></button>)}</div><small>{vote.selected?`Votaste por: ${vote.selected}`:'Toca una opción para votar'}</small></div>})():<p>{message.body}</p>)}
+                  {message.body && <p>{message.body}</p>}
                   {Array.isArray(message.attachments) && message.attachments.map(attachment => <AttachmentPreview key={attachment.id} attachment={attachment} onNotice={setNotice}/>)}
                   <small>{formatMessageHour(message.created_at)}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
@@ -819,7 +791,7 @@ export default function Chat({ setPage }) {
 
     {showSettingsPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowSettingsPanel(false)}>
       <div className="chatModal chatSettingsPanel">
-        <div className="chatModalHeader"><div><span>MI ZONA CHAT 30.47</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
+        <div className="chatModalHeader"><div><span>MI ZONA CHAT 30.46.1</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
         <input ref={profilePhotoInput} type="file" hidden accept="image/*" onChange={uploadProfilePhoto}/>
         <section className="settingsProfileCard">
           <button type="button" className="settingsAvatar" onClick={() => profilePhotoInput.current?.click()}>{profileDraft.avatar ? <img src={profileDraft.avatar} alt="perfil"/> : <Camera size={26}/>}<span><Camera size={13}/></span></button>

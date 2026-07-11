@@ -1,6 +1,6 @@
 {
-  "name": "mizona-enterprise-v8-etapa30-47-correccion-real-ui-finanzas-encuestas",
-  "version": "8.30.47",
+  "name": "mizona-enterprise-v8-etapa30-47-1-fix-finanzas-actas-internas",
+  "version": "8.30.47-1",
   "private": true,
   "type": "module",
   "scripts": {
