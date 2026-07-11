@@ -1,11 +1,11 @@
 {
-  "name": "MiZona Enterprise V8 · Etapa 21",
-  "short_name": "MiZona",
-  "description": "MiZona con IA local multiusuario, comunidad, chat, beneficios, negocios, aprendizaje, Business y Ride.",
-  "start_url": "/",
+  "name": "MiZona Enterprise V8 30.48",
+  "short_name": "MiZona 30.48",
+  "description": "MiZona: comunidad, comités, chat, pagos, negocios, movilidad y beneficios en una sola app.",
+  "start_url": "/?v=304800",
   "display": "standalone",
-  "background_color": "#f5f7fb",
-  "theme_color": "#101a2e",
+  "background_color": "#061116",
+  "theme_color": "#061116",
   "lang": "es",
   "icons": [
     {
@@ -17,6 +17,48 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "orientation": "portrait-primary",
+  "categories": [
+    "productivity",
+    "business",
+    "education",
+    "social"
+  ],
+  "shortcuts": [
+    {
+      "name": "Mi Panel",
+      "short_name": "Panel",
+      "url": "/#panel",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Comités",
+      "short_name": "Comités",
+      "url": "/#committees",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "short_name": "Chat",
+      "url": "/#chat",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

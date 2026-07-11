@@ -7234,3 +7234,37 @@ button,
   background:rgba(5,216,137,.14)!important;
   color:#05d889!important;
 }
+
+/* ETAPA 30.49 — correcciones funcionales y visuales solicitadas */
+@media (max-width:760px){
+  .chatModal{width:calc(100vw - 20px)!important;max-height:calc(100dvh - 28px)!important;padding:20px!important;border-radius:24px!important;overflow:auto!important}
+  .chatModalHeader h2{font-size:25px!important;line-height:1.08!important}
+  .chatModalHeader p{font-size:14px!important;line-height:1.35!important}
+  .chatModal label{font-size:13px!important;margin-top:12px!important}
+  .chatModal input,.chatModal select{min-height:50px!important;font-size:16px!important;border-radius:18px!important}
+  .chatModal textarea{min-height:105px!important;font-size:16px!important;border-radius:18px!important}
+  .groupCreator{max-height:94dvh!important}
+  .groupContactPicker{max-height:310px!important;overflow:auto!important}
+  .groupContactPicker label{min-height:70px!important;padding:10px 12px!important;color:#173042!important;background:#eef6ff!important}
+  .groupContactPicker label span,.groupContactPicker label small{color:#173042!important}
+  .groupContactPicker label.selected{outline:2px solid var(--chat-accent)!important;background:#e8f5ff!important}
+  .pollPanel .switchRow{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;min-height:54px!important;padding:10px 12px!important;border:1px solid rgba(148,163,184,.25)!important;border-radius:16px!important;color:var(--chat-text)!important}
+  .pollPanel .switchRow input{width:22px!important;height:22px!important;min-height:auto!important;flex:0 0 auto!important}
+  .twoCols{gap:10px!important}
+  .chatConversationHeader{position:sticky!important;top:0!important;z-index:20!important;min-height:58px!important}
+  .chatConversationHeader h2,.chatConversationHeader b{font-size:17px!important}
+  .chatConversationHeader p,.chatConversationHeader span{font-size:12px!important}
+  .chatComposer{position:sticky!important;bottom:0!important;z-index:22!important}
+  .cartTotals{display:grid!important;grid-template-columns:1fr!important;gap:0!important;padding:10px 0!important}
+  .cartTotals>span{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;padding:9px 4px!important;border-bottom:1px solid rgba(15,23,42,.08)!important;font-size:15px!important;white-space:normal!important}
+  .cartTotals>span b{font-size:17px!important;white-space:nowrap!important}
+  .cartTotals .grandTotal{font-size:18px!important;font-weight:800!important;border-bottom:0!important;padding-top:12px!important}
+  .cartTotals .grandTotal b{font-size:24px!important}
+  .changeBox{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:15px 18px!important;border-radius:18px!important}
+  .changeBox span{font-size:16px!important}.changeBox b{font-size:24px!important}
+}
+.locationPermissionCard{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:18px;border:1px solid rgba(148,163,184,.25);border-radius:20px;background:var(--chat-surface)}
+.locationPermissionCard>svg{color:var(--chat-accent);margin-top:2px}.locationPermissionCard div{display:grid;gap:5px}.locationPermissionCard span{font-size:13px;color:var(--chat-subtext);line-height:1.4}.locationPermissionCard button{grid-column:1/-1;width:100%;min-height:48px}
+.blockedContact{opacity:.92}.blockedContact>div:nth-child(2)>b{display:flex;align-items:center;gap:6px}.blockedContact .contactActions button:disabled{opacity:.45}.unlockBtn{color:#047857!important;background:#ecfdf5!important;border-color:#a7f3d0!important}
+.themeSection>b{color:var(--chat-text)!important;opacity:1!important}.themeWallpaper span{color:#173042!important}.themeWallpaper.active{outline:3px solid var(--chat-accent)!important}
+.chatRealPage{transition:background .2s ease,color .2s ease}.chatRealPage .chatCreateBtn,.chatRealPage .chatTabs button.active,.chatRealPage .formActions button:not(.secondary){background:var(--chat-accent)!important}

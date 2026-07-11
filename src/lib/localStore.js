@@ -428,9 +428,11 @@ export function getLocalChatContacts() {
   const currentId = getActiveLocalProfileId();
   const ids = state.contactPairs
     .filter(item => item.user_a === currentId || item.user_b === currentId)
-    .map(item => item.user_a === currentId ? item.user_b : item.user_a)
-    .filter(id => !isBlockedBetween(state, currentId, id));
-  return ids.map(id => getProfileRow(state, id)).filter(Boolean).map(normalizeProfile);
+    .map(item => item.user_a === currentId ? item.user_b : item.user_a);
+  return ids.map(id => {
+    const row = getProfileRow(state, id);
+    return row ? { ...normalizeProfile(row), is_blocked: state.blocks.some(item => item.blocker_id === currentId && item.blocked_id === id) } : null;
+  }).filter(Boolean);
 }
 
 export function getLocalChatRequests() {
@@ -535,11 +537,9 @@ export function blockLocalUser(userId, reason = '') {
   const currentId = getActiveLocalProfileId();
   mutateLocalState(draft => {
     if (!draft.blocks.some(item => item.blocker_id === currentId && item.blocked_id === userId)) draft.blocks.push({ id: uid('block'), blocker_id: currentId, blocked_id: userId, reason, created_at: new Date().toISOString() });
-    draft.contactPairs = draft.contactPairs.filter(item => pairKey(item.user_a, item.user_b) !== pairKey(currentId, userId));
-    draft.requests = draft.requests.filter(item => pairKey(item.sender_id, item.receiver_id) !== pairKey(currentId, userId));
-    const removed = draft.conversations.filter(item => item.type === 'direct' && (item.participant_ids || []).includes(currentId) && (item.participant_ids || []).includes(userId)).map(item => item.id);
-    draft.conversations = draft.conversations.filter(item => !removed.includes(item.id));
-    removed.forEach(id => delete draft.messages[id]);
+    // Se conserva el contacto, la conversación y todo el historial.
+    // El bloqueo solo impide nuevas interacciones hasta que el usuario lo desbloquee.
+    draft.requests = draft.requests.filter(item => !(item.status === 'pending' && pairKey(item.sender_id, item.receiver_id) === pairKey(currentId, userId)));
     enqueue(draft, 'user_block', 'profile', userId, { reason });
     addAudit(draft, 'user_block', 'profile', userId, reason || 'Sin motivo registrado');
   }, 'user-block');

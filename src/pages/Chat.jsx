@@ -10,7 +10,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { listCommunities, listMyMemberships, loadCommunityBundle } from '../lib/community';
 import {
-  blockChatUser, createChatGroup, findChatProfileExact, leaveConversation,
+  blockChatUser, unblockChatUser, createChatGroup, findChatProfileExact, leaveConversation,
   loadChatContacts, loadChatRequests, loadConversations, loadMessages, markConversationRead,
   openChatAttachment, reportChatItem, resolveChatAttachmentUrl, reviewContactRequest, sendChatFile,
   sendContactRequest, sendTextMessage, startDirectConversation, subscribeToChat
@@ -237,8 +237,9 @@ function GroupModal({ contacts, userId, onCreated, onClose }) {
           <input type="checkbox" checked={selected.includes(contact.id)} onChange={() => toggle(contact.id)}/><Avatar small name={contact.display_name} image={contact.avatar_url}/><span>{contact.display_name}<small>@{String(contact.username || '').toUpperCase()}</small></span>
         </label>) : <p>Aún no tienes contactos aceptados.</p>}
       </div>
+      {selected.length < 1 && <ChatNotice>Selecciona al menos un contacto para crear el grupo.</ChatNotice>}
       {message && <ChatNotice kind="danger">{message}</ChatNotice>}
-      <div className="formActions"><button type="button" className="secondary" onClick={onClose}>Cancelar</button><button disabled={loading || !title.trim()}>{loading ? <Loader2 className="spin" size={18}/> : <Plus size={18}/>} Crear grupo</button></div>
+      <div className="formActions"><button type="button" className="secondary" onClick={onClose}>Cancelar</button><button disabled={loading || title.trim().length < 3 || selected.length < 1 || (type === 'school' && !schoolId)}>{loading ? <Loader2 className="spin" size={18}/> : <Plus size={18}/>} Crear grupo</button></div>
     </form>
   </div>;
 }
@@ -267,6 +268,8 @@ export default function Chat({ setPage }) {
   const [showAttachPanel, setShowAttachPanel] = useState(false);
   const [showActionsPanel, setShowActionsPanel] = useState(false);
   const [showLocationPanel, setShowLocationPanel] = useState(false);
+  const [locationReady, setLocationReady] = useState(false);
+  const [locationChecking, setLocationChecking] = useState(false);
   const [showPollPanel, setShowPollPanel] = useState(false);
   const [showEventPanel, setShowEventPanel] = useState(false);
   const [profileDraft, setProfileDraft] = useState(() => {
@@ -331,6 +334,16 @@ export default function Chat({ setPage }) {
   }, [contacts, searchText]);
 
   const updateChatTheme = patch => setChatTheme(current => ({ ...current, ...patch }));
+
+  const requestLocationAccess = async () => {
+    if (!navigator.geolocation) { setNotice('Este dispositivo no permite obtener la ubicación.'); return; }
+    setLocationChecking(true);
+    navigator.geolocation.getCurrentPosition(
+      () => { setLocationReady(true); setLocationChecking(false); setNotice('Ubicación habilitada correctamente.'); },
+      () => { setLocationReady(false); setLocationChecking(false); setNotice('Debes permitir la ubicación desde el navegador o los ajustes del celular.'); },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 }
+    );
+  };
   const chatThemeStyle = {
     '--chat-accent': chatTheme.accent || CHAT_THEME_DEFAULT.accent,
     '--chat-bg': chatTheme.background || CHAT_THEME_DEFAULT.background,
@@ -652,6 +665,8 @@ export default function Chat({ setPage }) {
     }
     sendSpecialText(`📊 Encuesta\n${pollDraft.question.trim()}\n${options.map((option, index) => `${index + 1}. ${option}`).join('\n')}\n${pollDraft.multiple ? 'Permite varias respuestas' : 'Una sola respuesta'} · ${pollDraft.results ? 'Resultados visibles' : 'Resultados ocultos'}`);
     setPollDraft({ question: '', options: ['Sí', 'No'], multiple: false, results: true });
+    setShowPollPanel(false);
+    setNotice('Encuesta publicada dentro del chat.');
   };
 
   const createEvent = () => {
@@ -661,6 +676,8 @@ export default function Chat({ setPage }) {
     }
     sendSpecialText(`📅 Evento\n${eventDraft.title.trim()}\nFecha: ${eventDraft.date || 'por definir'} ${eventDraft.time || ''}\nLugar: ${eventDraft.place || 'por definir'}\n${eventDraft.description || ''}`.trim());
     setEventDraft({ title: '', date: '', time: '', place: '', description: '' });
+    setShowEventPanel(false);
+    setNotice('Evento publicado dentro del chat.');
   };
 
   const inviteFriend = () => {
@@ -682,14 +699,20 @@ export default function Chat({ setPage }) {
   };
 
   const block = async contact => {
-    if (!window.confirm(`¿Bloquear a ${contact.display_name}? Ya no podrán encontrarse ni conversar.`)) return;
+    if (!window.confirm(`¿Bloquear a ${contact.display_name}? El contacto y el historial seguirán visibles.`)) return;
     try {
       await blockChatUser(contact.id, 'Bloqueado por el usuario');
-      setNotice(`${contact.display_name} fue bloqueado.`);
+      setNotice(`${contact.display_name} fue bloqueado. Puedes desbloquearlo cuando quieras.`);
       await refreshLists(false);
-    } catch (error) {
-      setNotice(error.message);
-    }
+    } catch (error) { setNotice(error.message); }
+  };
+
+  const unblock = async contact => {
+    try {
+      await unblockChatUser(contact.id);
+      setNotice(`${contact.display_name} fue desbloqueado.`);
+      await refreshLists(false);
+    } catch (error) { setNotice(error.message); }
   };
 
   const report = async message => {
@@ -735,7 +758,7 @@ export default function Chat({ setPage }) {
           </div>
         </div>
 
-        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">{filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}><Avatar name={conversationName(item)} image={item.peer_avatar_url}/><span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (item.last_message || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${item.last_message || 'Sin mensajes recientes'}`}</small></span><em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em></button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}</div> : tab === 'contacts' ? <div className="contactListReal">{filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}</div> : <div className="requestListReal">{requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}</div>}
+        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">{filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}><Avatar name={conversationName(item)} image={item.peer_avatar_url}/><span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (item.last_message || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${item.last_message || 'Sin mensajes recientes'}`}</small></span><em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em></button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}</div> : tab === 'contacts' ? <div className="contactListReal">{filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id} className={contact.is_blocked ? 'blockedContact' : ''}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name} {contact.is_blocked && <Ban size={14}/>}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.is_blocked ? 'Contacto bloqueado · historial conservado' : contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" disabled={contact.is_blocked} onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && (contact.is_blocked ? <button className="unlockBtn" title="Desbloquear" onClick={() => unblock(contact)}><RefreshCw size={17}/></button> : <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>)}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}</div> : <div className="requestListReal">{requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}</div>}
       </aside>
 
       <section className="chatConversation">
@@ -860,10 +883,12 @@ export default function Chat({ setPage }) {
 
     {showLocationPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowLocationPanel(false)}>
       <div className="chatModal locationPanel">
-        <div className="chatModalHeader"><div><span>UBICACIÓN</span><h2>Compartir ubicación</h2><p>Comparte tu ubicación actual o tiempo real con personas de confianza.</p></div><button className="iconBtn" onClick={() => setShowLocationPanel(false)}><X size={19}/></button></div>
-        <button className="locationOption" type="button" onClick={sendCurrentLocation}><MapPin/><div><b>Enviar mi ubicación actual</b><span>Envía tu punto exacto de este momento y abre Google Maps.</span></div></button>
-        <div className="locationOption passive"><MapPin/><div><b>Compartir ubicación en tiempo real</b><span>Disponible como base. El seguimiento continuo se activará con permisos y temporizador.</span></div></div>
-        <div className="durationGrid"><button onClick={() => sendLiveLocationDemo(15)}>15 minutos</button><button onClick={() => sendLiveLocationDemo(60)}>1 hora</button><button onClick={() => sendLiveLocationDemo(480)}>8 horas</button></div>
+        <div className="chatModalHeader"><div><span>UBICACIÓN</span><h2>Compartir ubicación</h2><p>Primero debes autorizar el acceso a la ubicación del dispositivo.</p></div><button className="iconBtn" onClick={() => setShowLocationPanel(false)}><X size={19}/></button></div>
+        {!locationReady ? <div className="locationPermissionCard"><ShieldCheck/><div><b>Habilitar ubicación</b><span>MiZona solicitará permiso al navegador. Tú decides cuándo compartirla.</span></div><button type="button" onClick={requestLocationAccess} disabled={locationChecking}>{locationChecking ? 'Comprobando…' : 'Habilitar ubicación'}</button></div> : <>
+        <ChatNotice kind="success">Ubicación habilitada. Ahora elige cómo compartirla.</ChatNotice>
+        <button className="locationOption" type="button" onClick={sendCurrentLocation}><MapPin/><div><b>Enviar mi ubicación actual</b><span>Envía tu punto de este momento y permite abrir Google Maps.</span></div></button>
+        <div className="locationOption passive"><MapPin/><div><b>Compartir ubicación en tiempo real</b><span>Elige durante cuánto tiempo deseas compartirla.</span></div></div>
+        <div className="durationGrid"><button onClick={() => sendLiveLocationDemo(15)}>15 minutos</button><button onClick={() => sendLiveLocationDemo(60)}>1 hora</button><button onClick={() => sendLiveLocationDemo(480)}>8 horas</button></div></>}
       </div>
     </div>}
 
