@@ -7,34 +7,50 @@ export const statusLabel = {
   maintenance: 'Mantenimiento'
 };
 
+// Los módulos se agrupan por "section" para ordenar el menú lateral de forma
+// coherente (Principal → Comercio → Finanzas → IA → Administración → Cuenta).
+// Ningún módulo fue eliminado: solo se reordenaron y se les asignó una sección.
+export const sectionOrder = ['Principal', 'Comercio y servicios', 'Finanzas', 'Inteligencia', 'Administración y sistema', 'Cuenta'];
+
 export const modules = [
-  { id: 'committees', label: 'Comités', icon: ClipboardList, status: 'active', phase: 'Etapa 28', audience: 'Padres, vecinos y administradores' },
-  { id: 'notifications', label: 'Notificaciones', icon: Bell, status: 'active', phase: 'Etapa 14', audience: 'Todos' },
-  { id: 'localLab', label: 'Laboratorio local', icon: FlaskConical, status: 'active', phase: 'Etapa 18', audience: 'Equipo y pruebas' },
-  { id: 'verification', label: 'Verificación', icon: BadgeCheck, status: 'active', phase: 'Etapa 23', audience: 'Adultos, negocios y administradores' },
-  { id: 'sync', label: 'Usuarios y Sync', icon: CloudUpload, status: 'active', phase: 'Etapa 24', audience: 'Administradores y migración' },
-  { id: 'cloudLaunch', label: 'Supabase real', icon: ServerCog, status: 'active', phase: 'Etapa 29', audience: 'Administradores y backend' },
-  { id: 'cloudCenter', label: 'Nube y Push', icon: CloudUpload, status: 'active', phase: 'Etapa 25', audience: 'Administradores, archivos y avisos' },
-  { id: 'payments', label: 'Pagos MiZona', icon: CreditCard, status: 'active', phase: 'Etapa 22', audience: 'Adultos, negocios y administradores' },
-  { id: 'gateway', label: 'Pasarela y liquidaciones', icon: Landmark, status: 'active', phase: 'Etapa 26', audience: 'Administradores y finanzas' },
-  { id: 'quality', label: 'Calidad y piloto', icon: ClipboardCheck, status: 'active', phase: 'Etapa 27', audience: 'Administradores y equipo de pruebas' },
-  { id: 'personalFinance', label: 'Mis gastos', icon: WalletCards, status: 'active', phase: 'Etapa 30', audience: 'Finanzas personales privadas' },
-  { id: 'panel', label: 'Mi Panel', icon: Home, status: 'active', phase: 'Base', audience: 'Todos' },
-  { id: 'community', label: 'Mi Comunidad', icon: Users, status: 'active', phase: 'Etapa 15', audience: 'Colegios, comités, clubes' },
-  { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Etapa 14', audience: 'Usuarios y aulas' },
-  { id: 'transfer', label: 'MiZona Transfer', icon: CloudUpload, status: 'active', phase: 'Sprint 2', audience: 'Aulas y trabajos' },
-  { id: 'benefits', label: 'Beneficios', icon: Gift, status: 'active', phase: 'Etapa 16', audience: 'Todos' },
-  { id: 'businesses', label: 'Negocios', icon: Store, status: 'active', phase: 'Etapa 17', audience: 'Todos y comercios' },
-  { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag, status: 'active', phase: 'Etapa 17', audience: 'Usuarios' },
-  { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'active', phase: 'Etapa 19', audience: 'Negocios y emprendimientos' },
-  { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Etapa 18', audience: 'Estudiantes, familias y negocios' },
-  { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos' },
-  { id: 'rideDelivery', label: 'Zona Ride Delivery', icon: Truck, status: 'soon', phase: 'Etapa 30.34', audience: 'Administradores y motorizados' },
-  { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Etapa 21', audience: 'Adultos y organizaciones' },
-  { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores' },
-  { id: 'architecture', label: 'Arquitectura', icon: Boxes, status: 'active', phase: 'Etapa 30.37', audience: 'Administradores y equipo técnico' },
-  { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo' },
-  { id: 'settings', label: 'Configuración', icon: Settings, status: 'active', phase: 'Core', audience: 'Usuario' }
+  // ---- Principal: lo que cualquier usuario usa a diario ----
+  { id: 'panel', label: 'Mi Panel', icon: Home, status: 'active', phase: 'Base', audience: 'Todos', section: 'Principal' },
+  { id: 'community', label: 'Mi Comunidad', icon: Users, status: 'active', phase: 'Etapa 15', audience: 'Colegios, comités, clubes', section: 'Principal' },
+  { id: 'committees', label: 'Comités', icon: ClipboardList, status: 'active', phase: 'Etapa 28', audience: 'Padres, vecinos y administradores', section: 'Principal' },
+  { id: 'chat', label: 'MiZona Chat', icon: MessageCircle, status: 'active', phase: 'Etapa 14', audience: 'Usuarios y aulas', section: 'Principal' },
+  { id: 'notifications', label: 'Notificaciones', icon: Bell, status: 'active', phase: 'Etapa 14', audience: 'Todos', section: 'Principal' },
+
+  // ---- Comercio y servicios: todo lo que mueve dinero entre vecinos ----
+  { id: 'businesses', label: 'Negocios', icon: Store, status: 'active', phase: 'Etapa 17', audience: 'Todos y comercios', section: 'Comercio y servicios' },
+  { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag, status: 'active', phase: 'Etapa 17', audience: 'Usuarios', section: 'Comercio y servicios' },
+  { id: 'business', label: 'MiZona Business', icon: BriefcaseBusiness, status: 'active', phase: 'Etapa 19', audience: 'Negocios y emprendimientos', section: 'Comercio y servicios' },
+  { id: 'campus', label: 'CampusHugo', icon: GraduationCap, status: 'active', phase: 'Etapa 18', audience: 'Estudiantes, familias y negocios', section: 'Comercio y servicios' },
+  { id: 'ride', label: 'MiZona Ride', icon: Car, status: 'active', phase: 'Etapa 20', audience: 'Adultos, conductores y envíos', section: 'Comercio y servicios' },
+  { id: 'rideDelivery', label: 'Zona Ride Delivery', icon: Truck, status: 'soon', phase: 'Etapa 30.34', audience: 'Administradores y motorizados', section: 'Comercio y servicios' },
+  { id: 'benefits', label: 'Beneficios', icon: Gift, status: 'active', phase: 'Etapa 16', audience: 'Todos', section: 'Comercio y servicios' },
+  { id: 'transfer', label: 'MiZona Transfer', icon: CloudUpload, status: 'active', phase: 'Sprint 2', audience: 'Aulas y trabajos', section: 'Comercio y servicios' },
+
+  // ---- Finanzas: dinero, cobros y liquidaciones ----
+  { id: 'payments', label: 'Pagos MiZona', icon: CreditCard, status: 'active', phase: 'Etapa 22', audience: 'Adultos, negocios y administradores', section: 'Finanzas' },
+  { id: 'personalFinance', label: 'Mis gastos', icon: WalletCards, status: 'active', phase: 'Etapa 30', audience: 'Finanzas personales privadas', section: 'Finanzas' },
+  { id: 'gateway', label: 'Pasarela y liquidaciones', icon: Landmark, status: 'active', phase: 'Etapa 26', audience: 'Administradores y finanzas', section: 'Finanzas' },
+
+  // ---- Inteligencia ----
+  { id: 'ai', label: 'IA MiZona', icon: Bot, status: 'active', phase: 'Etapa 21', audience: 'Adultos y organizaciones', section: 'Inteligencia' },
+
+  // ---- Administración y sistema: uso técnico / administrativo ----
+  { id: 'admin', label: 'Centro de Control', icon: Shield, status: 'active', phase: 'Core', audience: 'Administradores', section: 'Administración y sistema' },
+  { id: 'verification', label: 'Verificación', icon: BadgeCheck, status: 'active', phase: 'Etapa 23', audience: 'Adultos, negocios y administradores', section: 'Administración y sistema' },
+  { id: 'sync', label: 'Usuarios y Sync', icon: CloudUpload, status: 'active', phase: 'Etapa 24', audience: 'Administradores y migración', section: 'Administración y sistema' },
+  { id: 'cloudLaunch', label: 'Supabase real', icon: ServerCog, status: 'active', phase: 'Etapa 29', audience: 'Administradores y backend', section: 'Administración y sistema' },
+  { id: 'cloudCenter', label: 'Nube y Push', icon: CloudUpload, status: 'active', phase: 'Etapa 25', audience: 'Administradores, archivos y avisos', section: 'Administración y sistema' },
+  { id: 'quality', label: 'Calidad y piloto', icon: ClipboardCheck, status: 'active', phase: 'Etapa 27', audience: 'Administradores y equipo de pruebas', section: 'Administración y sistema' },
+  { id: 'architecture', label: 'Arquitectura', icon: Boxes, status: 'active', phase: 'Etapa 30.37', audience: 'Administradores y equipo técnico', section: 'Administración y sistema' },
+  { id: 'localLab', label: 'Laboratorio local', icon: FlaskConical, status: 'active', phase: 'Etapa 18', audience: 'Equipo y pruebas', section: 'Administración y sistema' },
+  { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo', section: 'Administración y sistema' },
+
+  // ---- Cuenta ----
+  { id: 'settings', label: 'Configuración', icon: Settings, status: 'active', phase: 'Core', audience: 'Usuario', section: 'Cuenta' }
 ];
 
 export const communities = [

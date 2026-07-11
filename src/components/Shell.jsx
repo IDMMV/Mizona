@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Bell, CloudOff, LogOut, Menu, Search, User, Wifi, X, Camera } from 'lucide-react';
-import { statusLabel } from '../data/modules';
+import { statusLabel, sectionOrder } from '../data/modules';
 import { useApp } from '../context/AppContext';
 import { canAccessModule } from '../lib/permissions';
+import { APP_VERSION, APP_STAGE_LABEL } from '../version.js';
 
 export default function Shell({ page, setPage, children }) {
   const [open, setOpen] = useState(false);
@@ -15,6 +16,17 @@ export default function Shell({ page, setPage, children }) {
     if (module.visible === false) return false;
     return canAccessModule(profile, module.id);
   }), [moduleConfig, profile]);
+
+  const groupedModules = useMemo(() => {
+    const groups = sectionOrder.map(section => ({ section, items: [] }));
+    const bySection = new Map(groups.map(group => [group.section, group]));
+    const fallback = { section: null, items: [] };
+    visibleModules.forEach(module => {
+      const target = bySection.get(module.section) || fallback;
+      target.items.push(module);
+    });
+    return [...groups, ...(fallback.items.length ? [fallback] : [])].filter(group => group.items.length);
+  }, [visibleModules]);
 
   const mobilePrimaryModules = useMemo(() => ['panel', 'committees', 'chat', 'business', 'more']
     .map(id => id === 'more'
@@ -33,20 +45,23 @@ export default function Shell({ page, setPage, children }) {
     {open && <button className="sidebarBackdrop" aria-label="Cerrar menú" onClick={() => setOpen(false)}/>}
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="brand">
-        <div className="logo">MZ</div><div><b>MiZona</b><span>Enterprise V8</span></div>
+        <div className="logo">MZ</div><div><b>MiZona</b><span>Enterprise V8 · v{APP_VERSION}</span></div>
         <button className="iconBtn mobileOnly" onClick={() => setOpen(false)}><X size={18}/></button>
       </div>
       <div className="sidebarMode">{backendConnected ? <Wifi size={15}/> : <CloudOff size={15}/>}<span><b>{backendConnected ? 'Nube activa' : 'Modo local'}</b><small>{backendConnected ? 'Supabase conectado' : `${syncQueueCount} acciones guardadas`}</small></span></div>
       <nav>
-        {visibleModules.map(module => {
-          const Icon = module.icon;
-          const badge = module.id === 'notifications' && unreadNotifications > 0 ? unreadNotifications : null;
-          return <button key={module.id} onClick={() => { setPage(module.id); setOpen(false); }} className={`navItem nav-${module.id} ${page === module.id ? 'active' : ''}`}>
-            <Icon size={18}/><span>{module.label}</span>{badge ? <i className="navBadge">{badge}</i> : module.status !== 'active' && <small>{statusLabel[module.status]}</small>}
-          </button>;
-        })}
+        {groupedModules.map(group => <div className="navSection" key={group.section || 'otros'}>
+          {group.section && <div className="navSectionLabel">{group.section}</div>}
+          {group.items.map(module => {
+            const Icon = module.icon;
+            const badge = module.id === 'notifications' && unreadNotifications > 0 ? unreadNotifications : null;
+            return <button key={module.id} onClick={() => { setPage(module.id); setOpen(false); }} className={`navItem nav-${module.id} ${page === module.id ? 'active' : ''}`}>
+              <Icon size={18}/><span>{module.label}</span>{badge ? <i className="navBadge">{badge}</i> : module.status !== 'active' && <small>{statusLabel[module.status]}</small>}
+            </button>;
+          })}
+        </div>)}
       </nav>
-      <div className="phaseBox"><b>Etapa actual</b><span>Etapa 30 · Finanzas personales privadas</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
+      <div className="phaseBox"><b>Versión publicada</b><span>Etapa {APP_VERSION} · {APP_STAGE_LABEL}</span><div className="bar"><i style={{ width: '100%' }}/></div></div>
       <button className="sidebarLogoutFinal" onClick={() => { void signOut().finally(() => { setPage('settings'); setOpen(false); }); }} aria-label="Cerrar sesión" title="Cerrar sesión">
         <LogOut size={18}/><span>Cerrar sesión</span>
       </button>

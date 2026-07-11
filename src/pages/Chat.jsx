@@ -8,6 +8,7 @@ import {
   SlidersHorizontal, Star, Store, UserPlus, Users, X, Zap
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { APP_VERSION } from '../version.js';
 import { listCommunities, listMyMemberships, loadCommunityBundle } from '../lib/community';
 import {
   blockChatUser, unblockChatUser, createChatGroup, findChatProfileExact, leaveConversation,
@@ -814,7 +815,7 @@ export default function Chat({ setPage }) {
 
     {showSettingsPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowSettingsPanel(false)}>
       <div className="chatModal chatSettingsPanel">
-        <div className="chatModalHeader"><div><span>MI ZONA CHAT 30.48</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
+        <div className="chatModalHeader"><div><span>MI ZONA CHAT · v{APP_VERSION}</span><h2>Ajustes del chat</h2><p>Perfil, apariencia, contactos, privacidad y accesos rápidos.</p></div><button className="iconBtn" onClick={() => setShowSettingsPanel(false)}><X size={19}/></button></div>
         <input ref={profilePhotoInput} type="file" hidden accept="image/*" onChange={uploadProfilePhoto}/>
         <section className="settingsProfileCard">
           <button type="button" className="settingsAvatar" onClick={() => profilePhotoInput.current?.click()}>{profileDraft.avatar ? <img src={profileDraft.avatar} alt="perfil"/> : <Camera size={26}/>}<span><Camera size={13}/></span></button>

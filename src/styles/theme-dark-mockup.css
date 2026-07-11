@@ -197,6 +197,18 @@
 /* ---------- 9. Barras de progreso / trazos ---------- */
 .app.mode-dark .bar,.app.mode-dark .progressTrack,.app.mode-dark .statusTimeline>div:after{background:var(--panel2) !important}
 
+/* ---------- 11. Encabezados de sección del menú lateral (orden 30.51) ---------- */
+.navSection{margin-bottom:4px}
+.navSectionLabel{
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:#7f93b8;
+  padding:14px 12px 6px;
+}
+.navSection:first-child .navSectionLabel{padding-top:4px}
+
 /* ---------- 10. Scrollbars sutiles en oscuro ---------- */
 .app.mode-dark ::-webkit-scrollbar{width:8px;height:8px}
 .app.mode-dark ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
