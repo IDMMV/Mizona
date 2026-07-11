@@ -2,6 +2,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
 import './styles/theme-dark-mockup.css';
+import './styles/unified-design-3052.css';
+import './styles/web-global-3053.css';
 import { APP_VERSION } from './version.js';
 
 const rootElement = document.getElementById('root');

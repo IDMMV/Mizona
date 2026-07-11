@@ -1,0 +1,91 @@
+/* MiZona 30.53 — formato global realmente aplicado (se carga al final) */
+:root{
+  --mz-accent:#10b981;--mz-accent-2:#06b6d4;--mz-purple:#7c3aed;
+  --mz-bg:#f3f7f8;--mz-card:#ffffff;--mz-text:#112c36;--mz-muted:#6f838b;
+  --mz-border:#dbe7e9;--mz-radius:20px;--mz-shadow:0 12px 34px rgba(21,54,66,.09);
+}
+html,body,#root{min-height:100%;background:var(--mz-bg)}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;color:var(--mz-text)}
+.app:not(.mode-dark){background:var(--mz-bg)!important;color:var(--mz-text)!important}
+.content,.page{max-width:1500px;margin-inline:auto}
+.page{animation:mzPageIn .2s ease-out}
+@keyframes mzPageIn{from{opacity:.25;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* Todos los módulos reciben la misma jerarquía */
+.pageTitle,.sectionHeader,.panelHeader{margin-bottom:18px!important}
+.pageTitle h1,.page h1{letter-spacing:-.035em!important;font-weight:900!important;color:var(--mz-text)!important}
+.pageTitle p,.page p,.muted{color:var(--mz-muted)}
+.card,.panel,.moduleCard,.quick,.thread,.timelineItem,.marketCard,.productCard,.courseCard,
+.communityCard,.committeeCard,.benefitCard,.rideCard,.financePanel47,.adminTableWrap,.cartPanel{
+  border:1px solid var(--mz-border)!important;border-radius:var(--mz-radius)!important;
+  background:var(--mz-card)!important;box-shadow:0 6px 20px rgba(21,54,66,.055)!important;
+}
+.card:hover,.quick:hover,.marketCard:hover,.productCard:hover,.courseCard:hover{transform:translateY(-2px);box-shadow:var(--mz-shadow)!important}
+button{transition:transform .15s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease}
+button:active{transform:scale(.98)}
+
+/* Barra superior y navegación web */
+.topbar{border-bottom:1px solid var(--mz-border)!important;background:rgba(255,255,255,.92)!important;backdrop-filter:blur(18px)}
+.sidebar{background:linear-gradient(180deg,#071b22,#0b2830)!important;color:#eaf7f4!important;border-right:1px solid rgba(255,255,255,.08)!important}
+.sidebar a,.sidebar button{border-radius:13px!important}
+.sidebar .active{background:linear-gradient(135deg,rgba(16,185,129,.24),rgba(6,182,212,.12))!important;color:#6ee7c4!important}
+
+/* Tienda, marketplace y ofertas */
+.opportunityGrid,.productGrid,.marketGrid{gap:16px!important}
+.opportunityCard,.productCard,.marketCard{overflow:hidden!important}
+.opportunityVisual,.productVisual{background:linear-gradient(135deg,#e4fbf4,#eef1ff)!important;min-height:150px}
+.price,.amount,.total,.grandTotal{color:#078568!important;font-weight:900!important}
+.offerBadge,.discountBadge{background:#e8fff7!important;color:#087a60!important;border:1px solid #bdeedc!important;border-radius:999px!important}
+
+/* Formularios uniformes */
+input:not([type=checkbox]):not([type=radio]),select,textarea,.field{
+  border:1px solid var(--mz-border)!important;border-radius:14px!important;background:#fff!important;color:var(--mz-text)!important;
+  min-height:46px!important;padding:11px 13px!important
+}
+input:focus,select:focus,textarea:focus{outline:0!important;border-color:rgba(16,185,129,.75)!important;box-shadow:0 0 0 4px rgba(16,185,129,.1)!important}
+.primary,button[type=submit],.chatCreateBtn{background:linear-gradient(135deg,var(--mz-accent),#08a77b)!important;color:#fff!important;border:0!important;border-radius:14px!important;font-weight:850!important}
+
+/* Chat web: escritorio equilibrado, sin gran vacío */
+body.mizona-chat-app .chatWorkspace,body.mizona-chat-fullscreen .chatWorkspace{
+  grid-template-columns:minmax(330px,390px) minmax(0,1fr)!important;
+}
+body.mizona-chat-app .chatDirectory,body.mizona-chat-fullscreen .chatDirectory{width:auto!important;max-width:none!important}
+body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact>div:first-child b,
+body.mizona-chat-fullscreen .chatDirectoryHeaderBar.chatTopCompact>div:first-child b{font-size:27px!important;letter-spacing:-.035em!important}
+body.mizona-chat-app .chatDirectoryHeaderBar.chatTopCompact,
+body.mizona-chat-fullscreen .chatDirectoryHeaderBar.chatTopCompact{padding:16px 16px 10px!important}
+body.mizona-chat-app .chatSettingsBtn,body.mizona-chat-app .chatCreateBtn,body.mizona-chat-app .chatExitBtn,
+body.mizona-chat-fullscreen .chatSettingsBtn,body.mizona-chat-fullscreen .chatCreateBtn,body.mizona-chat-fullscreen .chatExitBtn{
+  min-height:42px!important;height:42px!important;border-radius:14px!important;font-size:12px!important;padding:0 12px!important;width:auto!important;min-width:0!important
+}
+.chatSearchBar button.active{background:#dff8ef!important;color:#087c61!important;border-color:#aee5d2!important}
+.chatFilterPanel{display:flex;gap:7px;padding:0 12px 10px;overflow-x:auto;background:inherit}
+.chatFilterPanel button{white-space:nowrap;border:1px solid rgba(148,163,184,.28);background:rgba(255,255,255,.08);color:inherit;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800}
+.chatFilterPanel button.active{background:linear-gradient(135deg,#10b981,#0ea5a5);border-color:transparent;color:#fff}
+.chatFilterSummary{margin:0 12px 10px;padding:9px 11px;border-radius:12px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.24);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}
+.chatFilterSummary span{display:flex;align-items:center;gap:6px;font-weight:750}
+.chatFilterSummary button{border:0;background:transparent;color:#0d9b75;font-weight:850;cursor:pointer}
+.noConversationSelected{max-width:560px!important;margin:auto!important;padding:34px!important;border:1px dashed rgba(16,185,129,.3)!important;border-radius:24px!important;background:linear-gradient(145deg,rgba(16,185,129,.07),rgba(6,182,212,.04))!important}
+
+/* Modal de grupos legible y compacto */
+.chatModal{width:min(860px,calc(100vw - 28px))!important;max-height:min(88vh,820px)!important;overflow:auto!important}
+.groupTypeTabs button.active{background:#e7f3ff!important;color:#1260ad!important;border-color:#a9d0ff!important}
+.groupContactList{background:#f8fbfc!important;border:1px solid var(--mz-border)!important;border-radius:18px!important}
+
+/* Totales siempre alineados */
+.cartTotals,.businessTotals,.paymentSummary{display:grid!important;grid-template-columns:1fr auto!important;gap:8px 16px!important;align-items:center!important}
+.cartTotals>span,.businessTotals>span,.paymentSummary>span{display:contents!important}
+.changeBox{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;border-radius:16px!important;padding:14px 16px!important}
+
+/* Modo oscuro global coherente */
+.app.mode-dark{--mz-bg:#071318;--mz-card:#0d2027;--mz-text:#edf8f5;--mz-muted:#91a7ad;--mz-border:#20363e}
+.app.mode-dark,.app.mode-dark .content,.app.mode-dark .page{background:var(--mz-bg)!important;color:var(--mz-text)!important}
+.app.mode-dark .topbar{background:rgba(7,19,24,.9)!important;border-color:var(--mz-border)!important}
+.app.mode-dark .card,.app.mode-dark .panel,.app.mode-dark .moduleCard,.app.mode-dark .quick,.app.mode-dark .marketCard,.app.mode-dark .productCard,.app.mode-dark .courseCard,.app.mode-dark .financePanel47,.app.mode-dark .adminTableWrap,.app.mode-dark .cartPanel{background:var(--mz-card)!important;color:var(--mz-text)!important;border-color:var(--mz-border)!important}
+.app.mode-dark input:not([type=checkbox]):not([type=radio]),.app.mode-dark select,.app.mode-dark textarea,.app.mode-dark .field{background:#122930!important;color:var(--mz-text)!important;border-color:#29434c!important}
+.app.mode-dark .pageTitle h1,.app.mode-dark .page h1{color:var(--mz-text)!important}
+
+@media(max-width:980px){
+  .content{padding:15px 12px 88px!important}.card,.panel{border-radius:17px!important}
+  body.mizona-chat-app .chatWorkspace,body.mizona-chat-fullscreen .chatWorkspace{grid-template-columns:1fr!important}
+}
