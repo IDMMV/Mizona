@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
 import './styles/theme-dark-mockup.css';
+import './styles/unified-design-3052.css';
 import Shell from './components/Shell';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AppProvider, useApp } from './context/AppContext';
