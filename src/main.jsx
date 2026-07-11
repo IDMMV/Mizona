@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
+import './styles/theme-dark-mockup.css';
 
 const rootElement = document.getElementById('root');
 

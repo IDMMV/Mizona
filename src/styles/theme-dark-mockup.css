@@ -1,0 +1,202 @@
+/* =========================================================
+   TEMA OSCURO — alineado al mockup aprobado
+   Este archivo se carga DESPUÉS de app.css a propósito:
+   consolida en un solo lugar todas las reglas de modo oscuro
+   que antes estaban repetidas y a veces en conflicto a lo
+   largo de las distintas "etapas". No borra nada del CSS
+   anterior, solo tiene la última palabra quien gane el cascade.
+   Para revertir: quita el import de este archivo.
+   ========================================================= */
+
+/* ---------- 1. Paleta base (coincide con el mockup) ---------- */
+.app.mode-dark{
+  --bg:#0a0f1a !important;
+  --panel:#141b28 !important;
+  --panel2:#1b2333 !important;
+  --ink:#eef2f8 !important;
+  --muted:#8b96ab !important;
+  --line:#232c3f !important;
+  --dark:#0a0f1a !important;
+  --brand:#22c55e !important;
+  --brand2:#16b892 !important;
+  --brand3:#22c55e !important;
+  --accent:#f59e0b !important;
+  --ok:#22c55e !important;
+  --danger:#ef4444 !important;
+  --shadow:0 18px 40px rgba(0,0,0,.45) !important;
+  background:var(--bg) !important;
+  color:var(--ink) !important;
+}
+.app.mode-dark, .app.mode-dark main, .app.mode-dark .content, body:has(.app.mode-dark){
+  background:var(--bg) !important;
+}
+
+/* ---------- 2. Estructura: sidebar, topbar, bottom nav ---------- */
+.app.mode-dark .sidebar{
+  background:linear-gradient(180deg,#0d1420 0%,#0a0f1a 100%) !important;
+  border-right:1px solid var(--line);
+}
+.app.mode-dark .topbar{
+  background:rgba(10,15,26,.92) !important;
+  border-bottom:1px solid var(--line) !important;
+  backdrop-filter:blur(14px);
+}
+.app.mode-dark .searchBox,
+.app.mode-dark .iconBtn,
+.app.mode-dark .profileBtn,
+.app.mode-dark .zoneBtn,
+.app.mode-dark .ghost,
+.app.mode-dark .secondary{
+  background:var(--panel2) !important;
+  color:var(--ink) !important;
+  border:1px solid var(--line) !important;
+}
+.app.mode-dark .searchBox input{color:var(--ink) !important}
+.app.mode-dark .searchBox input::placeholder{color:var(--muted) !important}
+
+.app.mode-dark .mobileBottomNav{
+  background:rgba(10,15,26,.97) !important;
+  border-top:1px solid var(--line) !important;
+  box-shadow:0 -10px 30px rgba(0,0,0,.5) !important;
+}
+.app.mode-dark .mobileBottomNav button{color:var(--muted) !important}
+.app.mode-dark .mobileBottomNav button svg{color:var(--muted) !important}
+.app.mode-dark .mobileBottomNav button.active{
+  background:color-mix(in srgb, var(--brand) 16%, transparent) !important;
+  color:var(--brand) !important;
+}
+.app.mode-dark .mobileBottomNav button.active svg{color:var(--brand) !important}
+
+/* ---------- 3. Superficies / tarjetas de contenido ---------- */
+.app.mode-dark .card,
+.app.mode-dark .quick,
+.app.mode-dark .thread,
+.app.mode-dark .chatBox,
+.app.mode-dark .timelineItem,
+.app.mode-dark .compact,
+.app.mode-dark .communityStat,
+.app.mode-dark .communityCardReal,
+.app.mode-dark .opportunityCard,
+.app.mode-dark .featuredCard,
+.app.mode-dark .teacherCard,
+.app.mode-dark .learningCard,
+.app.mode-dark .gatewayCard,
+.app.mode-dark .courseCard,
+.app.mode-dark .marketCard,
+.app.mode-dark .placeCard,
+.app.mode-dark .driverCard,
+.app.mode-dark .trackingCard,
+.app.mode-dark .mkCBusinessCard,
+.app.mode-dark .mkCProductCard,
+.app.mode-dark .mkCPromoCard,
+.app.mode-dark .mkCPanel,
+.app.mode-dark .posFilters,
+.app.mode-dark .posProduct,
+.app.mode-dark .cartPanel,
+.app.mode-dark .adminTableWrap,
+.app.mode-dark .businessModePanel,
+.app.mode-dark .communityInlineForm,
+.app.mode-dark .communityEmpty,
+.app.mode-dark .emptyState,
+.app.mode-dark .chatDirectory,
+.app.mode-dark .chatDirectoryTop,
+.app.mode-dark .conversationHeader,
+.app.mode-dark .chatSearchBar,
+.app.mode-dark .chatTabs,
+.app.mode-dark .messageComposer,
+.app.mode-dark .requestListReal,
+.app.mode-dark .notificationEmpty,
+.app.mode-dark .benefitSearch,
+.app.mode-dark .benefitToolbar,
+.app.mode-dark .moduleMini>div,
+.app.mode-dark .adminTable>div,
+.app.mode-dark .aiChatCard,
+.app.mode-dark .aiConversationRail{
+  background:var(--panel) !important;
+  border:1px solid var(--line) !important;
+  color:var(--ink) !important;
+  box-shadow:var(--shadow) !important;
+}
+
+/* Modales / hojas flotantes */
+.app.mode-dark .detailModal,
+.app.mode-dark .courseModal,
+.app.mode-dark .lessonModal,
+.app.mode-dark .chatModal,
+.app.mode-dark .communityModal,
+.app.mode-dark .formModal,
+.app.mode-dark .benefitCreateModal,
+.app.mode-dark .businessModal,
+.app.mode-dark .marketModal,
+.app.mode-dark .mkCBusinessModal{
+  background:var(--panel2) !important;
+  color:var(--ink) !important;
+  box-shadow:0 30px 80px rgba(0,0,0,.55) !important;
+}
+.app.mode-dark .modalClose,
+.app.mode-dark .benefitModalHead button{
+  background:var(--panel) !important;
+  color:var(--ink) !important;
+}
+
+/* ---------- 4. Textos mudos y títulos dentro de tarjetas ---------- */
+.app.mode-dark .muted,
+.app.mode-dark .card small,
+.app.mode-dark .card span,
+.app.mode-dark .thread span,
+.app.mode-dark .thread small{color:var(--muted) !important}
+.app.mode-dark h1,.app.mode-dark h2,.app.mode-dark h3{color:var(--ink) !important}
+
+/* ---------- 5. Formularios ---------- */
+.app.mode-dark input,
+.app.mode-dark select,
+.app.mode-dark textarea,
+.app.mode-dark .field,
+.app.mode-dark .miniMoneyInput{
+  background:var(--panel2) !important;
+  color:var(--ink) !important;
+  border:1px solid var(--line) !important;
+}
+.app.mode-dark input::placeholder,
+.app.mode-dark textarea::placeholder{color:var(--muted) !important}
+
+/* ---------- 6. Botones ---------- */
+.app.mode-dark .primary{
+  background:linear-gradient(135deg,var(--brand),var(--brand2)) !important;
+  color:#04150c !important;
+  border:0 !important;
+}
+.app.mode-dark .tabs button{background:var(--panel2) !important;color:var(--muted) !important;border-color:var(--line) !important}
+.app.mode-dark .tabs button.active{background:var(--brand) !important;color:#04150c !important;border-color:var(--brand) !important}
+
+/* ---------- 7. Chat: burbujas al estilo del mockup ---------- */
+.app.mode-dark .messageStream{background:var(--bg) !important}
+.app.mode-dark .messageBubble{
+  background:var(--panel) !important;
+  border:1px solid var(--line) !important;
+  color:var(--ink) !important;
+}
+.app.mode-dark .messageRow.own .messageBubble{
+  background:linear-gradient(135deg,var(--brand),var(--brand2)) !important;
+  color:#04150c !important;
+  border:0 !important;
+}
+.app.mode-dark .messageRow.own .messageBubble>small{color:rgba(4,21,12,.65) !important}
+.app.mode-dark .msg.them{background:var(--panel) !important;border-color:var(--line) !important}
+.app.mode-dark .msg.me{background:var(--brand) !important;color:#04150c !important}
+.app.mode-dark .conversationList>button:hover,
+.app.mode-dark .conversationList>button.active{background:var(--panel2) !important}
+.app.mode-dark .conversationList>button{border-bottom-color:var(--line) !important}
+
+/* ---------- 8. Pills / badges de estado (se mantienen legibles) ---------- */
+.app.mode-dark .pill.active,.app.mode-dark .open{background:rgba(34,197,94,.16) !important;color:#4ade80 !important}
+.app.mode-dark .pill.beta,.app.mode-dark .status-searching,.app.mode-dark .status-pending{background:rgba(245,158,11,.16) !important;color:#fbbf24 !important}
+.app.mode-dark .pill.maintenance,.app.mode-dark .closed,.app.mode-dark .status-cancelled{background:rgba(239,68,68,.16) !important;color:#f87171 !important}
+.app.mode-dark .pill.soon{background:var(--panel2) !important;color:var(--muted) !important}
+
+/* ---------- 9. Barras de progreso / trazos ---------- */
+.app.mode-dark .bar,.app.mode-dark .progressTrack,.app.mode-dark .statusTimeline>div:after{background:var(--panel2) !important}
+
+/* ---------- 10. Scrollbars sutiles en oscuro ---------- */
+.app.mode-dark ::-webkit-scrollbar{width:8px;height:8px}
+.app.mode-dark ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
