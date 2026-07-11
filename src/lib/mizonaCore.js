@@ -83,6 +83,6 @@ export function getCoreNextSteps() {
     'Verificar que no existan errores de políticas RLS.',
     'Confirmar que las tablas mz_* aparecen en Table Editor.',
     'Probar perfiles, comunidades y notificaciones.',
-    'Luego conectar Chat real en la Etapa 30.46.1.'
+    'Luego conectar Chat real en la Etapa 30.48.'
   ];
 }

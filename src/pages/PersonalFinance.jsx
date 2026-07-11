@@ -151,20 +151,7 @@ export default function PersonalFinance() {
         <span className={summary.balance < 0 ? 'bad' : 'good'}><b>{money(summary.balance)}</b>Disponible</span>
       </div>
       <div className="grid2">
-        <Card title="Agregar movimiento rápido" icon="➕">
-          <form className="financeForm" onSubmit={saveTransaction}>
-            <label>Tipo<select value={tx.type} onChange={event => setTx({ ...tx, type: event.target.value, categoryId: event.target.value === 'income' ? 'cat-income' : event.target.value === 'saving' ? 'cat-savings' : 'cat-food' })}><option value="expense">Gasto</option><option value="income">Ingreso</option><option value="saving">Ahorro</option></select></label>
-            <label>Categoría<select value={tx.categoryId} onChange={event => setTx({ ...tx, categoryId: event.target.value })}>{categories.filter(cat => cat.type === tx.type || (tx.type === 'saving' && cat.type === 'saving')).map(cat => <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>)}</select></label>
-            <label>Cuenta<select value={tx.accountId} onChange={event => setTx({ ...tx, accountId: event.target.value })}>{accounts.map(account => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
-            <label>Monto<input type="number" min="0.10" step="0.10" value={tx.amount} onChange={event => setTx({ ...tx, amount: event.target.value })}/></label>
-            <label>Fecha<input type="date" value={tx.date} onChange={event => setTx({ ...tx, date: event.target.value })}/></label>
-            <label>Descripción<input placeholder="Ej. cuota del aula, mercado, pasaje" value={tx.description} onChange={event => setTx({ ...tx, description: event.target.value })}/></label>
-            <label>Comprobante / operación<input placeholder="Yape, boleta, ticket, operación" value={tx.receiptRef} onChange={event => setTx({ ...tx, receiptRef: event.target.value })}/></label>
-            <label>Nota<textarea value={tx.note} onChange={event => setTx({ ...tx, note: event.target.value })}/></label>
-            <button><Plus size={16}/> Guardar movimiento</button>
-          </form>
-        </Card>
-        <Card title="Cuentas" icon="💳">
+                <Card title="Cuentas" icon="💳">
           <div className="accountList">{summary.accountTotals.map(account => <article key={account.id}><span>{account.name}<small>{account.type}</small></span><b>{money(account.balance)}</b></article>)}</div>
         </Card>
       </div>
@@ -181,6 +168,19 @@ export default function PersonalFinance() {
     </>}
 
     {tab === 'movements' && <>
+      <div className="mz-expense-quick-form expenseRegisterPanel47"><Card className="gastosMoveForm47" title="Agregar movimiento rápido" icon="➕">
+          <form className="financeForm" onSubmit={saveTransaction}>
+            <label>Tipo<select value={tx.type} onChange={event => setTx({ ...tx, type: event.target.value, categoryId: event.target.value === 'income' ? 'cat-income' : event.target.value === 'saving' ? 'cat-savings' : 'cat-food' })}><option value="expense">Gasto</option><option value="income">Ingreso</option><option value="saving">Ahorro</option></select></label>
+            <label>Categoría<select value={tx.categoryId} onChange={event => setTx({ ...tx, categoryId: event.target.value })}>{categories.filter(cat => cat.type === tx.type || (tx.type === 'saving' && cat.type === 'saving')).map(cat => <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>)}</select></label>
+            <label>Cuenta<select value={tx.accountId} onChange={event => setTx({ ...tx, accountId: event.target.value })}>{accounts.map(account => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
+            <label>Monto<input type="number" min="0.10" step="0.10" value={tx.amount} onChange={event => setTx({ ...tx, amount: event.target.value })}/></label>
+            <label>Fecha<input type="date" value={tx.date} onChange={event => setTx({ ...tx, date: event.target.value })}/></label>
+            <label>Descripción<input placeholder="Ej. cuota del aula, mercado, pasaje" value={tx.description} onChange={event => setTx({ ...tx, description: event.target.value })}/></label>
+            <label>Comprobante / operación<input placeholder="Yape, boleta, ticket, operación" value={tx.receiptRef} onChange={event => setTx({ ...tx, receiptRef: event.target.value })}/></label>
+            <label>Nota<textarea value={tx.note} onChange={event => setTx({ ...tx, note: event.target.value })}/></label>
+            <button><Plus size={16}/> Guardar movimiento</button>
+          </form>
+        </Card></div>
       <div className="financeActions"><button onClick={exportCsv}><Download size={16}/> Exportar Excel CSV</button><button onClick={exportJson}><Download size={16}/> Respaldo JSON</button></div>
       <Card title="Historial personal" icon="🧾">
         <div className="financeTable">{data.transactions.map(item => {

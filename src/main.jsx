@@ -24,13 +24,13 @@ function showBootError(error, title = 'MiZona no pudo iniciar') {
     <div style="min-height:100vh;display:grid;place-items:center;background:#f6fbf9;color:#0f2534;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:24px;text-align:center">
       <div style="max-width:680px;background:white;border:1px solid #dbe9e3;border-radius:28px;padding:28px;box-shadow:0 16px 40px rgba(15,23,42,.08)">
         <div style="width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#0f766e,#14b8a6);display:grid;place-items:center;color:white;font-weight:900;font-size:26px;margin:0 auto 18px">MZ</div>
-        <p style="margin:0 0 8px;color:#0f766e;font-weight:900;letter-spacing:.12em">ETAPA 30.46.1</p>
+        <p style="margin:0 0 8px;color:#0f766e;font-weight:900;letter-spacing:.12em">ETAPA 30.48</p>
         <h1 style="margin:0 0 10px;font-size:26px">${escapeHtml(title)}</h1>
         <p style="color:#64748b;margin:0 0 14px">Ahora la app muestra el error real en vez de quedarse congelada.</p>
         <pre style="white-space:pre-wrap;text-align:left;background:#0f172a;color:#e2e8f0;border-radius:16px;padding:14px;max-height:260px;overflow:auto">${escapeHtml(message + (stack ? '\n\n' + stack : ''))}</pre>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
           <button onclick="location.reload()" style="border:0;background:#0f766e;color:white;border-radius:16px;padding:12px 18px;font-weight:900">Volver a cargar</button>
-          <button onclick="localStorage.clear();sessionStorage.clear();location.href='/?v=304601&t='+Date.now()" style="border:1px solid #dbe9e3;background:white;color:#0f2534;border-radius:16px;padding:12px 18px;font-weight:900">Limpiar datos y abrir</button>
+          <button onclick="localStorage.clear();sessionStorage.clear();location.href='/?v=304800&t='+Date.now()" style="border:1px solid #dbe9e3;background:white;color:#0f2534;border-radius:16px;padding:12px 18px;font-weight:900">Limpiar datos y abrir</button>
         </div>
       </div>
     </div>
@@ -59,9 +59,9 @@ async function resetLegacyMizonaCache() {
         .filter(key => String(key).toLowerCase().includes('mizona'))
         .map(key => caches.delete(key)));
     }
-    console.info('MiZona 30.46.1: caché legacy limpiado.');
+    console.info('MiZona 30.48: caché legacy limpiado.');
   } catch (error) {
-    console.warn('MiZona 30.46.1: no se pudo limpiar caché legacy', error);
+    console.warn('MiZona 30.48: no se pudo limpiar caché legacy', error);
   }
 }
 

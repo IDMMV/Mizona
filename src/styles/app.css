@@ -5650,7 +5650,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 
 
 /* =========================================================
-   ETAPA 30.47.1 · UI REAL MÓVIL
+   ETAPA 30.48.2 · UI REAL MÓVIL
    Corrección real de lo observado por el usuario:
    - Chat sin título duplicado ni botones mal ubicados
    - Conversación oscura completa
@@ -5908,7 +5908,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
     -webkit-overflow-scrolling:touch!important;
   }
 
-  /* MiZona Chat 30.47.1 real */
+  /* MiZona Chat 30.48.2 real */
   body.mizona-chat-app,
   body.mizona-chat-fullscreen{
     background:#071316!important;
@@ -6358,7 +6358,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 
 
 /* =========================================================
-   ETAPA 30.47.1 · AJUSTE REAL CHAT + PESTAÑAS
+   ETAPA 30.48.2 · AJUSTE REAL CHAT + PESTAÑAS
    - Salir del chat lleva realmente al panel
    - Barra superior de Comités reducida a 7 pestañas reales
    - Apariencia más cercana al mockup aprobado
@@ -6408,7 +6408,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 
 
 /* =========================================================
-   ETAPA 30.47.1 · MOCKUP MÓVIL MÁS FIEL
+   ETAPA 30.48.2 · MOCKUP MÓVIL MÁS FIEL
    Objetivo: acercar Mi Panel, Comités, Chat, Business y Marketplace
    al diseño oscuro/ordenado aprobado en la primera imagen.
    ========================================================= */
@@ -6464,7 +6464,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 }
 
 /* =========================================================
-   CHAT 30.47.1 - estilo similar al mockup oscuro
+   CHAT 30.48.2 - estilo similar al mockup oscuro
    ========================================================= */
 .chatRealPage{
   --chat-dark-main:#071015;
@@ -6621,7 +6621,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 }
 
 /* =========================================================
-   COMITÉS 30.47.1 - pestañas reales reducidas y diseño más app
+   COMITÉS 30.48.2 - pestañas reales reducidas y diseño más app
    ========================================================= */
 .committeeMock46 .tabs{
   max-width:100%!important;overflow-x:auto!important;flex-wrap:nowrap!important;gap:12px!important;
@@ -6660,7 +6660,7 @@ body.mizona-chat-app .messageComposer .sendBtnChat40:disabled{
 }
 
 /* =========================================================
-   MI PANEL 30.47.1 - tarjetas tipo dashboard oscuro del mockup
+   MI PANEL 30.48.2 - tarjetas tipo dashboard oscuro del mockup
    ========================================================= */
 @media(max-width:760px){
   .panelMock46 .hero,
@@ -6716,5 +6716,521 @@ html,body,#root,.app,main,.content{max-width:100vw!important;}
 }
 
 
-/* ETAPA 30.47.1 - Finanzas y Actas internas, sin accesos rápidos */
+/* ETAPA 30.48.2 - Finanzas y Actas internas, sin accesos rápidos */
 .committeeFinancePage47,.committeeArchivePage47{display:grid!important;gap:18px!important}.financeHero47,.archiveHero47{background:#edf9f4!important;border:1px solid rgba(15,118,110,.12)!important;border-radius:28px!important;padding:28px!important;box-shadow:0 18px 40px rgba(15,23,42,.05)!important}.financeTabs47,.archiveTabs47{display:flex!important;gap:10px!important;overflow-x:auto!important;background:#f7fbfa!important;border:1px solid rgba(15,118,110,.10)!important;border-radius:22px!important;padding:10px!important}.financeTabs47 button,.archiveTabs47 button{flex:0 0 auto!important;border-radius:17px!important;min-height:46px!important;padding:0 18px!important;font-weight:950!important}.financeTabs47 button.active,.archiveTabs47 button.active{background:#0f8f72!important;color:#fff!important}.financeKpis47,.financeSummaryGrid47{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}.financeKpis47 span,.financeSummaryGrid47 span{background:#fff!important;border:1px solid rgba(15,118,110,.12)!important;border-radius:20px!important;padding:18px!important}.downloadGrid47{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}.downloadGrid47 button{border:1px solid rgba(15,118,110,.14)!important;border-radius:18px!important;background:#fff!important;color:#0f2d42!important;min-height:58px!important;font-weight:950!important}.downloadGrid47 button:first-child,.downloadGrid47 button:nth-child(3){background:linear-gradient(135deg,#0f8f72,#19c89d)!important;color:#fff!important}@media(max-width:760px){.financeHero47,.archiveHero47{padding:22px!important}.financeKpis47,.financeSummaryGrid47,.downloadGrid47{grid-template-columns:1fr!important}.committeeFinancePage47 .committeeForm,.committeeArchivePage47 .committeeForm{grid-template-columns:1fr!important}}
+
+
+/* =========================================================
+   ETAPA 30.48 · Mis gastos: formulario fuera del Dashboard
+   ========================================================= */
+
+/* Mis gastos: Dashboard debe quedar limpio, solo resumen/gráficos/cuentas */
+.expenseDashboardClean47,
+.misGastosDashboardClean47{
+  display:grid!important;
+  gap:18px!important;
+}
+
+/* Si una tarjeta contiene "Agregar movimiento rápido", debe verse como formulario de registro, no como dashboard. */
+.gastosMoveForm47,
+.card:has(h2:first-child),
+.card:has(h3:first-child){
+  scroll-margin-top:90px;
+}
+
+/* Compatibilidad moderna: oculta el formulario de movimiento rápido cuando la pestaña Dashboard está activa.
+   Se mantiene visible al usar Registrar / consultar. */
+/* Como :contains no existe en CSS, se usa clase por JS abajo cuando el módulo se renderiza. */
+body.mz-expenses-dashboard .mz-expense-quick-form,
+body.mz-expenses-dashboard .gastosMoveForm47{
+  display:none!important;
+}
+body.mz-expenses-register .mz-expense-quick-form,
+body.mz-expenses-register .gastosMoveForm47{
+  display:block!important;
+}
+
+/* Estética del módulo Mis gastos */
+.expenseTabs47,
+.misGastosTabs47{
+  display:flex!important;
+  gap:10px!important;
+  overflow-x:auto!important;
+  padding:10px!important;
+  border-radius:22px!important;
+  background:#f7fbfa!important;
+  border:1px solid rgba(15,118,110,.10)!important;
+}
+.expenseTabs47 button,
+.misGastosTabs47 button{
+  min-height:46px!important;
+  border-radius:16px!important;
+  border:1px solid rgba(15,118,110,.14)!important;
+  background:#fff!important;
+  color:#0f2d42!important;
+  font-weight:950!important;
+  padding:0 18px!important;
+}
+.expenseTabs47 button.active,
+.misGastosTabs47 button.active{
+  background:#0f8f72!important;
+  color:#fff!important;
+}
+
+.expenseRegisterPanel47{
+  background:#fff!important;
+  border:1px solid rgba(15,118,110,.12)!important;
+  border-radius:28px!important;
+  padding:22px!important;
+  box-shadow:0 18px 40px rgba(15,23,42,.05)!important;
+}
+.expenseDashboardCards47{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:14px!important;
+}
+@media(max-width:760px){
+  .expenseDashboardCards47{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .expenseRegisterPanel47{padding:16px!important;border-radius:24px!important;}
+}
+
+
+/* =========================================================
+   ETAPA 30.48 · Apariencia tipo mockup dark / app móvil
+   ========================================================= */
+
+:root{
+  --mz-dark-0:#061116;
+  --mz-dark-1:#081820;
+  --mz-dark-2:#0d1f2a;
+  --mz-dark-3:#122b38;
+  --mz-green:#04c77d;
+  --mz-green-2:#08a66f;
+  --mz-purple:#6d4dff;
+  --mz-text:#eef8f4;
+  --mz-muted:#90a7b3;
+  --mz-border:rgba(255,255,255,.10);
+  --mz-card-shadow:0 18px 40px rgba(0,0,0,.35);
+}
+
+/* Botones y tarjetas base más app */
+button,
+.primary,
+.secondaryBtn{
+  border-radius:16px!important;
+  font-weight:900!important;
+}
+.card,
+.panel,
+.statCard,
+.kpiCard,
+.moduleCard,
+.summaryCard,
+.featureCard{
+  border-radius:22px!important;
+}
+
+/* ==================== HOME / PANEL ==================== */
+.mobileAppShell,
+.dashboardPage,
+.homePage,
+.panelPage,
+.mainPanel,
+.pageHome{
+  background:linear-gradient(180deg,#071118 0%,#0b1720 100%)!important;
+  color:var(--mz-text)!important;
+}
+.mobileAppShell .quickCard,
+.dashboardPage .quickCard,
+.homePage .quickCard,
+.panelPage .quickCard{
+  background:linear-gradient(180deg,#111f2b,#0b1720)!important;
+  border:1px solid var(--mz-border)!important;
+  color:var(--mz-text)!important;
+  box-shadow:var(--mz-card-shadow)!important;
+}
+.dashboardPage h1,
+.homePage h1,
+.panelPage h1,
+.mainPanel h1{
+  color:#fff!important;
+}
+
+/* ==================== MÓDULOS DARK EN CELULAR ==================== */
+@media(max-width:760px){
+  body{
+    background:#061116!important;
+  }
+  .appShell,
+  .content,
+  .page,
+  main{
+    background:#061116!important;
+  }
+
+  /* barra inferior estilo mockup */
+  .mobileBottomNav{
+    background:rgba(8,18,25,.96)!important;
+    border-top:1px solid rgba(255,255,255,.08)!important;
+    box-shadow:0 -18px 40px rgba(0,0,0,.35)!important;
+    backdrop-filter:blur(16px)!important;
+  }
+  .mobileBottomNav button,
+  .mobileBottomNav a{
+    color:#8ea3ad!important;
+  }
+  .mobileBottomNav .active,
+  .mobileBottomNav button.active,
+  .mobileBottomNav a.active{
+    color:#05d889!important;
+  }
+
+  /* topbar tipo app */
+  .topbar,
+  .mobileTopbar,
+  .appHeader{
+    background:#061116!important;
+    color:#fff!important;
+    border-bottom:1px solid rgba(255,255,255,.06)!important;
+  }
+  .topbar input,
+  .mobileTopbar input,
+  .globalSearch,
+  .searchBox input{
+    background:#111f2a!important;
+    color:#fff!important;
+    border:1px solid rgba(255,255,255,.08)!important;
+  }
+
+  /* hero de todos los módulos */
+  .hero,
+  .moduleHero,
+  .businessHero,
+  .marketHero,
+  .benefitsHero,
+  .campusHero,
+  .rideHero,
+  .committeeHero,
+  .mizonaHero,
+  .commerceHero{
+    background:linear-gradient(135deg,#09212b 0%,#096b5b 50%,#06c584 100%)!important;
+    color:#fff!important;
+    border:1px solid rgba(255,255,255,.10)!important;
+    border-radius:26px!important;
+    box-shadow:0 20px 50px rgba(0,0,0,.35)!important;
+    overflow:hidden!important;
+  }
+  .hero h1,.hero h2,
+  .moduleHero h1,.moduleHero h2,
+  .businessHero h1,.businessHero h2,
+  .marketHero h1,.marketHero h2,
+  .committeeHero h1,.committeeHero h2{
+    color:#fff!important;
+  }
+  .hero p,.moduleHero p,.businessHero p,.marketHero p,.committeeHero p{
+    color:rgba(255,255,255,.82)!important;
+  }
+
+  /* tarjetas oscuras generales */
+  .card,
+  .panel,
+  .moduleCard,
+  .productCard,
+  .businessCard,
+  .marketCard,
+  .courseCard,
+  .benefitCard,
+  .rideCard,
+  .statCard,
+  .kpiCard{
+    background:#0d1c25!important;
+    color:#eef8f4!important;
+    border:1px solid rgba(255,255,255,.08)!important;
+    box-shadow:0 16px 36px rgba(0,0,0,.28)!important;
+  }
+  .card p,
+  .panel p,
+  .moduleCard p,
+  .productCard p,
+  .businessCard p,
+  .marketCard p,
+  .courseCard p,
+  .benefitCard p,
+  .rideCard p{
+    color:#9eb1bb!important;
+  }
+
+  /* tabs tipo cápsula */
+  .tabs,
+  .pillTabs,
+  .moduleTabs,
+  .categoryTabs,
+  .businessTabs,
+  .marketTabs,
+  .committeeMock46 .tabs{
+    background:#061116!important;
+    border:0!important;
+    gap:10px!important;
+    padding:8px 0!important;
+    overflow-x:auto!important;
+  }
+  .tabs button,
+  .pillTabs button,
+  .moduleTabs button,
+  .categoryTabs button,
+  .businessTabs button,
+  .marketTabs button,
+  .committeeMock46 .tabs button{
+    background:#101f29!important;
+    color:#d7e6e2!important;
+    border:1px solid rgba(255,255,255,.12)!important;
+    border-radius:18px!important;
+    min-height:48px!important;
+    padding:0 16px!important;
+    white-space:nowrap!important;
+  }
+  .tabs button.active,
+  .pillTabs button.active,
+  .moduleTabs button.active,
+  .categoryTabs button.active,
+  .businessTabs button.active,
+  .marketTabs button.active,
+  .committeeMock46 .tabs button.active{
+    background:linear-gradient(135deg,#07805d,#05d889)!important;
+    color:#fff!important;
+    border-color:rgba(5,216,137,.55)!important;
+    box-shadow:0 12px 25px rgba(5,216,137,.20)!important;
+  }
+
+  /* formularios */
+  input,select,textarea{
+    background:#111f2a!important;
+    border:1px solid rgba(255,255,255,.10)!important;
+    color:#fff!important;
+  }
+  input::placeholder,
+  textarea::placeholder{
+    color:#8ea3ad!important;
+  }
+
+  /* botones verdes */
+  .primary,
+  button.primary,
+  .mainCta,
+  .ctaBtn,
+  .addBtn,
+  .saveBtn{
+    background:linear-gradient(135deg,#07805d,#05d889)!important;
+    color:#fff!important;
+    border:0!important;
+    box-shadow:0 14px 28px rgba(5,216,137,.22)!important;
+  }
+}
+
+/* ==================== CHAT exacto más cercano al mockup ==================== */
+.chatRealPage{
+  background:#061116!important;
+  color:#eef8f4!important;
+}
+.chatDirectory{
+  background:#061116!important;
+  color:#eef8f4!important;
+}
+.chatDirectory h1,
+.chatDirectory h2,
+.chatRealPage h1,
+.chatRealPage h2{
+  color:#fff!important;
+}
+.chatDirectory .muted,
+.chatDirectory small,
+.chatSubtitle{
+  color:#90a7b3!important;
+}
+.chatSearch,
+.chatSearch input,
+.chatDirectory input{
+  background:#14232d!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  color:#eef8f4!important;
+}
+.chatTabs button{
+  background:#0e1b24!important;
+  color:#dbe9e4!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:18px!important;
+}
+.chatTabs button.active{
+  background:linear-gradient(135deg,#07805d,#05d889)!important;
+  color:#fff!important;
+}
+.chatItem,
+.conversationItem{
+  border-radius:18px!important;
+  background:transparent!important;
+}
+.chatItem.active,
+.conversationItem.active{
+  background:#11232e!important;
+}
+.chatAvatar,
+.avatarBubble{
+  background:#172934!important;
+  color:#fff!important;
+}
+.chatConversation{
+  background:#061116!important;
+}
+.messageStream{
+  background:#061116!important;
+}
+.bubbleMine,
+.messageBubble.mine,
+.message.mine .messageBubble{
+  background:#08a67a!important;
+  color:#fff!important;
+}
+.bubbleTheirs,
+.messageBubble.theirs,
+.message.theirs .messageBubble{
+  background:#10232d!important;
+  color:#eef8f4!important;
+}
+.messageComposer{
+  background:#061116!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+}
+.messageComposer input{
+  background:#152731!important;
+  color:#eef8f4!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+}
+.messageComposer button{
+  background:#162934!important;
+  color:#eef8f4!important;
+}
+.messageComposer button[type="submit"]{
+  background:#08a67a!important;
+}
+
+/* ==================== BUSINESS / MARKETPLACE ==================== */
+.businessPage,
+.marketplacePage,
+.storePage,
+.campusPage,
+.ridePage,
+.benefitsPage{
+  background:#061116!important;
+  color:#eef8f4!important;
+}
+.businessPage .card,
+.marketplacePage .card,
+.storePage .card,
+.campusPage .card,
+.ridePage .card,
+.benefitsPage .card{
+  background:#0d1c25!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  color:#eef8f4!important;
+}
+.businessPage h1,.businessPage h2,
+.marketplacePage h1,.marketplacePage h2,
+.storePage h1,.storePage h2,
+.campusPage h1,.campusPage h2,
+.ridePage h1,.ridePage h2,
+.benefitsPage h1,.benefitsPage h2{
+  color:#fff!important;
+}
+
+/* Product/cart cards mockup */
+.productCard,
+.cartItem,
+.orderCard{
+  background:#0d1c25!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  color:#eef8f4!important;
+  border-radius:22px!important;
+}
+.price,
+.total,
+.amount{
+  color:#fff!important;
+}
+
+/* ==================== COMITÉS en móvil estilo mockup pero legible ==================== */
+@media(max-width:760px){
+  .committeeMock46{
+    background:#061116!important;
+    color:#eef8f4!important;
+  }
+  .committeeMock46 .committeeHero,
+  .committeeMock46 .communityHeader{
+    background:linear-gradient(135deg,#09212b,#098068,#05d889)!important;
+    color:#fff!important;
+  }
+  .committeeMock46 .card,
+  .committeeMock46 .financePanel47,
+  .committeeMock46 .committeeArchivePage47 .financePanel47,
+  .committeeFinancePage47 .financePanel47{
+    background:#0d1c25!important;
+    color:#eef8f4!important;
+    border:1px solid rgba(255,255,255,.08)!important;
+  }
+  .committeeMock46 .financeHero47{
+    background:linear-gradient(135deg,#09212b,#0a4e46)!important;
+    color:#fff!important;
+  }
+  .committeeMock46 .financeHero47 h2,
+  .committeeMock46 .financeHero47 p,
+  .committeeMock46 .financeEyebrow47{
+    color:#fff!important;
+  }
+  .committeeMock46 table,
+  .committeeMock46 thead,
+  .committeeMock46 tbody,
+  .committeeMock46 tr,
+  .committeeMock46 td,
+  .committeeMock46 th{
+    background:#0d1c25!important;
+    color:#eef8f4!important;
+    border-color:rgba(255,255,255,.08)!important;
+  }
+}
+
+/* ==================== MODO ESCRITORIO: elegante claro + dark chat ==================== */
+@media(min-width:761px){
+  .chatRealPage{
+    background:#061116!important;
+  }
+  .chatWorkspace{
+    background:#061116!important;
+  }
+  .chatDirectory{
+    background:#061116!important;
+  }
+  .chatConversation{
+    background:#061116!important;
+  }
+  .committeeMock46 .tabs button{
+    border-radius:16px!important;
+  }
+  .committeeMock46 .tabs button.active{
+    background:linear-gradient(135deg,#07805d,#05d889)!important;
+    color:#fff!important;
+  }
+}
+
+/* Small visual polish */
+.badge,
+.countBadge,
+.notificationBadge{
+  background:#ef4444!important;
+  color:#fff!important;
+  border:0!important;
+}
+.greenBadge,
+.statusActive,
+.onlineBadge{
+  background:rgba(5,216,137,.14)!important;
+  color:#05d889!important;
+}
