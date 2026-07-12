@@ -1,0 +1,273 @@
+/* MiZona Enterprise V8 · 30.64
+   Ajuste fino del chat en PC/tablet/móvil. */
+
+:root{
+  --chat64-radius:18px;
+  --chat64-line:#dbe4ee;
+  --chat64-muted:#6b778b;
+  --chat64-ink:#101827;
+  --chat64-accent:#1967ff;
+  --chat64-accent-soft:#eaf1ff;
+  --chat64-received:#ffffff;
+  --chat64-sent:#dff3ea;
+}
+
+@media (min-width: 1180px){
+  .chatRealPage .chatWorkspace{
+    grid-template-columns:420px minmax(0,1fr)!important;
+    min-height:calc(100vh - 124px)!important;
+    height:calc(100vh - 124px)!important;
+    border-radius:20px!important;
+  }
+  .chatRealPage .chatDirectoryHeaderBar.chatTopCompact{padding:16px 18px 12px!important}
+  .chatRealPage .chatSearchBar{margin:0 18px 12px!important}
+  .chatRealPage .chatTabs{padding:0 18px 12px!important}
+  .chatRealPage .conversationList>button{padding:13px 18px!important}
+  .chatRealPage .messageStream{padding:18px 36px 22px!important}
+}
+
+@media (min-width: 981px) and (max-width:1179px){
+  .chatRealPage .chatWorkspace{
+    grid-template-columns:360px minmax(0,1fr)!important;
+    min-height:calc(100vh - 132px)!important;
+    height:calc(100vh - 132px)!important;
+  }
+}
+
+@media (min-width: 981px){
+  .chatRealPage{
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .chatRealPage .chatWorkspace{
+    width:100%!important;
+  }
+
+  .chatRealPage .chatDirectoryHeaderActions{
+    max-width:210px!important;
+  }
+
+  .chatRealPage .chatDirectoryHeaderActions button{
+    padding:0 12px!important;
+    font-size:12px!important;
+  }
+
+  .chatRealPage .chatTabs{
+    overflow-x:auto!important;
+    scrollbar-width:none!important;
+  }
+  .chatRealPage .chatTabs::-webkit-scrollbar{display:none!important}
+  .chatRealPage .chatTabs button{
+    min-width:82px!important;
+    white-space:nowrap!important;
+  }
+
+  .chatRealPage .conversationList>button{
+    transition:background .16s ease,border-color .16s ease!important;
+  }
+  .chatRealPage .conversationList>button.active{
+    box-shadow:inset 4px 0 0 var(--chat64-accent)!important;
+  }
+
+  .chatRealPage .conversationHeader{
+    min-height:68px!important;
+    padding:12px 16px!important;
+  }
+  .chatRealPage .conversationHeader .chatAvatar{
+    width:44px!important;height:44px!important;font-size:15px!important;
+  }
+  .chatRealPage .conversationHeader>div b{
+    font-size:15px!important;
+  }
+  .chatRealPage .conversationHeader>div span{
+    font-size:12px!important;
+  }
+
+  .chatRealPage .retentionBanner{
+    max-width:max-content!important;
+    margin:10px auto 4px!important;
+    font-size:11px!important;
+    padding:6px 10px!important;
+  }
+
+  .chatRealPage .messageRow{
+    max-width:min(760px,78%)!important;
+  }
+  .chatRealPage .messageRow.own{
+    max-width:min(760px,78%)!important;
+  }
+
+  .chatRealPage .messageBubble{
+    border-radius:16px 16px 16px 6px!important;
+    padding:9px 11px 7px!important;
+  }
+  .chatRealPage .messageRow.own .messageBubble{
+    border-radius:16px 16px 6px 16px!important;
+  }
+  .chatRealPage .messageBubble p{
+    font-size:14px!important;
+    line-height:1.42!important;
+  }
+  .chatRealPage .messageBubble>small{
+    font-size:10px!important;
+    margin-top:4px!important;
+  }
+
+  .chatRealPage .messageReport{
+    opacity:0!important;
+    transition:opacity .15s ease!important;
+  }
+  .chatRealPage .messageRow:hover .messageReport{opacity:1!important}
+
+  .chatRealPage .messageComposer{
+    min-height:66px!important;
+    padding:10px 14px!important;
+    gap:8px!important;
+  }
+  .chatRealPage .messageComposer>input{
+    min-height:44px!important;
+    font-size:14px!important;
+  }
+  .chatRealPage .messageComposer>.iconBtn,
+  .chatRealPage .messageComposer .sendBtnChat40{
+    width:42px!important;height:42px!important;
+  }
+
+  .chatRealPage .noConversationSelected>div{
+    max-width:480px!important;
+    padding:30px!important;
+  }
+  .chatRealPage .noConversationSelected h2{
+    font-size:30px!important;
+  }
+  .chatRealPage .noConversationSelected p{
+    font-size:14px!important;
+  }
+
+  .chatRealPage .contactListReal article,
+  .chatRealPage .requestListReal article{
+    margin:0!important;
+    border-radius:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-top:0!important;
+    padding:12px 16px!important;
+    background:transparent!important;
+  }
+  .chatRealPage .contactListReal article:hover,
+  .chatRealPage .requestListReal article:hover{
+    background:#eef3f9!important;
+  }
+
+  .chatRealPage .structuredActions{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:7px!important;
+  }
+  .chatRealPage .structuredActions button,
+  .chatRealPage .structuredActions a{
+    min-height:34px!important;
+    padding:7px 10px!important;
+    border-radius:10px!important;
+    font-size:12px!important;
+  }
+}
+
+/* Tablet */
+@media (min-width: 721px) and (max-width:980px){
+  .chatRealPage .chatWorkspace{
+    min-height:calc(100dvh - 92px)!important;
+    height:calc(100dvh - 92px)!important;
+    border-radius:0!important;
+    border-left:0!important;
+    border-right:0!important;
+  }
+  .chatRealPage .chatDirectoryHeaderBar.chatTopCompact{
+    padding:12px!important;
+  }
+  .chatRealPage .chatDirectoryHeaderActions button span{
+    display:none!important;
+  }
+}
+
+/* Mobile: compactar sin romper la navegación existente */
+@media (max-width:720px){
+  .chatRealPage .chatWorkspace{
+    border-radius:0!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  .chatRealPage .chatDirectoryHeaderBar.chatTopCompact{
+    padding:10px 12px 8px!important;
+  }
+  .chatRealPage .chatDirectoryHeaderBar.chatTopCompact>div:first-child b{
+    font-size:22px!important;
+  }
+  .chatRealPage .chatDirectoryHeaderActions{
+    gap:6px!important;
+  }
+  .chatRealPage .chatDirectoryHeaderActions button{
+    min-width:38px!important;
+    width:38px!important;
+    height:38px!important;
+    padding:0!important;
+    border-radius:12px!important;
+  }
+  .chatRealPage .chatDirectoryHeaderActions button:not(.chatExitBtn){font-size:0!important}
+  .chatRealPage .chatDirectoryHeaderActions button svg{width:17px!important;height:17px!important}
+
+  .chatRealPage .chatSearchBar{
+    margin:0 10px 8px!important;
+  }
+  .chatRealPage .chatTabs{
+    padding:0 10px 10px!important;
+    overflow-x:auto!important;
+    grid-template-columns:repeat(4,minmax(88px,1fr))!important;
+  }
+  .chatRealPage .conversationList>button{
+    padding:11px 12px!important;
+    grid-template-columns:46px minmax(0,1fr) auto!important;
+  }
+  .chatRealPage .chatAvatar{width:46px!important;height:46px!important}
+
+  .chatRealPage .conversationHeader{
+    min-height:58px!important;
+    padding:8px 10px!important;
+    grid-template-columns:auto auto minmax(0,1fr) auto!important;
+  }
+  .chatRealPage .conversationHeader .chatBack{display:flex!important}
+  .chatRealPage .conversationHeader .chatAvatar{width:40px!important;height:40px!important}
+  .chatRealPage .conversationHeader>div b{font-size:15px!important}
+  .chatRealPage .conversationHeader>div span{font-size:11px!important}
+
+  .chatRealPage .retentionBanner{
+    margin:7px auto 3px!important;
+    font-size:10px!important;
+    padding:5px 8px!important;
+  }
+
+  .chatRealPage .messageStream{
+    padding:10px 10px 12px!important;
+  }
+  .chatRealPage .messageRow,
+  .chatRealPage .messageRow.own{
+    max-width:88%!important;
+  }
+  .chatRealPage .messageBubble p{font-size:14px!important}
+
+  .chatRealPage .messageComposer{
+    grid-template-columns:auto minmax(0,1fr) auto auto!important;
+    padding:8px!important;
+    gap:6px!important;
+  }
+  .chatRealPage .messageComposer>.iconBtn,
+  .chatRealPage .messageComposer .sendBtnChat40{
+    width:40px!important;height:40px!important;
+  }
+  .chatRealPage .messageComposer>input{
+    min-height:42px!important;
+    font-size:16px!important;
+  }
+}

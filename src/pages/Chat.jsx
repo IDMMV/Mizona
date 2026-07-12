@@ -962,7 +962,7 @@ export default function Chat({ setPage }) {
       </section>
     </div>
 
-    <div className="chatSafetyGrid"><article><ShieldCheck/><div><b>Protección escolar</b><span>Las cuentas estudiantiles solo se encuentran dentro de relaciones escolares válidas.</span></div></article><article><FileUp/><div><b>Archivos privados</b><span>Hasta 25 MB, con enlaces temporales y acceso exclusivo para integrantes.</span></div></article><article><Ban/><div><b>Bloquear y reportar</b><span>El bloqueo elimina el contacto y detiene nuevas solicitudes.</span></div></article></div>
+    <div className="chatSafetyGrid"><article><ShieldCheck/><div><b>Protección escolar</b><span>Las cuentas estudiantiles solo se encuentran dentro de relaciones escolares válidas.</span></div></article><article><FileUp/><div><b>Archivos privados</b><span>Hasta 25 MB, con enlaces temporales y acceso exclusivo para integrantes.</span></div></article><article><Ban/><div><b>Bloquear y reportar</b><span>El bloqueo conserva el contacto y el historial, pero detiene nuevos mensajes hasta que lo desbloquees.</span></div></article></div>
 
     {showSearch && <ContactSearch onChanged={() => refreshLists(true)} onClose={() => setShowSearch(false)}/>}
     {showGroup && !isStudent && <GroupModal contacts={contacts} userId={user?.id} onCreated={async id => { setShowGroup(false); await refreshLists(true); openConversation(id); }} onClose={() => setShowGroup(false)}/>}
