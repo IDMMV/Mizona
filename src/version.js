@@ -3,5 +3,5 @@
 // el número se refleja automáticamente en el sidebar, la pantalla
 // de carga, los mensajes de error de arranque y el título de la
 // pestaña del navegador (vía vite.config.js).
-export const APP_VERSION = '30.54';
-export const APP_STAGE_LABEL = 'Rediseño visual integral MiZona';
+export const APP_VERSION = '30.55';
+export const APP_STAGE_LABEL = 'Balance cromático global MiZona';
