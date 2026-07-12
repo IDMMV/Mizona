@@ -1,0 +1,11 @@
+MiZona Enterprise V8 – Etapa 30.65
+
+Ajuste aplicado:
+- Corrección global de contraste visual en MiZona Chat.
+- Formularios de Evento, Encuesta, Ubicación, Contacto, Pedido y Catálogo ahora muestran texto oscuro y legible.
+- Inputs, labels, placeholders, selects y textarea del chat corregidos.
+- Botones secundarios y tarjetas internas con mejor contraste.
+- Se mantiene texto blanco únicamente donde corresponde: botones primarios y burbujas del usuario.
+
+Nota:
+- El proyecto sigue sin incluir node_modules.

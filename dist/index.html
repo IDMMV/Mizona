@@ -8,14 +8,14 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-    <title>MiZona Enterprise V8 · Etapa 30.64</title>
+    <title>MiZona Enterprise V8 · Etapa 30.65</title>
 
     <script>
-      window.__MIZONA_INDEX_VERSION__ = '30.64';
+      window.__MIZONA_INDEX_VERSION__ = '30.65';
       function mzShowIndexBootError(message){
         var root=document.getElementById('root');
         if(!root || window.__MIZONA_APP_READY__) return;
-        root.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;background:#f6fbf9;color:#0f2534;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:24px;text-align:center"><div style="max-width:620px;background:white;border:1px solid #dbe9e3;border-radius:28px;padding:28px;box-shadow:0 16px 40px rgba(15,23,42,.08)"><div style="width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#0f766e,#14b8a6);display:grid;place-items:center;color:white;font-weight:900;font-size:26px;margin:0 auto 18px">MZ</div><p style="margin:0 0 8px;color:#0f766e;font-weight:900;letter-spacing:.12em">ETAPA 30.64</p><h1 style="margin:0 0 10px;font-size:26px">MiZona no terminó de cargar</h1><p style="color:#64748b;margin:0 0 14px">'+String(message)+'</p><button onclick="localStorage.clear();sessionStorage.clear();location.href=\\'/?v=305100&t=\\'+Date.now()" style="border:0;background:#0f766e;color:white;border-radius:16px;padding:12px 18px;font-weight:900">Limpiar datos y abrir de nuevo</button></div></div>';
+        root.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;background:#f6fbf9;color:#0f2534;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:24px;text-align:center"><div style="max-width:620px;background:white;border:1px solid #dbe9e3;border-radius:28px;padding:28px;box-shadow:0 16px 40px rgba(15,23,42,.08)"><div style="width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#0f766e,#14b8a6);display:grid;place-items:center;color:white;font-weight:900;font-size:26px;margin:0 auto 18px">MZ</div><p style="margin:0 0 8px;color:#0f766e;font-weight:900;letter-spacing:.12em">ETAPA 30.65</p><h1 style="margin:0 0 10px;font-size:26px">MiZona no terminó de cargar</h1><p style="color:#64748b;margin:0 0 14px">'+String(message)+'</p><button onclick="localStorage.clear();sessionStorage.clear();location.href=\\'/?v=305100&t=\\'+Date.now()" style="border:0;background:#0f766e;color:white;border-radius:16px;padding:12px 18px;font-weight:900">Limpiar datos y abrir de nuevo</button></div></div>';
       }
       window.addEventListener('error', function(e){
         if(!window.__MIZONA_APP_READY__) mzShowIndexBootError(e.message || 'Error cargando archivos JavaScript.');

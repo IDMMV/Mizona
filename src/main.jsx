@@ -11,6 +11,7 @@ import './styles/qa-final-3060.css';
 import './styles/palette-unified-3061.css';
 import './styles/chat-desktop-web-3063.css';
 import './styles/chat-finetune-3064.css';
+import './styles/chat-contrast-fix-3065.css';
 import { APP_VERSION } from './version.js';
 
 const rootElement = document.getElementById('root');

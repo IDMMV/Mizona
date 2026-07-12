@@ -1,0 +1,296 @@
+/* 30.65 — Corrección de contraste para todo el chat */
+:root{
+  --mz-chat-fg:#102033;
+  --mz-chat-muted:#617287;
+  --mz-chat-line:#d7e2ee;
+  --mz-chat-soft:#f7fafc;
+  --mz-chat-soft-2:#ffffff;
+  --mz-chat-accent:#1967ff;
+  --mz-chat-accent-2:#0ea5e9;
+}
+
+/* Base de contraste en toda la experiencia de chat */
+.chatRealPage,
+.chatRealPage *{
+  text-shadow:none;
+}
+
+.chatRealPage,
+.chatRealPage .chatWorkspace,
+.chatRealPage .chatDirectory,
+.chatRealPage .chatConversation,
+.chatRealPage .conversationHeader,
+.chatRealPage .messageComposer,
+.chatRealPage .noConversationSelected > div,
+.chatRealPage .conversationList > button,
+.chatRealPage .contactListReal article,
+.chatRealPage .requestListReal article,
+.chatRealPage .chatTabs,
+.chatRealPage .chatSearchBar,
+.chatRealPage .chatFilterPanel,
+.chatRealPage .chatFilterSummary,
+.chatRealPage .chatAttachmentSheet,
+.chatRealPage .chatModal,
+.chatRealPage .chatSettingsPanel,
+.chatRealPage .chatActionsPanel,
+.chatRealPage .themePanel,
+.chatRealPage .pollPanel,
+.chatRealPage .eventPanel,
+.chatRealPage .locationPanel,
+.chatRealPage .compactActionForm,
+.chatRealPage .quickReplyPanel,
+body.mizona-chat-app .chatAttachmentSheet,
+body.mizona-chat-app .chatModal{
+  color:var(--mz-chat-fg)!important;
+}
+
+.chatRealPage b,
+.chatRealPage h1,
+.chatRealPage h2,
+.chatRealPage h3,
+.chatRealPage h4,
+.chatRealPage label,
+.chatRealPage strong,
+.chatRealPage .chatModalHeader h2,
+.chatRealPage .chatModalHeader span,
+.chatRealPage .conversationHeader b,
+.chatRealPage .conversationList > button > span b,
+.chatRealPage .contactListReal b,
+.chatRealPage .requestListReal b,
+.chatRealPage .structuredHead b,
+.chatRealPage .catalogItem b,
+.chatRealPage .orderLines b,
+.chatRealPage .foundContactCard b,
+.chatRealPage .quickReplyChoice,
+body.mizona-chat-app .chatModal b,
+body.mizona-chat-app .chatModal h2,
+body.mizona-chat-app .chatModal label{
+  color:var(--mz-chat-fg)!important;
+}
+
+.chatRealPage p,
+.chatRealPage small,
+.chatRealPage span,
+.chatRealPage em,
+.chatRealPage .chatModalHeader p,
+.chatRealPage .conversationHeader span,
+.chatRealPage .conversationList > button > span small,
+.chatRealPage .contactListReal small,
+.chatRealPage .requestListReal small,
+.chatRealPage .mapPreview span,
+.chatRealPage .structuredCard p,
+.chatRealPage .structuredHead span,
+.chatRealPage .catalogItem span,
+.chatRealPage .foundContactCard small,
+body.mizona-chat-app .chatModal p,
+body.mizona-chat-app .chatModal small{
+  color:var(--mz-chat-muted)!important;
+}
+
+/* Inputs y controles del chat */
+.chatRealPage input,
+.chatRealPage textarea,
+.chatRealPage select,
+.chatRealPage option,
+body.mizona-chat-app .chatModal input,
+body.mizona-chat-app .chatModal textarea,
+body.mizona-chat-app .chatModal select,
+body.mizona-chat-app .chatAttachmentSheet input,
+body.mizona-chat-app .chatAttachmentSheet textarea,
+body.mizona-chat-app .chatAttachmentSheet select{
+  background:var(--mz-chat-soft-2)!important;
+  color:var(--mz-chat-fg)!important;
+  border:1px solid var(--mz-chat-line)!important;
+  caret-color:var(--mz-chat-accent)!important;
+}
+
+.chatRealPage input::placeholder,
+.chatRealPage textarea::placeholder,
+.chatRealPage select:invalid,
+body.mizona-chat-app .chatModal input::placeholder,
+body.mizona-chat-app .chatModal textarea::placeholder{
+  color:#8a97aa!important;
+  opacity:1!important;
+}
+
+.chatRealPage input:focus,
+.chatRealPage textarea:focus,
+.chatRealPage select:focus,
+body.mizona-chat-app .chatModal input:focus,
+body.mizona-chat-app .chatModal textarea:focus,
+body.mizona-chat-app .chatModal select:focus{
+  outline:none!important;
+  border-color:#8eb8ff!important;
+  box-shadow:0 0 0 3px rgba(25,103,255,.12)!important;
+}
+
+/* Modal y paneles */
+.chatRealPage .chatModal,
+body.mizona-chat-app .chatModal{
+  background:#fff!important;
+  border:1px solid var(--mz-chat-line)!important;
+  box-shadow:0 28px 80px rgba(2,6,23,.28)!important;
+}
+
+.chatRealPage .chatModalHeader,
+body.mizona-chat-app .chatModalHeader{
+  color:var(--mz-chat-fg)!important;
+}
+
+.chatRealPage .chatModalHeader .iconBtn,
+.chatRealPage .chatAttachmentSheet .iconBtn,
+body.mizona-chat-app .chatModalHeader .iconBtn{
+  background:#fff!important;
+  color:var(--mz-chat-fg)!important;
+  border:1px solid var(--mz-chat-line)!important;
+}
+
+.chatRealPage .chatModalHeader .iconBtn svg,
+.chatRealPage .chatAttachmentSheet .iconBtn svg,
+body.mizona-chat-app .chatModalHeader .iconBtn svg{
+  color:var(--mz-chat-fg)!important;
+}
+
+/* Tarjetas y bloques internos */
+.chatRealPage .foundContactCard,
+.chatRealPage .groupList,
+.chatRealPage .contactPicker,
+.chatRealPage .structuredCard,
+.chatRealPage .themeChoice,
+.chatRealPage .themePreviewCard,
+.chatRealPage .actionPanelCard,
+.chatRealPage .locationOption,
+.chatRealPage .pollOptionRow,
+.chatRealPage .orderLines,
+.chatRealPage .catalogItem,
+.chatRealPage .quickReplyChoice,
+.chatRealPage .attachmentOption,
+body.mizona-chat-app .chatModal .foundContactCard,
+body.mizona-chat-app .chatModal .structuredCard{
+  background:var(--mz-chat-soft)!important;
+  color:var(--mz-chat-fg)!important;
+  border-color:var(--mz-chat-line)!important;
+}
+
+.chatRealPage .groupCreator .typeSwitch button,
+.chatRealPage .pollChoices button,
+.chatRealPage .structuredActions .secondary,
+.chatRealPage .chatSettingsPanel button,
+.chatRealPage .chatActionsPanel button,
+.chatRealPage .themePanel button,
+.chatRealPage .quickReplyChoice,
+body.mizona-chat-app .chatModal .secondary{
+  color:var(--mz-chat-fg)!important;
+}
+
+.chatRealPage .groupCreator .typeSwitch button.active,
+.chatRealPage .pollChoices button.active{
+  color:var(--mz-chat-accent)!important;
+}
+
+/* Botones primarios */
+.chatRealPage .formActions button:not(.secondary),
+.chatRealPage .chatHeaderActions button:not(.secondary),
+.chatRealPage .chatModal .primary,
+.chatRealPage .chatModal .sendBtn,
+.chatRealPage .chatModal .createBtn,
+.chatRealPage .chatModal .confirmBtn,
+.chatRealPage .exactUserSearch button,
+body.mizona-chat-app .chatModal .formActions button:not(.secondary),
+body.mizona-chat-app .chatModal .exactUserSearch button{
+  background:linear-gradient(135deg,var(--mz-chat-accent),var(--mz-chat-accent-2))!important;
+  color:#fff!important;
+  border:0!important;
+}
+
+/* Hacer visibles filas especiales del formulario */
+.chatRealPage .switchRow,
+.chatRealPage .locationOption,
+.chatRealPage .pollOptionRow,
+.chatRealPage .groupCreator .pickList label,
+.chatRealPage .groupCreator .groupMemberOption,
+.chatRealPage .chatSettingsGroup button,
+body.mizona-chat-app .chatModal .switchRow{
+  color:var(--mz-chat-fg)!important;
+  background:#fff!important;
+  border-color:var(--mz-chat-line)!important;
+}
+
+.chatRealPage .switchRow span,
+.chatRealPage .switchRow small,
+.chatRealPage .locationOption span,
+.chatRealPage .locationOption small,
+.chatRealPage .groupCreator .pickList label span,
+.chatRealPage .groupCreator .pickList label small,
+.chatRealPage .chatSettingsGroup button span,
+body.mizona-chat-app .chatModal .switchRow span,
+body.mizona-chat-app .chatModal .switchRow small{
+  color:inherit!important;
+}
+
+/* Evitar texto blanco dentro de formularios de evento, encuesta, ubicación y acciones */
+.chatRealPage .eventPanel,
+.chatRealPage .pollPanel,
+.chatRealPage .locationPanel,
+.chatRealPage .compactActionForm,
+.chatRealPage .quickReplyPanel,
+.chatRealPage .themePanel,
+.chatRealPage .chatSettingsPanel,
+.chatRealPage .chatActionsPanel,
+body.mizona-chat-app .eventPanel,
+body.mizona-chat-app .pollPanel,
+body.mizona-chat-app .locationPanel,
+body.mizona-chat-app .compactActionForm,
+body.mizona-chat-app .quickReplyPanel,
+body.mizona-chat-app .themePanel,
+body.mizona-chat-app .chatSettingsPanel,
+body.mizona-chat-app .chatActionsPanel{
+  color:var(--mz-chat-fg)!important;
+}
+
+.chatRealPage .eventPanel *,
+.chatRealPage .pollPanel *,
+.chatRealPage .locationPanel *,
+.chatRealPage .compactActionForm *,
+.chatRealPage .quickReplyPanel *,
+.chatRealPage .themePanel *,
+.chatRealPage .chatSettingsPanel *,
+.chatRealPage .chatActionsPanel *,
+body.mizona-chat-app .eventPanel *,
+body.mizona-chat-app .pollPanel *,
+body.mizona-chat-app .locationPanel *,
+body.mizona-chat-app .compactActionForm *,
+body.mizona-chat-app .quickReplyPanel *,
+body.mizona-chat-app .themePanel *,
+body.mizona-chat-app .chatSettingsPanel *,
+body.mizona-chat-app .chatActionsPanel *{
+  color:inherit;
+}
+
+/* Mantener texto blanco solo donde sí corresponde */
+.chatRealPage .messageRow.own .messageBubble,
+.chatRealPage .messageRow.own .messageBubble *,
+.chatRealPage .messageComposer .sendBtnChat40,
+.chatRealPage .messageComposer .sendBtnChat40 *,
+.chatRealPage .conversationList > button em i,
+.chatRealPage .exactUserSearch button,
+.chatRealPage .exactUserSearch button *,
+.chatRealPage .formActions button:not(.secondary) *,
+.chatRealPage .chatHeaderActions button:not(.secondary) *{
+  color:#fff!important;
+}
+
+.chatRealPage .messageRow:not(.own) .messageBubble,
+.chatRealPage .messageRow:not(.own) .messageBubble *,
+.chatRealPage .messageComposer > input,
+.chatRealPage .chatSearchBar input{
+  color:var(--mz-chat-fg)!important;
+}
+
+/* Oscurecer un poco el fondo para que resalte el modal */
+.chatModalBackdrop,
+.chatAttachmentSheetBackdrop,
+body.mizona-chat-app .chatModalBackdrop,
+body.mizona-chat-app .chatAttachmentSheetBackdrop{
+  background:rgba(7,14,24,.72)!important;
+}
