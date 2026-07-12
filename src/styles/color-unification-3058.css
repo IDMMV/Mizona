@@ -1,0 +1,715 @@
+/* MiZona Enterprise V8 · 30.58
+   Unificación cromática global: una sola línea visual para todas las pantallas. */
+
+:root {
+  --u-bg: #eef2f6;
+  --u-bg-soft: #f7f9fc;
+  --u-surface: #ffffff;
+  --u-surface-2: #f8fbfd;
+  --u-text: #102033;
+  --u-text-soft: #5f7187;
+  --u-text-faint: #8a99ad;
+  --u-border: #d8e3ed;
+  --u-border-strong: #bfd0df;
+  --u-dark: #0d1f30;
+  --u-dark-2: #12273a;
+  --u-dark-3: #173148;
+  --u-primary: #16b88a;
+  --u-primary-strong: #10926d;
+  --u-primary-soft: rgba(22, 184, 138, 0.12);
+  --u-blue: #2563eb;
+  --u-blue-soft: rgba(37, 99, 235, 0.1);
+  --u-warning: #c98207;
+  --u-warning-bg: #fff4dc;
+  --u-danger: #e11d48;
+  --u-danger-bg: #fff1f5;
+  --u-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  --u-shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.05);
+  --u-hero: linear-gradient(135deg, #0e2b3e 0%, #0f5f69 58%, #16b88a 100%);
+  --u-dark-card: linear-gradient(145deg, #0d1f30, #11283a 70%, #153046 100%);
+}
+
+html, body { background: #06111d !important; }
+body { color: var(--u-text) !important; }
+.app,
+.app.mode-light,
+.app.mode-dark {
+  --page: var(--u-bg) !important;
+  --panel: var(--u-surface) !important;
+  --panel2: var(--u-surface-2) !important;
+  --ink: var(--u-text) !important;
+  --muted: var(--u-text-soft) !important;
+  --line: var(--u-border) !important;
+  --primary: var(--u-primary) !important;
+  --primary-strong: var(--u-primary-strong) !important;
+  background: var(--u-bg) !important;
+  color: var(--u-text) !important;
+}
+.app > main,
+.page,
+.content {
+  background: var(--u-bg) !important;
+  color: var(--u-text) !important;
+}
+.content { max-width: 1560px !important; }
+
+/* Sidebar + topbar */
+.sidebar {
+  background: linear-gradient(180deg, #07131f 0%, #081827 100%) !important;
+  border-right: 1px solid rgba(255,255,255,.06) !important;
+}
+.navItem,
+.navSectionLabel,
+.brand span,
+.phaseBox,
+.sidebarMode { color: #d4deea !important; }
+.navItem.active {
+  background: linear-gradient(90deg, rgba(22,184,138,.15), rgba(22,184,138,0)) !important;
+  border-color: rgba(22,184,138,.35) !important;
+  color: #eafff8 !important;
+  box-shadow: inset 3px 0 0 var(--u-primary);
+}
+.navItem svg,
+.navItem .lucide,
+.navItem i,
+.navItem span + small,
+.navSectionLabel,
+.brand .logo { color: inherit; }
+.topbar {
+  background: rgba(6,17,29,.96) !important;
+  border-bottom-color: rgba(255,255,255,.06) !important;
+}
+.searchBox,
+.iconBtn,
+.zoneBtn,
+.profileBtn,
+.runtimeBadge {
+  background: rgba(13,31,48,.92) !important;
+  border-color: rgba(255,255,255,.08) !important;
+  color: #ecf3fb !important;
+}
+.searchBox input::placeholder { color: #9fb1c6 !important; }
+
+/* Typography on light content */
+.page h1,
+.page h2,
+.page h3,
+.page h4,
+.page strong,
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+section h1,
+section h2,
+section h3,
+section h4,
+article h1,
+article h2,
+article h3,
+article h4 { color: var(--u-text) !important; }
+.page p,
+.page small,
+.page label,
+.page span,
+.page li,
+.page td,
+.page th,
+.card p,
+.card small,
+.card label,
+.card span,
+.card li,
+.card td,
+.card th { color: inherit; }
+.muted,
+small.muted,
+.page .muted,
+.page .helpText,
+.page .subtle,
+.page .caption,
+.page .eyebrow + p { color: var(--u-text-soft) !important; }
+
+/* Generic surfaces */
+.card,
+.grid2 > section,
+.grid2 > article,
+.grid3 > section,
+.grid3 > article,
+.sessionSummary,
+.accountForm,
+.syncStatus,
+.paymentForm,
+.paymentTable,
+.adminTableWrap,
+.financeForm,
+.financeTable,
+.aiChatCard,
+.aiConversationRail,
+.aiSide,
+.mkCPanel,
+.businessModePanel,
+.cartPanel,
+.orderFlow,
+.cashSummary,
+.cashSessionPanel,
+.deliveryRuleCard,
+.deliveryConfigCard,
+.deliveryFlowCard,
+.deliveryAdminCard,
+.architectureStatus37,
+.firebasePlan37,
+.tablePlan37,
+.phaseGrid37,
+.communityCardReal,
+.placeCard,
+.opportunityCard,
+.courseCard,
+.notificationList,
+.communityPanel,
+.localCard,
+.listingCard,
+.learningCard,
+.transferDemoCard,
+.singleAccessPanel,
+.mainPanel,
+.moduleCard,
+.quickCard,
+.summaryCard,
+.marketCard,
+.businessCard,
+.orderCard,
+.paymentCard,
+.financePanel,
+.eventPanel,
+.pollPanel,
+.gatewayCard,
+.campusAssignmentCard,
+.campusCourseCard,
+.roleMatrixCard,
+.themePanel,
+.themePreviewCard,
+.notificationItem,
+.chatSettingsPanel,
+.chatActionsPanel,
+.locationPanel,
+.pushPermissionVisiblePanel,
+.pushPermissionBox,
+.modalBackdrop > div,
+.chatModal {
+  background: var(--u-surface) !important;
+  color: var(--u-text) !important;
+  border: 1px solid var(--u-border) !important;
+  box-shadow: var(--u-shadow-soft) !important;
+}
+.card,
+.communityCardReal,
+.placeCard,
+.opportunityCard,
+.courseCard,
+.businessCard,
+.marketCard,
+.paymentCard,
+.financePanel,
+.gatewayCard { border-radius: 20px !important; }
+
+/* Hero blocks */
+.hero,
+.smartHero,
+.communityHero,
+.communityHeroReal,
+.committeeHero,
+.newCommitteeHero,
+.notificationHero,
+.commerceHero,
+.businessHero,
+.businessSuiteHero,
+.businessMarketHero,
+.benefitsHero,
+.marketHero,
+.mkHero,
+.mkCTopHero,
+.mkCHero,
+.campusHero,
+.financeHero,
+.transferHero,
+.rideHero,
+.rideDeliveryHero,
+.aiHero,
+.pushPermissionHero,
+.pushRealHero,
+.ordersHero,
+.pageHero,
+.moduleHero,
+.dashboardHero,
+.compactHero,
+.archiveHero,
+.labHero,
+.mizonaHero,
+.architectureHero {
+  background: var(--u-hero) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  box-shadow: var(--u-shadow) !important;
+}
+.hero *,
+.smartHero *,
+.communityHero *,
+.communityHeroReal *,
+.committeeHero *,
+.newCommitteeHero *,
+.notificationHero *,
+.commerceHero *,
+.businessHero *,
+.businessSuiteHero *,
+.businessMarketHero *,
+.benefitsHero *,
+.marketHero *,
+.mkHero *,
+.mkCTopHero *,
+.mkCHero *,
+.campusHero *,
+.financeHero *,
+.transferHero *,
+.rideHero *,
+.rideDeliveryHero *,
+.aiHero *,
+.pushPermissionHero *,
+.pushRealHero *,
+.ordersHero *,
+.pageHero *,
+.moduleHero *,
+.dashboardHero *,
+.compactHero *,
+.archiveHero *,
+.labHero *,
+.mizonaHero *,
+.architectureHero * { color: #ffffff !important; }
+.eyebrow { color: rgba(255,255,255,.76) !important; }
+
+/* KPI / stat cards */
+.kpiCard,
+.statCard,
+.financeKpi,
+.paymentKpi,
+.reportKpi,
+.businessKpi,
+.adminKpi,
+.orderStats > div,
+.businessStats > div,
+.communityStats > div,
+.committeeStats > div,
+.committeeKpi > span,
+.heroStats > span,
+.financeHeroCard,
+.notificationHeroStats > *,
+.aiAdminStats > *,
+.rideHeroStats > *,
+.marketHeroStats > *,
+.campusHeroStats > *,
+.businessHeroStats > *,
+.labStats > *,
+.yapeStats > *,
+.loyaltyStats > *,
+.driverStats > *,
+.rideHistoryStats > * {
+  background: var(--u-dark-card) !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  color: #ffffff !important;
+  box-shadow: var(--u-shadow-soft) !important;
+}
+.kpiCard *,
+.statCard *,
+.financeKpi *,
+.paymentKpi *,
+.reportKpi *,
+.businessKpi *,
+.adminKpi *,
+.orderStats > div *,
+.businessStats > div *,
+.communityStats > div *,
+.committeeStats > div *,
+.committeeKpi > span *,
+.heroStats > span *,
+.financeHeroCard *,
+.notificationHeroStats > * *,
+.aiAdminStats > * *,
+.rideHeroStats > * *,
+.marketHeroStats > * *,
+.campusHeroStats > * *,
+.businessHeroStats > * *,
+.labStats > * *,
+.yapeStats > * *,
+.loyaltyStats > * *,
+.driverStats > * *,
+.rideHistoryStats > * * { color: #ffffff !important; }
+
+/* Tabs, chips, filters */
+.tabs,
+.accessTabs,
+.actionsTabs,
+.archiveTabs,
+.benefitTabs,
+.businessTabs,
+.campusTabs,
+.committeeTabs,
+.expenseTabs,
+.financeTabs,
+.groupTypeTabs,
+.marketTabs,
+.moduleTabs,
+.paymentViewTabs,
+.pillTabs,
+.categoryTabs,
+.chatTabs,
+.chatFilterPanel,
+.notificationFilter,
+.dateFilter,
+.posFilter,
+.adminToolbar,
+.businessToolbar,
+.committeeToolbar,
+.communityToolbar,
+.benefitToolbar,
+.businessSearchPanel,
+.chatFilter,
+.chatFilterPanel,
+.mkCModeTabs {
+  background: transparent !important;
+  color: var(--u-text) !important;
+}
+.tabs button,
+.accessTabs button,
+.actionsTabs button,
+.archiveTabs button,
+.benefitTabs button,
+.businessTabs button,
+.campusTabs button,
+.committeeTabs button,
+.expenseTabs button,
+.financeTabs button,
+.groupTypeTabs button,
+.marketTabs button,
+.moduleTabs button,
+.paymentViewTabs button,
+.pillTabs button,
+.categoryTabs button,
+.chatTabs button,
+.notificationFilter button,
+.dateFilter button,
+.posFilter button,
+.adminToolbar button,
+.businessToolbar button,
+.committeeToolbar button,
+.communityToolbar button,
+.benefitToolbar button,
+.chatFilter button,
+.chatFilterPanel button,
+.mkCModeTabs button,
+.mkCCategoryChip,
+.pill,
+.userPill,
+.statusPill,
+.mineBadge,
+.managerBadge,
+.memberRoleBadge,
+.offerBadge,
+.discountBadge,
+.onlineBadge,
+.connectionBadge,
+.verificationBadge,
+.placeBadge,
+.communityHeroBadge,
+.countBadge,
+.notificationBadge,
+.rideStatusBadge,
+.campusStatusBadge,
+.greenBadge {
+  background: var(--u-dark) !important;
+  color: #eef6ff !important;
+  border: 1px solid rgba(13,31,48,.1) !important;
+  box-shadow: none !important;
+}
+.tabs button.active,
+.accessTabs button.active,
+.actionsTabs button.active,
+.archiveTabs button.active,
+.benefitTabs button.active,
+.businessTabs button.active,
+.campusTabs button.active,
+.committeeTabs button.active,
+.expenseTabs button.active,
+.financeTabs button.active,
+.groupTypeTabs button.active,
+.marketTabs button.active,
+.moduleTabs button.active,
+.paymentViewTabs button.active,
+.pillTabs button.active,
+.categoryTabs button.active,
+.chatTabs button.active,
+.notificationFilter button.active,
+.dateFilter button.active,
+.posFilter button.active,
+.adminToolbar button.active,
+.businessToolbar button.active,
+.committeeToolbar button.active,
+.communityToolbar button.active,
+.benefitToolbar button.active,
+.chatFilter button.active,
+.chatFilterPanel button.active,
+.mkCModeTabs button.active,
+.mkCCategoryChip.active,
+.pill.active,
+.greenBadge,
+.connectionBadge.online,
+.onlineBadge {
+  background: linear-gradient(135deg, var(--u-primary-strong), var(--u-primary)) !important;
+  color: #ffffff !important;
+  border-color: rgba(22,184,138,.35) !important;
+}
+.pill.beta,
+.offerBadge,
+.discountBadge,
+.communityHeroBadge.pending,
+.notificationBadge.warn,
+.placeBadge.pending { background: var(--u-warning-bg) !important; color: var(--u-warning) !important; border-color: rgba(201,130,7,.15) !important; }
+.pill.maintenance,
+.notificationBadge.danger,
+.placeBadge.danger,
+.verificationBadge.error { background: var(--u-danger-bg) !important; color: var(--u-danger) !important; border-color: rgba(225,29,72,.15) !important; }
+
+/* Buttons */
+.primary,
+.buttonPrimary,
+button.primaryAction,
+button[data-variant='primary'] {
+  background: linear-gradient(135deg, var(--u-primary-strong), var(--u-primary)) !important;
+  border: 1px solid rgba(22,184,138,.28) !important;
+  color: #fff !important;
+}
+.secondary,
+.ghost,
+.ghostButton,
+.secondaryButton,
+button.secondaryAction,
+button[data-variant='secondary'] {
+  background: var(--u-dark) !important;
+  border: 1px solid rgba(13,31,48,.1) !important;
+  color: #eef6ff !important;
+}
+button:not(.navItem):not(.iconBtn):not(.profileBtn):not(.zoneBtn):not(.mobileBottomNav button):not(.mkCBottomNav button):not(.tabs button):not(.accessTabs button):not(.actionsTabs button):not(.archiveTabs button):not(.benefitTabs button):not(.businessTabs button):not(.campusTabs button):not(.committeeTabs button):not(.expenseTabs button):not(.financeTabs button):not(.groupTypeTabs button):not(.marketTabs button):not(.moduleTabs button):not(.paymentViewTabs button):not(.pillTabs button):not(.categoryTabs button):not(.chatTabs button):not(.notificationFilter button):not(.dateFilter button):not(.posFilter button):not(.adminToolbar button):not(.businessToolbar button):not(.committeeToolbar button):not(.communityToolbar button):not(.benefitToolbar button):not(.chatFilter button):not(.chatFilterPanel button):not(.mkCModeTabs button):not(.ghost):not(.secondary):not(.danger):not(.dangerButton):not(.dangerSoft):not(.notificationDelete):not(.modalClose):not(.chatExitBtn):not(.chatSettingsBtn):not(.chatBack):not(.sidebarMasterToggle):not(.mkCFav) {
+  background: linear-gradient(135deg, var(--u-primary-strong), var(--u-primary)) !important;
+  border: 1px solid rgba(22,184,138,.28) !important;
+  color: #fff !important;
+}
+.danger,
+.dangerButton,
+.dangerSoft,
+.notificationDelete,
+.modalClose {
+  background: var(--u-danger-bg) !important;
+  color: var(--u-danger) !important;
+  border: 1px solid rgba(225,29,72,.16) !important;
+}
+button:disabled { opacity: .55 !important; }
+
+/* Light form controls for content area */
+input,
+select,
+textarea,
+.field,
+.adminSearch,
+.businessSearch,
+.communitySearch,
+.mkCSearch,
+.chatSearchBar,
+.exactUserSearch {
+  background: #ffffff !important;
+  color: var(--u-text) !important;
+  border: 1px solid var(--u-border) !important;
+}
+input::placeholder, textarea::placeholder { color: var(--u-text-faint) !important; }
+label,.fieldLabel { color: var(--u-text) !important; }
+
+/* Rows / list items / tables */
+.timelineItem,
+.thread,
+.foundContactCard,
+.teacherCard,
+.memberCard,
+.listRow,
+.notificationRow,
+.chatContactRow,
+.moduleMini > div,
+.adminTable > div,
+.adminTable.files > div,
+.workflowList button,
+.workflowList.static > div,
+.participant,
+.paymentCards article,
+.communityListItem,
+.notificationItem,
+.archiveRow,
+.orderLine,
+.trackRow,
+.financeTable article,
+.financeTable .row,
+.financeTable .entry,
+.communityCardReal .summaryRow,
+.placeCard .summaryRow,
+.courseCard .summaryRow,
+.campusAssignmentCard .summaryRow {
+  background: var(--u-surface) !important;
+  color: var(--u-text) !important;
+  border: 1px solid var(--u-border) !important;
+}
+.timelineItem span,
+.thread span,
+.thread small,
+.notificationItem small,
+.moduleMini small,
+.adminTable small,
+.paymentCards small,
+.participant small,
+.workflowList small,
+.listRow small,
+.financeTable small { color: var(--u-text-soft) !important; }
+
+/* Notification / alert panels */
+.pushPermissionBox,
+.alert,
+.notice,
+.localWarning,
+.runtimeWarning,
+.localModeBanner,
+.simulationBanner,
+.warningCard,
+.locationPermissionCard {
+  background: #eef6ff !important;
+  color: var(--u-text) !important;
+  border: 1px solid #cfe0f3 !important;
+}
+.alert-warning,
+.warning,
+.notice-warning,
+.simulationWarning,
+.localModeWarning {
+  background: var(--u-warning-bg) !important;
+  color: var(--u-warning) !important;
+  border: 1px solid #f0d59a !important;
+}
+
+/* Chat specific */
+.chatLayout,
+.chatWorkspace,
+.chatDirectory,
+.chatConversation,
+.chatBox {
+  background: transparent !important;
+}
+.thread,
+.chatHeader,
+.chatPageHeader,
+.chatConversationHeader,
+.chatDirectoryHeader,
+.chatModalHeader,
+.chatSettingsPanel,
+.chatActionsPanel {
+  background: var(--u-surface) !important;
+  color: var(--u-text) !important;
+  border: 1px solid var(--u-border) !important;
+}
+.thread.active,
+.thread:hover { border-color: rgba(22,184,138,.35) !important; background: #f2fbf7 !important; }
+.messages {
+  background: #f6f9fc !important;
+}
+.msg.them {
+  background: #ffffff !important;
+  color: var(--u-text) !important;
+  border: 1px solid var(--u-border) !important;
+}
+.msg.me {
+  background: linear-gradient(135deg, var(--u-primary-strong), var(--u-primary)) !important;
+  color: #ffffff !important;
+}
+.composer,
+.composer input,
+.chatComposer,
+.chatComposer input { background: #ffffff !important; color: var(--u-text) !important; }
+
+/* Commerce / cards with split visual blocks */
+.placeCard > div,
+.communityCardReal > div,
+.opportunityCard > div,
+.courseCard > div,
+.marketCard > div,
+.businessCard > div,
+.productCard > div,
+.campusCourseCard > div,
+.campusAssignmentCard > div {
+  color: inherit !important;
+}
+.placeCard h3,
+.placeCard h4,
+.communityCardReal h3,
+.communityCardReal h4,
+.courseCard h3,
+.courseCard h4,
+.marketCard h3,
+.marketCard h4,
+.businessCard h3,
+.businessCard h4,
+.productCard h3,
+.productCard h4,
+.campusCourseCard h3,
+.campusCourseCard h4,
+.campusAssignmentCard h3,
+.campusAssignmentCard h4 { color: var(--u-text) !important; }
+
+/* White content blocks where dark text was getting lost */
+.page section,
+.page article,
+.page .card,
+.page .panel,
+.page .tableWrap,
+.page .summaryWrap { color: var(--u-text) !important; }
+.page section p,
+.page article p,
+.page .card p,
+.page .panel p,
+.page .tableWrap p,
+.page .summaryWrap p,
+.page section small,
+.page article small,
+.page .card small,
+.page .panel small,
+.page .tableWrap small,
+.page .summaryWrap small,
+.page section label,
+.page article label,
+.page .card label,
+.page .panel label,
+.page .tableWrap label,
+.page .summaryWrap label { color: var(--u-text-soft) !important; }
+
+/* Mobile bottom nav */
+.mobileBottomNav,
+.bottomNav,
+.appBottomNav,
+.mkCBottomNav {
+  background: rgba(255,255,255,.96) !important;
+  border-top: 1px solid var(--u-border) !important;
+}
+.mobileBottomNav button,
+.bottomNav button,
+.appBottomNav button,
+.mkCBottomNav button { color: var(--u-text-soft) !important; }
+.mobileBottomNav button.active,
+.bottomNav button.active,
+.appBottomNav button.active,
+.mkCBottomNav button.active { color: var(--u-primary) !important; }
+
+/* Scroll containers */
+*::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+*::-webkit-scrollbar-track { background: transparent; }

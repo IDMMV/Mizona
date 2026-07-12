@@ -5,7 +5,7 @@ import './styles/theme-dark-mockup.css';
 import './styles/unified-design-3052.css';
 import './styles/web-global-3053.css';
 import './styles/design-system-3054.css';
-import './styles/final-replica-3057.css';
+import './styles/color-unification-3058.css';
 import { APP_VERSION } from './version.js';
 
 const rootElement = document.getElementById('root');
