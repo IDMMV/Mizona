@@ -6,6 +6,9 @@ import './styles/unified-design-3052.css';
 import './styles/web-global-3053.css';
 import './styles/design-system-3054.css';
 import './styles/color-unification-3058.css';
+import './styles/precision-layout-3059.css';
+import './styles/qa-final-3060.css';
+import './styles/palette-unified-3061.css';
 import { APP_VERSION } from './version.js';
 
 const rootElement = document.getElementById('root');

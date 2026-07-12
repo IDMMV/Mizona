@@ -1,0 +1,373 @@
+/* MiZona Enterprise V8 · 30.59
+   Ajuste fino visual: proporciones, espacios, bordes, contraste y responsive. */
+
+:root {
+  --p-content-max: 1480px;
+  --p-gap-1: 6px;
+  --p-gap-2: 10px;
+  --p-gap-3: 14px;
+  --p-gap-4: 18px;
+  --p-gap-5: 24px;
+  --p-radius-sm: 10px;
+  --p-radius-md: 14px;
+  --p-radius-lg: 18px;
+  --p-radius-xl: 22px;
+  --p-control-h: 42px;
+  --p-card-pad: 18px;
+}
+
+/* Marco general */
+.content {
+  max-width: var(--p-content-max) !important;
+  padding: 20px 22px 40px !important;
+}
+.page { width: 100%; min-width: 0; }
+.page > * + * { margin-top: 16px; }
+.pageTitle,
+.pageHeader,
+.sectionHeader,
+.cardHeader,
+.panelHeader {
+  gap: 12px !important;
+}
+.pageTitle { margin-bottom: 14px !important; }
+.page h1 { margin: 0 0 6px !important; }
+.page h2,
+.page h3 { margin-top: 0; }
+.page p { line-height: 1.5; }
+
+/* Menú lateral más compacto y proporcionado */
+.sidebar { width: 248px !important; }
+.app > main { margin-left: 248px !important; width: calc(100% - 248px) !important; }
+.brand { margin-bottom: 10px !important; }
+.navItem { min-height: 40px !important; padding: 8px 11px !important; }
+.navSectionLabel { padding-top: 12px !important; }
+.sidebarMode,
+.phaseBox { padding: 12px !important; }
+
+/* Barra superior */
+.topbar { height: 64px !important; padding: 0 18px !important; gap: 10px !important; }
+.searchBox { height: 42px !important; max-width: none !important; }
+.iconBtn,.zoneBtn,.profileBtn,.runtimeBadge { min-height: 40px !important; }
+
+/* Héroes más compactos */
+.hero,
+.smartHero,
+.communityHero,
+.communityHeroReal,
+.committeeHero,
+.newCommitteeHero,
+.notificationHero,
+.commerceHero,
+.businessHero,
+.businessSuiteHero,
+.businessMarketHero,
+.benefitsHero,
+.marketHero,
+.mkHero,
+.mkCTopHero,
+.mkCHero,
+.campusHero,
+.financeHero,
+.transferHero,
+.rideHero,
+.rideDeliveryHero,
+.aiHero,
+.pushPermissionHero,
+.pushRealHero,
+.ordersHero,
+.pageHero,
+.moduleHero,
+.dashboardHero,
+.compactHero,
+.archiveHero,
+.labHero,
+.mizonaHero,
+.architectureHero {
+  padding: 22px !important;
+  border-radius: var(--p-radius-xl) !important;
+  min-height: auto !important;
+}
+.hero h1,
+.smartHero h1,
+.communityHero h1,
+.committeeHero h1,
+.notificationHero h1,
+.businessHero h1,
+.marketHero h1,
+.campusHero h1,
+.financeHero h1,
+.rideHero h1 { font-size: clamp(25px,2vw,32px) !important; }
+.heroStats,
+.communityStats,
+.committeeStats,
+.notificationHeroStats,
+.businessHeroStats,
+.marketHeroStats,
+.campusHeroStats,
+.rideHeroStats { gap: 10px !important; }
+.heroStats > *,
+.communityStats > *,
+.committeeStats > *,
+.notificationHeroStats > *,
+.businessHeroStats > *,
+.marketHeroStats > *,
+.campusHeroStats > *,
+.rideHeroStats > * { padding: 12px 14px !important; border-radius: 14px !important; }
+
+/* Tarjetas y paneles */
+.card,
+.communityCardReal,
+.placeCard,
+.opportunityCard,
+.courseCard,
+.businessCard,
+.marketCard,
+.paymentCard,
+.financePanel,
+.gatewayCard,
+.moduleCard,
+.quickCard,
+.summaryCard,
+.mainPanel,
+.singleAccessPanel,
+.chatSettingsPanel,
+.chatActionsPanel,
+.modalBackdrop > div,
+.chatModal {
+  padding: var(--p-card-pad) !important;
+  border-radius: var(--p-radius-lg) !important;
+}
+.grid2,.grid3,.quickGrid,.adminGrid,.participantGrid,.opportunityGrid {
+  gap: 14px !important;
+  margin-top: 14px !important;
+}
+.cardHead,.cardHeader,.sectionHeader,.panelHeader { margin-bottom: 12px !important; }
+
+/* Controles */
+input,select,textarea,.field,.adminSearch,.businessSearch,.communitySearch,.mkCSearch,.chatSearchBar,.exactUserSearch {
+  min-height: var(--p-control-h) !important;
+  padding: 9px 12px !important;
+  border-radius: var(--p-radius-sm) !important;
+  font-size: 14px !important;
+}
+textarea { min-height: 96px !important; }
+label,.fieldLabel { margin-bottom: 5px !important; }
+button,.primary,.secondary,.ghost,.dangerButton,.dangerSoft,.ghostButton,.secondaryButton {
+  min-height: 40px !important;
+  padding: 9px 14px !important;
+  border-radius: var(--p-radius-sm) !important;
+}
+
+/* Pestañas y filtros sin bloques enormes */
+.tabs,
+.accessTabs,
+.actionsTabs,
+.archiveTabs,
+.benefitTabs,
+.businessTabs,
+.campusTabs,
+.committeeTabs,
+.expenseTabs,
+.financeTabs,
+.groupTypeTabs,
+.marketTabs,
+.moduleTabs,
+.paymentViewTabs,
+.pillTabs,
+.categoryTabs,
+.chatTabs,
+.notificationFilter,
+.dateFilter,
+.posFilter,
+.mkCModeTabs {
+  gap: 7px !important;
+  margin: 12px 0 !important;
+  padding: 0 !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar,
+.accessTabs::-webkit-scrollbar,
+.categoryTabs::-webkit-scrollbar,
+.chatTabs::-webkit-scrollbar { display: none; }
+.tabs button,
+.accessTabs button,
+.actionsTabs button,
+.archiveTabs button,
+.benefitTabs button,
+.businessTabs button,
+.campusTabs button,
+.committeeTabs button,
+.expenseTabs button,
+.financeTabs button,
+.groupTypeTabs button,
+.marketTabs button,
+.moduleTabs button,
+.paymentViewTabs button,
+.pillTabs button,
+.categoryTabs button,
+.chatTabs button,
+.notificationFilter button,
+.dateFilter button,
+.posFilter button,
+.mkCModeTabs button {
+  white-space: nowrap;
+  min-height: 38px !important;
+  padding: 8px 12px !important;
+  border-radius: 10px !important;
+}
+
+/* Filas y listas */
+.timelineItem,
+.thread,
+.foundContactCard,
+.teacherCard,
+.memberCard,
+.listRow,
+.notificationRow,
+.chatContactRow,
+.moduleMini > div,
+.adminTable > div,
+.adminTable.files > div,
+.workflowList button,
+.workflowList.static > div,
+.participant,
+.paymentCards article,
+.communityListItem,
+.notificationItem,
+.archiveRow,
+.orderLine,
+.trackRow,
+.financeTable article,
+.financeTable .row,
+.financeTable .entry {
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+.threadList,.timeline,.workflowList,.paymentCards,.notificationList { gap: 9px !important; }
+
+/* Estadísticas */
+.kpiCard,
+.statCard,
+.financeKpi,
+.paymentKpi,
+.reportKpi,
+.businessKpi,
+.adminKpi {
+  min-height: 82px !important;
+  padding: 14px 16px !important;
+  border-radius: 16px !important;
+}
+.kpiCard b,.statCard b,.financeKpi b,.paymentKpi b,.businessKpi b,.adminKpi b {
+  font-size: 22px !important;
+}
+
+/* Pantallas de dos columnas realmente pensadas para escritorio */
+.chatLayout,
+.chatWorkspace { grid-template-columns: minmax(280px,340px) minmax(0,1fr) !important; gap: 14px !important; }
+.grid2 { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+.grid3 { grid-template-columns: repeat(3,minmax(0,1fr)) !important; }
+.adminGrid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+
+/* Chat: aprovechar el espacio y mantener proporciones */
+.chatDirectory { min-width: 0; }
+.chatConversation,.chatBox { min-width: 0; }
+.chatHeader,.chatConversationHeader,.chatPageHeader { padding: 13px 15px !important; }
+.messages { min-height: 420px !important; padding: 16px !important; }
+.msg { max-width: min(72%,620px) !important; padding: 10px 13px !important; }
+.composer,.chatComposer { padding: 10px !important; gap: 8px !important; }
+.chatEmpty,.emptyState { max-width: 520px; margin: 48px auto !important; padding: 24px !important; }
+
+/* Comunidad y tarjetas comerciales */
+.communityCardReal,
+.placeCard,
+.marketCard,
+.businessCard,
+.opportunityCard,
+.courseCard { overflow: hidden; }
+.communityCardReal > :first-child,
+.placeCard > :first-child,
+.marketCard > :first-child,
+.businessCard > :first-child,
+.opportunityCard > :first-child,
+.courseCard > :first-child { margin-top: 0 !important; }
+
+/* Formularios administrativos */
+.adminTableWrap,.financeTable,.paymentTable { overflow-x: auto; }
+.adminTable > div,.moduleMini > div { align-items: center !important; }
+.adminGrid label { padding: 12px !important; }
+.paymentForm,.financeForm,.accountForm { display: grid; gap: 10px !important; }
+
+/* Mejor legibilidad de secundarios */
+.page .muted,
+.page small,
+.card small,
+.timelineItem span,
+.thread span,
+.thread small,
+.notificationItem small { opacity: 1 !important; }
+button:disabled { opacity: .62 !important; }
+
+/* Tablet */
+@media (max-width: 1180px) {
+  .content { padding: 18px 18px 36px !important; }
+  .grid3 { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  .hero,
+  .smartHero,
+  .communityHero,
+  .committeeHero,
+  .notificationHero,
+  .businessHero,
+  .marketHero,
+  .campusHero,
+  .financeHero,
+  .rideHero { grid-template-columns: 1fr !important; }
+}
+
+/* Móvil */
+@media (max-width: 900px) {
+  .sidebar { width: min(86vw,300px) !important; }
+  .app > main { margin-left: 0 !important; width: 100% !important; }
+  .content { padding: 14px 12px 88px !important; }
+  .topbar { height: 60px !important; padding: 0 10px !important; }
+  .searchBox { min-width: 0 !important; }
+  .grid2,.grid3,.quickGrid,.adminGrid,.chatLayout,.chatWorkspace,.participantGrid,.opportunityGrid {
+    grid-template-columns: 1fr !important;
+  }
+  .hero,
+  .smartHero,
+  .communityHero,
+  .committeeHero,
+  .notificationHero,
+  .businessHero,
+  .marketHero,
+  .campusHero,
+  .financeHero,
+  .rideHero { padding: 18px !important; border-radius: 18px !important; }
+  .card,
+  .communityCardReal,
+  .placeCard,
+  .opportunityCard,
+  .courseCard,
+  .businessCard,
+  .marketCard,
+  .paymentCard,
+  .financePanel,
+  .gatewayCard,
+  .moduleCard,
+  .quickCard,
+  .summaryCard { padding: 14px !important; border-radius: 16px !important; }
+  .messages { min-height: 52vh !important; }
+  .msg { max-width: 88% !important; }
+}
+
+@media (max-width: 520px) {
+  .content { padding-inline: 10px !important; }
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 19px !important; }
+  .heroStats,.communityStats,.committeeStats,.notificationHeroStats,.businessHeroStats,.marketHeroStats,.campusHeroStats,.rideHeroStats {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  }
+  .kpiCard,.statCard,.financeKpi,.paymentKpi,.businessKpi,.adminKpi { min-height: 74px !important; }
+}

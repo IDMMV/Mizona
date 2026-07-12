@@ -1,0 +1,208 @@
+/* MiZona Enterprise V8 · 30.61
+   Paleta única global: todos los módulos comparten la misma identidad visual.
+   Los colores semánticos se reservan para éxito, advertencia, error e información. */
+
+:root {
+  --mz61-shell: #081523;
+  --mz61-shell-2: #0d2234;
+  --mz61-page: #eef3f7;
+  --mz61-surface: #ffffff;
+  --mz61-surface-soft: #f7fafc;
+  --mz61-text: #102235;
+  --mz61-muted: #61758a;
+  --mz61-line: #d7e2eb;
+  --mz61-primary: #1976b9;
+  --mz61-primary-strong: #125987;
+  --mz61-primary-soft: rgba(25,118,185,.11);
+  --mz61-success: #178b69;
+  --mz61-warning: #c57a09;
+  --mz61-danger: #d93659;
+  --mz61-info: #1976b9;
+}
+
+/* Elimina los colores propios por módulo. */
+.panelSmartPage,
+.communityRealPage,
+.committeeFinancePage,
+.chatRealPage,
+.notificationsPage,
+.businessPage,
+.marketplacePage,
+.businessSuitePage,
+.campusPage,
+.ridePage,
+.rideDeliveryPage,
+.benefitsPage,
+.personalFinancePage,
+.paymentsPage,
+.gatewayPage,
+.aiPage,
+.architecturePage37,
+.qualityPage,
+.cloudPage,
+.syncPage,
+.localLabPage,
+.transferExplainPage38,
+.page {
+  --qa-accent: var(--mz61-primary) !important;
+  --qa-accent-strong: var(--mz61-primary-strong) !important;
+  --qa-accent-soft: var(--mz61-primary-soft) !important;
+  --primary: var(--mz61-primary) !important;
+  --primary-strong: var(--mz61-primary-strong) !important;
+}
+
+.app,
+.app.mode-light,
+.app.mode-dark {
+  --primary: var(--mz61-primary) !important;
+  --primary-strong: var(--mz61-primary-strong) !important;
+  --page: var(--mz61-page) !important;
+  --panel: var(--mz61-surface) !important;
+  --panel2: var(--mz61-surface-soft) !important;
+  --ink: var(--mz61-text) !important;
+  --muted: var(--mz61-muted) !important;
+  --line: var(--mz61-line) !important;
+  background: var(--mz61-page) !important;
+}
+
+/* Navegación: una sola identidad, sin iconos multicolor. */
+.sidebar {
+  background: linear-gradient(180deg,var(--mz61-shell),#091a29) !important;
+}
+.navItem svg,
+.navItem i,
+.navItem .lucide {
+  color: #9eb0c3 !important;
+}
+.navItem:hover svg,
+.navItem:hover i,
+.navItem.active svg,
+.navItem.active i,
+.navItem.active .lucide {
+  color: #ffffff !important;
+}
+.navItem.active {
+  background: linear-gradient(90deg,rgba(25,118,185,.2),rgba(25,118,185,0)) !important;
+  border-color: rgba(25,118,185,.34) !important;
+  box-shadow: inset 3px 0 0 var(--mz61-primary) !important;
+  color: #ffffff !important;
+}
+.brand .logo {
+  background: linear-gradient(135deg,var(--mz61-primary-strong),var(--mz61-primary)) !important;
+}
+
+/* Todos los banners y héroes comparten el mismo gradiente. */
+.hero,.smartHero,.communityHero,.communityHeroReal,.committeeHero,.newCommitteeHero,
+.notificationHero,.commerceHero,.businessHero,.businessSuiteHero,.businessMarketHero,
+.benefitsHero,.marketHero,.mkHero,.mkCTopHero,.mkCHero,.campusHero,.financeHero,
+.transferHero,.rideHero,.rideDeliveryHero,.aiHero,.pushPermissionHero,.pushRealHero,
+.ordersHero,.pageHero,.moduleHero,.dashboardHero,.compactHero,.archiveHero,.labHero,
+.mizonaHero,.architectureHero,.architectureHero37,.financeHero38,.transferHero38,
+.yapeBenefitsHero {
+  background:
+    radial-gradient(circle at 92% 8%,rgba(25,118,185,.18),transparent 32%),
+    linear-gradient(135deg,#102536 0%,#132c40 62%,#17384c 100%) !important;
+}
+
+/* Acción primaria única para toda la aplicación. */
+.primary,.buttonPrimary,button.primaryAction,button[data-variant='primary'],
+.tabs button.active,.accessTabs button.active,.actionsTabs button.active,
+.archiveTabs button.active,.benefitTabs button.active,.businessTabs button.active,
+.campusTabs button.active,.committeeTabs button.active,.expenseTabs button.active,
+.financeTabs button.active,.groupTypeTabs button.active,.marketTabs button.active,
+.moduleTabs button.active,.paymentViewTabs button.active,.pillTabs button.active,
+.categoryTabs button.active,.chatTabs button.active,.notificationFilter button.active,
+.dateFilter button.active,.posFilter button.active,.mkCModeTabs button.active,
+.chatFilterPanel button.active,.mkCCategoryChip.active {
+  background: linear-gradient(135deg,var(--mz61-primary-strong),var(--mz61-primary)) !important;
+  border-color: rgba(25,118,185,.35) !important;
+  color: #ffffff !important;
+}
+
+/* Controles activos/focus con el mismo color global. */
+input:focus,select:focus,textarea:focus,.field:focus-within {
+  border-color: var(--mz61-primary) !important;
+  box-shadow: 0 0 0 3px var(--mz61-primary-soft) !important;
+}
+.page a,
+.link,
+.textLink {
+  color: var(--mz61-primary) !important;
+}
+.thread.active,.thread:hover {
+  background: var(--mz61-primary-soft) !important;
+  border-color: rgba(25,118,185,.32) !important;
+}
+.msg.me {
+  background: linear-gradient(135deg,var(--mz61-primary-strong),var(--mz61-primary)) !important;
+}
+
+/* KPI: todos iguales, sin color por módulo. */
+.kpiCard,.statCard,.financeKpi,.paymentKpi,.reportKpi,.businessKpi,.adminKpi,
+.orderStats>div,.businessStats>div,.communityStats>div,.committeeStats>div,
+.committeeKpi>span,.heroStats>span,.financeHeroCard,.notificationHeroStats>*,
+.aiAdminStats>*,.rideHeroStats>*,.marketHeroStats>*,.campusHeroStats>*,
+.businessHeroStats>*,.labStats>*,.yapeStats>*,.loyaltyStats>*,.driverStats>*,
+.rideHistoryStats>* {
+  background: linear-gradient(145deg,#102536,#132d41) !important;
+}
+
+/* Insignias neutras: solo los estados reales conservan color semántico. */
+.pill,.badge,.statusBadge,.userPill,.mineBadge,.managerBadge,.memberRoleBadge,
+.offerBadge,.discountBadge,.placeBadge,.communityHeroBadge,.countBadge,
+.notificationBadge,.rideStatusBadge,.campusStatusBadge,.verificationBadge {
+  background: #edf3f8 !important;
+  color: #3c5268 !important;
+  border-color: var(--mz61-line) !important;
+}
+.pill.active,.greenBadge,.onlineBadge,.connectionBadge.online,.status-success,
+.successBadge,.paidBadge,.approvedBadge {
+  background: #e7f5f0 !important;
+  color: var(--mz61-success) !important;
+  border-color: #bee3d7 !important;
+}
+.warningBadge,.pill.beta,.status-warning,.pendingBadge {
+  background: #fff5df !important;
+  color: var(--mz61-warning) !important;
+  border-color: #efd49d !important;
+}
+.dangerBadge,.pill.maintenance,.status-danger,.errorBadge,.blockedBadge {
+  background: #fff0f3 !important;
+  color: var(--mz61-danger) !important;
+  border-color: #f1c0cb !important;
+}
+.infoBadge,.status-info {
+  background: #edf6ff !important;
+  color: var(--mz61-info) !important;
+  border-color: #c9def0 !important;
+}
+
+/* Evita tarjetas naranjas, moradas, verdes o rosadas heredadas. */
+.businessPage .card,
+.marketplacePage .card,
+.campusPage .card,
+.benefitsPage .card,
+.notificationsPage .card,
+.ridePage .card,
+.aiPage .card,
+.paymentsPage .card,
+.personalFinancePage .card,
+.committeeFinancePage .card,
+.communityRealPage .card {
+  background: var(--mz61-surface) !important;
+  border-color: var(--mz61-line) !important;
+}
+
+/* Iconos funcionales: neutros salvo estados semánticos. */
+.page svg:not(.successIcon):not(.warningIcon):not(.dangerIcon),
+.card svg:not(.successIcon):not(.warningIcon):not(.dangerIcon) {
+  color: currentColor;
+}
+
+/* La barra inferior usa la misma selección azul. */
+.mobileBottomNav button.active,
+.bottomNav button.active,
+.appBottomNav button.active,
+.mkCBottomNav button.active {
+  color: var(--mz61-primary) !important;
+}

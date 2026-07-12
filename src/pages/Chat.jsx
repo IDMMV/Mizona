@@ -43,6 +43,40 @@ const formatChatDateLabel = value => {
 
 const mapsUrl = (lat, lng) => `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 
+const MZ_STRUCT_PREFIX = '[[MZCHAT:1]]';
+const newId = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+const encodeStructured = (type, data = {}) => `${MZ_STRUCT_PREFIX}${JSON.stringify({ type, ...data })}`;
+const parseStructured = body => {
+  const text = String(body || '');
+  if (!text.startsWith(MZ_STRUCT_PREFIX)) return null;
+  try { return JSON.parse(text.slice(MZ_STRUCT_PREFIX.length)); } catch { return null; }
+};
+const structuredPreview = body => {
+  const data = parseStructured(body);
+  if (!data) return body || '';
+  const labels = { location: data.live ? 'Ubicación en tiempo real' : 'Ubicación', contact: `Contacto: ${data.name || ''}`, poll: `Encuesta: ${data.question || ''}`, poll_vote: 'Voto actualizado', event: `Evento: ${data.title || ''}`, event_rsvp: 'Respuesta a evento', order: `Pedido: ${data.item || ''}`, order_status: `Pedido ${data.status || ''}`, catalog: `Catálogo: ${data.item || ''}` };
+  return labels[data.type] || 'Elemento del chat';
+};
+const openWhatsAppShare = text => window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+const shareText = async ({ title, text, url }) => {
+  if (navigator.share) {
+    try { await navigator.share({ title, text, url }); return true; } catch (error) { if (error?.name !== 'AbortError') throw error; return false; }
+  }
+  if (navigator.clipboard) await navigator.clipboard.writeText([text, url].filter(Boolean).join('\n'));
+  return false;
+};
+const downloadCalendarEvent = data => {
+  const compact = value => String(value || '').replaceAll('-', '').replaceAll(':', '').slice(0, 15);
+  const start = data.date ? `${compact(data.date)}T${compact(data.time || '09:00')}00` : compact(new Date().toISOString()).slice(0, 8) + 'T090000';
+  const endDate = new Date(`${data.date || new Date().toISOString().slice(0,10)}T${data.time || '09:00'}:00`);
+  endDate.setHours(endDate.getHours() + 1);
+  const end = `${endDate.getFullYear()}${String(endDate.getMonth()+1).padStart(2,'0')}${String(endDate.getDate()).padStart(2,'0')}T${String(endDate.getHours()).padStart(2,'0')}${String(endDate.getMinutes()).padStart(2,'0')}00`;
+  const escapeIcs = value => String(value || '').replaceAll('\\','\\\\').replaceAll('\n','\\n').replaceAll(',','\\,').replaceAll(';','\\;');
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MiZona//Chat Event//ES','BEGIN:VEVENT',`UID:${data.eventId || newId('event')}@mizona`,`DTSTART:${start}`,`DTEND:${end}`,`SUMMARY:${escapeIcs(data.title)}`,`LOCATION:${escapeIcs(data.place)}`,`DESCRIPTION:${escapeIcs(data.description)}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const link = document.createElement('a'); link.href = url; link.download = `${String(data.title || 'evento').replace(/[^a-z0-9_-]+/gi,'_')}.ics`; link.click(); URL.revokeObjectURL(url);
+};
+
 const formatBytes = value => {
   const bytes = Number(value || 0);
   if (!bytes) return '0 KB';
@@ -113,6 +147,55 @@ function AttachmentPreview({ attachment, onNotice }) {
   return <button className="attachmentCard" onClick={() => attachment.storage_path ? openChatAttachment(attachment.storage_path).catch(error => onNotice?.(error.message)) : onNotice?.('Archivo de demostración.') }>
     <File size={22}/><span><b>{attachment.file_name}</b><small>{formatBytes(attachment.size_bytes)} · enlace privado</small></span><Download size={17}/>
   </button>;
+}
+
+
+function StructuredMessage({ data, message, allMessages, currentUser, onSend, onNotice }) {
+  const votes = allMessages.map(item => ({ item, data: parseStructured(item.body) })).filter(entry => entry.data?.type === 'poll_vote' && entry.data.pollId === data.pollId);
+  const latestVoteByUser = new Map();
+  votes.forEach(entry => latestVoteByUser.set(entry.data.voterId || entry.item.sender_id || entry.item.sender_username, entry.data));
+  const pollTotals = (data.options || []).map((_, index) => [...latestVoteByUser.values()].filter(vote => (vote.optionIndices || []).includes(index)).length);
+  const myVote = latestVoteByUser.get(currentUser?.id || currentUser?.username);
+  const rsvps = allMessages.map(item => parseStructured(item.body)).filter(item => item?.type === 'event_rsvp' && item.eventId === data.eventId);
+  const latestRsvp = new Map(); rsvps.forEach(item => latestRsvp.set(item.userId, item));
+  const orderStatuses = allMessages.map(item => parseStructured(item.body)).filter(item => item?.type === 'order_status' && item.orderId === data.orderId);
+  const lastOrderStatus = orderStatuses.at(-1)?.status || data.status || 'pendiente';
+
+  if (data.type === 'location') {
+    const url = mapsUrl(data.lat, data.lng);
+    const text = `${data.live ? 'Ubicación en tiempo real' : 'Mi ubicación actual'}: ${url}`;
+    return <div className="structuredCard locationCard"><div className="structuredHead"><MapPin/><div><b>{data.live ? 'Ubicación en tiempo real' : 'Ubicación compartida'}</b><span>{data.live ? `Disponible hasta ${new Date(data.expiresAt).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}` : `Precisión aproximada: ${Math.round(data.accuracy || 0)} m`}</span></div></div><div className="mapPreview"><MapPin size={30}/><span>{Number(data.lat).toFixed(5)}, {Number(data.lng).toFixed(5)}</span></div><div className="structuredActions"><button onClick={() => window.open(url,'_blank','noopener,noreferrer')}>Abrir Maps</button><button className="secondary" onClick={() => openWhatsAppShare(text)}>WhatsApp</button><button className="secondary" onClick={() => shareText({title:'Ubicación MiZona',text,url}).then(shared => !shared && onNotice('Enlace copiado.'))}>Compartir</button></div></div>;
+  }
+  if (data.type === 'contact') {
+    const digits = String(data.phone || '').replace(/\D/g,'');
+    return <div className="structuredCard contactShareCard"><div className="structuredHead"><Contact/><div><b>{data.name}</b><span>{data.phone}</span></div></div>{data.note && <p>{data.note}</p>}<div className="structuredActions"><a href={`tel:${data.phone}`}>Llamar</a><button onClick={() => window.open(`https://wa.me/${digits}`,'_blank','noopener,noreferrer')}>WhatsApp</button><button className="secondary" onClick={() => navigator.clipboard?.writeText(`${data.name}\n${data.phone}`).then(() => onNotice('Contacto copiado.'))}>Copiar</button></div></div>;
+  }
+  if (data.type === 'poll') {
+    const totalVotes = latestVoteByUser.size;
+    const choose = index => {
+      let indices = data.multiple ? [...(myVote?.optionIndices || [])] : [];
+      indices = data.multiple ? (indices.includes(index) ? indices.filter(i => i !== index) : [...indices,index]) : [index];
+      onSend('poll_vote',{ pollId:data.pollId, optionIndices:indices, voterId:currentUser?.id || currentUser?.username, voterName:currentUser?.display_name || currentUser?.username });
+    };
+    return <div className="structuredCard pollCard"><div className="structuredHead"><BarChart3/><div><b>{data.question}</b><span>{data.multiple ? 'Varias respuestas permitidas' : 'Una respuesta'} · {totalVotes} participante(s)</span></div></div><div className="pollChoices">{data.options.map((option,index) => { const active=(myVote?.optionIndices||[]).includes(index); const pct=totalVotes ? Math.round((pollTotals[index]/totalVotes)*100) : 0; return <button key={index} className={active?'active':''} onClick={() => choose(index)}><span>{active ? <Check size={15}/> : null}{option}</span>{data.results && <em>{pollTotals[index]} · {pct}%</em>}<i style={{width:`${pct}%`}}/></button>; })}</div></div>;
+  }
+  if (data.type === 'poll_vote') return <div className="structuredMini"><Check size={14}/> Voto actualizado</div>;
+  if (data.type === 'event') {
+    const attending=[...latestRsvp.values()].filter(item=>item.response==='yes').length;
+    const maybe=[...latestRsvp.values()].filter(item=>item.response==='maybe').length;
+    const rsvp=response=>onSend('event_rsvp',{eventId:data.eventId,response,userId:currentUser?.id || currentUser?.username,userName:currentUser?.display_name || currentUser?.username});
+    return <div className="structuredCard eventCard"><div className="structuredHead"><CalendarDays/><div><b>{data.title}</b><span>{data.date || 'Fecha por definir'} {data.time || ''}</span></div></div><p><MapPin size={14}/> {data.place || 'Lugar por definir'}</p>{data.description && <p>{data.description}</p>}<small>{attending} asistirán · {maybe} tal vez</small><div className="structuredActions"><button onClick={()=>rsvp('yes')}>Asistiré</button><button className="secondary" onClick={()=>rsvp('maybe')}>Tal vez</button><button className="secondary" onClick={()=>rsvp('no')}>No iré</button><button className="secondary" onClick={()=>downloadCalendarEvent(data)}>Calendario</button></div></div>;
+  }
+  if (data.type === 'event_rsvp') return <div className="structuredMini"><CalendarDays size={14}/> Respuesta al evento: {data.response === 'yes' ? 'Asistiré' : data.response === 'maybe' ? 'Tal vez' : 'No asistiré'}</div>;
+  if (data.type === 'order') {
+    const total=Number(data.quantity||1)*Number(data.price||0);
+    return <div className="structuredCard orderShareCard"><div className="structuredHead"><ShoppingBag/><div><b>Pedido #{String(data.orderId).slice(-6).toUpperCase()}</b><span className={`orderStatus ${lastOrderStatus}`}>{lastOrderStatus}</span></div></div><div className="orderLines"><span>{data.item}</span><span>{data.quantity} × S/ {Number(data.price||0).toFixed(2)}</span><b>S/ {total.toFixed(2)}</b></div>{data.note && <p>{data.note}</p>}<div className="structuredActions"><button onClick={()=>onSend('order_status',{orderId:data.orderId,status:'confirmado'})}>Confirmar</button><button className="secondary" onClick={()=>onSend('order_status',{orderId:data.orderId,status:'preparando'})}>Preparando</button><button className="secondary" onClick={()=>onSend('order_status',{orderId:data.orderId,status:'entregado'})}>Entregado</button></div></div>;
+  }
+  if (data.type === 'order_status') return <div className="structuredMini"><ShoppingBag size={14}/> Pedido actualizado: {data.status}</div>;
+  if (data.type === 'catalog') {
+    return <div className="structuredCard catalogShareCard"><div className="structuredHead"><Store/><div><b>{data.provider}</b><span>{data.availability || 'Disponible'}</span></div></div><div className="catalogItem"><b>{data.item}</b><span>S/ {Number(data.price||0).toFixed(2)}</span></div>{data.description && <p>{data.description}</p>}<div className="structuredActions"><button onClick={()=>onSend('order',{orderId:newId('order'),item:data.item,quantity:1,price:Number(data.price||0),note:`Solicitado desde el catálogo de ${data.provider}`,status:'pendiente'})}>Pedir</button><button className="secondary" onClick={()=>openWhatsAppShare(`${data.provider}: ${data.item} - S/ ${Number(data.price||0).toFixed(2)}`)}>Compartir</button></div></div>;
+  }
+  return <p>{message.body}</p>;
 }
 
 function ContactSearch({ onChanged, onClose }) {
@@ -275,6 +358,16 @@ export default function Chat({ setPage }) {
   const [locationChecking, setLocationChecking] = useState(false);
   const [showPollPanel, setShowPollPanel] = useState(false);
   const [showEventPanel, setShowEventPanel] = useState(false);
+  const [showContactPanel, setShowContactPanel] = useState(false);
+  const [showOrderPanel, setShowOrderPanel] = useState(false);
+  const [showCatalogPanel, setShowCatalogPanel] = useState(false);
+  const [showQuickPanel, setShowQuickPanel] = useState(false);
+  const [actionTab, setActionTab] = useState('summary');
+  const [contactDraft, setContactDraft] = useState({ name:'', phone:'', note:'' });
+  const [orderDraft, setOrderDraft] = useState({ item:'', quantity:1, price:'', note:'' });
+  const [catalogDraft, setCatalogDraft] = useState({ provider: profile?.display_name || profile?.username || 'Proveedor', item:'', price:'', availability:'Disponible', description:'' });
+  const liveWatchRef = useRef(null);
+  const recorderRef = useRef(null);
   const [profileDraft, setProfileDraft] = useState(() => {
     try {
       return { displayName: profile?.display_name || profile?.username || 'Mi perfil', status: 'Disponible', avatar: '', ...(JSON.parse(localStorage.getItem(`mizona-chat-profile-${profile?.username || profile?.id || 'local'}`) || '{}') || {}) };
@@ -403,6 +496,8 @@ export default function Chat({ setPage }) {
     document.body.classList.toggle('mizona-chat-immersive', immersiveMode);
     return () => document.body.classList.remove('mizona-chat-immersive');
   }, [immersiveMode]);
+
+  useEffect(() => () => { if (liveWatchRef.current != null && navigator.geolocation) navigator.geolocation.clearWatch(liveWatchRef.current); if (recorderRef.current?.stream) recorderRef.current.stream.getTracks().forEach(track => track.stop()); }, []);
 
   useEffect(() => {
     // ETAPA 30.32: el chat completo se comporta como una app fullscreen real.
@@ -646,48 +741,100 @@ export default function Chat({ setPage }) {
     }
   };
 
+
+  const sendStructured = async (type, data = {}) => {
+    await sendSpecialText(encodeStructured(type, data));
+  };
+
+  const recordAudio = async () => {
+    if (!selectedId) return setNotice('Selecciona una conversación primero.');
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') return setNotice('Este navegador no permite grabar audio.');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const chunks = [];
+      const recorder = new MediaRecorder(stream);
+      recorderRef.current = { recorder, stream };
+      recorder.ondataavailable = event => event.data.size && chunks.push(event.data);
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+        const file = new File([blob], `nota-voz-${Date.now()}.webm`, { type: blob.type });
+        stream.getTracks().forEach(track => track.stop());
+        setSending(true);
+        try { await sendChatFile({ conversationId:selectedId, file, userId:user.id }); setMessages(await loadMessages(selectedId)); await refreshLists(true); setNotice('Nota de voz enviada.'); } catch (error) { setNotice(error.message); } finally { setSending(false); recorderRef.current=null; }
+      };
+      recorder.start();
+      setNotice('Grabando nota de voz… pulsa nuevamente para detener.');
+    } catch { setNotice('No se pudo acceder al micrófono. Revisa el permiso del navegador.'); }
+  };
+
+  const toggleAudioRecording = () => {
+    if (recorderRef.current?.recorder?.state === 'recording') recorderRef.current.recorder.stop();
+    else recordAudio();
+  };
+
   const sendCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setNotice('Tu navegador no permite compartir ubicación.');
-      return;
-    }
-    setNotice('Obteniendo ubicación...');
+    if (!navigator.geolocation) return setNotice('Tu navegador no permite compartir ubicación.');
+    setNotice('Obteniendo ubicación…');
     navigator.geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        const url = mapsUrl(latitude, longitude);
-        sendSpecialText(`📍 Ubicación actual\n${url}\nHora: ${new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`);
+      async position => {
+        const { latitude, longitude, accuracy } = position.coords;
+        await sendStructured('location',{ lat:latitude, lng:longitude, accuracy, live:false, capturedAt:new Date().toISOString() });
+        setNotice('Ubicación enviada. El receptor podrá abrirla en Google Maps o compartirla por WhatsApp.');
       },
-      () => setNotice('No se pudo obtener tu ubicación. Revisa los permisos del navegador.'),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 15000 }
+      error => setNotice(error.code === 1 ? 'Permiso de ubicación denegado. Actívalo en el navegador o ajustes del celular.' : 'No se pudo obtener tu ubicación. Verifica GPS y conexión.'),
+      { enableHighAccuracy:true, timeout:15000, maximumAge:5000 }
     );
   };
 
-  const sendLiveLocationDemo = minutes => {
-    sendSpecialText(`🛰️ Ubicación en tiempo real solicitada\nDuración: ${minutes} minutos\nEstado: pendiente de activar permisos de ubicación en el dispositivo.`);
+  const startLiveLocation = minutes => {
+    if (!navigator.geolocation) return setNotice('Tu navegador no permite ubicación en tiempo real.');
+    if (liveWatchRef.current != null) navigator.geolocation.clearWatch(liveWatchRef.current);
+    const liveId = newId('live');
+    const expiresAt = Date.now() + minutes * 60000;
+    let lastSent = 0;
+    liveWatchRef.current = navigator.geolocation.watchPosition(async position => {
+      const now = Date.now();
+      if (now - lastSent < 20000) return;
+      lastSent = now;
+      await sendStructured('location',{ liveId, lat:position.coords.latitude, lng:position.coords.longitude, accuracy:position.coords.accuracy, live:true, expiresAt, capturedAt:new Date().toISOString() });
+      if (Date.now() >= expiresAt) { navigator.geolocation.clearWatch(liveWatchRef.current); liveWatchRef.current=null; setNotice('La ubicación en tiempo real finalizó.'); }
+    }, error => setNotice(error.code === 1 ? 'Permiso de ubicación denegado.' : 'No fue posible actualizar la ubicación en tiempo real.'), { enableHighAccuracy:true, timeout:15000, maximumAge:5000 });
+    window.setTimeout(() => { if (liveWatchRef.current != null) { navigator.geolocation.clearWatch(liveWatchRef.current); liveWatchRef.current=null; } }, minutes * 60000);
+    setShowLocationPanel(false);
+    setNotice(`Ubicación en tiempo real activa durante ${minutes} minutos.`);
   };
 
-  const createPoll = () => {
+  const createPoll = async () => {
     const options = pollDraft.options.map(item => item.trim()).filter(Boolean);
-    if (!pollDraft.question.trim() || options.length < 2) {
-      setNotice('La encuesta necesita una pregunta y mínimo 2 opciones.');
-      return;
-    }
-    sendSpecialText(`📊 Encuesta\n${pollDraft.question.trim()}\n${options.map((option, index) => `${index + 1}. ${option}`).join('\n')}\n${pollDraft.multiple ? 'Permite varias respuestas' : 'Una sola respuesta'} · ${pollDraft.results ? 'Resultados visibles' : 'Resultados ocultos'}`);
-    setPollDraft({ question: '', options: ['Sí', 'No'], multiple: false, results: true });
-    setShowPollPanel(false);
-    setNotice('Encuesta publicada dentro del chat.');
+    if (!pollDraft.question.trim() || options.length < 2) return setNotice('La encuesta necesita una pregunta y mínimo 2 opciones.');
+    await sendStructured('poll',{ pollId:newId('poll'), question:pollDraft.question.trim(), options, multiple:pollDraft.multiple, results:pollDraft.results, createdBy:profile?.display_name || profile?.username });
+    setPollDraft({ question:'', options:['Sí','No'], multiple:false, results:true });
+    setShowPollPanel(false); setNotice('Encuesta publicada y lista para votar.');
   };
 
-  const createEvent = () => {
-    if (!eventDraft.title.trim()) {
-      setNotice('El evento necesita un título.');
-      return;
-    }
-    sendSpecialText(`📅 Evento\n${eventDraft.title.trim()}\nFecha: ${eventDraft.date || 'por definir'} ${eventDraft.time || ''}\nLugar: ${eventDraft.place || 'por definir'}\n${eventDraft.description || ''}`.trim());
-    setEventDraft({ title: '', date: '', time: '', place: '', description: '' });
-    setShowEventPanel(false);
-    setNotice('Evento publicado dentro del chat.');
+  const createEvent = async () => {
+    if (!eventDraft.title.trim() || !eventDraft.date) return setNotice('El evento necesita título y fecha.');
+    await sendStructured('event',{ eventId:newId('event'), ...eventDraft, title:eventDraft.title.trim(), createdBy:profile?.display_name || profile?.username });
+    setEventDraft({ title:'', date:'', time:'', place:'', description:'' });
+    setShowEventPanel(false); setNotice('Evento publicado. Los participantes pueden confirmar y agregarlo al calendario.');
+  };
+
+  const createContactShare = async () => {
+    if (!contactDraft.name.trim() || !contactDraft.phone.trim()) return setNotice('Completa el nombre y teléfono del contacto.');
+    await sendStructured('contact',{ ...contactDraft, name:contactDraft.name.trim(), phone:contactDraft.phone.trim() });
+    setContactDraft({name:'',phone:'',note:''}); setShowContactPanel(false); setNotice('Contacto compartido con acciones de llamada y WhatsApp.');
+  };
+
+  const createOrderShare = async () => {
+    if (!orderDraft.item.trim() || Number(orderDraft.quantity)<=0) return setNotice('Completa el producto o servicio y una cantidad válida.');
+    await sendStructured('order',{ orderId:newId('order'), item:orderDraft.item.trim(), quantity:Number(orderDraft.quantity), price:Number(orderDraft.price||0), note:orderDraft.note.trim(), status:'pendiente' });
+    setOrderDraft({item:'',quantity:1,price:'',note:''}); setShowOrderPanel(false); setNotice('Pedido publicado con seguimiento de estado.');
+  };
+
+  const createCatalogShare = async () => {
+    if (!catalogDraft.provider.trim() || !catalogDraft.item.trim()) return setNotice('Completa proveedor y producto o servicio.');
+    await sendStructured('catalog',{ ...catalogDraft, price:Number(catalogDraft.price||0) });
+    setCatalogDraft(current=>({...current,item:'',price:'',description:''})); setShowCatalogPanel(false); setNotice('Artículo del catálogo compartido.');
   };
 
   const inviteFriend = () => {
@@ -774,7 +921,7 @@ export default function Chat({ setPage }) {
           </div>
         </div>
 
-        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">{filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}><Avatar name={conversationName(item)} image={item.peer_avatar_url}/><span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (item.last_message || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${item.last_message || 'Sin mensajes recientes'}`}</small></span><em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em></button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}</div> : tab === 'contacts' ? <div className="contactListReal">{filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id} className={contact.is_blocked ? 'blockedContact' : ''}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name} {contact.is_blocked && <Ban size={14}/>}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.is_blocked ? 'Contacto bloqueado · historial conservado' : contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" disabled={contact.is_blocked} onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && (contact.is_blocked ? <button className="unlockBtn" title="Desbloquear" onClick={() => unblock(contact)}><RefreshCw size={17}/></button> : <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>)}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}</div> : <div className="requestListReal">{requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}</div>}
+        {loading ? <div className="chatListLoading"><Loader2 className="spin"/> Cargando...</div> : (tab === 'chats' || tab === 'groups') ? <div className="conversationList">{filteredConversations.length ? filteredConversations.map(item => <button key={item.id} className={selectedId === item.id ? 'active' : ''} onClick={() => openConversation(item.id)}><Avatar name={conversationName(item)} image={item.peer_avatar_url}/><span><b>{conversationName(item)}</b><small>{item.type === 'direct' ? (structuredPreview(item.last_message) || 'Conversación nueva') : `${item.type?.includes('school') ? 'Grupo escolar' : 'Grupo privado'} · ${structuredPreview(item.last_message) || 'Sin mensajes recientes'}`}</small></span><em>{formatTime(item.last_message_at || item.updated_at)}{Number(item.unread_count) > 0 && <i>{item.unread_count}</i>}</em></button>) : <div className="chatDirectoryEmpty"><MessageCircle size={34}/><b>{tab === 'groups' ? 'Aún no tienes grupos' : 'Aún no hay conversaciones'}</b><span>{isStudent ? 'Cuando un grupo o contacto sea autorizado aparecerá aquí.' : 'Agrega un contacto o crea un grupo.'}</span></div>}</div> : tab === 'contacts' ? <div className="contactListReal">{filteredContacts.length ? filteredContacts.map(contact => <article key={contact.id} className={contact.is_blocked ? 'blockedContact' : ''}><Avatar name={contact.display_name} image={contact.avatar_url}/><div><b>{contact.display_name} {contact.is_blocked && <Ban size={14}/>}</b><span>@{String(contact.username || '').toUpperCase()}</span><small>{contact.is_blocked ? 'Contacto bloqueado · historial conservado' : contact.account_type === 'student' ? 'Estudiante protegido' : contact.zone || 'Contacto MiZona'}</small></div><div className="contactActions"><button title="Conversar" disabled={contact.is_blocked} onClick={() => startDirect(contact)}><MessageCircle size={17}/></button>{!isStudent && (contact.is_blocked ? <button className="unlockBtn" title="Desbloquear" onClick={() => unblock(contact)}><RefreshCw size={17}/></button> : <button className="danger" title="Bloquear" onClick={() => block(contact)}><Ban size={17}/></button>)}</div></article>) : <div className="chatDirectoryEmpty"><CircleUserRound size={34}/><b>Sin contactos aceptados</b><span>{isStudent ? 'Tus contactos permitidos aparecerán aquí.' : 'Busca por usuario exacto para enviar solicitud.'}</span>{!isStudent && <button onClick={() => setShowSearch(true)}>Buscar usuario</button>}</div>}</div> : <div className="requestListReal">{requests.length ? requests.map(request => <article key={request.id}><Avatar name={request.display_name} image={request.avatar_url}/><div><b>{request.display_name}</b><span>@{String(request.username || '').toUpperCase()}</span><small>{request.direction === 'received' ? 'Quiere agregarte' : request.status === 'pending' ? 'Esperando respuesta' : request.status}</small></div>{request.direction === 'received' && request.status === 'pending' ? <div><button onClick={() => review(request, 'accepted')}><Check size={16}/></button><button className="danger" onClick={() => review(request, 'rejected')}><X size={16}/></button></div> : <em>{request.status}</em>}</article>) : <div className="chatDirectoryEmpty"><UserPlus size={34}/><b>No hay solicitudes</b><span>Las invitaciones aparecerán aquí.</span></div>}</div>}
       </aside>
 
       <section className="chatConversation">
@@ -796,7 +943,7 @@ export default function Chat({ setPage }) {
               return <div key={message.id} className={`messageRow ${own ? 'own' : ''}`}>
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
                   {!own && <b>{message.sender_display_name}</b>}
-                  {message.body && <p>{message.body}</p>}
+                  {message.body && (parseStructured(message.body) ? <StructuredMessage data={parseStructured(message.body)} message={message} allMessages={messages} currentUser={{...profile,id:user?.id}} onSend={sendStructured} onNotice={setNotice}/> : <p>{message.body}</p>)}
                   {Array.isArray(message.attachments) && message.attachments.map(attachment => <AttachmentPreview key={attachment.id} attachment={attachment} onNotice={setNotice}/>)}
                   <small>{formatMessageHour(message.created_at)}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
@@ -808,7 +955,7 @@ export default function Chat({ setPage }) {
             <input ref={fileInput} type="file" hidden multiple onChange={uploadFile} accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip"/>
             <button type="button" className="iconBtn" title="Adjuntar" onClick={() => setShowAttachPanel(true)} disabled={sending}><Paperclip size={20}/></button>
             <input value={composer} onChange={event => setComposer(event.target.value)} placeholder="Escribe un mensaje seguro..." maxLength={5000}/>
-            <button type="button" className="iconBtn" title="Audio" onClick={() => sendSpecialText('🎙️ Nota de voz\nPendiente de grabación desde el dispositivo.')} disabled={sending}><Mic size={20}/></button>
+            <button type="button" className="iconBtn" title="Audio" onClick={toggleAudioRecording} disabled={sending}><Mic size={20}/></button>
             <button className="sendBtnChat40" disabled={sending || !composer.trim()}>{sending ? <Loader2 className="spin" size={20}/> : <Send size={20}/>}</button>
           </form>
         </> : <div className="noConversationSelected"><div><MessageCircle size={58}/><h2>Selecciona una conversación</h2><p>También puedes crear un grupo o buscar a una persona por su usuario exacto.</p><button onClick={() => setShowSearch(true)}><UserPlus size={18}/> Agregar contacto</button></div></div>}
@@ -866,12 +1013,12 @@ export default function Chat({ setPage }) {
           <button type="button" onClick={() => fileInput.current?.click()}><span className="attachIcon green"><FileText/></span>Documento</button>
           <button type="button" onClick={() => fileInput.current?.click()}><span className="attachIcon pink"><Mic/></span>Audio</button>
           <button type="button" onClick={() => setShowLocationPanel(true)}><span className="attachIcon mint"><MapPin/></span>Ubicación</button>
-          <button type="button" onClick={() => sendSpecialText('👤 Contacto compartido\nNombre: por seleccionar\nTeléfono: por agregar')}><span className="attachIcon blue"><Contact/></span>Contacto</button>
+          <button type="button" onClick={() => { setShowAttachPanel(false); setShowContactPanel(true); }}><span className="attachIcon blue"><Contact/></span>Contacto</button>
           <button type="button" onClick={() => setShowPollPanel(true)}><span className="attachIcon orange"><BarChart3/></span>Encuesta</button>
           <button type="button" onClick={() => setShowEventPanel(true)}><span className="attachIcon red"><CalendarDays/></span>Evento</button>
-          <button type="button" onClick={() => sendSpecialText('🧾 Pedido registrado\nProducto/servicio: por definir\nEstado: pendiente de confirmar')}><span className="attachIcon indigo"><ShoppingBag/></span>Pedido</button>
-          <button type="button" onClick={() => sendSpecialText('🏪 Catálogo\nEl proveedor compartirá productos o servicios disponibles.')}><span className="attachIcon teal"><Store/></span>Catálogo</button>
-          <button className="quickReplyBtn" type="button" onClick={() => sendSpecialText('⚡ Respuesta rápida\nGracias por escribir. Te confirmo en unos minutos.') }><Zap size={16}/> Respuesta rápida</button>
+          <button type="button" onClick={() => { setShowAttachPanel(false); setShowOrderPanel(true); }}><span className="attachIcon indigo"><ShoppingBag/></span>Pedido</button>
+          <button type="button" onClick={() => { setShowAttachPanel(false); setShowCatalogPanel(true); }}><span className="attachIcon teal"><Store/></span>Catálogo</button>
+          <button className="quickReplyBtn" type="button" onClick={() => { setShowAttachPanel(false); setShowQuickPanel(true); }}><Zap size={16}/> Respuesta rápida</button>
         </div>
       </div>
     </div>}
@@ -880,22 +1027,26 @@ export default function Chat({ setPage }) {
       <div className="chatModal chatActionsPanel">
         <div className="chatModalHeader"><div><span>CENTRO DE ACCIONES</span><h2>Acciones del chat</h2><p>Todo lo importante de esta conversación en un solo lugar.</p></div><button className="iconBtn" onClick={() => setShowActionsPanel(false)}><X size={19}/></button></div>
         <div className="actionsTabs">
-          <button className="active"><ListTodo size={17}/> Resumen</button>
-          <button><ShoppingBag size={17}/> Pedidos</button>
-          <button><BarChart3 size={17}/> Encuestas</button>
-          <button><CalendarDays size={17}/> Eventos</button>
-          <button><File size={17}/> Archivos</button>
+          <button className={actionTab === 'summary' ? 'active' : ''} onClick={()=>setActionTab('summary')}><ListTodo size={17}/> Resumen</button>
+          <button className={actionTab === 'orders' ? 'active' : ''} onClick={()=>setActionTab('orders')}><ShoppingBag size={17}/> Pedidos</button>
+          <button className={actionTab === 'polls' ? 'active' : ''} onClick={()=>setActionTab('polls')}><BarChart3 size={17}/> Encuestas</button>
+          <button className={actionTab === 'events' ? 'active' : ''} onClick={()=>setActionTab('events')}><CalendarDays size={17}/> Eventos</button>
+          <button className={actionTab === 'files' ? 'active' : ''} onClick={()=>setActionTab('files')}><File size={17}/> Archivos</button>
         </div>
-        <section className="actionBlock"><h3>Pendientes</h3>
-          <article><ClipboardCheck/><div><b>Confirmar recibido</b><span>Pedido registrado o entrega pendiente.</span></div><button>Confirmar</button></article>
-          <article><BarChart3/><div><b>Votar encuesta</b><span>Encuestas activas del grupo o conversación.</span></div><button>Votar</button></article>
-          <article><Star/><div><b>Calificar proveedor</b><span>Después de recibir un producto o servicio.</span></div><button>Calificar</button></article>
-        </section>
-        <section className="actionBlock"><h3>Resumen automático</h3>
-          <p>Hoy se enviaron {messages.length} mensajes. Esta sección reunirá pedidos, ubicaciones, archivos, encuestas, eventos y acuerdos sin buscarlos manualmente.</p>
+        <section className="actionBlock"><h3>{actionTab === 'summary' ? 'Resumen real' : actionTab === 'orders' ? 'Pedidos' : actionTab === 'polls' ? 'Encuestas' : actionTab === 'events' ? 'Eventos' : 'Archivos'}</h3>
+          {actionTab === 'files' ? (messages.flatMap(item => item.attachments || []).length ? messages.flatMap(item => item.attachments || []).map(file => <AttachmentPreview key={file.id} attachment={file} onNotice={setNotice}/>) : <p>No hay archivos en esta conversación.</p>) : (() => { const types = actionTab === 'summary' ? ['location','contact','poll','event','order','catalog'] : actionTab === 'orders' ? ['order'] : actionTab === 'polls' ? ['poll'] : ['event']; const items = messages.filter(item => types.includes(parseStructured(item.body)?.type)); return items.length ? items.map(item => <StructuredMessage key={item.id} data={parseStructured(item.body)} message={item} allMessages={messages} currentUser={{...profile,id:user?.id}} onSend={sendStructured} onNotice={setNotice}/>) : <p>No hay elementos en esta categoría.</p>; })()}
         </section>
       </div>
     </div>}
+
+
+    {showContactPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event=>event.target===event.currentTarget&&setShowContactPanel(false)}><div className="chatModal compactActionForm"><div className="chatModalHeader"><div><span>CONTACTO</span><h2>Compartir contacto</h2><p>La tarjeta permitirá llamar, abrir WhatsApp o copiar los datos.</p></div><button className="iconBtn" onClick={()=>setShowContactPanel(false)}><X size={19}/></button></div><label>Nombre</label><input value={contactDraft.name} onChange={e=>setContactDraft(c=>({...c,name:e.target.value}))} placeholder="Nombre completo"/><label>Teléfono</label><input type="tel" value={contactDraft.phone} onChange={e=>setContactDraft(c=>({...c,phone:e.target.value}))} placeholder="+51 999 999 999"/><label>Nota opcional</label><textarea value={contactDraft.note} onChange={e=>setContactDraft(c=>({...c,note:e.target.value}))}/><div className="formActions"><button onClick={createContactShare}>Compartir contacto</button></div></div></div>}
+
+    {showOrderPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event=>event.target===event.currentTarget&&setShowOrderPanel(false)}><div className="chatModal compactActionForm"><div className="chatModalHeader"><div><span>PEDIDO</span><h2>Crear pedido</h2><p>Se podrá confirmar y actualizar su estado dentro del chat.</p></div><button className="iconBtn" onClick={()=>setShowOrderPanel(false)}><X size={19}/></button></div><label>Producto o servicio</label><input value={orderDraft.item} onChange={e=>setOrderDraft(c=>({...c,item:e.target.value}))}/><div className="twoCols"><div><label>Cantidad</label><input type="number" min="1" value={orderDraft.quantity} onChange={e=>setOrderDraft(c=>({...c,quantity:e.target.value}))}/></div><div><label>Precio unitario</label><input type="number" min="0" step="0.01" value={orderDraft.price} onChange={e=>setOrderDraft(c=>({...c,price:e.target.value}))}/></div></div><label>Observación</label><textarea value={orderDraft.note} onChange={e=>setOrderDraft(c=>({...c,note:e.target.value}))}/><div className="formActions"><button onClick={createOrderShare}>Enviar pedido</button></div></div></div>}
+
+    {showCatalogPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event=>event.target===event.currentTarget&&setShowCatalogPanel(false)}><div className="chatModal compactActionForm"><div className="chatModalHeader"><div><span>CATÁLOGO</span><h2>Compartir producto o servicio</h2><p>El receptor podrá crear un pedido desde la tarjeta.</p></div><button className="iconBtn" onClick={()=>setShowCatalogPanel(false)}><X size={19}/></button></div><label>Proveedor</label><input value={catalogDraft.provider} onChange={e=>setCatalogDraft(c=>({...c,provider:e.target.value}))}/><label>Producto o servicio</label><input value={catalogDraft.item} onChange={e=>setCatalogDraft(c=>({...c,item:e.target.value}))}/><div className="twoCols"><div><label>Precio</label><input type="number" min="0" step="0.01" value={catalogDraft.price} onChange={e=>setCatalogDraft(c=>({...c,price:e.target.value}))}/></div><div><label>Disponibilidad</label><select value={catalogDraft.availability} onChange={e=>setCatalogDraft(c=>({...c,availability:e.target.value}))}><option>Disponible</option><option>Agotado</option><option>Bajo pedido</option></select></div></div><label>Descripción</label><textarea value={catalogDraft.description} onChange={e=>setCatalogDraft(c=>({...c,description:e.target.value}))}/><div className="formActions"><button onClick={createCatalogShare}>Compartir catálogo</button></div></div></div>}
+
+    {showQuickPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event=>event.target===event.currentTarget&&setShowQuickPanel(false)}><div className="chatModal quickReplyPanel"><div className="chatModalHeader"><div><span>RESPUESTAS RÁPIDAS</span><h2>Elige una respuesta</h2><p>Se envía como mensaje normal y puede editarse después desde el chat.</p></div><button className="iconBtn" onClick={()=>setShowQuickPanel(false)}><X size={19}/></button></div>{['Gracias por escribir. Te confirmo en unos minutos.','Ya estoy llegando.','¿Puedes enviarme tu ubicación?','Pedido recibido. Estamos preparándolo.','De acuerdo, quedamos coordinados.'].map(text=><button className="quickReplyChoice" key={text} onClick={()=>{sendSpecialText(text);setShowQuickPanel(false)}}>{text}<Send size={16}/></button>)}</div></div>}
 
     {showLocationPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowLocationPanel(false)}>
       <div className="chatModal locationPanel">
@@ -904,7 +1055,7 @@ export default function Chat({ setPage }) {
         <ChatNotice kind="success">Ubicación habilitada. Ahora elige cómo compartirla.</ChatNotice>
         <button className="locationOption" type="button" onClick={sendCurrentLocation}><MapPin/><div><b>Enviar mi ubicación actual</b><span>Envía tu punto de este momento y permite abrir Google Maps.</span></div></button>
         <div className="locationOption passive"><MapPin/><div><b>Compartir ubicación en tiempo real</b><span>Elige durante cuánto tiempo deseas compartirla.</span></div></div>
-        <div className="durationGrid"><button onClick={() => sendLiveLocationDemo(15)}>15 minutos</button><button onClick={() => sendLiveLocationDemo(60)}>1 hora</button><button onClick={() => sendLiveLocationDemo(480)}>8 horas</button></div></>}
+        <div className="durationGrid"><button onClick={() => startLiveLocation(15)}>15 minutos</button><button onClick={() => startLiveLocation(60)}>1 hora</button><button onClick={() => startLiveLocation(480)}>8 horas</button></div></>}
       </div>
     </div>}
 

@@ -1,0 +1,309 @@
+/* MiZona Enterprise V8 · 30.60
+   QA visual y funcional: paleta neutra uniforme, acentos por módulo,
+   contraste, densidad, responsive y correcciones de componentes heredados. */
+
+:root {
+  --qa-shell: #071522;
+  --qa-shell-2: #0b1c2b;
+  --qa-page: #eef3f7;
+  --qa-surface: #ffffff;
+  --qa-surface-soft: #f7fafc;
+  --qa-text: #102235;
+  --qa-muted: #61758a;
+  --qa-faint: #8c9cae;
+  --qa-line: #d7e2eb;
+  --qa-line-strong: #bdccd9;
+  --qa-accent: #1687d9;
+  --qa-accent-strong: #0f69ae;
+  --qa-accent-soft: rgba(22,135,217,.11);
+  --qa-success: #15966f;
+  --qa-warning: #c57a09;
+  --qa-danger: #dc3657;
+  --qa-radius: 16px;
+  --qa-shadow: 0 10px 28px rgba(15,23,42,.07);
+}
+
+/* Acentos controlados por módulo. El fondo, las tarjetas y los textos permanecen uniformes. */
+.panelSmartPage { --qa-accent:#1687d9; --qa-accent-strong:#0f69ae; --qa-accent-soft:rgba(22,135,217,.11); }
+.communityRealPage { --qa-accent:#0f9f91; --qa-accent-strong:#0b766d; --qa-accent-soft:rgba(15,159,145,.11); }
+.committeeFinancePage { --qa-accent:#7c5bd6; --qa-accent-strong:#5b3fb5; --qa-accent-soft:rgba(124,91,214,.11); }
+.chatRealPage { --qa-accent:#0891b2; --qa-accent-strong:#0e7490; --qa-accent-soft:rgba(8,145,178,.11); }
+.notificationsPage { --qa-accent:#df5574; --qa-accent-strong:#b73656; --qa-accent-soft:rgba(223,85,116,.11); }
+.businessPage { --qa-accent:#d68b1e; --qa-accent-strong:#a9650d; --qa-accent-soft:rgba(214,139,30,.12); }
+.marketplacePage { --qa-accent:#7664d8; --qa-accent-strong:#5945b6; --qa-accent-soft:rgba(118,100,216,.11); }
+.businessSuitePage { --qa-accent:#e1792d; --qa-accent-strong:#bb5614; --qa-accent-soft:rgba(225,121,45,.11); }
+.campusPage { --qa-accent:#356edb; --qa-accent-strong:#2251ad; --qa-accent-soft:rgba(53,110,219,.11); }
+.ridePage,.rideDeliveryPage { --qa-accent:#138bb8; --qa-accent-strong:#0e6b8e; --qa-accent-soft:rgba(19,139,184,.11); }
+.benefitsPage { --qa-accent:#9a4ed0; --qa-accent-strong:#7131a5; --qa-accent-soft:rgba(154,78,208,.11); }
+.personalFinancePage,.paymentsPage,.gatewayPage { --qa-accent:#2773c7; --qa-accent-strong:#185594; --qa-accent-soft:rgba(39,115,199,.11); }
+.aiPage { --qa-accent:#7559d7; --qa-accent-strong:#5940b5; --qa-accent-soft:rgba(117,89,215,.11); }
+.architecturePage37,.qualityPage,.cloudPage,.syncPage,.localLabPage { --qa-accent:#53687f; --qa-accent-strong:#3b4e63; --qa-accent-soft:rgba(83,104,127,.11); }
+.transferExplainPage38 { --qa-accent:#4f64c9; --qa-accent-strong:#394ba5; --qa-accent-soft:rgba(79,100,201,.11); }
+
+html,body { background: var(--qa-shell) !important; }
+.app,.app.mode-light,.app.mode-dark {
+  --primary: var(--qa-accent) !important;
+  --primary-strong: var(--qa-accent-strong) !important;
+  --page: var(--qa-page) !important;
+  --panel: var(--qa-surface) !important;
+  --panel2: var(--qa-surface-soft) !important;
+  --ink: var(--qa-text) !important;
+  --muted: var(--qa-muted) !important;
+  --line: var(--qa-line) !important;
+  background: var(--qa-page) !important;
+  color: var(--qa-text) !important;
+}
+.app > main,.content,.page { background: var(--qa-page) !important; color: var(--qa-text) !important; }
+
+/* Shell estable y discreto */
+.sidebar { background: linear-gradient(180deg,#071522,#081a29) !important; }
+.topbar { background: rgba(6,17,29,.97) !important; }
+.navItem { color:#d1dce8 !important; }
+.navItem:hover { color:#fff !important; background:rgba(255,255,255,.045)!important; }
+.navItem.active {
+  color:#eafff8 !important;
+  background:linear-gradient(90deg,rgba(21,150,111,.16),rgba(21,150,111,0))!important;
+  border-color:rgba(21,150,111,.32)!important;
+  box-shadow:inset 3px 0 0 var(--qa-success)!important;
+}
+.navItem svg,.navItem i { color:var(--qa-success)!important; }
+.navItem.active svg,.navItem.active i { color:#32d29e!important; }
+.searchBox,.iconBtn,.zoneBtn,.profileBtn,.runtimeBadge {
+  background:#0d2031!important;
+  color:#eaf2fa!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+.searchBox input { color:#f8fbff!important; }
+.searchBox input::placeholder { color:#9db0c4!important; }
+
+/* Una base de contenido clara y consistente */
+.page h1,.page h2,.page h3,.page h4,.page h5,.page strong,.page b { color:var(--qa-text)!important; }
+.page p,.page small,.page label,.page li,.page td,.page th { color:var(--qa-muted)!important; }
+.page a { color:var(--qa-accent)!important; }
+.muted,.subtle,.caption,.helpText { color:var(--qa-muted)!important; }
+
+.card,.panel,.mainPanel,.moduleCard,.quickCard,.summaryCard,.singleAccessPanel,
+.grid2>section,.grid2>article,.grid3>section,.grid3>article,
+.communityPanel,.communityCardReal,.placeCard,.opportunityCard,.courseCard,
+.businessCard,.marketCard,.paymentCard,.financePanel,.gatewayCard,
+.aiChatCard,.aiConversationRail,.aiSide,.mkCPanel,.businessModePanel,.cartPanel,
+.orderFlow,.cashSummary,.cashSessionPanel,.deliveryRuleCard,.deliveryConfigCard,
+.deliveryFlowCard,.deliveryAdminCard,.notificationList,.chatSettingsPanel,
+.chatActionsPanel,.locationPanel,.themePanel,.themePreviewCard,.accountForm,
+.sessionSummary,.paymentForm,.paymentTable,.financeForm,.financeTable,
+.adminTableWrap,.modalBackdrop>div,.chatModal {
+  background:var(--qa-surface)!important;
+  color:var(--qa-text)!important;
+  border:1px solid var(--qa-line)!important;
+  box-shadow:var(--qa-shadow)!important;
+}
+.card h1,.card h2,.card h3,.card h4,.panel h1,.panel h2,.panel h3,.panel h4,
+.communityCardReal h1,.communityCardReal h2,.communityCardReal h3,.communityCardReal h4,
+.placeCard h1,.placeCard h2,.placeCard h3,.placeCard h4,
+.businessCard h1,.businessCard h2,.businessCard h3,.businessCard h4,
+.marketCard h1,.marketCard h2,.marketCard h3,.marketCard h4 { color:var(--qa-text)!important; }
+.card p,.card small,.panel p,.panel small,.communityCardReal p,.communityCardReal small,
+.placeCard p,.placeCard small,.businessCard p,.businessCard small,.marketCard p,.marketCard small { color:var(--qa-muted)!important; }
+
+/* Héroes: misma estructura, color sobrio y acento del módulo sin saturar toda la página */
+.hero,.smartHero,.communityHero,.communityHeroReal,.committeeHero,.newCommitteeHero,
+.notificationHero,.commerceHero,.businessHero,.businessSuiteHero,.businessMarketHero,
+.benefitsHero,.marketHero,.mkHero,.mkCTopHero,.mkCHero,.campusHero,.financeHero,
+.transferHero,.rideHero,.rideDeliveryHero,.aiHero,.pushPermissionHero,.pushRealHero,
+.ordersHero,.pageHero,.moduleHero,.dashboardHero,.compactHero,.archiveHero,.labHero,
+.mizonaHero,.architectureHero,.architectureHero37,.financeHero38,.transferHero38 {
+  background:
+    radial-gradient(circle at 91% 8%,var(--qa-accent-soft),transparent 32%),
+    linear-gradient(135deg,#102536 0%,#132c40 62%,#17384c 100%)!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+  box-shadow:0 12px 28px rgba(15,23,42,.13)!important;
+}
+.hero *,.smartHero *,.communityHero *,.communityHeroReal *,.committeeHero *,
+.newCommitteeHero *,.notificationHero *,.commerceHero *,.businessHero *,
+.businessSuiteHero *,.businessMarketHero *,.benefitsHero *,.marketHero *,
+.mkHero *,.mkCTopHero *,.mkCHero *,.campusHero *,.financeHero *,.transferHero *,
+.rideHero *,.rideDeliveryHero *,.aiHero *,.pushPermissionHero *,.pushRealHero *,
+.ordersHero *,.pageHero *,.moduleHero *,.dashboardHero *,.compactHero *,
+.archiveHero *,.labHero *,.mizonaHero *,.architectureHero *,.architectureHero37 *,
+.financeHero38 *,.transferHero38 * { color:#fff!important; }
+.eyebrow { color:rgba(255,255,255,.7)!important; }
+
+/* Tarjetas KPI coherentes, sin fondo verde */
+.kpiCard,.statCard,.financeKpi,.paymentKpi,.reportKpi,.businessKpi,.adminKpi,
+.orderStats>div,.businessStats>div,.communityStats>div,.committeeStats>div,
+.committeeKpi>span,.heroStats>span,.financeHeroCard,.notificationHeroStats>*,
+.aiAdminStats>*,.rideHeroStats>*,.marketHeroStats>*,.campusHeroStats>*,
+.businessHeroStats>*,.labStats>*,.yapeStats>*,.loyaltyStats>*,.driverStats>*,
+.rideHistoryStats>* {
+  background:linear-gradient(145deg,#102536,#132d41)!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+  box-shadow:0 8px 22px rgba(15,23,42,.09)!important;
+}
+.kpiCard *,.statCard *,.financeKpi *,.paymentKpi *,.reportKpi *,.businessKpi *,
+.adminKpi *,.orderStats>div *,.businessStats>div *,.communityStats>div *,
+.committeeStats>div *,.committeeKpi>span *,.heroStats>span *,.financeHeroCard *,
+.notificationHeroStats>* *,.aiAdminStats>* *,.rideHeroStats>* *,
+.marketHeroStats>* *,.campusHeroStats>* *,.businessHeroStats>* *,.labStats>* *,
+.yapeStats>* *,.loyaltyStats>* *,.driverStats>* *,.rideHistoryStats>* * { color:#fff!important; }
+
+/* Controles y formularios */
+input,select,textarea,.field,.adminSearch,.businessSearch,.communitySearch,.mkCSearch,
+.chatSearchBar,.exactUserSearch {
+  background:#fff!important;
+  color:var(--qa-text)!important;
+  border:1px solid var(--qa-line)!important;
+  box-shadow:none!important;
+}
+input::placeholder,textarea::placeholder { color:var(--qa-faint)!important; }
+input:focus,select:focus,textarea:focus,.field:focus-within {
+  border-color:var(--qa-accent)!important;
+  box-shadow:0 0 0 3px var(--qa-accent-soft)!important;
+}
+label,.fieldLabel { color:var(--qa-text)!important; }
+
+/* Botones y filtros: solo activo usa el acento del módulo */
+.primary,.buttonPrimary,button.primaryAction,button[data-variant='primary'] {
+  background:linear-gradient(135deg,var(--qa-accent-strong),var(--qa-accent))!important;
+  color:#fff!important;
+  border:1px solid color-mix(in srgb,var(--qa-accent) 42%,transparent)!important;
+}
+.secondary,.ghost,.ghostButton,.secondaryButton,button.secondaryAction,button[data-variant='secondary'] {
+  background:#102536!important;
+  color:#f2f7fb!important;
+  border:1px solid rgba(16,37,54,.12)!important;
+}
+.tabs,.accessTabs,.actionsTabs,.archiveTabs,.benefitTabs,.businessTabs,.campusTabs,
+.committeeTabs,.expenseTabs,.financeTabs,.groupTypeTabs,.marketTabs,.moduleTabs,
+.paymentViewTabs,.pillTabs,.categoryTabs,.chatTabs,.notificationFilter,.dateFilter,
+.posFilter,.mkCModeTabs,.chatFilterPanel { background:transparent!important; }
+.tabs button,.accessTabs button,.actionsTabs button,.archiveTabs button,.benefitTabs button,
+.businessTabs button,.campusTabs button,.committeeTabs button,.expenseTabs button,
+.financeTabs button,.groupTypeTabs button,.marketTabs button,.moduleTabs button,
+.paymentViewTabs button,.pillTabs button,.categoryTabs button,.chatTabs button,
+.notificationFilter button,.dateFilter button,.posFilter button,.mkCModeTabs button,
+.chatFilterPanel button,.mkCCategoryChip {
+  background:#102536!important;
+  color:#eaf2fa!important;
+  border:1px solid rgba(16,37,54,.1)!important;
+}
+.tabs button.active,.accessTabs button.active,.actionsTabs button.active,
+.archiveTabs button.active,.benefitTabs button.active,.businessTabs button.active,
+.campusTabs button.active,.committeeTabs button.active,.expenseTabs button.active,
+.financeTabs button.active,.groupTypeTabs button.active,.marketTabs button.active,
+.moduleTabs button.active,.paymentViewTabs button.active,.pillTabs button.active,
+.categoryTabs button.active,.chatTabs button.active,.notificationFilter button.active,
+.dateFilter button.active,.posFilter button.active,.mkCModeTabs button.active,
+.chatFilterPanel button.active,.mkCCategoryChip.active {
+  background:linear-gradient(135deg,var(--qa-accent-strong),var(--qa-accent))!important;
+  color:#fff!important;
+  border-color:color-mix(in srgb,var(--qa-accent) 40%,transparent)!important;
+}
+.pill,.badge,.statusBadge,.userPill,.mineBadge,.managerBadge,.memberRoleBadge,
+.offerBadge,.discountBadge,.onlineBadge,.connectionBadge,.verificationBadge,
+.placeBadge,.communityHeroBadge,.countBadge,.notificationBadge,.rideStatusBadge,
+.campusStatusBadge,.greenBadge {
+  background:#edf3f8!important;
+  color:#3c5268!important;
+  border:1px solid var(--qa-line)!important;
+}
+.pill.active,.greenBadge,.onlineBadge,.connectionBadge.online {
+  background:#e6f6f1!important;
+  color:var(--qa-success)!important;
+  border-color:#bce7d9!important;
+}
+
+/* Alertas y estados */
+.alert,.notice,.pushPermissionBox,.locationPermissionCard,.localModeBanner,
+.simulationBanner,.runtimeWarning,.warningCard {
+  background:#edf6ff!important;
+  color:#24496b!important;
+  border:1px solid #c9def0!important;
+}
+.alert-warning,.warning,.notice-warning,.simulationWarning,.localModeWarning {
+  background:#fff5df!important;
+  color:#8a5706!important;
+  border:1px solid #efd49d!important;
+}
+.formError,.errorMessage { background:#fff0f3!important; color:var(--qa-danger)!important; border-color:#f1c0cb!important; }
+
+/* Filas y listados */
+.timelineItem,.thread,.foundContactCard,.teacherCard,.memberCard,.listRow,
+.notificationRow,.chatContactRow,.moduleMini>div,.adminTable>div,.adminTable.files>div,
+.workflowList button,.workflowList.static>div,.participant,.paymentCards article,
+.communityListItem,.notificationItem,.archiveRow,.orderLine,.trackRow,
+.financeTable article,.financeTable .row,.financeTable .entry {
+  background:#fff!important;
+  color:var(--qa-text)!important;
+  border:1px solid var(--qa-line)!important;
+}
+.timelineItem span,.thread span,.thread small,.notificationItem small,.moduleMini small,
+.adminTable small,.paymentCards small,.participant small,.workflowList small,
+.listRow small,.financeTable small { color:var(--qa-muted)!important; }
+
+/* Chat de escritorio: ocupa el ancho disponible y conserva jerarquía */
+.chatRealPage {
+  width:100%!important;
+  min-height:calc(100vh - 28px)!important;
+  background:#f0f4f7!important;
+  color:var(--qa-text)!important;
+}
+.chatWorkspace {
+  width:100%!important;
+  max-width:none!important;
+  display:grid!important;
+  grid-template-columns:minmax(300px,360px) minmax(0,1fr)!important;
+  gap:14px!important;
+  align-items:stretch!important;
+}
+.chatDirectory,.chatConversation,.chatBox {
+  background:#fff!important;
+  border:1px solid var(--qa-line)!important;
+  box-shadow:var(--qa-shadow)!important;
+}
+.chatDirectoryHeader,.chatConversationHeader,.chatPageHeader,.chatHeader {
+  background:#fff!important;
+  color:var(--qa-text)!important;
+  border-color:var(--qa-line)!important;
+}
+.thread { border-radius:13px!important; }
+.thread.active,.thread:hover { background:var(--qa-accent-soft)!important; border-color:color-mix(in srgb,var(--qa-accent) 32%,var(--qa-line))!important; }
+.messages { background:#f5f8fb!important; }
+.msg.them { background:#fff!important; color:var(--qa-text)!important; border:1px solid var(--qa-line)!important; }
+.msg.me { background:linear-gradient(135deg,var(--qa-accent-strong),var(--qa-accent))!important; color:#fff!important; }
+.composer,.chatComposer { background:#fff!important; border-color:var(--qa-line)!important; }
+
+/* Notificaciones legibles */
+.notificationItem,.notificationRow { background:#fff!important; }
+.notificationItem h3,.notificationItem strong,.notificationRow h3,.notificationRow strong { color:var(--qa-text)!important; }
+.notificationItem p,.notificationItem small,.notificationRow p,.notificationRow small { color:var(--qa-muted)!important; }
+
+/* Cabeceras de secciones y divisores */
+.sectionHeader,.cardHeader,.panelHeader,.cardHead,.mkCSectionTitle {
+  border-color:var(--qa-line)!important;
+  color:var(--qa-text)!important;
+}
+hr { border-color:var(--qa-line)!important; }
+
+/* Responsive QA */
+@media(max-width:1100px){
+  .grid3,.quickGrid,.opportunityGrid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+  .chatWorkspace { grid-template-columns:320px minmax(0,1fr)!important; }
+}
+@media(max-width:900px){
+  .app>main { margin-left:0!important; width:100%!important; }
+  .chatWorkspace { grid-template-columns:1fr!important; }
+  .grid2,.grid3,.quickGrid,.opportunityGrid,.adminGrid { grid-template-columns:1fr!important; }
+  .content { padding:14px 12px 80px!important; }
+}
+@media(max-width:560px){
+  .hero,.smartHero,.communityHero,.communityHeroReal,.committeeHero,.newCommitteeHero,
+  .notificationHero,.commerceHero,.businessHero,.businessSuiteHero,.benefitsHero,
+  .marketHero,.mkCTopHero,.campusHero,.financeHero,.transferHero,.rideHero,
+  .rideDeliveryHero,.aiHero,.pageHero,.moduleHero { border-radius:16px!important; padding:16px!important; }
+  .card,.panel,.communityCardReal,.placeCard,.businessCard,.marketCard,.paymentCard,
+  .financePanel { border-radius:14px!important; padding:14px!important; }
+  .page h1 { font-size:24px!important; }
+  button,input,select,textarea { min-height:44px!important; }
+}
