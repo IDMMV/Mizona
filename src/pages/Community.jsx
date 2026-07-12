@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  AlertCircle, Building2, CalendarDays, Check, ChevronLeft, CircleUserRound,
-  Download, FileText, GraduationCap, Image, LoaderCircle, LockKeyhole, Megaphone,
-  Plus, RefreshCw, Search, ShieldCheck, Upload, UserCheck, UserPlus, Users, X
-} from 'lucide-react';
+import { AlertCircle, BarChart3, Building2, CalendarDays, Camera, Check, ChevronLeft, CircleUserRound, Download, FileText, GraduationCap, Image, LoaderCircle, LockKeyhole, Megaphone, Plus, Puzzle, RefreshCw, Search, ShieldCheck, Upload, UserCheck, UserPlus, Users, X } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -511,13 +507,13 @@ function JoinCodeForm({ busy, onCancel, onSubmit }) {
 function CommunityHome({ community, bundle, canPublish, onChangeTab }) {
   const nextEvent = bundle.events.find(item => new Date(item.starts_at) >= new Date()) || bundle.events[0];
   return <div className="communityHomeGrid">
-    <Card title="Últimos comunicados" icon="📢" action={<button className="linkButton" onClick={() => onChangeTab('announcements')}>Ver todos</button>}>
+    <Card title="Últimos comunicados" icon={<Megaphone size={18}/>} action={<button className="linkButton" onClick={() => onChangeTab('announcements')}>Ver todos</button>}>
       {bundle.announcements.length === 0 ? <MiniEmpty text="Todavía no hay comunicados."/> : <div className="announcementCompactList">{bundle.announcements.slice(0, 3).map(item => <article key={item.id}><span>{item.is_pinned ? '📌' : '📢'}</span><div><b>{item.title}</b><p>{item.body}</p><small>{formatDate(item.published_at, true)}</small></div></article>)}</div>}
     </Card>
-    <Card title="Próximo evento" icon="📅" action={<button className="linkButton" onClick={() => onChangeTab('events')}>Calendario</button>}>
+    <Card title="Próximo evento" icon={<CalendarDays size={18}/>} action={<button className="linkButton" onClick={() => onChangeTab('events')}>Calendario</button>}>
       {!nextEvent ? <MiniEmpty text="No hay eventos programados."/> : <div className="nextEventCard"><CalendarDays size={34}/><div><b>{nextEvent.title}</b><span>{formatDate(nextEvent.starts_at, true)}</span><span>{nextEvent.location || 'Ubicación por confirmar'}</span><p>{nextEvent.description}</p></div></div>}
     </Card>
-    <Card title="Resumen" icon="📊">
+    <Card title="Resumen" icon={<BarChart3 size={18}/>}>
       <div className="communitySummaryGrid">
         <div><b>{community.member_count || 0}</b><span>Miembros</span></div>
         <div><b>{bundle.announcements.length}</b><span>Comunicados</span></div>
@@ -526,7 +522,7 @@ function CommunityHome({ community, bundle, canPublish, onChangeTab }) {
         <div><b>{bundle.documents.length}</b><span>Documentos</span></div>
       </div>
     </Card>
-    <Card title="Funciones disponibles" icon="🧩">
+    <Card title="Funciones disponibles" icon={<Puzzle size={18}/>}>
       <div className="communityFeatureList"><span>📢 Comunicados oficiales</span><span>📅 Eventos y reuniones</span><span>👥 Gestión de miembros</span><span>📁 Documentos privados</span>{community.type === 'school' && <><span>🏫 Aulas escolares</span><span>🔒 Acceso dentro del colegio</span></>}</div>
       {canPublish && <small className="managerHint">Tienes permisos para publicar y administrar contenido.</small>}
     </Card>
@@ -580,7 +576,7 @@ function MembersPanel({ members, canManage, busy, currentUserId, onReview }) {
   return <div className="communitySectionStack">
     <SectionHeader title="Miembros" subtitle={`${active.length} miembros activos · ${pending.length} solicitudes pendientes`}/>
     {canManage && pending.length > 0 && <Card title="Solicitudes de ingreso" icon="⏳"><div className="memberListReal">{pending.map(member => <MemberRow key={member.user_id} member={member} busy={busy === `member-${member.user_id}`} canManage currentUserId={currentUserId} pending onReview={onReview}/>)}</div></Card>}
-    <Card title="Miembros activos" icon="👥">{active.length === 0 ? <MiniEmpty text="No hay miembros activos visibles."/> : <div className="memberListReal">{active.map(member => <MemberRow key={member.user_id} member={member} busy={busy === `member-${member.user_id}`} canManage={canManage} currentUserId={currentUserId} onReview={onReview}/>)}</div>}</Card>
+    <Card title="Miembros activos" icon={<Users size={18}/>}>{active.length === 0 ? <MiniEmpty text="No hay miembros activos visibles."/> : <div className="memberListReal">{active.map(member => <MemberRow key={member.user_id} member={member} busy={busy === `member-${member.user_id}`} canManage={canManage} currentUserId={currentUserId} onReview={onReview}/>)}</div>}</Card>
   </div>;
 }
 
@@ -626,7 +622,7 @@ function PhotosPanel({ photos = [], canUpload }) {
       <small>{photo.author || 'Comunidad'} · {formatDate(photo.date || photo.created_at, true)}</small>
       <button className="ghost">Ver / descargar</button>
     </article>)}</div>
-    {!localPhotos.length && <EmptyState icon="📸" title="Todavía no hay fotos" text="Cuando subas fotos de actividades, eventos o reuniones aparecerán aquí."/>}
+    {!localPhotos.length && <EmptyState icon={<Camera size={18}/>} title="Todavía no hay fotos" text="Cuando subas fotos de actividades, eventos o reuniones aparecerán aquí."/>}
   </div>;
 }
 

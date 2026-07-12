@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, Cloud, Database, RefreshCw, ShieldCheck, TriangleAlert, UserRound } from 'lucide-react';
+import { CheckCircle2, Cloud, Compass, Database, RefreshCw, ShieldCheck, TriangleAlert, UserRound } from 'lucide-react';
 import Card from '../components/Card';
 import { runCloudHealthCheck } from '../lib/cloudBackend';
 import { useApp } from '../context/AppContext';
@@ -36,6 +36,6 @@ export default function CloudLaunch({ setPage }) {
       {checks.length > 0 && <div className={`resultBanner ${errors ? 'danger' : 'success'}`}>{errors ? `${errors} comprobaciones requieren atención.` : 'La base principal está preparada para comenzar las pruebas con usuarios reales.'}</div>}
     </Card>
 
-    <Card title="Orden de prueba recomendado" icon="🧭"><ol className="numberedList"><li>Activa el modo nube.</li><li>Crea una cuenta adulta con correo real.</li><li>Confirma el correo desde tu bandeja de entrada.</li><li>Inicia sesión y revisa el perfil.</li><li>En otra ventana crea una segunda cuenta para probar comunicación real.</li><li>No migres todavía pagos ni documentos sensibles hasta validar permisos.</li></ol></Card>
+    <Card title="Orden de prueba recomendado" icon={<Compass size={18}/>}><ol className="numberedList"><li>Activa el modo nube.</li><li>Crea una cuenta adulta con correo real.</li><li>Confirma el correo desde tu bandeja de entrada.</li><li>Inicia sesión y revisa el perfil.</li><li>En otra ventana crea una segunda cuenta para probar comunicación real.</li><li>No migres todavía pagos ni documentos sensibles hasta validar permisos.</li></ol></Card>
   </div>;
 }

@@ -1,22 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  AlertTriangle,
-  BadgeCheck,
-  BriefcaseBusiness,
-  CalendarDays,
-  Check,
-  Clock3,
-  Gift,
-  Heart,
-  MapPin,
-  Plus,
-  Search,
-  Sparkles,
-  Tag,
-  Ticket,
-  Users,
-  X
-} from 'lucide-react';
+import { AlertTriangle, BadgeCheck, BriefcaseBusiness, CalendarDays, Check, Clock3, Gift, Heart, MapPin, Plus, RefreshCw, Search, Sparkles, Tag, Ticket, Users, X } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -261,7 +244,7 @@ export default function Benefits() {
     </>}
 
     {mode === 'actions' && <div className="benefitActionWorkspace">
-      <Card title="Mis beneficios y acciones" icon="🎟️">
+      <Card title="Mis beneficios y acciones" icon={<Ticket size={18}/>}>
         <p className="muted">Cada perfil conserva sus cupones, postulaciones, reservas y asistencias.</p>
         <div className="benefitActionList">
           {myActionRows.map(({ action, item }) => <article key={action.id}>
@@ -277,7 +260,7 @@ export default function Benefits() {
           {!myActionRows.length && <div className="emptyInline"><Ticket size={30}/><p>Todavía no registraste beneficios.</p><button className="primary" onClick={() => setMode('discover')}>Explorar oportunidades</button></div>}
         </div>
       </Card>
-      <Card title="Cómo se comparte entre perfiles" icon="🔄">
+      <Card title="Cómo se comparte entre perfiles" icon={<RefreshCw size={18}/>}>
         <ul className="list">
           <li>Abre una segunda pestaña y selecciona otro perfil.</li>
           <li>Publica una oferta, empleo, evento, campaña o cupón.</li>

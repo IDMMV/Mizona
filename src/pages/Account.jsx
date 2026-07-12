@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, CheckCircle2, Cloud, CloudOff, Database, Download, Eye, EyeOff, HelpCircle, KeyRound, LockKeyhole, LogOut, Mail, Save, ShieldCheck, Upload, UserRound, Wifi } from 'lucide-react';
+import { AlertTriangle, BarChart3, Bell, CheckCircle2, Cloud, CloudOff, Database, Download, Eye, EyeOff, HelpCircle, KeyRound, LifeBuoy, Lock, LockKeyhole, LogOut, Mail, Save, ShieldCheck, Sparkles, Upload, User, UserRound, Wifi } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { friendlyAuthError } from '../lib/supabase';
@@ -195,7 +195,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
 
     <div className={`localOperationBanner ${backendConnected ? 'cloudReadyBanner' : ''}`}>{backendConnected ? <Cloud size={20}/> : <CloudOff size={20}/>}<div><b>{backendConnected ? 'Supabase conectado correctamente' : 'Modo local activo · Etapa 14'}</b><span>{backendConnected ? 'Tus datos pueden sincronizarse con la nube cuando uses una cuenta conectada.' : 'MiZona usa almacenamiento local e IndexedDB. Los datos permanecen en este navegador y pueden exportarse como respaldo.'}</span></div><em>{online ? 'Internet disponible' : 'Sin internet'}</em></div>
 
-    {tab === 'profile' && <Card title="Identidad MiZona" icon="👤">
+    {tab === 'profile' && <Card title="Identidad MiZona" icon={<User size={18}/>}>
       {isAuthenticated ? <form className="accountForm" onSubmit={submitProfile} key={`${profile.id || 'local'}-${profile.username}`}>
         <label>Nombre visible<input name="displayName" defaultValue={profile.displayName} required/></label>
         <label>Usuario único<input name="username" defaultValue={profile.username} pattern="[A-Za-z0-9_]{4,20}" required/><small>Se utiliza para encontrarte por coincidencia exacta.</small></label>
@@ -207,12 +207,12 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     {tab === 'access' && <>
       {dataMode === 'local' ? <>
         {canLogout ? <div className="grid2 accountAccessGrid">
-          <Card title="Sesión local activa" icon="✅">
+          <Card title="Sesión local activa" icon={<CheckCircle2 size={18}/>}>
             <div className="sessionSummary sessionActiveBox"><b>{profile.displayName}</b><span>@{profile.username}</span><small>Rol local: {profile.role}</small><small>Zona: {profile.zone}</small></div>
             <p className="muted">Estás dentro de MiZona con este perfil.</p>
             <div className="buttonWrap"><button className="ghost" onClick={() => setAccessView('security')}><KeyRound size={17}/>Cambiar contraseña</button><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></div>
           </Card>
-          {accessView === 'security' && <Card title="Cambiar contraseña y recuperación" icon="🔑">
+          {accessView === 'security' && <Card title="Cambiar contraseña y recuperación" icon={<KeyRound size={18}/>}>
             <form className="accountForm" onSubmit={submitLocalSecurity}>
               <PasswordField label="Contraseña actual" name="currentPassword" minLength={4} placeholder="Solo si ya configuraste una"/>
               <PasswordField label="Nueva contraseña" name="newPassword" minLength={4} autoComplete="new-password" placeholder="mín. 4 caracteres"/>
@@ -223,7 +223,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
             </form>
           </Card>}
         </div> : <div className="singleAccessPanel">
-          {accessView === 'login' && <Card title="Iniciar sesión local" icon="🔐">
+          {accessView === 'login' && <Card title="Iniciar sesión local" icon={<Lock size={18}/>}>
             <form className="accountForm" onSubmit={submitLogin}>
               <label>Usuario local<input name="identifier" placeholder="Ejemplo: JOSE1985" autoComplete="username" required/></label>
               <PasswordField label="Contraseña" name="password" minLength={4} placeholder="Contraseña local opcional" autoComplete="current-password"/>
@@ -231,7 +231,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
             </form>
             <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>¿Olvidaste tu contraseña?</button><button className="ghost" type="button" onClick={() => setAccessView('create')}><UserRound size={17}/>Crear perfil local</button></div>
           </Card>}
-          {accessView === 'recover' && <Card title="Recuperar contraseña local" icon="🛟">
+          {accessView === 'recover' && <Card title="Recuperar contraseña local" icon={<LifeBuoy size={18}/>}>
             <form className="accountForm" onSubmit={loadLocalRecoveryQuestion}>
               <label>Usuario local<input name="username" placeholder="Ejemplo: JOSE1985" required/></label>
               <button className="ghost" disabled={busy}><HelpCircle size={17}/>Buscar pregunta secreta</button>
@@ -246,7 +246,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
             </form>}
             <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => { setRecoveryQuestion(''); setAccessView('login'); }}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => { setRecoveryQuestion(''); setAccessView('create'); }}><UserRound size={17}/>Crear perfil local</button></div>
           </Card>}
-          {accessView === 'create' && <Card title="Crear perfil local" icon="✨">
+          {accessView === 'create' && <Card title="Crear perfil local" icon={<Sparkles size={18}/>}>
             <form className="accountForm" onSubmit={submitRegister}>
               <label>Nombre visible<input name="displayName" required/></label>
               <label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label>
@@ -262,12 +262,12 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
             <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('login')}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>Recuperar contraseña</button></div>
           </Card>}
         </div>}
-        <Card title="Conexión futura" icon="☁️"><p className="muted">Cuando Supabase vuelva a estar estable podremos cambiar a modo nube y verificar las Etapas 10, 11 y 12.</p><button className="ghost" disabled={!backendConfigured} onClick={() => { setDataMode('cloud'); setMessage(backendConfigured ? 'Modo nube solicitado. Recarga la página para verificar la sesión.' : 'Las variables de Supabase no están configuradas.'); }}><Cloud size={17}/>Intentar modo nube después</button>{!backendConfigured && <small className="muted">VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY no están configuradas.</small>}</Card>
+        <Card title="Conexión futura" icon={<Cloud size={18}/>}><p className="muted">Cuando Supabase vuelva a estar estable podremos cambiar a modo nube y verificar las Etapas 10, 11 y 12.</p><button className="ghost" disabled={!backendConfigured} onClick={() => { setDataMode('cloud'); setMessage(backendConfigured ? 'Modo nube solicitado. Recarga la página para verificar la sesión.' : 'Las variables de Supabase no están configuradas.'); }}><Cloud size={17}/>Intentar modo nube después</button>{!backendConfigured && <small className="muted">VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY no están configuradas.</small>}</Card>
       </> : <>
         {authLoading && <Card title="Verificando sesión" icon="⏳"><p className="muted">Comprobando tu acceso...</p></Card>}
-        {!authLoading && canLogout && <div className="grid2"><Card title="Sesión de nube activa" icon="✅"><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>{user?.email}</small><small>Rol: {profile.role}</small></div><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card><Card title="Cambiar contraseña" icon="🔑"><form className="accountForm" onSubmit={submitPassword}><PasswordField label="Nueva contraseña" name="password" minLength={8} autoComplete="new-password" required/><PasswordField label="Repetir contraseña" name="confirmation" minLength={8} autoComplete="new-password" required/><button className="primary" disabled={busy}><KeyRound size={17}/>Actualizar contraseña</button></form></Card></div>}
+        {!authLoading && canLogout && <div className="grid2"><Card title="Sesión de nube activa" icon={<CheckCircle2 size={18}/>}><div className="sessionSummary"><b>{profile.displayName}</b><span>@{profile.username}</span><small>{user?.email}</small><small>Rol: {profile.role}</small></div><button className="dangerButton" disabled={busy} onClick={logout}><LogOut size={17}/>Cerrar sesión</button></Card><Card title="Cambiar contraseña" icon={<KeyRound size={18}/>}><form className="accountForm" onSubmit={submitPassword}><PasswordField label="Nueva contraseña" name="password" minLength={8} autoComplete="new-password" required/><PasswordField label="Repetir contraseña" name="confirmation" minLength={8} autoComplete="new-password" required/><button className="primary" disabled={busy}><KeyRound size={17}/>Actualizar contraseña</button></form></Card></div>}
         {!authLoading && !canLogout && <div className="singleAccessPanel">
-          {accessView === 'login' && <Card title="Iniciar sesión" icon="🔐">
+          {accessView === 'login' && <Card title="Iniciar sesión" icon={<Lock size={18}/>}>
             <form className="accountForm" onSubmit={submitLogin}>
               <label>Usuario o correo<input name="identifier" autoComplete="username" required/></label>
               <PasswordField label="Contraseña" name="password" minLength={6} required/>
@@ -275,7 +275,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
             </form>
             <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>¿Olvidaste tu contraseña?</button><button className="ghost" type="button" onClick={() => setAccessView('create')}><UserRound size={17}/>Crear cuenta</button></div>
           </Card>}
-          {accessView === 'create' && <Card title="Crear cuenta" icon="✨">
+          {accessView === 'create' && <Card title="Crear cuenta" icon={<Sparkles size={18}/>}>
             <form className="accountForm" onSubmit={submitRegister}>
               <label>Nombre visible<input name="displayName" required/></label>
               <label>Usuario único<input name="username" pattern="[A-Za-z0-9_]{4,20}" required/></label>
@@ -288,7 +288,7 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
             </form>
             <div className="accessChoiceRow"><button className="ghost" type="button" onClick={() => setAccessView('login')}><KeyRound size={17}/>Volver a iniciar sesión</button><button className="ghost" type="button" onClick={() => setAccessView('recover')}><HelpCircle size={17}/>Recuperar contraseña</button></div>
           </Card>}
-          {accessView === 'recover' && <Card title="Recuperar contraseña" icon="📧">
+          {accessView === 'recover' && <Card title="Recuperar contraseña" icon={<Mail size={18}/>}>
             <form className="accountForm" onSubmit={submitRecovery}>
               <label>Correo<input name="email" type="email" required/></label>
               <button className="ghost" disabled={busy || !backendConnected}><Mail size={17}/>Enviar enlace</button>
@@ -301,13 +301,13 @@ export default function Account({ initialTab = 'profile', cloudOnly = false }) {
     </>}
 
     {tab === 'local' && <div className="grid2">
-      <Card title="Respaldo del dispositivo" icon="💾"><p className="muted">Descarga chats, contactos, notificaciones, reportes y configuración local en un archivo JSON.</p><div className="localDataActions"><button className="primary" onClick={exportLocalBackup}><Download size={17}/>Descargar respaldo</button><button className="ghost" onClick={() => importInput.current?.click()}><Upload size={17}/>Importar respaldo</button><input ref={importInput} type="file" accept="application/json,.json" hidden onChange={importBackup}/></div></Card>
-      <Card title="Estado del almacenamiento" icon="📊"><div className="contingencyStatus"><span><b>Modo</b><em>Local</em></span><span><b>Acciones locales</b><em>{syncQueueCount}</em></span><span><b>Conexión</b><em>{online ? 'Disponible' : 'Sin internet'}</em></span><span><b>Archivos</b><em>IndexedDB</em></span></div><button className="dangerButton" onClick={resetData}><Database size={17}/>Restablecer datos locales</button></Card>
+      <Card title="Respaldo del dispositivo" icon={<Save size={18}/>}><p className="muted">Descarga chats, contactos, notificaciones, reportes y configuración local en un archivo JSON.</p><div className="localDataActions"><button className="primary" onClick={exportLocalBackup}><Download size={17}/>Descargar respaldo</button><button className="ghost" onClick={() => importInput.current?.click()}><Upload size={17}/>Importar respaldo</button><input ref={importInput} type="file" accept="application/json,.json" hidden onChange={importBackup}/></div></Card>
+      <Card title="Estado del almacenamiento" icon={<BarChart3 size={18}/>}><div className="contingencyStatus"><span><b>Modo</b><em>Local</em></span><span><b>Acciones locales</b><em>{syncQueueCount}</em></span><span><b>Conexión</b><em>{online ? 'Disponible' : 'Sin internet'}</em></span><span><b>Archivos</b><em>IndexedDB</em></span></div><button className="dangerButton" onClick={resetData}><Database size={17}/>Restablecer datos locales</button></Card>
     </div>}
 
-    {tab === 'notifications' && <Card title="Qué deseas recibir" icon="🔔"><div className="preferenceList">{Object.entries({ community: 'Comunicados de mi comunidad', chat: 'Mensajes e invitaciones', offers: 'Beneficios y oportunidades', courses: 'Recordatorios de CampusHugo', ride: 'Estados de viajes y envíos' }).map(([key, label]) => <label key={key}><span><Bell size={17}/>{label}</span><input type="checkbox" checked={Boolean(notifications[key])} onChange={event => setNotifications(current => ({ ...current, [key]: event.target.checked }))}/></label>)}</div><button className="primary" onClick={savePreferences}><Save size={17}/>Guardar preferencias</button></Card>}
+    {tab === 'notifications' && <Card title="Qué deseas recibir" icon={<Bell size={18}/>}><div className="preferenceList">{Object.entries({ community: 'Comunicados de mi comunidad', chat: 'Mensajes e invitaciones', offers: 'Beneficios y oportunidades', courses: 'Recordatorios de CampusHugo', ride: 'Estados de viajes y envíos' }).map(([key, label]) => <label key={key}><span><Bell size={17}/>{label}</span><input type="checkbox" checked={Boolean(notifications[key])} onChange={event => setNotifications(current => ({ ...current, [key]: event.target.checked }))}/></label>)}</div><button className="primary" onClick={savePreferences}><Save size={17}/>Guardar preferencias</button></Card>}
 
-    {tab === 'security' && <div className="grid2"><Card title="Privacidad por defecto" icon="🛡️"><div className="preferenceList"><label><span><LockKeyhole size={17}/>Buscarme solo por usuario exacto</span><input type="checkbox" defaultChecked/></label><label><span><ShieldCheck size={17}/>Bloquear contacto externo para estudiantes</span><input type="checkbox" defaultChecked/></label><label><span><UserRound size={17}/>Mostrar comunidad en perfil</span><input type="checkbox"/></label></div></Card><Card title="Límites del modo local" icon="⚠️"><ul className="list"><li>Los datos solo existen en este navegador y dispositivo.</li><li>Un respaldo JSON no incluye el contenido binario de archivos adjuntos.</li><li>La contraseña local protege este navegador; la seguridad real multiusuario se activará con Supabase.</li><li>No se sincroniza todavía con otros usuarios o equipos.</li><li>La seguridad multiusuario se activará al recuperar el backend.</li></ul></Card></div>}
+    {tab === 'security' && <div className="grid2"><Card title="Privacidad por defecto" icon={<ShieldCheck size={18}/>}><div className="preferenceList"><label><span><LockKeyhole size={17}/>Buscarme solo por usuario exacto</span><input type="checkbox" defaultChecked/></label><label><span><ShieldCheck size={17}/>Bloquear contacto externo para estudiantes</span><input type="checkbox" defaultChecked/></label><label><span><UserRound size={17}/>Mostrar comunidad en perfil</span><input type="checkbox"/></label></div></Card><Card title="Límites del modo local" icon={<AlertTriangle size={18}/>}><ul className="list"><li>Los datos solo existen en este navegador y dispositivo.</li><li>Un respaldo JSON no incluye el contenido binario de archivos adjuntos.</li><li>La contraseña local protege este navegador; la seguridad real multiusuario se activará con Supabase.</li><li>No se sincroniza todavía con otros usuarios o equipos.</li><li>La seguridad multiusuario se activará al recuperar el backend.</li></ul></Card></div>}
 
     {tab === 'install' && <div className="installCard"><div className="installPhone"><span>MZ</span><b>MiZona</b><small>Tu comunidad en una app</small></div><div><h2>Instala MiZona como aplicación</h2><p>La PWA conserva la interfaz y los datos locales en conexiones inestables.</p><ul className="list"><li>Acceso directo desde celular, tablet o PC.</li><li>Chat local y notificaciones disponibles en el dispositivo.</li><li>Los servicios externos seguirán necesitando internet.</li></ul><button className="primary" onClick={install}><Download size={18}/>Instalar MiZona</button></div></div>}
   </div>;

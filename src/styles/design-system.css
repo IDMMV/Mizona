@@ -1,0 +1,95 @@
+/* =========================================================
+   SISTEMA DE DISEÑO UNIFICADO — MiZona
+   Este archivo se carga al final de todos (después de app.css y
+   theme-dark-mockup.css) para que sus reglas ganen sin tener que
+   editar cada página una por una. Objetivo: que TODAS las
+   pantallas usen el mismo lenguaje visual (mismo degradado de
+   marca en los encabezados, mismos radios de tarjeta, mismos
+   acentos), en vez de que cada "etapa" haya traído su propio
+   color al azar (morado en Beneficios, celeste en Negocios, verde
+   azulado en Ride, etc.)
+   ========================================================= */
+
+/* ---------- 1. Un solo degradado de marca para TODOS los encabezados ----------
+   Antes: .benefitsHero, .marketHero, .campusHero, .businessSuiteHero,
+   .notificationHero, .mkCTopHero, .labHero y .aiHero tenían cada uno
+   su propio color inventado. app.css YA unificaba .hero, .businessHero,
+   .rideHero y .committeeHero (línea ~467) — aquí extendemos esa MISMA
+   regla al resto para que toda la web comparta un único degradado. */
+.app .hero,
+.app .businessHero,
+.app .rideHero,
+.app .committeeHero,
+.app .benefitsHero,
+.app .marketHero,
+.app .campusHero,
+.app .businessSuiteHero,
+.app .notificationHero,
+.app .mkCTopHero,
+.app .labHero,
+.app .aiHero,
+.app .communityHeroReal{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--brand) 60%,var(--brand2) 100%) !important;
+}
+
+/* Textos secundarios dentro de cualquier encabezado, unificados a un
+   blanco translúcido en vez de cada uno con su propio tono pastel */
+.app .benefitsHero p,.app .marketHero p,.app .campusHero p,
+.app .businessSuiteHero p,.app .notificationHero p,.app .aiHero p,
+.app .communityHeroReal p,.app .labHero p{color:rgba(255,255,255,.88) !important}
+
+/* Chips/estadísticas translúcidas dentro del encabezado: mismo estilo
+   en todas las páginas */
+.app .benefitStats span,.app .marketHeroStats span,.app .campusHeroStats span,
+.app .businessHeroStats span,.app .rideHeroStats span,.app .committeeHeroStats span,
+.app .notificationHeroStats span,.app .businessSelector,.app .rideTrust,
+.app .aiMode,.app .communityHeroBadges span{
+  background:rgba(255,255,255,.14) !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  color:#fff !important;
+}
+
+/* ---------- 2. Escala única de radios (antes iba de 18px a 30px al azar) ---------- */
+.app .hero,.app .businessHero,.app .rideHero,.app .committeeHero,
+.app .benefitsHero,.app .marketHero,.app .campusHero,.app .businessSuiteHero,
+.app .notificationHero,.app .mkCTopHero,.app .labHero,.app .aiHero,
+.app .communityHeroReal{border-radius:26px !important}
+
+.app .card,.app .quick,.app .thread,.app .chatBox,.app .timelineItem,
+.app .courseCard,.app .marketCard,.app .placeCard,.app .driverCard,
+.app .communityCardReal,.app .opportunityCard,.app .featuredCard,
+.app .teacherCard,.app .learningCard,.app .gatewayCard,.app .trackingCard,
+.app .mkCBusinessCard,.app .mkCProductCard,.app .mkCPromoCard,
+.app .posProduct,.app .notificationList article{border-radius:20px !important}
+
+.app .detailModal,.app .courseModal,.app .lessonModal,.app .chatModal,
+.app .communityModal,.app .formModal,.app .benefitCreateModal,
+.app .businessModal,.app .marketModal,.app .mkCBusinessModal,
+.app .cartPanel,.app .posFilters{border-radius:24px !important}
+
+/* ---------- 3. Un solo botón de acción principal en toda la web ---------- */
+.app .primary,
+.app .committeeActions .primary,
+.app .mkCEmptyBox button{
+  background:linear-gradient(135deg,var(--brand),var(--brand2)) !important;
+  border:0 !important;
+  color:#04150c !important;
+}
+
+/* ---------- 4. Acentos de marca reutilizados (en vez de azules/morados sueltos) ---------- */
+.app .marketTitle strong,.app .marketModalTop strong,.app .sellerLine svg:last-child,
+.app .courseInstructor svg:last-child,.app .routeList li span,.app .curriculum summary>span,
+.app .opportunityType,.app .mkCProductBody strong,.app .mkCPromoCard strong,
+.app .mkCSectionTitle button,.app .mkCFav:hover{color:var(--brand) !important}
+
+.app .categoryRail button.active,.app .servicePicker button.active,
+.app .mkCModeTabs button.active,.app .mkCCategoryChips button.active{
+  background:var(--brand) !important;color:#04150c !important;border-color:var(--brand) !important;
+}
+
+/* Insignia de estado de conexión (Nube / Local) con el mismo verde de marca */
+.app .runtimeBadge.local,.app .runtimeBadge.cloud{
+  background:color-mix(in srgb, var(--brand) 16%, transparent) !important;
+  color:var(--brand) !important;
+  border-color:color-mix(in srgb, var(--brand) 35%, transparent) !important;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CloudUpload, Database, Download, RefreshCcw, ShieldCheck, Smartphone, Users, WifiOff } from 'lucide-react';
+import { AlertTriangle, Cloud, CloudUpload, Compass, Database, Download, Lock, Package, RefreshCcw, Settings, ShieldCheck, Smartphone, Users, WifiOff } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -101,7 +101,7 @@ export default function SyncCenter() {
           <button onClick={() => { runReadinessChecks(); setMsg('Revisión completada.'); }}><RefreshCcw size={16}/> Ejecutar revisión</button>
         </Card>
       </div>
-      <Card title="Progreso de preparación" icon="☁️">
+      <Card title="Progreso de preparación" icon={<Cloud size={18}/>}>
         <div className="syncProgress"><div><i style={{width:`${progress}%`}}/></div><b>{progress}%</b></div>
         <div className="syncPlanGrid">{Object.entries(state.cloudPlan || {}).map(([key, value]) => <article key={key}><b>{planLabels[key]}</b><span>{statusText[value] || value}</span><select value={value} onChange={e => markCloudPlan(key, e.target.value)}><option value="pending">Pendiente</option><option value="done">Listo</option><option value="blocked_until_legal">Bloqueado legal</option></select></article>)}</div>
       </Card>
@@ -112,28 +112,28 @@ export default function SyncCenter() {
         <Card title="Resumen de usuarios" icon={<Users/>}>
           <ul className="list"><li><b>{preview.summary.profiles}</b> perfiles activos.</li><li><b>{preview.summary.admins}</b> administradores.</li><li><b>{preview.summary.students}</b> estudiantes protegidos.</li><li><b>{preview.summary.notifications}</b> notificaciones locales.</li></ul>
         </Card>
-        <Card title="Reglas para usuarios reales" icon="🔐"><ul className="list"><li>Usuario único obligatorio.</li><li>Correo para recuperación de contraseña.</li><li>Teléfono opcional o requerido según configuración.</li><li>Niños y estudiantes siempre con módulos restringidos.</li><li>Adultos, negocios y administradores separados por rol.</li></ul></Card>
+        <Card title="Reglas para usuarios reales" icon={<Lock size={18}/>}><ul className="list"><li>Usuario único obligatorio.</li><li>Correo para recuperación de contraseña.</li><li>Teléfono opcional o requerido según configuración.</li><li>Niños y estudiantes siempre con módulos restringidos.</li><li>Adultos, negocios y administradores separados por rol.</li></ul></Card>
       </div>
-      <Card title="Perfiles listos para migración" icon="👥"><div className="paymentTable">{preview.profiles.map(profile => <article key={profile.id}><div><b>@{profile.username} · {profile.displayName}</b><span>{profile.accountType} · {profile.role} · {profile.zone}</span></div><em className="payStatus ok">{profile.status}</em></article>)}</div></Card>
+      <Card title="Perfiles listos para migración" icon={<Users size={18}/>}><div className="paymentTable">{preview.profiles.map(profile => <article key={profile.id}><div><b>@{profile.username} · {profile.displayName}</b><span>{profile.accountType} · {profile.role} · {profile.zone}</span></div><em className="payStatus ok">{profile.status}</em></article>)}</div></Card>
     </>}
 
     {tab === 'devices' && <div className="grid2">
       <Card title="Dispositivos autorizados" icon={<Smartphone/>}>
         <div className="paymentTable compactTable">{state.devices.map(item => <article key={item.id}><div><b>{item.name}</b><span>{item.type} · {item.id}{item.pairingCode ? ` · código ${item.pairingCode}` : ''}</span></div><em className={`payStatus ${item.status}`}>{item.trusted ? 'confiable' : item.status}</em><div className="payActions"><button onClick={() => trustDevice(item.id, !item.trusted)}>{item.trusted ? 'Quitar confianza' : 'Confiar'}</button></div></article>)}</div>
       </Card>
-      <Card title="Agregar dispositivo de prueba" icon="📱"><form className="paymentForm" onSubmit={e => { e.preventDefault(); const next = addPendingDevice(device); setMsg(`Dispositivo creado con código ${next.pairingCode}.`); }}><label>Nombre<input value={device.name} onChange={e => setDevice({...device, name:e.target.value})}/></label><label>Tipo<select value={device.type} onChange={e => setDevice({...device, type:e.target.value})}><option>Android</option><option>iPhone</option><option>PC / Navegador</option><option>Tablet</option></select></label><button>Crear código de vinculación</button></form><p className="muted">El código es local. En producción servirá para autorizar celulares o computadoras nuevas.</p></Card>
+      <Card title="Agregar dispositivo de prueba" icon={<Smartphone size={18}/>}><form className="paymentForm" onSubmit={e => { e.preventDefault(); const next = addPendingDevice(device); setMsg(`Dispositivo creado con código ${next.pairingCode}.`); }}><label>Nombre<input value={device.name} onChange={e => setDevice({...device, name:e.target.value})}/></label><label>Tipo<select value={device.type} onChange={e => setDevice({...device, type:e.target.value})}><option>Android</option><option>iPhone</option><option>PC / Navegador</option><option>Tablet</option></select></label><button>Crear código de vinculación</button></form><p className="muted">El código es local. En producción servirá para autorizar celulares o computadoras nuevas.</p></Card>
     </div>}
 
     {tab === 'migration' && <>
       <div className="grid2">
         <Card title="Respaldo local" icon={<Download/>}><p>Antes de sincronizar, descarga una copia completa de la información local.</p><div className="payActions"><button onClick={exportLocalBackup}>Descargar respaldo</button><label className="fileButton">Importar respaldo<input type="file" accept="application/json" onChange={importFile}/></label></div></Card>
-        <Card title="Plan de migración" icon="🧭"><p>Genera un plan local con conteos, advertencias y pasos recomendados.</p><div className="payActions"><button onClick={createRun}>Crear plan</button><button onClick={downloadMigrationPreview}>Descargar plan JSON</button></div></Card>
+        <Card title="Plan de migración" icon={<Compass size={18}/>}><p>Genera un plan local con conteos, advertencias y pasos recomendados.</p><div className="payActions"><button onClick={createRun}>Crear plan</button><button onClick={downloadMigrationPreview}>Descargar plan JSON</button></div></Card>
       </div>
-      <Card title="Advertencias actuales" icon="⚠️">{preview.warnings.length ? <ul className="list">{preview.warnings.map(w => <li key={w}>{w}</li>)}</ul> : <p className="muted">No hay advertencias críticas en la vista previa.</p>}</Card>
-      <Card title="Ejecuciones de migración" icon="📦"><div className="paymentTable compactTable">{state.migrationRuns?.length ? state.migrationRuns.map(run => <article key={run.id}><div><b>{run.id}</b><span>{run.createdAt} · perfiles {run.summary.profiles} · mensajes {run.summary.messages}</span></div><em className={`payStatus ${run.status}`}>{statusText[run.status] || run.status}</em></article>) : <p className="muted">Todavía no hay planes creados.</p>}</div></Card>
+      <Card title="Advertencias actuales" icon={<AlertTriangle size={18}/>}>{preview.warnings.length ? <ul className="list">{preview.warnings.map(w => <li key={w}>{w}</li>)}</ul> : <p className="muted">No hay advertencias críticas en la vista previa.</p>}</Card>
+      <Card title="Ejecuciones de migración" icon={<Package size={18}/>}><div className="paymentTable compactTable">{state.migrationRuns?.length ? state.migrationRuns.map(run => <article key={run.id}><div><b>{run.id}</b><span>{run.createdAt} · perfiles {run.summary.profiles} · mensajes {run.summary.messages}</span></div><em className={`payStatus ${run.status}`}>{statusText[run.status] || run.status}</em></article>) : <p className="muted">Todavía no hay planes creados.</p>}</div></Card>
     </>}
 
-    {tab === 'settings' && <Card title="Reglas de sincronización" icon="⚙️"><form className="paymentForm" onSubmit={saveSettings}>
+    {tab === 'settings' && <Card title="Reglas de sincronización" icon={<Settings size={18}/>}><form className="paymentForm" onSubmit={saveSettings}>
       <label>Backend objetivo<input name="targetBackend" defaultValue={state.settings.targetBackend}/></label>
       <label>Modo de migración<select name="migrationMode" defaultValue={state.settings.migrationMode}><option value="manual_review">Revisión manual</option><option value="staged">Por etapas</option><option value="full">Completa</option></select></label>
       <label>Conflictos<select name="conflictPolicy" defaultValue={state.settings.conflictPolicy}><option value="keep_newest">Conservar más reciente</option><option value="prefer_cloud">Preferir nube</option><option value="prefer_local">Preferir local</option><option value="manual">Resolver manual</option></select></label>

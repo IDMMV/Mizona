@@ -3,5 +3,5 @@
 // el número se refleja automáticamente en el sidebar, la pantalla
 // de carga, los mensajes de error de arranque y el título de la
 // pestaña del navegador (vía vite.config.js).
-export const APP_VERSION = '30.53';
-export const APP_STAGE_LABEL = 'Formato global real y filtros visibles';
+export const APP_VERSION = '30.54';
+export const APP_STAGE_LABEL = 'Formularios coherentes: buscadores, checkboxes y foco unificados';

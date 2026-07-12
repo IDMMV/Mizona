@@ -1,10 +1,12 @@
 import Card from '../components/Card';
 import StatusPill from '../components/StatusPill';
-import { notices, chatThreads } from '../data/modules';
+import { notices, chatThreads, modules } from '../data/modules';
 import { useApp } from '../context/AppContext';
 import { canAccessModule, isStudentProfile, profileAudienceLabel } from '../lib/permissions';
+import { MessageCircle, ClipboardList, Bell, Radar, Zap, CalendarDays, FileUp, MapPin, CloudUpload } from 'lucide-react';
 
 const money = value => `S/ ${Number(value || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const modulesById = Object.fromEntries(modules.map(m => [m.id, m]));
 
 export default function Panel({ setPage }) {
   const { moduleConfig, profile, unreadNotifications, backendConnected, online, syncQueueCount } = useApp();
@@ -12,14 +14,14 @@ export default function Panel({ setPage }) {
 
   const visibleModules = moduleConfig.filter(m => canAccessModule(profile, m.id));
   const quicks = [
-    ['chat', '💬', 'Abrir chat', 'Mensajes y soporte'],
-    ['committees', '📋', 'Revisar comité', 'Cuotas, pagos y comunicados'],
-    ['notifications', '🔔', 'Ver avisos', 'Pendientes y recordatorios'],
-    ['business', '🧾', 'Administrar negocio', 'Caja, cocina y reportes'],
-    ['marketplace', '🛒', 'Marketplace', 'Productos y servicios'],
-    ['ride', '🚗', 'Pedir viaje', 'Movilidad y envíos'],
-    ['benefits', '🎁', 'Beneficios', 'Ofertas y campañas'],
-    ['cloudCenter', '☁️', 'Nube y Push', 'Permisos y notificaciones']
+    ['chat', 'Abrir chat', 'Mensajes y soporte'],
+    ['committees', 'Revisar comité', 'Cuotas, pagos y comunicados'],
+    ['notifications', 'Ver avisos', 'Pendientes y recordatorios'],
+    ['business', 'Administrar negocio', 'Caja, cocina y reportes'],
+    ['marketplace', 'Marketplace', 'Productos y servicios'],
+    ['ride', 'Pedir viaje', 'Movilidad y envíos'],
+    ['benefits', 'Beneficios', 'Ofertas y campañas'],
+    ['cloudCenter', 'Nube y Push', 'Permisos y notificaciones']
   ].filter(([id]) => canAccessModule(profile, id));
 
   const metrics = student
@@ -39,9 +41,9 @@ export default function Panel({ setPage }) {
       ];
 
   const radar = [
-    ...notices.map(n => ({ icon: n.category === 'Evento' ? '🎉' : n.category === 'Tarea' ? '📤' : '📍', title: n.title, meta: `${n.category} · ${n.date}`, page: n.category === 'Evento' ? 'committees' : 'notifications' })),
-    { icon: '💬', title: `${chatThreads.length} conversaciones`, meta: 'Chat seguro y grupos locales', page: 'chat' },
-    { icon: '☁️', title: backendConnected ? 'Supabase conectado' : 'Acciones locales guardadas', meta: backendConnected ? 'Sincronización activa' : `${syncQueueCount} acciones en este navegador`, page: 'cloudCenter' }
+    ...notices.map(n => ({ Icon: n.category === 'Evento' ? CalendarDays : n.category === 'Tarea' ? FileUp : MapPin, title: n.title, meta: `${n.category} · ${n.date}`, page: n.category === 'Evento' ? 'committees' : 'notifications' })),
+    { Icon: MessageCircle, title: `${chatThreads.length} conversaciones`, meta: 'Chat seguro y grupos locales', page: 'chat' },
+    { Icon: CloudUpload, title: backendConnected ? 'Supabase conectado' : 'Acciones locales guardadas', meta: backendConnected ? 'Sincronización activa' : `${syncQueueCount} acciones en este navegador`, page: 'cloudCenter' }
   ];
 
   return <div className="page panelSmartPage">
@@ -51,9 +53,9 @@ export default function Panel({ setPage }) {
         <h1>Hola {profile.displayName}, revisa lo importante de hoy</h1>
         <p>{student ? 'Accede rápido a comunicados, chat seguro, tareas y aprendizaje.' : 'Tu panel resume comunidad, comités, negocios, chat, pagos, beneficios y movilidad en una sola vista.'}</p>
         <div className="smartHeroActions">
-          <button onClick={() => setPage('chat')}>💬 Abrir chat</button>
-          <button onClick={() => setPage('committees')}>📋 Comité</button>
-          <button onClick={() => setPage('business')}>🧾 Business</button>
+          <button onClick={() => setPage('chat')}><MessageCircle size={16}/> Abrir chat</button>
+          <button onClick={() => setPage('committees')}><ClipboardList size={16}/> Comité</button>
+          <button onClick={() => setPage('business')}><FileUp size={16}/> Business</button>
         </div>
       </div>
       <div className="smartMetricGrid">
@@ -62,16 +64,19 @@ export default function Panel({ setPage }) {
     </section>
 
     <section className="smartOverview">
-      <Card title="Radar de hoy" icon="📍">
+      <Card title="Radar de hoy" icon={<Radar size={18}/>}>
         <div className="radarList">
           {radar.map((item, index) => <button key={`${item.title}-${index}`} onClick={() => setPage(item.page)}>
-            <i>{item.icon}</i><span><b>{item.title}</b><small>{item.meta}</small></span><em>Ver</em>
+            <i><item.Icon size={17}/></i><span><b>{item.title}</b><small>{item.meta}</small></span><em>Ver</em>
           </button>)}
         </div>
       </Card>
-      <Card title="Acciones rápidas" icon="⚡">
+      <Card title="Acciones rápidas" icon={<Zap size={18}/>}>
         <div className="quickActionGrid">
-          {quicks.map(([id, icon, label, hint]) => <button key={id} onClick={() => setPage(id)}><i>{icon}</i><b>{label}</b><small>{hint}</small></button>)}
+          {quicks.map(([id, label, hint]) => {
+            const ModIcon = modulesById[id]?.icon || Bell;
+            return <button key={id} onClick={() => setPage(id)}><i><ModIcon size={19}/></i><b>{label}</b><small>{hint}</small></button>;
+          })}
         </div>
       </Card>
     </section>

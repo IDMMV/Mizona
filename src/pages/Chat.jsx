@@ -263,8 +263,6 @@ export default function Chat({ setPage }) {
   const [openingConversation, setOpeningConversation] = useState(false);
   const [showOpeningSkeleton, setShowOpeningSkeleton] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [chatFilter, setChatFilter] = useState('all');
   const [immersiveMode, setImmersiveMode] = useState(false);
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
@@ -324,24 +322,17 @@ export default function Chat({ setPage }) {
   }, [messages]);
 
   const filteredConversations = useMemo(() => {
-    let source = tab === 'groups' ? groupConversations : conversations;
-    if (chatFilter === 'unread') source = source.filter(item => Number(item.unread_count) > 0);
-    if (chatFilter === 'direct') source = source.filter(item => item.type === 'direct');
-    if (chatFilter === 'groups') source = source.filter(item => item.type !== 'direct');
+    const source = tab === 'groups' ? groupConversations : conversations;
     const q = searchText.trim().toLowerCase();
     if (!q) return source;
     return source.filter(item => [conversationName(item), item.last_message, item.peer_username, item.title].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
-  }, [tab, groupConversations, conversations, searchText, chatFilter]);
+  }, [tab, groupConversations, conversations, searchText]);
 
   const filteredContacts = useMemo(() => {
-    let source = contacts;
-    if (chatFilter === 'blocked') source = source.filter(item => item.is_blocked);
     const q = searchText.trim().toLowerCase();
-    if (!q) return source;
-    return source.filter(item => [item.display_name, item.username, item.zone].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
-  }, [contacts, searchText, chatFilter]);
-
-  const visibleResultCount = tab === 'contacts' ? filteredContacts.length : (tab === 'chats' || tab === 'groups') ? filteredConversations.length : requests.length;
+    if (!q) return contacts;
+    return contacts.filter(item => [item.display_name, item.username, item.zone].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
+  }, [contacts, searchText]);
 
   const updateChatTheme = patch => setChatTheme(current => ({ ...current, ...patch }));
 
@@ -758,13 +749,7 @@ export default function Chat({ setPage }) {
               <button type="button" className="chatExitBtn" onClick={exitChat} title="Salir del chat"><X size={16}/> Salir</button>
             </div>
           </div>
-          <div className="chatSearchBar"><Search size={17}/><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder="Buscar conversación o usuario"/><button type="button" className={showFilters ? 'active' : ''} title="Filtros" onClick={() => setShowFilters(value => !value)}><SlidersHorizontal size={16}/></button></div>
-          {showFilters && <div className="chatFilterPanel">
-            <button className={chatFilter === 'all' ? 'active' : ''} onClick={() => setChatFilter('all')}>Todos</button>
-            {(tab === 'chats' || tab === 'groups') && <><button className={chatFilter === 'unread' ? 'active' : ''} onClick={() => setChatFilter('unread')}>No leídos</button><button className={chatFilter === 'direct' ? 'active' : ''} onClick={() => setChatFilter('direct')}>Personas</button><button className={chatFilter === 'groups' ? 'active' : ''} onClick={() => setChatFilter('groups')}>Grupos</button></>}
-            {tab === 'contacts' && <button className={chatFilter === 'blocked' ? 'active' : ''} onClick={() => setChatFilter('blocked')}>Bloqueados</button>}
-          </div>}
-          {(searchText.trim() || chatFilter !== 'all') && <div className="chatFilterSummary"><span><Search size={14}/> {visibleResultCount} resultado{visibleResultCount === 1 ? '' : 's'} encontrados</span><button type="button" onClick={() => { setSearchText(''); setChatFilter('all'); }}>Limpiar filtro</button></div>}
+          <div className="chatSearchBar"><Search size={17}/><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder="Buscar conversación o usuario"/><button type="button" title="Filtros"><SlidersHorizontal size={16}/></button></div>
           {isStudent && <ChatNotice kind="success">Solo verás contactos y grupos aprobados para tu cuenta estudiantil.</ChatNotice>}
           <div className="chatTabs">
             <button className={tab === 'chats' ? 'active' : ''} onClick={() => setTab('chats')}><MessageCircle size={16}/> Chats</button>

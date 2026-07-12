@@ -1,9 +1,9 @@
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, ShieldCheck } from 'lucide-react';
 import Card from '../components/Card';
 
 export default function AccessDenied({ setPage }) {
   return <div className="page accessDeniedPage">
-    <Card title="Acceso restringido" icon="🛡️">
+    <Card title="Acceso restringido" icon={<ShieldCheck size={18}/>}>
       <div className="accessDeniedContent">
         <ShieldAlert size={54}/>
         <h2>Este módulo no está disponible para este perfil</h2>

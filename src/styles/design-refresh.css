@@ -1,0 +1,151 @@
+/* =========================================================
+   ETAPA 30.52 · FORMATO UNIFICADO DE TODA LA WEB
+   Se carga al final de todo (después de theme-dark-mockup.css)
+   para unificar componentes que hoy se ven distintos entre sí:
+   chips/pills, pestañas, botones segmentados, avatares planos
+   y estados "activo" que rompían el estilo oscuro (ej. el celeste
+   claro del selector de vehículo en MiZona Ride).
+   No borra nada existente, solo homogeneiza el aspecto.
+   ========================================================= */
+
+:root{
+  --accent-1:#8b5cf6; /* morado */
+  --accent-2:#14b8a6; /* teal   */
+  --accent-3:#f59e0b; /* ámbar  */
+  --accent-4:#ec4899; /* rosa   */
+  --accent-5:#3b82f6; /* azul   */
+  --accent-6:#22c55e; /* verde  */
+  --radius-card:20px;
+  --radius-control:14px;
+}
+
+/* ---------- 1. Avatares e íconos circulares con color rotativo ----------
+   En vez de que todos los avatares sean del mismo azul plano, cada uno
+   toma un color distinto según su posición en la lista (como en apps
+   de pagos: cada contacto/categoría tiene su propio color de fondo). */
+.chatAvatar,.memberAvatar,.driverAvatar,.localProfileAvatar,.historyIcon,
+.notificationIcon,.learningIcon,.documentIcon,.roomIcon,.benefitActionIcon,
+.teacherCard>div,.communityStat>span,.topProducts b{
+  background:linear-gradient(145deg,var(--accent-5),#1d4ed8)!important;
+  color:#fff!important;
+}
+:is(.conversationList,.contactListReal,.requestListReal,.memberListReal,.driverGrid,.teacherGrid,.communityStats,.notificationList,.rideHistory,.documentListReal,.roomGridReal,.learningGrid,.benefitActionList) :is(.chatAvatar,.memberAvatar,.driverAvatar,.historyIcon,.notificationIcon,.learningIcon,.documentIcon,.roomIcon,.benefitActionIcon,.teacherCard>div,.communityStat>span,.topProducts b):nth-child(6n+2){background:linear-gradient(145deg,var(--accent-1),#6d28d9)!important}
+:is(.conversationList,.contactListReal,.requestListReal,.memberListReal,.driverGrid,.teacherGrid,.communityStats,.notificationList,.rideHistory,.documentListReal,.roomGridReal,.learningGrid,.benefitActionList) :is(.chatAvatar,.memberAvatar,.driverAvatar,.historyIcon,.notificationIcon,.learningIcon,.documentIcon,.roomIcon,.benefitActionIcon,.teacherCard>div,.communityStat>span,.topProducts b):nth-child(6n+3){background:linear-gradient(145deg,var(--accent-2),#0d9488)!important}
+:is(.conversationList,.contactListReal,.requestListReal,.memberListReal,.driverGrid,.teacherGrid,.communityStats,.notificationList,.rideHistory,.documentListReal,.roomGridReal,.learningGrid,.benefitActionList) :is(.chatAvatar,.memberAvatar,.driverAvatar,.historyIcon,.notificationIcon,.learningIcon,.documentIcon,.roomIcon,.benefitActionIcon,.teacherCard>div,.communityStat>span,.topProducts b):nth-child(6n+4){background:linear-gradient(145deg,var(--accent-3),#b45309)!important}
+:is(.conversationList,.contactListReal,.requestListReal,.memberListReal,.driverGrid,.teacherGrid,.communityStats,.notificationList,.rideHistory,.documentListReal,.roomGridReal,.learningGrid,.benefitActionList) :is(.chatAvatar,.memberAvatar,.driverAvatar,.historyIcon,.notificationIcon,.learningIcon,.documentIcon,.roomIcon,.benefitActionIcon,.teacherCard>div,.communityStat>span,.topProducts b):nth-child(6n+5){background:linear-gradient(145deg,var(--accent-4),#be185d)!important}
+:is(.conversationList,.contactListReal,.requestListReal,.memberListReal,.driverGrid,.teacherGrid,.communityStats,.notificationList,.rideHistory,.documentListReal,.roomGridReal,.learningGrid,.benefitActionList) :is(.chatAvatar,.memberAvatar,.driverAvatar,.historyIcon,.notificationIcon,.learningIcon,.documentIcon,.roomIcon,.benefitActionIcon,.teacherCard>div,.communityStat>span,.topProducts b):nth-child(6n+6){background:linear-gradient(145deg,var(--accent-6),#15803d)!important}
+
+/* ---------- 2. Chips / pestañas / selectores segmentados unificados ----------
+   Antes cada pantalla tenía su propio estilo de "botón activo" (celeste,
+   azul oscuro, verde...). Ahora todos comparten el mismo lenguaje: fondo
+   suave cuando están inactivos, y el verde de marca cuando están activos. */
+.tabs button,.categoryRail button,.servicePicker button,.groupTypeButtons button,
+.paymentMethods button,.deliveryTypes button,.chatTabs button,.aiSpecialistBar button,
+.posFilters .chips button,.marketControls>label,.filterChecks label{
+  border-radius:999px!important;
+  transition:background .15s ease,color .15s ease,border-color .15s ease,transform .1s ease;
+}
+.servicePicker button,.deliveryTypes button,.groupTypeButtons button{border-radius:var(--radius-control)!important}
+.tabs button.active,.categoryRail button.active,.servicePicker button.active,
+.groupTypeButtons button.active,.paymentMethods button.active,.deliveryTypes button.active,
+.chatTabs button.active,.aiSpecialistBar button.active,.posFilters .chips button.active{
+  background:linear-gradient(135deg,var(--brand,#22c55e),var(--brand2,#16b892))!important;
+  border-color:transparent!important;
+  color:#04150c!important;
+  font-weight:850!important;
+}
+.tabs button.active svg,.categoryRail button.active svg,.servicePicker button.active svg,
+.chatTabs button.active svg,.aiSpecialistBar button.active svg{color:#04150c!important}
+.tabs button:active,.categoryRail button:active,.servicePicker button:active{transform:scale(.98)}
+
+/* ---------- 3. Tarjetas: elevación sutil al pasar el mouse ---------- */
+.marketCard,.placeCard,.courseCard,.opportunityCard,.communityCardReal,.driverCard,
+.teacherCard,.learningCard,.gatewayCard,.mkCBusinessCard,.mkCProductCard,.featuredCard{
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.marketCard:hover,.placeCard:hover,.courseCard:hover,.opportunityCard:hover,
+.communityCardReal:hover,.driverCard:hover,.teacherCard:hover,.learningCard:hover,
+.gatewayCard:hover,.mkCBusinessCard:hover,.mkCProductCard:hover,.featuredCard:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 34px rgba(0,0,0,.28);
+}
+
+/* ---------- 4. Estado vacío del chat (y otros "empty state") con ícono en círculo ---------- */
+.noConversationSelected svg,.emptyConversation svg,.chatDirectoryEmpty svg,.aiEmpty svg,
+.notificationEmpty svg,.communityEmpty svg{
+  background:color-mix(in srgb, var(--brand,#22c55e) 16%, transparent);
+  color:var(--brand,#22c55e)!important;
+  border-radius:50%;
+  padding:16px;
+  width:56px!important;
+  height:56px!important;
+  box-sizing:content-box;
+}
+
+/* ---------- 5. Botones "Agregar contacto / Nuevo / Publicar" y similares, consistentes ---------- */
+.chatHeaderActions button,.formActions button,.foundContactCard>button,
+.noConversationSelected button,.chatDirectoryEmpty button,.aiNewButton{
+  background:linear-gradient(135deg,var(--brand,#22c55e),var(--brand2,#16b892))!important;
+  color:#04150c!important;
+  border-radius:var(--radius-control)!important;
+  font-weight:850!important;
+}
+.chatHeaderActions .secondary,.formActions .secondary{
+  background:var(--panel2,#1b2333)!important;
+  color:var(--ink)!important;
+  border:1px solid var(--line)!important;
+}
+
+/* ---------- 6. Tarjetas y superficies: mismo radio en toda la web ---------- */
+.card,.quick,.opportunityCard,.marketCard,.placeCard,.courseCard,.driverCard,
+.communityCardReal,.trackingCard,.chatBox,.chatWorkspace{border-radius:var(--radius-card)!important}
+
+/* ---------- 7. Encabezados de página: mismo peso y tamaño en toda la web ---------- */
+.page h1,.pageTitle h1,.chatPageHeader h1,.communityHeroText h1{font-weight:850}
+
+/* ---------- 8. Íconos de encabezado de tarjeta (Etapa 30.53: sin emojis) ---------- */
+.cardHead h3 svg{color:var(--brand,#22c55e);flex:none}
+
+/* ---------- 9. Formularios: buscadores, checkboxes y foco unificados (Etapa 30.54) ----------
+   El input/select/textarea "de a pie" ya compartía radio y fondo (regla global
+   de app.css). Lo que faltaba eran los contenedores tipo "buscador con ícono"
+   (cada página con su propio radio y alto) y los checkboxes, que se veían
+   con el azul por defecto del navegador en vez del verde de marca. */
+.searchBox,.businessSearch,.benefitSearch,.exactUserSearch,.sortSelect,
+.groupCreator input,.groupCreator select,.deliveryForm input,.cashField input,
+.rideMiniFields input,.rideMiniFields select,.adminGrid label,.routeFields label input{
+  border-radius:var(--radius-control)!important;
+}
+.searchBox,.businessSearch,.benefitSearch,.sortSelect{min-height:46px}
+
+/* Checkboxes y radios con el verde de marca en vez del azul del navegador */
+input[type="checkbox"],input[type="radio"]{accent-color:var(--brand,#22c55e)}
+
+/* Foco consistente: siempre el verde de marca, nunca el celeste suelto que
+   quedaba en pantallas puntuales */
+input:focus,select:focus,textarea:focus,.field:focus,
+.searchBox:focus-within,.businessSearch:focus-within,.benefitSearch:focus-within,
+.exactUserSearch:focus-within{
+  outline:2px solid color-mix(in srgb, var(--brand,#22c55e) 30%, transparent)!important;
+  border-color:var(--brand,#22c55e)!important;
+}
+
+/* Modo oscuro: los buscadores con ícono comparten la misma superficie que
+   el resto de los inputs (antes se quedaban en blanco por ser <div>, no <input>) */
+.app.mode-dark .searchBox,.app.mode-dark .businessSearch,.app.mode-dark .benefitSearch,
+.app.mode-dark .exactUserSearch,.app.mode-dark .sortSelect,.app.mode-dark .adminGrid label,
+.app.mode-dark .groupCreator input,.app.mode-dark .groupCreator select,
+.app.mode-dark .deliveryForm input,.app.mode-dark .cashField input,
+.app.mode-dark .rideMiniFields input,.app.mode-dark .rideMiniFields select{
+  background:var(--panel2)!important;
+  border:1px solid var(--line)!important;
+  color:var(--ink)!important;
+}
+.app.mode-dark .searchBox input,.app.mode-dark .businessSearch input,
+.app.mode-dark .benefitSearch input{color:var(--ink)!important}
+.app.mode-dark .searchBox input::placeholder,.app.mode-dark .businessSearch input::placeholder,
+.app.mode-dark .benefitSearch input::placeholder{color:var(--muted)!important}
+
+@media(max-width:700px){
+  .marketCard:hover,.placeCard:hover,.courseCard:hover,.opportunityCard:hover{transform:none}
+}

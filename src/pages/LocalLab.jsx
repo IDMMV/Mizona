@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, CheckCircle2, Copy, ExternalLink, FlaskConical, GraduationCap, ShieldCheck, Trash2, UserPlus, UsersRound } from 'lucide-react';
+import { Building2, CheckCircle2, Compass, Copy, ExternalLink, FlaskConical, GraduationCap, School, ShieldCheck, Trash2, UserPlus, UsersRound } from 'lucide-react';
 import Card from '../components/Card';
 import { getLocalStats } from '../lib/localStore';
 import { useApp } from '../context/AppContext';
@@ -112,7 +112,7 @@ export default function LocalLab({ setPage }) {
       <article><b>{memberships.filter(item => item.status === 'active').length}</b><span>membresías activas</span></article>
     </div>
 
-    {showCreate && <Card title="Crear perfil de prueba" icon="🧪">
+    {showCreate && <Card title="Crear perfil de prueba" icon={<FlaskConical size={18}/>}>
       <form className="labCreateForm" onSubmit={createProfile}>
         <label>Nombre visible<input name="displayName" required minLength="2" placeholder="Ejemplo: Rosa Mendoza"/></label>
         <label>Usuario único<input name="username" required pattern="[A-Za-z0-9_]{4,20}" placeholder="ROSA_2026"/></label>
@@ -147,7 +147,7 @@ export default function LocalLab({ setPage }) {
     </div>
 
     <div className="grid2 labGuide">
-      <Card title="Prueba completa en dos pestañas" icon="🧭">
+      <Card title="Prueba completa en dos pestañas" icon={<Compass size={18}/>}>
         <ol className="labSteps">
           <li><b>Pestaña 1:</b> usa José o crea un perfil adulto.</li>
           <li><b>Pestaña 2:</b> abre otra sesión y selecciona Carlos, María, Ian u otro perfil.</li>
@@ -158,7 +158,7 @@ export default function LocalLab({ setPage }) {
         <button onClick={() => setPage('chat')}><FlaskConical size={17}/> Ir a MiZona Chat</button>
       </Card>
 
-      <Card title="Prueba comunidades en dos perfiles" icon="🏘️">
+      <Card title="Prueba comunidades en dos perfiles" icon={<Building2 size={18}/>}>
         <ol className="labSteps">
           <li>En una pestaña usa José, María o un perfil administrador.</li>
           <li>En otra pestaña selecciona Carlos, Ian, Dylan u otro perfil.</li>
@@ -168,7 +168,7 @@ export default function LocalLab({ setPage }) {
         </ol>
         <button onClick={() => setPage('community')}><Building2 size={17}/> Ir a Mi Comunidad</button>
       </Card>
-      <Card title="Pruebas de seguridad escolar" icon="🏫">
+      <Card title="Pruebas de seguridad escolar" icon={<School size={18}/>}>
         <ul className="list">
           <li><GraduationCap size={16}/> Ian y Dylan pueden encontrarse porque pertenecen al mismo colegio.</li>
           <li>José puede encontrarlos porque figura como padre del mismo colegio.</li>

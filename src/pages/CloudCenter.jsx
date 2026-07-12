@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BellRing, Cloud, Database, Download, FileUp, CloudUpload, Lock, RefreshCcw, ShieldCheck, Trash2 } from 'lucide-react';
+import { BellRing, Cloud, CloudUpload, Compass, Database, Download, FileUp, FolderOpen, Lock, Mail, Puzzle, RefreshCcw, Settings, ShieldCheck, Smartphone, Trash2, Users } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -179,12 +179,12 @@ export default function CloudCenter() {
           </div>
           <p className="muted">Primero presiona Solicitar permiso. Luego usa Enviar prueba local para revisar si aparece el aviso.</p>
         </Card>
-        <Card title="Segmentos protegidos" icon="👥">
+        <Card title="Segmentos protegidos" icon={<Users size={18}/>}>
           <ul className="list"><li><b>{adultProfiles.length}</b> adultos o administradores.</li><li><b>{studentProfiles.length}</b> estudiantes protegidos.</li><li>Marketing para estudiantes: <b>bloqueado</b>.</li><li>Push estudiantil: <b>{settings.allowStudentPush ? 'solo avisos necesarios' : 'apagado'}</b>.</li></ul>
         </Card>
       </div>
-      <Card title="Plantillas de avisos" icon="🧩"><div className="paymentTable compactTable">{cloud.templates.map(t => <article key={t.id}><div><b>{t.title}</b><span>{t.body} · {t.audience}</span></div><em className={`payStatus ${t.enabled ? 'ok':'blocked'}`}>{t.enabled ? 'activa':'apagada'}</em><div className="payActions"><button onClick={() => toggleTemplate(t.id)}>{t.enabled ? 'Apagar' : 'Activar'}</button></div></article>)}</div></Card>
-      <Card title="Historial de envíos simulados" icon="📨"><div className="paymentTable compactTable">{cloud.sends.length ? cloud.sends.map(s => <article key={s.id}><div><b>{s.title}</b><span>{s.channel} · {s.recipients.length} receptor(es) · {new Date(s.createdAt).toLocaleString('es-PE')}</span></div><em className="payStatus ok">{statusLabel[s.status] || s.status}</em></article>) : <p className="muted">Aún no hay envíos.</p>}</div></Card>
+      <Card title="Plantillas de avisos" icon={<Puzzle size={18}/>}><div className="paymentTable compactTable">{cloud.templates.map(t => <article key={t.id}><div><b>{t.title}</b><span>{t.body} · {t.audience}</span></div><em className={`payStatus ${t.enabled ? 'ok':'blocked'}`}>{t.enabled ? 'activa':'apagada'}</em><div className="payActions"><button onClick={() => toggleTemplate(t.id)}>{t.enabled ? 'Apagar' : 'Activar'}</button></div></article>)}</div></Card>
+      <Card title="Historial de envíos simulados" icon={<Mail size={18}/>}><div className="paymentTable compactTable">{cloud.sends.length ? cloud.sends.map(s => <article key={s.id}><div><b>{s.title}</b><span>{s.channel} · {s.recipients.length} receptor(es) · {new Date(s.createdAt).toLocaleString('es-PE')}</span></div><em className="payStatus ok">{statusLabel[s.status] || s.status}</em></article>) : <p className="muted">Aún no hay envíos.</p>}</div></Card>
     </>}
 
 
@@ -198,7 +198,7 @@ export default function CloudCenter() {
         <div className={`pushRealStatus ${fcmStatus.ready ? 'ready' : 'pending'}`}>{fcmStatus.ready ? 'Configuración lista' : 'Faltan datos Firebase'}</div>
       </div>
       <div className="grid2">
-        <Card title="Activar este dispositivo" icon="📲">
+        <Card title="Activar este dispositivo" icon={<Smartphone size={18}/>}>
           <div className="syncStatus">
             <span><b>Permiso navegador</b>{settings.browserPermission || 'default'}</span>
             <span><b>Proveedor</b>{settings.pushProvider || 'web_push_future'}</span>
@@ -212,7 +212,7 @@ export default function CloudCenter() {
           {!fcmStatus.ready && <p className="muted dangerText">Faltan: {fcmStatus.missing.join(', ')}. Completa las variables de Firebase y el archivo public/firebase-messaging-sw.js.</p>}
           <p className="muted">Este botón obtiene el token FCM del navegador y lo guarda en Supabase en la tabla <b>mz_push_tokens</b>.</p>
         </Card>
-        <Card title="Qué falta para que llegue desde otro celular" icon="🧭">
+        <Card title="Qué falta para que llegue desde otro celular" icon={<Compass size={18}/>}>
           <ol className="orderedList">
             <li>Crear proyecto Firebase y copiar configuración web.</li>
             <li>Ejecutar el SQL <b>ETAPA30_3_PUSH_REAL_FCM.sql</b>.</li>
@@ -222,7 +222,7 @@ export default function CloudCenter() {
           </ol>
         </Card>
       </div>
-      <Card title="Dispositivos registrados en este navegador" icon="🗂️">
+      <Card title="Dispositivos registrados en este navegador" icon={<FolderOpen size={18}/>}>
         <div className="paymentTable compactTable">
           {(cloud.fcmTokens || []).length ? cloud.fcmTokens.map(item => <article key={item.id}>
             <div><b>{item.deviceLabel || 'Dispositivo'}</b><span>@{String(item.username || '').toUpperCase()} · {item.updatedAt ? new Date(item.updatedAt).toLocaleString('es-PE') : ''}</span></div>
@@ -254,7 +254,7 @@ export default function CloudCenter() {
       <div className="paymentTable compactTable">{cloud.buckets.map(bucket => <article key={bucket.id}><div><b>{bucket.name}</b><span>{bucket.module} · {bucket.public ? 'público controlado' : 'privado'} · {bucket.encrypted ? 'cifrado requerido' : 'sin cifrado'}</span></div><label>Retención<input type="number" min="1" value={bucket.retentionDays} onChange={e => upsertBucket(bucket.id, { retentionDays: Number(e.target.value) })}/></label><em className="payStatus pending">{statusLabel[bucket.status] || bucket.status}</em></article>)}</div>
     </Card>}
 
-    {tab === 'settings' && <Card title="Reglas generales" icon="⚙️"><form className="paymentForm" onSubmit={saveSettings}>
+    {tab === 'settings' && <Card title="Reglas generales" icon={<Settings size={18}/>}><form className="paymentForm" onSubmit={saveSettings}>
       <label>Proveedor push futuro<input name="pushProvider" defaultValue={settings.pushProvider}/></label>
       <label>Proveedor storage futuro<input name="storageProvider" defaultValue={settings.storageProvider}/></label>
       <label>Digest<select name="digestFrequency" defaultValue={settings.digestFrequency}><option value="instant">Instantáneo</option><option value="daily">Diario</option><option value="weekly">Semanal</option></select></label>

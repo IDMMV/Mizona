@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Archive, Bot, BriefcaseBusiness, Building2, Check, ChevronRight, Clock3,
-  GraduationCap, Heart, History, Lightbulb, Loader2, MapPin, MessageSquareText,
-  Plus, RotateCcw, Save, Send, Settings2, ShieldAlert, ShieldCheck, Sparkles,
-  Store, ThumbsDown, ThumbsUp, Trash2, WandSparkles, Car, X
-} from 'lucide-react';
+import { AlertTriangle, Archive, BarChart3, Bot, BriefcaseBusiness, Building2, Car, Check, ChevronRight, Clock, Clock3, Eraser, GraduationCap, Heart, History, Lightbulb, Loader2, MapPin, MessageSquareText, Pin, Plus, RotateCcw, Save, Send, Settings, Settings2, ShieldAlert, ShieldCheck, Sparkles, Store, ThumbsDown, ThumbsUp, Trash2, WandSparkles, X } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -125,7 +120,7 @@ export default function AiAssistant({ setPage }) {
     catch (error) { setMessage(error.message); }
   };
 
-  if (student) return <div className="page"><Card title="IA MiZona no disponible" icon="🛡️"><p className="muted">La cuenta estudiantil no tiene acceso al asistente general. Continúa usando Comunidad escolar, Chat seguro, Transfer y CampusHugo.</p></Card></div>;
+  if (student) return <div className="page"><Card title="IA MiZona no disponible" icon={<ShieldCheck size={18}/>}><p className="muted">La cuenta estudiantil no tiene acceso al asistente general. Continúa usando Comunidad escolar, Chat seguro, Transfer y CampusHugo.</p></Card></div>;
 
   return <div className="page aiPage aiV21">
     <section className="aiHero">
@@ -203,8 +198,8 @@ export default function AiAssistant({ setPage }) {
       </section>
 
       <aside className="aiSide">
-        <Card title="Especialistas" icon="✨"><div className="assistantCards">{specialists.slice(1).map(item => { const Icon = item.icon; return <button key={item.id} onClick={() => { setSpecialist(item.id); createConversation(item.id); }}><span><Icon size={19}/></span><div><b>{item.title}</b><p>{item.text}</p></div></button>; })}</div></Card>
-        <Card title="Preguntas favoritas" icon="❤️"><div className="aiFavoriteList">{favoritePrompts.map(prompt => <div key={prompt}><button onClick={() => ask(prompt)}>{prompt}</button><button onClick={() => { toggleLocalAiFavorite(prompt); reload(); }}><Trash2 size={14}/></button></div>)}{!favoritePrompts.length && <p className="muted">Guarda preguntas frecuentes desde esta sección.</p>}<button className="primary full" onClick={() => { if (input.trim()) { toggleLocalAiFavorite(input); reload(); } else setMessage('Escribe primero una pregunta para guardarla.'); }}><Heart size={15}/>Guardar texto actual</button></div></Card>
+        <Card title="Especialistas" icon={<Sparkles size={18}/>}><div className="assistantCards">{specialists.slice(1).map(item => { const Icon = item.icon; return <button key={item.id} onClick={() => { setSpecialist(item.id); createConversation(item.id); }}><span><Icon size={19}/></span><div><b>{item.title}</b><p>{item.text}</p></div></button>; })}</div></Card>
+        <Card title="Preguntas favoritas" icon={<Heart size={18}/>}><div className="aiFavoriteList">{favoritePrompts.map(prompt => <div key={prompt}><button onClick={() => ask(prompt)}>{prompt}</button><button onClick={() => { toggleLocalAiFavorite(prompt); reload(); }}><Trash2 size={14}/></button></div>)}{!favoritePrompts.length && <p className="muted">Guarda preguntas frecuentes desde esta sección.</p>}<button className="primary full" onClick={() => { if (input.trim()) { toggleLocalAiFavorite(input); reload(); } else setMessage('Escribe primero una pregunta para guardarla.'); }}><Heart size={15}/>Guardar texto actual</button></div></Card>
       </aside>
     </div>}
 
@@ -214,7 +209,7 @@ export default function AiAssistant({ setPage }) {
         <p>{item.messages.slice(-1)[0]?.text || 'Conversación vacía'}</p>
         <footer><button onClick={() => { setActiveId(item.id); setSpecialist(item.specialist || 'general'); setTab('assistant'); }}>Abrir</button><button onClick={() => removeConversation(item.id)}><Trash2 size={15}/></button></footer>
       </article>)}
-      {!snapshot.conversations.length && <Card title="Sin historial" icon="🕘"><p className="muted">Crea tu primera conversación con IA MiZona.</p></Card>}
+      {!snapshot.conversations.length && <Card title="Sin historial" icon={<Clock size={18}/>}><p className="muted">Crea tu primera conversación con IA MiZona.</p></Card>}
     </div>}
 
     {tab === 'plans' && <div className="aiPlanGrid">
@@ -224,20 +219,20 @@ export default function AiAssistant({ setPage }) {
         {!!plan.checklist?.length && <ul>{plan.checklist.map(line => <li key={line}><Check size={14}/>{line}</li>)}</ul>}
         <footer><button onClick={() => deleteLocalAiPlan(plan.id)}><Trash2 size={15}/>Eliminar</button></footer>
       </article>)}
-      {!snapshot.savedPlans.length && <Card title="Planes guardados" icon="📌"><p className="muted">Cuando una respuesta te resulte útil, pulsa “Guardar plan”.</p></Card>}
+      {!snapshot.savedPlans.length && <Card title="Planes guardados" icon={<Pin size={18}/>}><p className="muted">Cuando una respuesta te resulte útil, pulsa “Guardar plan”.</p></Card>}
     </div>}
 
     {tab === 'admin' && admin && <div className="aiAdminGrid">
-      <Card title="Configuración local" icon="⚙️">
+      <Card title="Configuración local" icon={<Settings size={18}/>}>
         <label className="aiSwitch"><span><b>Motor local</b><small>Mantiene respuestas disponibles sin servicios externos.</small></span><input type="checkbox" checked={settingsDraft.local_enabled} onChange={e => setSettingsDraft(s => ({ ...s, local_enabled: e.target.checked }))}/></label>
         <label className="aiSwitch"><span><b>Endpoint externo opcional</b><small>Solo funciona cuando VITE_AI_ENDPOINT está configurado.</small></span><input type="checkbox" checked={settingsDraft.external_endpoint_enabled} onChange={e => setSettingsDraft(s => ({ ...s, external_endpoint_enabled: e.target.checked }))}/></label>
         <label className="aiSwitch"><span><b>Permitir estudiantes</b><small>Se mantiene desactivado por seguridad.</small></span><input type="checkbox" checked={settingsDraft.allow_student_access} onChange={e => setSettingsDraft(s => ({ ...s, allow_student_access: e.target.checked }))}/></label>
         <label className="fieldLabel">Máximo de caracteres<input className="field" type="number" min="300" max="5000" value={settingsDraft.max_prompt_chars} onChange={e => setSettingsDraft(s => ({ ...s, max_prompt_chars: Number(e.target.value) }))}/></label>
         <button className="primary" onClick={saveSettings}><Settings2 size={16}/>Guardar configuración</button>
       </Card>
-      <Card title="Métricas locales" icon="📊"><div className="aiAdminStats"><span><b>{snapshot.state.usage.length}</b> consultas</span><span><b>{snapshot.state.conversations.length}</b> conversaciones</span><span><b>{snapshot.state.saved_plans.length}</b> planes</span><span><b>{snapshot.state.feedback.length}</b> evaluaciones</span></div><p className="muted">Estas métricas pertenecen únicamente a este navegador.</p></Card>
-      <Card title="Alertas de seguridad" icon="🚨"><div className="aiFlagList">{snapshot.flagged.map(flag => <div key={flag.id}><span><b>{localAiUserLabel(flag.user_id)}</b><small>{flag.prompt}</small><em>{flag.reason}</em></span><select value={flag.status} onChange={e => { reviewLocalAiFlag(flag.id, e.target.value); reload(); }}><option value="blocked">Bloqueado</option><option value="reviewed">Revisado</option><option value="dismissed">Descartado</option></select></div>)}{!snapshot.flagged.length && <p className="muted">No hay consultas bloqueadas.</p>}</div></Card>
-      <Card title="Mantenimiento" icon="🧹"><p className="muted">Restablece solamente historial, planes y configuración de IA de este navegador.</p><button className="dangerButton" onClick={() => { if (confirm('¿Restablecer IA MiZona local?')) { resetLocalAi(); reload(); } }}><RotateCcw size={16}/>Restablecer IA local</button></Card>
+      <Card title="Métricas locales" icon={<BarChart3 size={18}/>}><div className="aiAdminStats"><span><b>{snapshot.state.usage.length}</b> consultas</span><span><b>{snapshot.state.conversations.length}</b> conversaciones</span><span><b>{snapshot.state.saved_plans.length}</b> planes</span><span><b>{snapshot.state.feedback.length}</b> evaluaciones</span></div><p className="muted">Estas métricas pertenecen únicamente a este navegador.</p></Card>
+      <Card title="Alertas de seguridad" icon={<AlertTriangle size={18}/>}><div className="aiFlagList">{snapshot.flagged.map(flag => <div key={flag.id}><span><b>{localAiUserLabel(flag.user_id)}</b><small>{flag.prompt}</small><em>{flag.reason}</em></span><select value={flag.status} onChange={e => { reviewLocalAiFlag(flag.id, e.target.value); reload(); }}><option value="blocked">Bloqueado</option><option value="reviewed">Revisado</option><option value="dismissed">Descartado</option></select></div>)}{!snapshot.flagged.length && <p className="muted">No hay consultas bloqueadas.</p>}</div></Card>
+      <Card title="Mantenimiento" icon={<Eraser size={18}/>}><p className="muted">Restablece solamente historial, planes y configuración de IA de este navegador.</p><button className="dangerButton" onClick={() => { if (confirm('¿Restablecer IA MiZona local?')) { resetLocalAi(); reload(); } }}><RotateCcw size={16}/>Restablecer IA local</button></Card>
     </div>}
 
     <div className="aiCapabilityGrid">
