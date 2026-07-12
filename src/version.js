@@ -4,4 +4,4 @@
 // de carga, los mensajes de error de arranque y el título de la
 // pestaña del navegador (vía vite.config.js).
 export const APP_VERSION = '30.54';
-export const APP_STAGE_LABEL = 'Formularios coherentes: buscadores, checkboxes y foco unificados';
+export const APP_STAGE_LABEL = 'Rediseño visual integral MiZona';

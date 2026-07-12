@@ -1,4 +1,7 @@
-import { Bell, Boxes, CheckCircle2, Circle, Cloud, Compass, Database, FileText, Flame, KeyRound, MessageCircle, PackageCheck, Puzzle, ShieldCheck, Store, Truck, Users } from 'lucide-react';
+import {
+  Bell, Boxes, CheckCircle2, Cloud, Database, FileText, Flame, KeyRound,
+  MessageCircle, PackageCheck, ShieldCheck, Store, Truck, Users
+} from 'lucide-react';
 import Card from '../components/Card';
 import { hasSupabase } from '../lib/supabase';
 import { firebaseEnabled, getFirebasePlan, getFirebasePublicConfig } from '../lib/firebaseConfig';
@@ -49,7 +52,7 @@ export default function ArchitectureCenter({ setPage }) {
     </section>
 
     <div className="architectureGrid37">
-      <Card title="Qué va en Supabase" icon={<Circle size={18}/>}>
+      <Card title="Qué va en Supabase" icon="🟢">
         <div className="architectureList37">
           <article><Users/><b>Usuarios, roles y permisos</b><span>Control real por usuario, negocio, conductor, adulto, alumno o invitado.</span></article>
           <article><PackageCheck/><b>Pedidos Marketplace</b><span>Cliente, proveedor y administrador ven el mismo pedido en tiempo real.</span></article>
@@ -58,7 +61,7 @@ export default function ArchitectureCenter({ setPage }) {
         </div>
       </Card>
 
-      <Card title="Qué va en Firebase" icon={<Flame size={18}/>}>
+      <Card title="Qué va en Firebase" icon="🔥">
         <div className="firebasePlan37">
           {firebasePlan.map(item => <article key={item.area}>
             <Flame/><div><b>{item.area}</b><span>{item.use}</span></div><em>{item.status}</em>
@@ -67,26 +70,26 @@ export default function ArchitectureCenter({ setPage }) {
       </Card>
     </div>
 
-    <Card title="Tablas reales recomendadas para Supabase" icon={<Puzzle size={18}/>}>
+    <Card title="Tablas reales recomendadas para Supabase" icon="🧩">
       <p className="muted">Esta etapa deja documentada la estructura SQL para convertir los pedidos locales en pedidos reales sincronizados.</p>
       <div className="tablePlan37">
         {supabaseTables.map(([name,desc]) => <article key={name}><code>{name}</code><span>{desc}</span></article>)}
       </div>
     </Card>
 
-    <Card title="Variables Firebase esperadas" icon={<KeyRound size={18}/>}>
+    <Card title="Variables Firebase esperadas" icon="🔑">
       <div className="firebaseKeys37">
         {Object.entries(firebaseConfig).filter(([key]) => key !== 'enabled').map(([key,value]) => <article key={key}><KeyRound size={16}/><b>{key}</b><span>{value ? 'configurado' : 'pendiente'}</span></article>)}
       </div>
       <p className="muted">Firebase puede quedar desactivado sin romper la web. Cuando coloques las claves en Vercel, se activarán los módulos que usemos.</p>
     </Card>
 
-    <Card title="Orden de desarrollo recomendado" icon={<Compass size={18}/>}>
+    <Card title="Orden de desarrollo recomendado" icon="🧭">
       <div className="phaseGrid37">
         {nextPhases.map(([phase,title,Icon]) => <article key={phase}><Icon/><span>{phase}</span><b>{title}</b></article>)}
       </div>
     </Card>
-    <Card title="Núcleo real 30.43 en Supabase" icon={<Boxes size={18}/>}>
+    <Card title="Núcleo real 30.43 en Supabase" icon="🧱">
       <p className="muted">Esta etapa deja una base oficial para que Chat, Marketplace, Business, Comités, Comunidad, Notificaciones y Archivos usen la misma estructura real.</p>
       <div className="coreGrid43">
         <article><b>{CORE_TABLES_3043.length}</b><span>Tablas principales mz_*</span></article>
@@ -99,7 +102,7 @@ export default function ArchitectureCenter({ setPage }) {
       </div>
     </Card>
 
-    <Card title="Pasos para activar el núcleo real" icon={<CheckCircle2 size={18}/>}>
+    <Card title="Pasos para activar el núcleo real" icon="✅">
       <div className="phaseGrid37 coreSteps43">
         {getCoreNextSteps().map((step, index) => <article key={step}><span>{index + 1}</span><b>{step}</b></article>)}
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Copy, FileArchive, FileText, Folder, Image, Lightbulb, Link, ShieldCheck, Upload, X } from 'lucide-react';
+import { Copy, FileArchive, FileText, Image, Link, ShieldCheck, Upload, X } from 'lucide-react';
 import Card from '../components/Card';
 
 export default function Transfer(){
@@ -25,11 +25,11 @@ export default function Transfer(){
   </div>
 
   <div className="grid2">
-    <Card title="Subir archivo temporal" icon={<Upload size={18}/>}>
+    <Card title="Subir archivo temporal" icon="📤">
       <div className="drop transferDrop38"><Upload size={36}/><b>Arrastra tus archivos o selecciona desde el dispositivo</b><small>PDF, Word, Excel, PowerPoint, imágenes y ZIP. Máximo recomendado: 50 MB.</small></div>
       <button className="primary full" onClick={add}><Upload size={18}/> Seleccionar archivo</button>
     </Card>
-    <Card title="¿Para qué sirve?" icon={<Lightbulb size={18}/>}>
+    <Card title="¿Para qué sirve?" icon="💡">
       <div className="transferUseGrid38">
         <article><FileText/> Tareas y trabajos escolares</article>
         <article><Image/> Fotos de actividades</article>
@@ -39,7 +39,7 @@ export default function Transfer(){
     </Card>
   </div>
 
-  <Card title="Archivos temporales" icon={<Folder size={18}/>}>
+  <Card title="Archivos temporales" icon="📁">
     <div className="adminTable files transferFiles38">{files.map(f=><div key={f.name}><b>{f.name}</b><span>{f.type}</span><span>{f.size}</span><span>Vence: {f.expires}</span><button><Copy size={16}/> Copiar enlace</button></div>)}</div>
   </Card>
  </div>;

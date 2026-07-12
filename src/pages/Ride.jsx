@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, Bike, Car, CheckCircle2, Clock3, Copy, CreditCard, DollarSign, MapPin, Navigation, Package, PackageCheck, Phone, Receipt, Route, ShieldCheck, Star, Truck, UserCheck, UserRound, WalletCards } from 'lucide-react';
+import {
+  AlertTriangle, Bike, Car, CheckCircle2, Clock3, Copy, DollarSign, MapPin,
+  Navigation, PackageCheck, Phone, Route, ShieldCheck, Star, Truck, UserCheck,
+  UserRound, WalletCards
+} from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -67,8 +71,8 @@ function RequestRide({ snapshot, refresh, notify, goTracking }) {
   };
 
   return <div className="rideRequestLayout">
-    <Card title="¿A dónde vas?" icon={<MapPin size={18}/>}>
-      {snapshot.activePassengerRide ? <Empty icon={<Car size={18}/>} title="Ya tienes un viaje activo" text={`${snapshot.activePassengerRide.origin} → ${snapshot.activePassengerRide.destination}`} action={<button className="primary" onClick={goTracking}>Ver seguimiento</button>}/> : <form onSubmit={submit} className="rideRequestForm">
+    <Card title="¿A dónde vas?" icon="📍">
+      {snapshot.activePassengerRide ? <Empty icon="🚕" title="Ya tienes un viaje activo" text={`${snapshot.activePassengerRide.origin} → ${snapshot.activePassengerRide.destination}`} action={<button className="primary" onClick={goTracking}>Ver seguimiento</button>}/> : <form onSubmit={submit} className="rideRequestForm">
         <div className="routeFields">
           <label><span className="originDot"/>Origen<input value={origin} onChange={e=>setOrigin(e.target.value)} required/></label>
           <i/>
@@ -104,7 +108,7 @@ function PassengerTracking({ snapshot, refresh, notify }) {
     try { createLocalRideReport({ rideId:item.origin ? item.id : null, deliveryId:item.pickup ? item.id : null, reason:'Alerta de seguridad', details:'El usuario activó el botón de emergencia.', emergency:true }); refresh(); notify('Alerta local registrada y enviada a los administradores de prueba.'); }
     catch(error){ notify(`Error: ${error.message}`); }
   };
-  if (!ride && !delivery) return <Card title="Seguimiento" icon={<MapPin size={18}/>}><Empty title="No tienes servicios activos" text="Solicita un viaje o envío para comenzar."/></Card>;
+  if (!ride && !delivery) return <Card title="Seguimiento" icon="📍"><Empty title="No tienes servicios activos" text="Solicita un viaje o envío para comenzar."/></Card>;
   const item = ride || delivery;
   const driver = item.driver;
   return <div className="trackingLayout">
@@ -118,8 +122,8 @@ function PassengerTracking({ snapshot, refresh, notify }) {
       {ride?.status==='completed' && !ride.rating && <RideRating ride={ride} refresh={refresh} notify={notify}/>} 
     </section>
     <aside>
-      <Card title="Seguridad" icon={<ShieldCheck size={18}/>}><ul className="list"><li>Verifica placa, vehículo y nombre.</li><li>No compartas el código con terceros.</li><li>Comparte el viaje con alguien de confianza.</li><li>La alerta de esta etapa es solo una simulación local.</li></ul></Card>
-      <Card title="Pago" icon={<CreditCard size={18}/>}><p>{item.payment_method==='cash'?'Efectivo':item.payment_method==='digital'?'Yape / Plin':'Tarjeta'}</p><b>{money(item.fare)}</b></Card>
+      <Card title="Seguridad" icon="🛡️"><ul className="list"><li>Verifica placa, vehículo y nombre.</li><li>No compartas el código con terceros.</li><li>Comparte el viaje con alguien de confianza.</li><li>La alerta de esta etapa es solo una simulación local.</li></ul></Card>
+      <Card title="Pago" icon="💳"><p>{item.payment_method==='cash'?'Efectivo':item.payment_method==='digital'?'Yape / Plin':'Tarjeta'}</p><b>{money(item.fare)}</b></Card>
     </aside>
   </div>;
 }
@@ -135,8 +139,8 @@ function DeliveryRequest({ snapshot, refresh, notify, goTracking }) {
   const estimate=5+Number(form.distanceKm||0)*1.35+(form.packageType==='food'?2:form.packageType==='document'?0:1);
   const submit=event=>{event.preventDefault();try{createLocalDelivery(form);refresh();notify('Envío creado. Un repartidor podrá aceptarlo desde otra sesión.');goTracking();}catch(error){notify(`Error: ${error.message}`);}};
   return <div className="grid2">
-    <Card title="Solicitar envío" icon={<Package size={18}/>}>
-      {snapshot.activePassengerDelivery ? <Empty icon={<Bike size={18}/>} title="Ya tienes un envío activo" text={`${snapshot.activePassengerDelivery.pickup} → ${snapshot.activePassengerDelivery.dropoff}`} action={<button className="primary" onClick={goTracking}>Ver seguimiento</button>}/> : <form className="deliveryForm" onSubmit={submit}>
+    <Card title="Solicitar envío" icon="📦">
+      {snapshot.activePassengerDelivery ? <Empty icon="🛵" title="Ya tienes un envío activo" text={`${snapshot.activePassengerDelivery.pickup} → ${snapshot.activePassengerDelivery.dropoff}`} action={<button className="primary" onClick={goTracking}>Ver seguimiento</button>}/> : <form className="deliveryForm" onSubmit={submit}>
         <label>Punto de recojo<input value={form.pickup} onChange={e=>update('pickup',e.target.value)} required/></label>
         <label>Punto de entrega<input value={form.dropoff} onChange={e=>update('dropoff',e.target.value)} required/></label>
         <label>¿Qué se enviará?<input value={form.content} onChange={e=>update('content',e.target.value)} required/></label>
@@ -146,7 +150,7 @@ function DeliveryRequest({ snapshot, refresh, notify, goTracking }) {
         <button className="primary full" type="submit"><PackageCheck size={17}/>Solicitar repartidor · {money(estimate)}</button>
       </form>}
     </Card>
-    <Card title="Cómo funciona" icon={<Bike size={18}/>}><div className="statusTimeline"><div className="done"><span>1</span><div><b>Solicita</b><small>Registra recojo, destino y contenido.</small></div></div><div><span>2</span><div><b>Asignación</b><small>Un conductor verificado acepta.</small></div></div><div><span>3</span><div><b>Recojo y traslado</b><small>El estado se actualiza entre pestañas.</small></div></div><div><span>4</span><div><b>Entrega</b><small>Se registra una constancia local.</small></div></div></div></Card>
+    <Card title="Cómo funciona" icon="🛵"><div className="statusTimeline"><div className="done"><span>1</span><div><b>Solicita</b><small>Registra recojo, destino y contenido.</small></div></div><div><span>2</span><div><b>Asignación</b><small>Un conductor verificado acepta.</small></div></div><div><span>3</span><div><b>Recojo y traslado</b><small>El estado se actualiza entre pestañas.</small></div></div><div><span>4</span><div><b>Entrega</b><small>Se registra una constancia local.</small></div></div></div></Card>
   </div>;
 }
 
@@ -155,7 +159,7 @@ function DriverCenter({ snapshot, refresh, notify }) {
   const [code,setCode]=useState('');
   const [proof,setProof]=useState('Entregado al destinatario');
   if (!driver) return <DriverRegistration refresh={refresh} notify={notify}/>;
-  if (driver.status!=='verified') return <Card title="Solicitud de conductor" icon={<UserCheck size={18}/>}><div className="driverApprovalState"><UserCheck size={42}/><h2>Estado: {driver.status}</h2><p>Tu solicitud debe ser aprobada por un administrador local antes de aceptar viajes.</p><div className="driverDocumentGrid"><span>Vehículo<b>{driver.vehicle_brand} {driver.vehicle_model}</b></span><span>Placa<b>{driver.plate}</b></span><span>Documentos<b>{driver.documents_ok?'Registrados':'Pendientes'}</b></span></div></div></Card>;
+  if (driver.status!=='verified') return <Card title="Solicitud de conductor" icon="🪪"><div className="driverApprovalState"><UserCheck size={42}/><h2>Estado: {driver.status}</h2><p>Tu solicitud debe ser aprobada por un administrador local antes de aceptar viajes.</p><div className="driverDocumentGrid"><span>Vehículo<b>{driver.vehicle_brand} {driver.vehicle_model}</b></span><span>Placa<b>{driver.plate}</b></span><span>Documentos<b>{driver.documents_ok?'Registrados':'Pendientes'}</b></span></div></div></Card>;
   const activeRide=snapshot.activeDriverRide;
   const activeDelivery=snapshot.activeDriverDelivery;
   const acceptRide=id=>{try{acceptLocalRideRequest(id);refresh();notify('Viaje aceptado.');}catch(error){notify(`Error: ${error.message}`);}};
@@ -165,11 +169,11 @@ function DriverCenter({ snapshot, refresh, notify }) {
   return <div className="driverCenter">
     <section className="driverDashboardHeader"><div><span className={driver.online?'onlineDot':'offlineDot'}/><div><h2>Panel del conductor</h2><p>{driver.vehicle_brand} {driver.vehicle_model} · {driver.plate}</p></div></div><button className={driver.online?'driverOnlineButton active':'driverOnlineButton'} onClick={()=>{try{toggleLocalDriverOnline(!driver.online);refresh();notify(driver.online?'Ahora estás fuera de línea.':'Ahora estás disponible.');}catch(error){notify(`Error: ${error.message}`);}}}>{driver.online?'Disponible':'Fuera de línea'}</button></section>
     <div className="driverStats"><span><b>{driver.trips_completed}</b> servicios</span><span><b>{driver.rating} ★</b> calificación</span><span><b>{money(driver.earnings)}</b> ganancias locales</span><span><b>{snapshot.openServices}</b> solicitudes abiertas</span></div>
-    {(activeRide||activeDelivery) && <Card title="Servicio activo" icon={<MapPin size={18}/>}>
+    {(activeRide||activeDelivery) && <Card title="Servicio activo" icon="📍">
       {activeRide && <div className="driverActiveService"><div><span>{activeRide.code}</span><h3>{activeRide.origin} → {activeRide.destination}</h3><p>Pasajero: {activeRide.passenger?.display_name} · {money(activeRide.fare)}</p><StatusBadge value={activeRide.status}/></div><div className="driverStatusActions">{activeRide.status==='assigned'&&<button onClick={()=>changeRide(activeRide.id,'arriving')}>Voy al origen</button>}{activeRide.status==='arriving'&&<button onClick={()=>changeRide(activeRide.id,'waiting')}>Llegué</button>}{['assigned','arriving','waiting'].includes(activeRide.status)&&<div className="rideCodeEntry"><input value={code} onChange={e=>setCode(e.target.value)} placeholder="Código de 4 dígitos" maxLength={4}/><button className="primary" onClick={()=>{try{confirmLocalRideCode(activeRide.id,code);setCode('');refresh();notify('Código correcto. Viaje iniciado.');}catch(error){notify(`Error: ${error.message}`);}}}>Iniciar viaje</button></div>}{activeRide.status==='in_progress'&&<button className="primary" onClick={()=>changeRide(activeRide.id,'completed')}>Completar viaje</button>}</div></div>}
       {activeDelivery && <div className="driverActiveService"><div><span>{activeDelivery.code}</span><h3>{activeDelivery.pickup} → {activeDelivery.dropoff}</h3><p>{activeDelivery.content} · {money(activeDelivery.fare)}</p><StatusBadge value={activeDelivery.status} delivery/></div><div className="driverStatusActions">{activeDelivery.status==='assigned'&&<button onClick={()=>changeDelivery(activeDelivery.id,'picked_up')}>Paquete recogido</button>}{activeDelivery.status==='picked_up'&&<button onClick={()=>changeDelivery(activeDelivery.id,'in_transit')}>Iniciar traslado</button>}{activeDelivery.status==='in_transit'&&<><input value={proof} onChange={e=>setProof(e.target.value)} placeholder="Constancia de entrega"/><button className="primary" onClick={()=>changeDelivery(activeDelivery.id,'delivered')}>Confirmar entrega</button></>}</div></div>}
     </Card>}
-    {!activeRide&&!activeDelivery&&<div className="grid2"><Card title="Viajes disponibles" icon={<Car size={18}/>}><div className="rideAvailableList">{snapshot.availableRides.length?snapshot.availableRides.map(item=><article key={item.id}><div><b>{item.origin} → {item.destination}</b><span>{item.passenger?.display_name} · {item.distance_km} km · {money(item.fare)}</span></div><button disabled={!driver.online} onClick={()=>acceptRide(item.id)}>Aceptar</button></article>):<p className="muted">No hay viajes pendientes.</p>}</div></Card><Card title="Envíos disponibles" icon={<Package size={18}/>}><div className="rideAvailableList">{snapshot.availableDeliveries.length?snapshot.availableDeliveries.map(item=><article key={item.id}><div><b>{item.pickup} → {item.dropoff}</b><span>{item.content} · {item.distance_km} km · {money(item.fare)}</span></div><button disabled={!driver.online} onClick={()=>acceptDelivery(item.id)}>Aceptar</button></article>):<p className="muted">No hay envíos pendientes.</p>}</div></Card></div>}
+    {!activeRide&&!activeDelivery&&<div className="grid2"><Card title="Viajes disponibles" icon="🚕"><div className="rideAvailableList">{snapshot.availableRides.length?snapshot.availableRides.map(item=><article key={item.id}><div><b>{item.origin} → {item.destination}</b><span>{item.passenger?.display_name} · {item.distance_km} km · {money(item.fare)}</span></div><button disabled={!driver.online} onClick={()=>acceptRide(item.id)}>Aceptar</button></article>):<p className="muted">No hay viajes pendientes.</p>}</div></Card><Card title="Envíos disponibles" icon="📦"><div className="rideAvailableList">{snapshot.availableDeliveries.length?snapshot.availableDeliveries.map(item=><article key={item.id}><div><b>{item.pickup} → {item.dropoff}</b><span>{item.content} · {item.distance_km} km · {money(item.fare)}</span></div><button disabled={!driver.online} onClick={()=>acceptDelivery(item.id)}>Aceptar</button></article>):<p className="muted">No hay envíos pendientes.</p>}</div></Card></div>}
   </div>;
 }
 
@@ -177,14 +181,14 @@ function DriverRegistration({ refresh, notify }) {
   const [form,setForm]=useState({vehicleType:'auto',brand:'Toyota',model:'Yaris',plate:'',color:'Plata',licenseNumber:'',documentsOk:true});
   const update=(key,value)=>setForm(current=>({...current,[key]:value}));
   const submit=event=>{event.preventDefault();try{registerLocalDriver(form);refresh();notify('Solicitud de conductor registrada. Un administrador debe aprobarla.');}catch(error){notify(`Error: ${error.message}`);}};
-  return <Card title="Registrarme como conductor" icon={<UserCheck size={18}/>}><form className="driverRegisterForm" onSubmit={submit}><div className="rideMiniFields"><label>Tipo de vehículo<select value={form.vehicleType} onChange={e=>update('vehicleType',e.target.value)}><option value="moto">Moto</option><option value="auto">Auto</option><option value="van">Van</option></select></label><label>Placa<input value={form.plate} onChange={e=>update('plate',e.target.value.toUpperCase())} required/></label></div><div className="rideMiniFields"><label>Marca<input value={form.brand} onChange={e=>update('brand',e.target.value)} required/></label><label>Modelo<input value={form.model} onChange={e=>update('model',e.target.value)} required/></label></div><div className="rideMiniFields"><label>Color<input value={form.color} onChange={e=>update('color',e.target.value)}/></label><label>Número de licencia<input value={form.licenseNumber} onChange={e=>update('licenseNumber',e.target.value)} required/></label></div><label className="checkLine"><input type="checkbox" checked={form.documentsOk} onChange={e=>update('documentsOk',e.target.checked)}/> Declaro que licencia, SOAT y documentos del vehículo están vigentes.</label><button className="primary" type="submit">Enviar solicitud</button></form></Card>;
+  return <Card title="Registrarme como conductor" icon="🪪"><form className="driverRegisterForm" onSubmit={submit}><div className="rideMiniFields"><label>Tipo de vehículo<select value={form.vehicleType} onChange={e=>update('vehicleType',e.target.value)}><option value="moto">Moto</option><option value="auto">Auto</option><option value="van">Van</option></select></label><label>Placa<input value={form.plate} onChange={e=>update('plate',e.target.value.toUpperCase())} required/></label></div><div className="rideMiniFields"><label>Marca<input value={form.brand} onChange={e=>update('brand',e.target.value)} required/></label><label>Modelo<input value={form.model} onChange={e=>update('model',e.target.value)} required/></label></div><div className="rideMiniFields"><label>Color<input value={form.color} onChange={e=>update('color',e.target.value)}/></label><label>Número de licencia<input value={form.licenseNumber} onChange={e=>update('licenseNumber',e.target.value)} required/></label></div><label className="checkLine"><input type="checkbox" checked={form.documentsOk} onChange={e=>update('documentsOk',e.target.checked)}/> Declaro que licencia, SOAT y documentos del vehículo están vigentes.</label><button className="primary" type="submit">Enviar solicitud</button></form></Card>;
 }
 
 function History({ snapshot, refresh, notify }) {
   const rows=[...snapshot.myRides.map(item=>({...item,kind:'ride'})),...snapshot.myDeliveries.map(item=>({...item,kind:'delivery'}))].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
   const completed=rows.filter(item=>['completed','delivered'].includes(item.status));
   const spent=completed.filter(item=>(item.kind==='ride'?item.passenger_id:item.customer_id)===snapshot.profile.id).reduce((sum,item)=>sum+Number(item.fare||0),0);
-  return <><div className="rideHistoryStats"><span><b>{rows.length}</b>servicios</span><span><b>{completed.length}</b>completados</span><span><b>{money(spent)}</b>gastado</span></div><Card title="Historial local" icon={<Receipt size={18}/>}><div className="rideHistory">{rows.length?rows.map(item=><div key={item.id}><span className="historyIcon">{item.kind==='ride'?'🚗':'📦'}</span><div><b>{item.kind==='ride'?`${item.origin} → ${item.destination}`:`${item.pickup} → ${item.dropoff}`}</b><small>{item.code} · {dateTime(item.created_at)}</small></div><strong>{money(item.fare)}</strong><em>{item.kind==='ride'?rideStatus(item.status):deliveryStatus(item.status)}</em>{item.kind==='ride'&&item.status==='completed'&&!item.rating&&item.passenger_id===snapshot.profile.id&&<button className="ghost" onClick={()=>{const score=Number(prompt('Calificación de 1 a 5','5'));if(!score)return;try{rateLocalRide(item.id,score,'');refresh();notify('Calificación guardada.');}catch(error){notify(`Error: ${error.message}`);}}}>Calificar</button>}</div>):<p className="muted">Todavía no hay servicios.</p>}</div></Card></>;
+  return <><div className="rideHistoryStats"><span><b>{rows.length}</b>servicios</span><span><b>{completed.length}</b>completados</span><span><b>{money(spent)}</b>gastado</span></div><Card title="Historial local" icon="🧾"><div className="rideHistory">{rows.length?rows.map(item=><div key={item.id}><span className="historyIcon">{item.kind==='ride'?'🚗':'📦'}</span><div><b>{item.kind==='ride'?`${item.origin} → ${item.destination}`:`${item.pickup} → ${item.dropoff}`}</b><small>{item.code} · {dateTime(item.created_at)}</small></div><strong>{money(item.fare)}</strong><em>{item.kind==='ride'?rideStatus(item.status):deliveryStatus(item.status)}</em>{item.kind==='ride'&&item.status==='completed'&&!item.rating&&item.passenger_id===snapshot.profile.id&&<button className="ghost" onClick={()=>{const score=Number(prompt('Calificación de 1 a 5','5'));if(!score)return;try{rateLocalRide(item.id,score,'');refresh();notify('Calificación guardada.');}catch(error){notify(`Error: ${error.message}`);}}}>Calificar</button>}</div>):<p className="muted">Todavía no hay servicios.</p>}</div></Card></>;
 }
 
 export default function Ride() {

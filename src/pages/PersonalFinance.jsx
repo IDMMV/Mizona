@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BarChart3, CreditCard, Download, PiggyBank, Pin, Plus, Puzzle, Receipt, RefreshCcw, ShieldCheck, Target, Trash2, Upload } from 'lucide-react';
+import { Download, PiggyBank, Plus, RefreshCcw, ShieldCheck, Trash2, Upload } from 'lucide-react';
 import Card from '../components/Card';
 import Tabs from '../components/Tabs';
 import { useApp } from '../context/AppContext';
@@ -151,11 +151,11 @@ export default function PersonalFinance() {
         <span className={summary.balance < 0 ? 'bad' : 'good'}><b>{money(summary.balance)}</b>Disponible</span>
       </div>
       <div className="grid2">
-                <Card title="Cuentas" icon={<CreditCard size={18}/>}>
+                <Card title="Cuentas" icon="💳">
           <div className="accountList">{summary.accountTotals.map(account => <article key={account.id}><span>{account.name}<small>{account.type}</small></span><b>{money(account.balance)}</b></article>)}</div>
         </Card>
       </div>
-      <Card title="Gastos por categoría" icon={<BarChart3 size={18}/>}>
+      <Card title="Gastos por categoría" icon="📊">
         <div className="budgetBars">{summary.byCategory.map(item => {
           const limit = Number(item.monthlyLimit || 0);
           const pct = limit ? Math.min(100, Math.round((item.total / limit) * 100)) : 0;
@@ -168,7 +168,7 @@ export default function PersonalFinance() {
     </>}
 
     {tab === 'movements' && <>
-      <div className="mz-expense-quick-form expenseRegisterPanel47"><Card className="gastosMoveForm47" title="Agregar movimiento rápido" icon={<Plus size={18}/>}>
+      <div className="mz-expense-quick-form expenseRegisterPanel47"><Card className="gastosMoveForm47" title="Agregar movimiento rápido" icon="➕">
           <form className="financeForm" onSubmit={saveTransaction}>
             <label>Tipo<select value={tx.type} onChange={event => setTx({ ...tx, type: event.target.value, categoryId: event.target.value === 'income' ? 'cat-income' : event.target.value === 'saving' ? 'cat-savings' : 'cat-food' })}><option value="expense">Gasto</option><option value="income">Ingreso</option><option value="saving">Ahorro</option></select></label>
             <label>Categoría<select value={tx.categoryId} onChange={event => setTx({ ...tx, categoryId: event.target.value })}>{categories.filter(cat => cat.type === tx.type || (tx.type === 'saving' && cat.type === 'saving')).map(cat => <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>)}</select></label>
@@ -182,7 +182,7 @@ export default function PersonalFinance() {
           </form>
         </Card></div>
       <div className="financeActions"><button onClick={exportCsv}><Download size={16}/> Exportar Excel CSV</button><button onClick={exportJson}><Download size={16}/> Respaldo JSON</button></div>
-      <Card title="Historial personal" icon={<Receipt size={18}/>}>
+      <Card title="Historial personal" icon="🧾">
         <div className="financeTable">{data.transactions.map(item => {
           const cat = categories.find(category => category.id === item.categoryId);
           const account = accounts.find(acc => acc.id === item.accountId);
@@ -197,7 +197,7 @@ export default function PersonalFinance() {
     </>}
 
     {tab === 'budgets' && <div className="grid2">
-      <Card title="Límites mensuales" icon={<Pin size={18}/>}>
+      <Card title="Límites mensuales" icon="📌">
         <div className="budgetBars">{categories.filter(item => item.type === 'expense').map(item => {
           const spent = summary.byCategory.find(cat => cat.id === item.id)?.total || 0;
           const limit = Number(item.monthlyLimit || 0);
@@ -209,7 +209,7 @@ export default function PersonalFinance() {
           </article>;
         })}</div>
       </Card>
-      <Card title="Crear categoría" icon={<Puzzle size={18}/>}>
+      <Card title="Crear categoría" icon="🧩">
         <form className="financeForm" onSubmit={saveCategory}>
           <label>Nombre<input value={category.name} onChange={event => setCategory({ ...category, name: event.target.value })}/></label>
           <label>Tipo<select value={category.type} onChange={event => setCategory({ ...category, type: event.target.value })}><option value="expense">Gasto</option><option value="income">Ingreso</option><option value="saving">Ahorro</option></select></label>
@@ -221,13 +221,13 @@ export default function PersonalFinance() {
     </div>}
 
     {tab === 'goals' && <div className="grid2">
-      <Card title="Mis metas" icon={<Target size={18}/>}>
+      <Card title="Mis metas" icon="🎯">
         <div className="goalList">{data.goals.map(item => {
           const pct = item.targetAmount ? Math.min(100, Math.round((Number(item.currentAmount || 0) / Number(item.targetAmount || 1)) * 100)) : 0;
           return <article key={item.id}><div><b>{item.name}</b><span>{money(item.currentAmount)} de {money(item.targetAmount)} · hasta {item.dueDate}</span></div><div className="progress"><i style={{ width: `${pct}%` }}/></div></article>;
         })}</div>
       </Card>
-      <Card title="Crear meta" icon={<PiggyBank size={18}/>}>
+      <Card title="Crear meta" icon="🐷">
         <form className="financeForm" onSubmit={saveGoal}>
           <label>Nombre<input value={goal.name} onChange={event => setGoal({ ...goal, name: event.target.value })}/></label>
           <label>Monto objetivo<input type="number" min="1" step="0.10" value={goal.targetAmount} onChange={event => setGoal({ ...goal, targetAmount: event.target.value })}/></label>
