@@ -1,0 +1,263 @@
+/* ==========================================================
+   MiZona 30.56 · LIMPIEZA VISUAL POR MÓDULOS
+   Corrige contraste, mezcla claro/oscuro, alturas, espaciado,
+   tarjetas, formularios y composición real de escritorio.
+   ========================================================== */
+
+:root{
+  --mz-page-max:1440px;
+  --mz-control-h:44px;
+  --mz-card-pad:20px;
+  --mz-section-gap:18px;
+  --mz-light-bg:#f4f8f9;
+  --mz-light-surface:#ffffff;
+  --mz-light-surface-2:#f7fafb;
+  --mz-light-text:#102431;
+  --mz-light-text-2:#526678;
+  --mz-light-border:#dbe5ea;
+}
+
+/* Estructura general: composición de escritorio real */
+.content > .page{
+  width:min(100%,var(--mz-page-max));
+  margin-inline:auto;
+  display:flex;
+  flex-direction:column;
+  gap:var(--mz-section-gap);
+}
+.page > *{min-width:0;}
+.page .grid2,.page .grid3,.page .businessLayout,.page .posLayout,.page .aiLayout{
+  align-items:start;
+}
+.page .grid2{gap:18px!important;}
+
+/* Hero compacto y uniforme */
+.page .hero{
+  min-height:0!important;
+  padding:24px 26px!important;
+  border-radius:20px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:20px!important;
+  box-shadow:0 14px 36px rgba(4,15,24,.12)!important;
+}
+.page .hero.compact{padding:22px 24px!important;}
+.page .hero h1{font-size:clamp(26px,2.4vw,36px)!important;line-height:1.08!important;margin:5px 0 8px!important;}
+.page .hero p{max-width:760px;margin:0!important;line-height:1.55!important;opacity:.92;}
+.page .heroIcon{width:48px!important;height:48px!important;min-width:48px!important;border-radius:14px!important;display:grid!important;place-items:center!important;}
+.page .eyebrow{font-size:11px!important;letter-spacing:.12em!important;text-transform:uppercase!important;font-weight:800!important;}
+
+/* Tarjetas: nunca mezclar panel oscuro dentro de tarjeta clara */
+.page .card{
+  border-radius:18px!important;
+  padding:var(--mz-card-pad)!important;
+  box-shadow:0 10px 30px rgba(6,20,29,.08)!important;
+  overflow:hidden;
+}
+.page .cardHead{margin-bottom:16px!important;padding-bottom:12px!important;border-bottom:1px solid var(--mz-border)!important;}
+.page .cardHead h3{margin:0!important;font-size:17px!important;line-height:1.25!important;display:flex;align-items:center;gap:8px;}
+.page .card p,.page .card li{line-height:1.55;}
+
+/* Formularios generales */
+.page form{background:transparent!important;}
+.page form label,
+.page .formLabel{
+  display:grid!important;
+  gap:6px!important;
+  color:var(--mz-text-2)!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1.25!important;
+}
+.page input:not([type="checkbox"]):not([type="radio"]),
+.page select,
+.page textarea{
+  min-height:var(--mz-control-h)!important;
+  height:auto!important;
+  padding:10px 13px!important;
+  border-radius:11px!important;
+  border:1px solid var(--mz-border)!important;
+  background:var(--mz-surface-2)!important;
+  color:var(--mz-text)!important;
+  font-size:14px!important;
+  box-shadow:none!important;
+}
+.page textarea{min-height:100px!important;resize:vertical;}
+.page input::placeholder,.page textarea::placeholder{color:var(--mz-text-3)!important;opacity:1!important;}
+.page input:focus,.page select:focus,.page textarea:focus{
+  outline:none!important;
+  border-color:color-mix(in srgb,var(--primary) 58%,transparent)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent)!important;
+}
+.page input:disabled,.page select:disabled,.page textarea:disabled{
+  opacity:.62!important;
+  cursor:not-allowed!important;
+}
+.page .checkLabel{display:flex!important;grid-template-columns:none!important;align-items:center!important;gap:9px!important;min-height:36px;}
+.page input[type="checkbox"],.page input[type="radio"]{accent-color:var(--primary);width:16px;height:16px;}
+
+/* Botones y pestañas */
+.page button{min-height:40px;font-weight:700!important;}
+.page .tabs{display:flex!important;gap:8px!important;flex-wrap:wrap!important;margin:0!important;padding:0!important;}
+.page .tabs button{padding:9px 14px!important;border-radius:10px!important;min-height:40px!important;}
+.page .tabs button.active{box-shadow:0 6px 16px color-mix(in srgb,var(--primary) 16%,transparent)!important;}
+
+/* Alertas legibles */
+.page .paymentWarning,
+.page .warningBox,
+.page .noticeWarning,
+.page .alertWarning{
+  display:flex!important;
+  align-items:flex-start!important;
+  gap:12px!important;
+  padding:14px 16px!important;
+  border-radius:14px!important;
+  background:#fff7e8!important;
+  border:1px solid #f5c773!important;
+  color:#6f4600!important;
+  box-shadow:none!important;
+}
+.page .paymentWarning svg,.page .warningBox svg{color:#d97706!important;flex:0 0 auto;}
+.page .paymentWarning b,.page .warningBox b{display:block;color:#553500!important;margin-bottom:3px;}
+.page .paymentWarning span,.page .warningBox span{display:block;color:#805817!important;line-height:1.45!important;}
+
+/* ==========================================================
+   PAGOS MIZONA
+   ========================================================== */
+.paymentsPage{gap:16px!important;}
+.paymentsPage .hero{background:linear-gradient(135deg,#0e3b4a 0%,#0f766e 60%,#14b8a6 100%)!important;}
+.paymentsPage .tabs{margin-top:2px!important;}
+.paymentsPage .grid2{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:18px!important;
+}
+.paymentsPage .card{
+  background:var(--mz-surface)!important;
+  border:1px solid var(--mz-border)!important;
+  color:var(--mz-text)!important;
+}
+.paymentsPage .paymentForm{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:13px 14px!important;
+  padding:0!important;
+  border:0!important;
+}
+.paymentsPage .paymentForm label:first-child,
+.paymentsPage .paymentForm label:nth-child(2),
+.paymentsPage .paymentForm label:nth-child(9),
+.paymentsPage .paymentForm label:nth-child(10),
+.paymentsPage .paymentForm label:nth-child(11),
+.paymentsPage .paymentForm .checkLabel,
+.paymentsPage .paymentForm button{
+  grid-column:1/-1;
+}
+.paymentsPage .paymentForm button{justify-self:start;min-width:190px;margin-top:2px;}
+.paymentsPage .paymentAdminModels{display:grid!important;gap:12px!important;}
+.paymentsPage .paymentAdminModels article{
+  display:grid!important;
+  grid-template-columns:minmax(200px,1.7fr) minmax(90px,.55fr) minmax(90px,.55fr) minmax(130px,.8fr)!important;
+  gap:12px!important;
+  align-items:center!important;
+  padding:14px!important;
+  border:1px solid var(--mz-border)!important;
+  border-radius:14px!important;
+  background:var(--mz-surface-2)!important;
+}
+.paymentsPage .paymentAdminModels article > div{min-width:0;}
+.paymentsPage .paymentAdminModels article > div b{display:block;color:var(--mz-text)!important;font-size:14px!important;margin-bottom:3px;}
+.paymentsPage .paymentAdminModels article > div span{display:block;color:var(--mz-text-3)!important;font-size:12px!important;line-height:1.4;}
+.paymentsPage .paymentAdminModels article label{display:flex!important;align-items:center!important;gap:7px!important;color:var(--mz-text-2)!important;}
+.paymentsPage .paymentAdminModels article label:has(input[type="number"]){display:grid!important;gap:5px!important;}
+.paymentsPage .paymentAdminModels article button{grid-column:1/-1;width:100%;}
+.paymentsPage .paymentFooterActions{display:flex!important;gap:10px!important;justify-content:flex-end!important;flex-wrap:wrap!important;}
+.paymentsPage .paymentKpis{gap:12px!important;margin:0!important;}
+.paymentsPage .paymentKpis span{min-height:82px!important;padding:14px 16px!important;border-radius:14px!important;}
+.paymentsPage .paymentMeta{display:flex!important;gap:10px!important;flex-wrap:wrap!important;}
+.paymentsPage .paymentTable article{grid-template-columns:minmax(0,1fr) auto auto!important;gap:12px!important;align-items:center!important;}
+
+/* Finanzas, Pasarela, Administración, IA, Ride, Campus y Business */
+.personalFinancePage .card,
+.gatewayPage .card,
+.adminPage .card,
+.aiPage .card,
+.ridePage .card,
+.campusPage .card,
+.businessPage .card,
+.businessSuitePage .card,
+.marketplacePage .card,
+.committeesPage .card{
+  min-width:0!important;
+}
+.financeKpis,.businessKpis,.committeeKpis,.paymentKpis{
+  gap:12px!important;
+}
+.financeKpis > *, .businessKpis > *, .committeeKpis > *{
+  border-radius:15px!important;
+  padding:15px!important;
+}
+.adminPage .grid2,.gatewayPage .grid2,.aiPage .grid2,.personalFinancePage .grid2{gap:18px!important;}
+
+/* Tablas y paneles administrativos */
+.page .adminTableWrap,.page .financeTable,.page .paymentTable{
+  border:1px solid var(--mz-border)!important;
+  border-radius:14px!important;
+  background:var(--mz-surface)!important;
+}
+.page th{position:sticky;top:0;z-index:1;}
+.page th,.page td{font-size:13px!important;}
+
+/* Modo claro: contraste real en todas las hojas */
+html:not([data-theme="dark"]) .page .card,
+body:not(.dark) .page .card{
+  --mz-surface:var(--mz-light-surface);
+  --mz-surface-2:var(--mz-light-surface-2);
+  --mz-text:var(--mz-light-text);
+  --mz-text-2:var(--mz-light-text-2);
+  --mz-text-3:#718292;
+  --mz-border:var(--mz-light-border);
+}
+html:not([data-theme="dark"]) .content,
+body:not(.dark) .content{background:var(--mz-light-bg)!important;}
+html:not([data-theme="dark"]) .page .cardHead h3,
+body:not(.dark) .page .cardHead h3{color:var(--mz-light-text)!important;}
+html:not([data-theme="dark"]) .page input:not([type="checkbox"]):not([type="radio"]),
+html:not([data-theme="dark"]) .page select,
+html:not([data-theme="dark"]) .page textarea,
+body:not(.dark) .page input:not([type="checkbox"]):not([type="radio"]),
+body:not(.dark) .page select,
+body:not(.dark) .page textarea{
+  background:#fff!important;
+  color:var(--mz-light-text)!important;
+  border-color:var(--mz-light-border)!important;
+}
+html:not([data-theme="dark"]) .paymentsPage .paymentAdminModels article,
+body:not(.dark) .paymentsPage .paymentAdminModels article{
+  background:#f7fafb!important;
+  border-color:#dbe5ea!important;
+}
+
+/* Responsive */
+@media (max-width:1200px){
+  .paymentsPage .paymentAdminModels article{grid-template-columns:minmax(180px,1fr) repeat(2,minmax(88px,.45fr))!important;}
+  .paymentsPage .paymentAdminModels article label:has(input[type="number"]){grid-column:1/-1;}
+}
+@media (max-width:980px){
+  .page .hero{padding:19px!important;border-radius:17px!important;}
+  .paymentsPage .grid2{grid-template-columns:1fr!important;}
+  .paymentsPage .paymentForm{grid-template-columns:1fr!important;}
+  .paymentsPage .paymentForm label,.paymentsPage .paymentForm button{grid-column:1!important;}
+  .paymentsPage .paymentAdminModels article{grid-template-columns:1fr 1fr!important;}
+  .paymentsPage .paymentAdminModels article > div,.paymentsPage .paymentAdminModels article button{grid-column:1/-1;}
+}
+@media (max-width:640px){
+  :root{--mz-card-pad:15px;--mz-section-gap:13px;}
+  .page .hero{align-items:flex-start!important;}
+  .page .heroIcon{width:42px!important;height:42px!important;min-width:42px!important;}
+  .page .tabs{overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:3px!important;}
+  .page .tabs button{white-space:nowrap!important;}
+  .paymentsPage .paymentAdminModels article{grid-template-columns:1fr!important;}
+  .paymentsPage .paymentAdminModels article > *{grid-column:1!important;}
+  .paymentsPage .paymentFooterActions button{width:100%;}
+}
