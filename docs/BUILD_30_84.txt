@@ -1,0 +1,30 @@
+
+> mizona-enterprise-v8-v30-84-web-release-candidate@8.30.84 build
+> vite build
+
+[36mvite v8.1.4 [32mbuilding client environment for production...[36m[39m
+[2K
+transforming...✓ 1920 modules transformed.
+rendering chunks...
+
+[31m✗[39m Build failed in 995ms
+[31merror during build:
+[31mBuild failed with 1 error:
+
+[31m[MISSING_EXPORT] [0m"isSupabaseConfigured" is not exported by "src/lib/supabase.js".
+   [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/releaseChecks.js:1:10 [38;5;246m][0m
+   [38;5;246m│[0m
+ [38;5;246m1 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m{[0m[38;5;249m [0misSupabaseConfigured[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249m.[0m[38;5;249m/[0m[38;5;249ms[0m[38;5;249mu[0m[38;5;249mp[0m[38;5;249ma[0m[38;5;249mb[0m[38;5;249ma[0m[38;5;249ms[0m[38;5;249me[0m[38;5;249m"[0m[38;5;249m;[0m
+ [38;5;240m  │[0m          ──────────┬─────────  
+ [38;5;240m  │[0m                    ╰─────────── Missing export
+[38;5;246m───╯[0m
+[31m
+    at aggregateBindingErrorsIntoJsError (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/rolldown/dist/shared/error-BHRSI0R7.mjs:48:18)
+    at unwrapBindingResult (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/rolldown/dist/shared/error-BHRSI0R7.mjs:18:128)
+    at #build (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/rolldown/dist/shared/rolldown-build-CtPvmZgJ.mjs:3276:34)
+    at async buildEnvironment (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/vite/dist/node/chunks/node.js:33011:66)
+    at async Object.build (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/vite/dist/node/chunks/node.js:33433:19)
+    at async Object.buildApp (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/vite/dist/node/chunks/node.js:33430:153)
+    at async CAC.<anonymous> (file:///mnt/data/mizona_phases_3075_3084/MiZona_Enterprise_V8_30_84_QA_WEB_ESTABLE/node_modules/vite/dist/node/cli.js:776:3) {
+  errors: [Getter/Setter]
+}[39m

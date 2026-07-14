@@ -37,6 +37,7 @@ import CloudAuthGate from './pages/CloudAuthGate';
 import PersonalFinance from './pages/PersonalFinance';
 import ArchitectureCenter from './pages/ArchitectureCenter';
 import AndroidReadiness from './pages/AndroidReadiness';
+import ReleaseQA from './pages/ReleaseQA';
 import { canAccessModule } from './lib/permissions';
 import MobileRuntime from './components/MobileRuntime';
 
@@ -128,6 +129,7 @@ export default function AppRoot() {
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
     architecture: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <ArchitectureCenter setPage={setPage}/>,
     android: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <AndroidReadiness/>,
+    releaseQA: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <ReleaseQA/>,
     settings: <Account/>,
     blueprint: <Blueprint/>
   };
