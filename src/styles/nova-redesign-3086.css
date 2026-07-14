@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --nova-bg:#07101d;
+  --nova-bg-2:#0a1423;
+  --nova-panel:#101c2c;
+  --nova-panel-2:#152338;
+  --nova-panel-3:#1b2d45;
+  --nova-line:rgba(148,163,184,.14);
+  --nova-line-strong:rgba(148,163,184,.24);
+  --nova-text:#f8fafc;
+  --nova-text-2:#b8c4d6;
+  --nova-text-3:#7f8da3;
+  --nova-blue:#5b7cfa;
+  --nova-blue-2:#3f63ef;
+  --nova-violet:#8b5cf6;
+  --nova-cyan:#38bdf8;
+  --nova-pink:#ec4899;
+  --nova-amber:#f59e0b;
+  --nova-success:#22c55e;
+  --nova-danger:#f43f5e;
+  --nova-radius:18px;
+  --nova-shadow:0 18px 50px rgba(0,0,0,.28);
+  --mz-font:"Inter","Segoe UI",Roboto,Arial,sans-serif;
+}
+
+html,body,#root{min-height:100%;background:var(--nova-bg)!important}
+body{
+  margin:0;
+  color:var(--nova-text)!important;
+  font-family:var(--mz-font)!important;
+  background:
+    radial-gradient(circle at 82% 8%,rgba(91,124,250,.13),transparent 30rem),
+    radial-gradient(circle at 12% 90%,rgba(139,92,246,.09),transparent 32rem),
+    var(--nova-bg)!important;
+}
+
+.app{background:var(--nova-bg)!important;color:var(--nova-text)!important}
+.app main{background:linear-gradient(180deg,var(--nova-bg-2),var(--nova-bg))!important}
+.content{background:transparent!important;color:var(--nova-text)!important;padding:24px 28px 38px!important}
+.page{max-width:1580px;margin:0 auto;color:var(--nova-text)!important}
+
+/* Sidebar completamente renovado */
+.sidebar{
+  background:linear-gradient(180deg,#0a1423 0%,#07101d 100%)!important;
+  border-right:1px solid var(--nova-line)!important;
+  box-shadow:18px 0 45px rgba(0,0,0,.22)!important;
+}
+.sidebar .brand{padding:18px 16px 14px!important;border-bottom:1px solid var(--nova-line)!important}
+.sidebar .logo{
+  background:linear-gradient(135deg,var(--nova-blue),var(--nova-violet))!important;
+  color:white!important;border:0!important;box-shadow:0 10px 26px rgba(91,124,250,.34)!important;
+}
+.sidebar .brand b{color:white!important;font-size:16px!important;letter-spacing:-.02em}
+.sidebar .brand span{color:var(--nova-text-3)!important}
+.sidebarMode{
+  margin:12px 12px 6px!important;
+  background:rgba(91,124,250,.08)!important;
+  border:1px solid rgba(91,124,250,.19)!important;
+  color:var(--nova-text)!important;
+  border-radius:14px!important;
+}
+.sidebarMode svg{color:var(--nova-cyan)!important}
+.sidebarMode small{color:var(--nova-text-3)!important}
+.navSectionLabel{color:#607089!important;font-size:10px!important;letter-spacing:.16em!important;padding:18px 16px 7px!important}
+.navItem{
+  margin:2px 10px!important;width:calc(100% - 20px)!important;
+  min-height:42px!important;border-radius:12px!important;
+  color:var(--nova-text-2)!important;background:transparent!important;border:1px solid transparent!important;
+  transition:.18s ease!important;
+}
+.navItem svg{color:#7789a4!important}
+.navItem:hover{background:rgba(255,255,255,.045)!important;color:white!important;transform:translateX(2px)}
+.navItem:hover svg{color:var(--nova-cyan)!important}
+.navItem.active{
+  background:linear-gradient(90deg,rgba(91,124,250,.22),rgba(139,92,246,.12))!important;
+  border-color:rgba(91,124,250,.28)!important;color:white!important;
+  box-shadow:inset 3px 0 0 var(--nova-blue)!important;
+}
+.navItem.active svg{color:#9bb0ff!important}
+.navBadge{background:var(--nova-danger)!important;color:white!important}
+.phaseBox{background:rgba(255,255,255,.025)!important;border:1px solid var(--nova-line)!important;color:var(--nova-text-2)!important}
+.phaseBox .bar{background:#18263a!important}.phaseBox .bar i{background:linear-gradient(90deg,var(--nova-blue),var(--nova-violet))!important}
+.sidebarLogoutFinal{background:rgba(244,63,94,.08)!important;color:#fda4af!important;border:1px solid rgba(244,63,94,.17)!important}
+
+/* Topbar */
+.topbar{
+  min-height:72px!important;padding:12px 22px!important;
+  background:rgba(7,16,29,.82)!important;
+  border-bottom:1px solid var(--nova-line)!important;
+  backdrop-filter:blur(22px)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.18)!important;
+}
+.topbar .iconBtn,.topbar .zoneBtn,.profileBtn,.runtimeBadge{
+  background:rgba(16,28,44,.88)!important;border:1px solid var(--nova-line)!important;color:var(--nova-text-2)!important;
+  box-shadow:none!important;
+}
+.topbar .iconBtn:hover,.topbar .zoneBtn:hover,.profileBtn:hover{border-color:rgba(91,124,250,.42)!important;color:white!important;background:var(--nova-panel-2)!important}
+.searchBox{
+  background:rgba(16,28,44,.9)!important;border:1px solid var(--nova-line)!important;
+  border-radius:14px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+.searchBox svg{color:var(--nova-text-3)!important}.searchBox input{background:transparent!important;border:0!important;color:white!important}
+.searchBox input::placeholder{color:#6f7f96!important}
+.runtimeBadge.cloud{color:#93c5fd!important;border-color:rgba(56,189,248,.24)!important;background:rgba(56,189,248,.07)!important}
+.sessionDot.online{background:var(--nova-success)!important;box-shadow:0 0 0 3px rgba(34,197,94,.16)!important}
+.topProfileAvatar38{background:linear-gradient(135deg,var(--nova-blue),var(--nova-violet))!important;color:white!important}
+
+/* Dashboard hero */
+.panelSmartPage{display:grid;gap:22px!important}
+.smartHero{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 88% 0%,rgba(56,189,248,.18),transparent 26rem),
+    linear-gradient(135deg,#17294a 0%,#172343 43%,#251b48 100%)!important;
+  border:1px solid rgba(139,92,246,.25)!important;
+  border-radius:24px!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.33)!important;
+  padding:30px!important;
+}
+.smartHero:before{content:"";position:absolute;inset:auto -8% -75% auto;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(91,124,250,.22),transparent 67%);pointer-events:none}
+.smartHero .eyebrow{color:#a5b4fc!important;font-size:11px!important;letter-spacing:.15em!important;text-transform:uppercase!important;font-weight:800!important}
+.smartHero h1{font-size:clamp(28px,3vw,44px)!important;max-width:780px!important;color:#fff!important;letter-spacing:-.045em!important;margin:8px 0 10px!important}
+.smartHero>div>p:not(.eyebrow){color:#c7d2e4!important;max-width:760px!important;font-size:15px!important}
+.smartHeroActions button{
+  border:1px solid rgba(255,255,255,.15)!important;
+  background:rgba(255,255,255,.08)!important;color:white!important;
+  border-radius:12px!important;padding:11px 15px!important;font-weight:700!important;box-shadow:none!important;
+}
+.smartHeroActions button:first-child{background:linear-gradient(135deg,var(--nova-blue),var(--nova-blue-2))!important;border-color:transparent!important;box-shadow:0 12px 28px rgba(91,124,250,.26)!important}
+.smartHeroActions button:hover{transform:translateY(-2px);background:rgba(255,255,255,.13)!important}
+.smartMetricGrid{gap:10px!important}
+.smartMetricGrid span{
+  background:rgba(4,10,25,.32)!important;border:1px solid rgba(255,255,255,.1)!important;
+  border-radius:16px!important;backdrop-filter:blur(14px)!important;padding:14px!important;
+}
+.smartMetricGrid b{color:#fff!important;font-size:22px!important}.smartMetricGrid small{color:#dbe5f5!important}.smartMetricGrid em{color:#91a0b7!important}
+
+/* Tarjetas principales */
+.card,.sectionCard,.smartOverview>.card,.smartModules{
+  background:linear-gradient(180deg,rgba(16,28,44,.98),rgba(12,23,38,.98))!important;
+  border:1px solid var(--nova-line)!important;
+  border-radius:20px!important;
+  box-shadow:var(--nova-shadow)!important;
+  color:var(--nova-text)!important;
+}
+.cardHeader,.sectionHeader{border-bottom-color:var(--nova-line)!important}
+.cardHeader h2,.cardHeader h3,.sectionHeader h2{color:white!important}
+.muted,.card p,.sectionHeader p{color:var(--nova-text-3)!important}
+
+.radarList button{
+  background:rgba(255,255,255,.025)!important;border:1px solid var(--nova-line)!important;
+  color:white!important;border-radius:14px!important;
+}
+.radarList button:hover{background:rgba(91,124,250,.08)!important;border-color:rgba(91,124,250,.30)!important;transform:translateY(-1px)}
+.radarList button i{background:linear-gradient(135deg,rgba(91,124,250,.20),rgba(139,92,246,.16))!important;color:white!important;border:1px solid rgba(139,92,246,.2)!important}
+.radarList button b{color:#f8fafc!important}.radarList button small{color:var(--nova-text-3)!important}.radarList button em{color:#8fa7ff!important}
+
+.quickActionGrid{gap:11px!important}
+.quickActionGrid button{
+  position:relative;overflow:hidden;
+  background:linear-gradient(145deg,rgba(21,35,56,.98),rgba(13,25,42,.98))!important;
+  border:1px solid var(--nova-line)!important;color:white!important;border-radius:16px!important;min-height:112px!important;
+  box-shadow:none!important;
+}
+.quickActionGrid button:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--nova-blue),var(--nova-violet));opacity:.7}
+.quickActionGrid button:hover{transform:translateY(-3px)!important;border-color:rgba(91,124,250,.34)!important;box-shadow:0 14px 34px rgba(0,0,0,.23)!important}
+.quickActionGrid button i{background:rgba(91,124,250,.11)!important;border:1px solid rgba(91,124,250,.18)!important;color:#9fb0ff!important}
+.quickActionGrid button b{color:#f8fafc!important}.quickActionGrid button small{color:var(--nova-text-3)!important}
+
+.smartModules{padding:22px!important}
+.sectionHeader button{background:rgba(91,124,250,.12)!important;border:1px solid rgba(91,124,250,.25)!important;color:#a8b6ff!important;border-radius:12px!important}
+.moduleStatusGrid article{
+  background:rgba(255,255,255,.025)!important;border:1px solid var(--nova-line)!important;border-radius:15px!important;color:white!important;
+}
+.moduleStatusGrid article:hover{background:rgba(91,124,250,.08)!important;border-color:rgba(91,124,250,.30)!important;transform:translateY(-2px)}
+.moduleStatusGrid article span{color:var(--nova-text-3)!important}
+
+/* Controles globales */
+button.primary,.primary,.btnPrimary,button[type="submit"]{background:linear-gradient(135deg,var(--nova-blue),var(--nova-blue-2))!important;color:white!important;border:0!important;box-shadow:0 10px 24px rgba(91,124,250,.24)!important}
+button.primary:hover,.primary:hover,.btnPrimary:hover,button[type="submit"]:hover{filter:brightness(1.08)}
+button.secondary,.secondary,.btnSecondary,button.ghost,.ghost{background:var(--nova-panel-2)!important;color:var(--nova-text)!important;border:1px solid var(--nova-line-strong)!important}
+input,textarea,select{background:#111f32!important;color:var(--nova-text)!important;border:1px solid var(--nova-line-strong)!important}
+input:focus,textarea:focus,select:focus{border-color:var(--nova-blue)!important;box-shadow:0 0 0 3px rgba(91,124,250,.15)!important}
+table{background:var(--nova-panel)!important;color:var(--nova-text)!important}thead,th{background:#152338!important;color:var(--nova-text-2)!important}td,th{border-color:var(--nova-line)!important}
+.badge.success,.statusPill.active,.statusSuccess{background:rgba(34,197,94,.12)!important;color:#86efac!important;border-color:rgba(34,197,94,.24)!important}
+.badge.warning,.statusWarning{background:rgba(245,158,11,.12)!important;color:#fcd34d!important;border-color:rgba(245,158,11,.24)!important}
+.badge.danger,.statusDanger{background:rgba(244,63,94,.12)!important;color:#fda4af!important;border-color:rgba(244,63,94,.24)!important}
+.modal,.dialog,.drawer,.popover,.dropdownMenu{background:#152338!important;border:1px solid var(--nova-line-strong)!important;color:white!important;box-shadow:0 30px 80px rgba(0,0,0,.55)!important}
+
+/* Chat unificado */
+.chatRealPage,.chatImmersiveMode,.chatConversationPane,.chatMain{background:#091322!important}
+.chatListPane,.chatSidebar,.chatConversationHeader,.conversationHeader,.messageComposer{background:#101c2c!important;border-color:var(--nova-line)!important}
+.messageBubble.outgoing,.bubbleOutgoing{background:linear-gradient(135deg,rgba(91,124,250,.30),rgba(139,92,246,.25))!important;border-color:rgba(91,124,250,.32)!important;color:white!important}
+.messageBubble.incoming,.bubbleIncoming{background:#18263a!important;color:white!important}
+
+/* Responsive */
+@media(max-width:980px){
+  .content{padding:14px 14px calc(88px + env(safe-area-inset-bottom,0px))!important}
+  .smartHero{padding:22px 18px!important;border-radius:20px!important}
+  .smartHero h1{font-size:28px!important}
+  .smartMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .smartOverview{grid-template-columns:1fr!important}
+  .quickActionGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .mobileBottomNav{background:rgba(7,16,29,.96)!important;border-color:var(--nova-line)!important;backdrop-filter:blur(18px)!important}
+  .mobileBottomNav button{color:var(--nova-text-3)!important}.mobileBottomNav button.active{color:#9fb0ff!important;background:rgba(91,124,250,.10)!important}
+}
+
+@media(max-width:560px){
+  .quickActionGrid{grid-template-columns:1fr!important}
+  .smartMetricGrid span{padding:12px!important}
+}
