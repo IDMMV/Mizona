@@ -1,0 +1,4 @@
+import { supabase } from './supabase';
+export async function listNotifications(limit=50){const {data:{user}}=await supabase.auth.getUser();if(!user)return[];const {data,error}=await supabase.from('mz_notifications').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(limit);if(error)throw error;return data||[];}
+export async function markNotificationRead(id){const {data,error}=await supabase.from('mz_notifications').update({read_at:new Date().toISOString()}).eq('id',id).select().single();if(error)throw error;return data;}
+export async function registerPushDevice({token,platform='web',device_name}){const {data:{user}}=await supabase.auth.getUser();if(!user)throw new Error('Inicia sesión');const {data,error}=await supabase.from('mz_notification_devices').upsert({user_id:user.id,token,platform,device_name,updated_at:new Date().toISOString()},{onConflict:'token'}).select().single();if(error)throw error;return data;}

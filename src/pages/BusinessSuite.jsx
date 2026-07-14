@@ -26,6 +26,11 @@ import {
   updateLocalBusinessWorker
 } from '../lib/localBusiness';
 import { listLocalProfiles } from '../lib/localStore';
+import {
+  loadCloudOrdersForBusiness, subscribeCloudCommerce, updateCloudOrderFromUi,
+  upsertCloudBusiness, upsertCloudProduct
+} from '../lib/cloudCommerce';
+import { loadBusinessOperationsSummary, subscribeBusinessOperations, syncBusinessOperations } from '../lib/cloudBusinessOps';
 
 const money = value => `S/ ${Number(value || 0).toFixed(2)}`;
 const roleLabel = { platform_admin:'Administrador de plataforma', owner:'Propietario', manager:'Administrador', cashier:'Caja', cook:'Cocina', waiter:'Mozo' };
@@ -46,7 +51,7 @@ function EmptyWorkspace({ profile, onCreated }){
 }
 
 export default function BusinessSuite(){
-  const { profile, refreshLocalIndicators } = useApp();
+  const { profile, refreshLocalIndicators, backendConnected } = useApp();
   const [version,setVersion]=useState(0);
   const [businessId,setBusinessId]=useState(()=>getActiveBusinessId());
   const [tab,setTab]=useState('dashboard');
@@ -73,6 +78,10 @@ export default function BusinessSuite(){
   const [kioskMode,setKioskMode]=useState(false);
   const [kioskView,setKioskView]=useState('tv');
   const [kioskLocked,setKioskLocked]=useState(true);
+  const [cloudMarketOrders,setCloudMarketOrders]=useState([]);
+  const [cloudCommerceState,setCloudCommerceState]=useState('local');
+  const [cloudOpsState,setCloudOpsState]=useState('local');
+  const [cloudOpsSummary,setCloudOpsSummary]=useState(null);
   const [marketOrders,setMarketOrders]=useState(()=>{
     try{return JSON.parse(localStorage.getItem('mizona-market-orders-v3035')||'[]');}catch{return [];}
   });
@@ -86,6 +95,41 @@ export default function BusinessSuite(){
     window.addEventListener('mizona-market-orders-updated', load);
     return ()=>{window.removeEventListener('storage', onStorage);window.removeEventListener('mizona-market-orders-updated', load);};
   },[]);
+  useEffect(()=>{
+    if(!backendConnected||!businessId||!navigator.onLine){setCloudCommerceState('local');return undefined;}
+    let active=true;
+    const refresh=async()=>{
+      try{setCloudCommerceState('loading');const rows=await loadCloudOrdersForBusiness(businessId);if(active){setCloudMarketOrders(rows);setCloudCommerceState('cloud');}}
+      catch(error){if(active){setCloudCommerceState('fallback');setError(error?.message||String(error));}}
+    };
+    refresh();
+    const unsubscribe=subscribeCloudCommerce(()=>refresh());
+    const online=()=>refresh();window.addEventListener('online',online);
+    return()=>{active=false;unsubscribe?.();window.removeEventListener('online',online);};
+  },[backendConnected,businessId]);
+
+  useEffect(()=>{
+    if(!backendConnected||!businessId||!navigator.onLine)return undefined;
+    let active=true;
+    const refresh=async()=>{
+      try{const summary=await loadBusinessOperationsSummary(businessId);if(active){setCloudOpsSummary(summary);setCloudOpsState('cloud');}}
+      catch{if(active)setCloudOpsState('fallback');}
+    };
+    refresh();
+    const unsubscribe=subscribeBusinessOperations(businessId,refresh);
+    const online=()=>refresh();window.addEventListener('online',online);
+    return()=>{active=false;unsubscribe?.();window.removeEventListener('online',online);};
+  },[backendConnected,businessId]);
+
+  useEffect(()=>{
+    if(!backendConnected||!businessId||!navigator.onLine||!snapshot)return undefined;
+    const timer=setTimeout(async()=>{
+      try{setCloudOpsState('loading');await syncBusinessOperations(snapshot);setCloudOpsSummary(await loadBusinessOperationsSummary(businessId));setCloudOpsState('cloud');}
+      catch{setCloudOpsState('fallback');}
+    },1400);
+    return()=>clearTimeout(timer);
+  },[backendConnected,businessId,version]);
+
   useEffect(()=>{
     document.body.classList.toggle('businessKioskActive', kioskMode);
     return ()=>document.body.classList.remove('businessKioskActive');
@@ -124,7 +168,21 @@ export default function BusinessSuite(){
     setKioskView('kitchen');
     return receipt;
   });
-  const createProduct=e=>{e.preventDefault();const result=safe(()=>createLocalBusinessProduct(businessId,{...productForm,price:Number(productForm.price),stock:Number(productForm.stock),minimum:Number(productForm.minimum)}));if(result)setProductForm({name:'',category:'General',price:'',stock:'',minimum:'',unit:'unid.',emoji:'📦',kitchen:false});};
+  const createProduct=async e=>{
+    e.preventDefault();setError('');
+    try{
+      const id=createLocalBusinessProduct(businessId,{...productForm,price:Number(productForm.price),stock:Number(productForm.stock),minimum:Number(productForm.minimum)});
+      setVersion(v=>v+1);refreshLocalIndicators?.();
+      const fresh=getLocalBusinessSnapshot(businessId);
+      if(backendConnected&&navigator.onLine){
+        await upsertCloudBusiness({...fresh.business,owner_id:profile.id,delivery_enabled:true});
+        const row=fresh.products.find(item=>item.id===id);if(row)await upsertCloudProduct(row);
+        setCloudCommerceState('cloud');
+      }
+      setProductForm({name:'',category:'General',price:'',stock:'',minimum:'',unit:'unid.',emoji:'📦',kitchen:false});
+      setNotice(backendConnected?'Producto guardado y sincronizado.':'Producto guardado localmente.');
+    }catch(err){setError(err.message||String(err));}
+  };
   const adjust=e=>{e.preventDefault();const result=safe(()=>adjustLocalBusinessStock(businessId,stockForm.productId,Number(stockForm.quantity),stockForm.reason));if(result)setStockForm({productId:'',quantity:'',reason:'Reposición'});};
   const addCustomer=e=>{e.preventDefault();const result=safe(()=>createLocalBusinessCustomer(businessId,customerForm));if(result)setCustomerForm({name:'',phone:''});};
   const addWorker=e=>{e.preventDefault();const result=safe(()=>addLocalBusinessWorker(businessId,workerForm.username,workerForm.role));if(result)setWorkerForm({username:'',role:'cashier'});};
@@ -152,6 +210,32 @@ export default function BusinessSuite(){
     if(document.fullscreenElement)document.exitFullscreen?.().catch(()=>{});
   };
 
+  const syncOperationsNow=async()=>{
+    if(!backendConnected)throw new Error('Supabase todavía no está conectado.');
+    if(!navigator.onLine)throw new Error('Necesitas conexión para sincronizar.');
+    setError('');setNotice('');setCloudOpsState('loading');
+    try{
+      const fresh=getLocalBusinessSnapshot(businessId);
+      const result=await syncBusinessOperations(fresh);
+      setCloudOpsSummary(await loadBusinessOperationsSummary(businessId));
+      setCloudOpsState('cloud');
+      setNotice(`Operaciones sincronizadas: ${result.sales} venta(s), ${result.expenses} gasto(s) y ${result.inventory} movimiento(s).`);
+    }catch(error){setCloudOpsState('fallback');setError(error?.message||String(error));}
+  };
+
+  const syncBusinessNow=async()=>{
+    if(!backendConnected)throw new Error('Supabase todavía no está conectado.');
+    if(!navigator.onLine)throw new Error('Necesitas conexión para sincronizar.');
+    setError('');setNotice('');setCloudCommerceState('loading');
+    try{
+      const fresh=getLocalBusinessSnapshot(businessId);
+      await upsertCloudBusiness({...fresh.business,owner_id:profile.id,delivery_enabled:true});
+      for(const product of fresh.products)await upsertCloudProduct(product);
+      setCloudMarketOrders(await loadCloudOrdersForBusiness(businessId));
+      setCloudCommerceState('cloud');setNotice(`Negocio sincronizado: ${fresh.products.length} producto(s).`);
+    }catch(error){setCloudCommerceState('fallback');setError(error?.message||String(error));}
+  };
+
   const marketStatusNext={registrado:'aceptado',aceptado:'preparando',preparando:'en_camino',en_camino:'entregado'};
   const marketStatusLabel={registrado:'Registrado',aceptado:'Aceptado',preparando:'Preparando',en_camino:'En camino',entregado:'Entregado',recibido:'Recibido',calificado:'Calificado',cancelado:'Cancelado'};
   const persistMarketOrders=next=>{
@@ -159,15 +243,22 @@ export default function BusinessSuite(){
     localStorage.setItem('mizona-market-orders-v3035', JSON.stringify(next));
     window.dispatchEvent(new Event('mizona-market-orders-updated'));
   };
-  const updateMarketOrder=(id,patch)=>{
+  const updateMarketOrder=async(id,patch)=>{
+    const cloud=cloudMarketOrders.find(order=>order.id===id);
+    if(cloud&&backendConnected&&navigator.onLine&&patch.status){
+      try{await updateCloudOrderFromUi(id,patch.status);setCloudMarketOrders(await loadCloudOrdersForBusiness(businessId));setNotice('Pedido sincronizado con el cliente.');}
+      catch(error){setError(error?.message||String(error));}
+      return;
+    }
     const next=marketOrders.map(order=>order.id===id?{...order,...patch,updated_at:new Date().toISOString()}:order);
-    persistMarketOrders(next);
-    setNotice('Pedido Marketplace actualizado.');
+    persistMarketOrders(next);setNotice('Pedido Marketplace actualizado localmente.');
   };
-  const businessMarketOrders=marketOrders.filter(order=>{
+  const allMarketOrders=useMemo(()=>{const map=new Map();for(const order of marketOrders)map.set(order.id,order);for(const order of cloudMarketOrders)map.set(order.id,order);return [...map.values()].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));},[marketOrders,cloudMarketOrders]);
+  const businessMarketOrders=allMarketOrders.filter(order=>{
+    if(order.business_id)return String(order.business_id)===String(businessId);
     const currentName=String(snapshot?.business?.name||'').toLowerCase();
     const provider=String(order.provider||'').toLowerCase();
-    return provider.includes(currentName)||currentName.includes(provider)||true;
+    return Boolean(currentName&&provider&&(provider.includes(currentName)||currentName.includes(provider)));
   });
 
     const statusNext={received:'preparing',preparing:'ready',ready:'delivered'};
@@ -185,7 +276,7 @@ export default function BusinessSuite(){
       <button className={kioskLocked?'kioskLock locked':'kioskLock'} onClick={()=>kioskLocked?setKioskLocked(false):exitKiosk()}>{kioskLocked?'🔒 Seguro':'🔓 Salir'}</button>
     </div>}
     {!kioskMode&&<section className="businessSuiteHero">
-      <div><p className="eyebrow">Etapa 19 · Gestión multiusuario local</p><h1>MiZona Business</h1><p>Caja, pedidos, cocina, inventario, clientes, trabajadores y reportes separados por negocio.</p><div className="businessSelector"><Store size={17}/><select value={businessId} onChange={e=>switchBusiness(e.target.value)}>{workspaces.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}</select><span>{snapshot.business.zone}</span></div></div>
+      <div><p className="eyebrow">Etapa 30.73 · Operaciones Business en Supabase</p><h1>MiZona Business</h1><p>Caja, ventas, clientes, personal, gastos e inventario con respaldo local y sincronización real con Supabase.</p><div className="businessSelector"><Store size={17}/><select value={businessId} onChange={e=>switchBusiness(e.target.value)}>{workspaces.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}</select><span>{snapshot.business.zone}</span></div></div>
       <div className="businessHeroStats"><span><b>{money(snapshot.stats.today_total)}</b>ventas de hoy</span><span><b>{snapshot.stats.today_sales}</b>comprobantes</span><span><b>{snapshot.stats.pending_orders}</b>pedidos activos</span><span><b>{snapshot.stats.low_stock}</b>alertas de stock</span></div>
     </section>}
     {!kioskMode&&<div className="businessModePanel">
@@ -194,7 +285,7 @@ export default function BusinessSuite(){
       <button onClick={()=>enterKiosk('kitchen')}>👨‍🍳 Cocina</button>
       <button onClick={()=>enterKiosk('tv')}>📺 Panel TV</button>
     </div>}
-    {!kioskMode&&<div className="businessRoleStrip"><span><b>{roleLabel[role]||role}</b> · @{profile.username}</span><span>{openSession?`Caja abierta desde ${new Date(openSession.opened_at).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`:'Caja cerrada'}</span></div>}
+    {!kioskMode&&<div className="businessRoleStrip"><span><b>{roleLabel[role]||role}</b> · @{profile.username}</span><span>{openSession?`Caja abierta desde ${new Date(openSession.opened_at).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`:'Caja cerrada'}</span><button type="button" className={`commerceSyncButton ${cloudCommerceState}`} onClick={syncBusinessNow}>{cloudCommerceState==='cloud'?'● Supabase conectado':cloudCommerceState==='loading'?'Sincronizando…':'Sincronizar negocio'}</button><button type="button" className={`commerceSyncButton ${cloudOpsState}`} onClick={syncOperationsNow}>{cloudOpsState==='cloud'?'● Operaciones sincronizadas':cloudOpsState==='loading'?'Sincronizando operaciones…':'Sincronizar operaciones'}</button></div>}
     {!kioskMode&&<Tabs tabs={tabs} active={tabs.some(x=>x.id===tab)?tab:tabs[0].id} setActive={setTab}/>}
     {notice&&<div className="businessNotice"><CheckCircle2 size={18}/>{notice}<button onClick={()=>setNotice('')}>×</button></div>}
     {error&&<div className="businessError"><XCircle size={18}/>{error}<button onClick={()=>setError('')}>×</button></div>}

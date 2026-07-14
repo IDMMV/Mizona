@@ -1,0 +1,216 @@
+{
+  "version": "30.69",
+  "generated_modules": 30,
+  "modules": [
+    {
+      "module": "AccessDenied",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "Account",
+      "localStorage": 0,
+      "supabase": 19,
+      "browserApis": 0,
+      "demoTerms": 4
+    },
+    {
+      "module": "Admin",
+      "localStorage": 0,
+      "supabase": 20,
+      "browserApis": 0,
+      "demoTerms": 2
+    },
+    {
+      "module": "AiAssistant",
+      "localStorage": 0,
+      "supabase": 1,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "AndroidReadiness",
+      "localStorage": 0,
+      "supabase": 5,
+      "browserApis": 7,
+      "demoTerms": 1
+    },
+    {
+      "module": "ArchitectureCenter",
+      "localStorage": 0,
+      "supabase": 11,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "Benefits",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "BusinessSuite",
+      "localStorage": 3,
+      "supabase": 1,
+      "browserApis": 6,
+      "demoTerms": 0
+    },
+    {
+      "module": "Businesses",
+      "localStorage": 0,
+      "supabase": 5,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "Campus",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 1
+    },
+    {
+      "module": "Chat",
+      "localStorage": 4,
+      "supabase": 3,
+      "browserApis": 35,
+      "demoTerms": 2
+    },
+    {
+      "module": "CloudAuthGate",
+      "localStorage": 0,
+      "supabase": 1,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "CloudCenter",
+      "localStorage": 0,
+      "supabase": 5,
+      "browserApis": 0,
+      "demoTerms": 4
+    },
+    {
+      "module": "CloudLaunch",
+      "localStorage": 0,
+      "supabase": 6,
+      "browserApis": 0,
+      "demoTerms": 1
+    },
+    {
+      "module": "Committees",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 11,
+      "demoTerms": 0
+    },
+    {
+      "module": "Community",
+      "localStorage": 0,
+      "supabase": 35,
+      "browserApis": 11,
+      "demoTerms": 15
+    },
+    {
+      "module": "GatewayCenter",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "LocalLab",
+      "localStorage": 0,
+      "supabase": 1,
+      "browserApis": 2,
+      "demoTerms": 1
+    },
+    {
+      "module": "Marketplace",
+      "localStorage": 2,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "Notifications",
+      "localStorage": 0,
+      "supabase": 2,
+      "browserApis": 0,
+      "demoTerms": 1
+    },
+    {
+      "module": "Panel",
+      "localStorage": 0,
+      "supabase": 4,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "Payments",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 8
+    },
+    {
+      "module": "PersonalFinance",
+      "localStorage": 0,
+      "supabase": 3,
+      "browserApis": 1,
+      "demoTerms": 1
+    },
+    {
+      "module": "Placeholders",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "QualityCenter",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 1
+    },
+    {
+      "module": "Ride",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 1,
+      "demoTerms": 1
+    },
+    {
+      "module": "RideDelivery",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    },
+    {
+      "module": "SyncCenter",
+      "localStorage": 0,
+      "supabase": 4,
+      "browserApis": 0,
+      "demoTerms": 1
+    },
+    {
+      "module": "Transfer",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 1
+    },
+    {
+      "module": "Verification",
+      "localStorage": 0,
+      "supabase": 0,
+      "browserApis": 0,
+      "demoTerms": 0
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+import { supabase, hasSupabase } from './supabase';
+const ensure=()=>{if(!hasSupabase) throw new Error('Supabase no configurado');};
+export async function listCourses(){ensure();const {data,error}=await supabase.from('mz_courses').select('*,mz_course_lessons(*)').eq('published',true).order('created_at',{ascending:false});if(error)throw error;return data||[];}
+export async function enrollCourse(courseId){ensure();const {data:{user}}=await supabase.auth.getUser();if(!user)throw new Error('Inicia sesión');const {data,error}=await supabase.from('mz_course_enrollments').upsert({course_id:courseId,user_id:user.id},{onConflict:'course_id,user_id'}).select().single();if(error)throw error;return data;}
+export async function saveLessonProgress(lessonId,progress){ensure();const {data:{user}}=await supabase.auth.getUser();if(!user)throw new Error('Inicia sesión');const row={lesson_id:lessonId,user_id:user.id,progress,completed_at:progress>=100?new Date().toISOString():null,updated_at:new Date().toISOString()};const {data,error}=await supabase.from('mz_lesson_progress').upsert(row,{onConflict:'lesson_id,user_id'}).select().single();if(error)throw error;return data;}

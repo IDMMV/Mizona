@@ -1,0 +1,10 @@
+create table if not exists public.mz_blocks(blocker_id uuid not null references auth.users(id) on delete cascade, blocked_id uuid not null references auth.users(id) on delete cascade, created_at timestamptz not null default now(), primary key(blocker_id,blocked_id), check(blocker_id<>blocked_id));
+create table if not exists public.mz_reports(id uuid primary key default gen_random_uuid(), reporter_id uuid not null references auth.users(id), target_type text not null, target_id text not null, reason text not null, detail text, status text not null default 'open', created_at timestamptz not null default now());
+create table if not exists public.mz_account_deletion_requests(id uuid primary key default gen_random_uuid(), user_id uuid not null references auth.users(id), reason text, status text not null default 'requested', requested_at timestamptz not null default now(), processed_at timestamptz);
+create table if not exists public.mz_audit_log(id bigint generated always as identity primary key, actor_id uuid references auth.users(id), action text not null, entity_type text not null, entity_id text, payload jsonb not null default '{}'::jsonb, created_at timestamptz not null default now());
+alter table public.mz_blocks enable row level security; alter table public.mz_reports enable row level security; alter table public.mz_account_deletion_requests enable row level security; alter table public.mz_audit_log enable row level security;
+create policy "own blocks" on public.mz_blocks for all using(blocker_id=auth.uid()) with check(blocker_id=auth.uid());
+create policy "own reports create" on public.mz_reports for insert with check(reporter_id=auth.uid());
+create policy "own reports read" on public.mz_reports for select using(reporter_id=auth.uid());
+create policy "own deletion request" on public.mz_account_deletion_requests for all using(user_id=auth.uid()) with check(user_id=auth.uid());
+create policy "own audit read" on public.mz_audit_log for select using(actor_id=auth.uid());

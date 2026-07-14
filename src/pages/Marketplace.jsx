@@ -13,6 +13,10 @@ import {
   reportLocalBusiness, reportLocalListing, subscribeLocalCommerce,
   toggleLocalBusinessFavorite, toggleLocalListingFavorite, updateLocalListingStatus
 } from '../lib/localCommerce';
+import {
+  createCloudOrder, loadCloudMarketplace, loadMyCloudOrders, subscribeCloudCommerce,
+  upsertCloudListing, updateCloudOrderFromUi
+} from '../lib/cloudCommerce';
 
 const categories = [
   { id:'all', label:'Todo', icon:'✨' },
@@ -66,8 +70,11 @@ function PromoCard({promo,onOpen}){
 }
 
 export default function Marketplace({ setPage }){
-  const { profile } = useApp();
+  const { profile, backendConnected } = useApp();
   const [snapshot,setSnapshot]=useState(getLocalCommerceSnapshot);
+  const [cloudCatalog,setCloudCatalog]=useState({businesses:[],products:[],listings:[]});
+  const [cloudOrders,setCloudOrders]=useState([]);
+  const [cloudState,setCloudState]=useState('local');
   const [tab,setTab]=useState('home');
   const [marketTab,setMarketTab]=useState('products');
   const [category,setCategory]=useState('all');
@@ -90,6 +97,29 @@ export default function Marketplace({ setPage }){
   const [error,setError]=useState('');
   const sectionRefs = useRef({});
   useEffect(()=>subscribeLocalCommerce(setSnapshot),[]);
+  useEffect(()=>{
+    if(!backendConnected || !navigator.onLine){ setCloudState('local'); return undefined; }
+    let active=true;
+    const refresh=async()=>{
+      try{
+        setCloudState('loading');
+        const [catalog,orders]=await Promise.all([loadCloudMarketplace(),loadMyCloudOrders()]);
+        if(!active)return;
+        setCloudCatalog(catalog);
+        setCloudOrders(orders);
+        setCloudState('cloud');
+      }catch(error){
+        if(!active)return;
+        setCloudState('fallback');
+        setError(error?.message||String(error));
+      }
+    };
+    refresh();
+    const unsubscribe=subscribeCloudCommerce(()=>refresh());
+    const online=()=>refresh();
+    window.addEventListener('online',online);
+    return()=>{active=false;unsubscribe?.();window.removeEventListener('online',online);};
+  },[backendConnected]);
   useEffect(()=>{localStorage.setItem('mizona-market-orders-v3035', JSON.stringify(orders)); window.dispatchEvent(new Event('mizona-market-orders-updated'));},[orders]);
   const goMarketBlock = (target) => {
     setTab('home');
@@ -99,20 +129,32 @@ export default function Marketplace({ setPage }){
     }, 90);
   };
 
+  const sourceListings=useMemo(()=>{
+    const map=new Map();
+    for(const item of snapshot.listings||[])map.set(item.id,item);
+    for(const item of cloudCatalog.listings||[])map.set(item.id,item);
+    return [...map.values()];
+  },[snapshot.listings,cloudCatalog.listings]);
+  const sourceBusinesses=useMemo(()=>{
+    const map=new Map();
+    for(const item of snapshot.businesses||[])map.set(item.id,item);
+    for(const item of cloudCatalog.businesses||[])map.set(item.id,item);
+    return [...map.values()];
+  },[snapshot.businesses,cloudCatalog.businesses]);
   const favoriteListings=useMemo(()=>new Set(snapshot.myListingFavoriteIds),[snapshot.myListingFavoriteIds]);
   const favoriteBusinesses=useMemo(()=>new Set(snapshot.myBusinessFavoriteIds),[snapshot.myBusinessFavoriteIds]);
   const normalizedQuery=query.trim().toLowerCase();
   const listings=useMemo(()=>{
-    let list=snapshot.listings
+    let list=sourceListings
       .filter(x=>category==='all'||x.category===category)
       .filter(x=>!onlyVerified||x.verified)
       .filter(x=>`${x.title} ${x.description} ${x.seller_username} ${x.zone}`.toLowerCase().includes(normalizedQuery));
     return [...list].sort((a,b)=>sort==='priceLow'?a.price-b.price:sort==='priceHigh'?b.price-a.price:sort==='distance'?a.distance_km-b.distance_km:new Date(b.created_at)-new Date(a.created_at));
-  },[snapshot.listings,category,onlyVerified,normalizedQuery,sort]);
-  const businesses=useMemo(()=>snapshot.businesses
+  },[sourceListings,category,onlyVerified,normalizedQuery,sort]);
+  const businesses=useMemo(()=>sourceBusinesses
     .filter(b=>!onlyVerified||b.verified)
     .filter(b=>`${b.name} ${b.description} ${b.zone} ${b.category}`.toLowerCase().includes(normalizedQuery))
-    .sort((a,b)=>a.distance_km-b.distance_km),[snapshot.businesses,onlyVerified,normalizedQuery]);
+    .sort((a,b)=>a.distance_km-b.distance_km),[sourceBusinesses,onlyVerified,normalizedQuery]);
   const services=listings.filter(x=>x.category==='services'||x.condition==='Servicio');
   const nearListings=listings.slice(0,6);
   const verifiedBusinesses=businesses.filter(b=>b.verified).slice(0,6);
@@ -121,14 +163,22 @@ export default function Marketplace({ setPage }){
   const fail=e=>{setError(e?.message||String(e));setTimeout(()=>setError(''),4200);};
   const openListing=item=>{registerLocalListingView(item.id);setSelected({...item,views:Number(item.views||0)+1});};
   const openBusiness=biz=>{registerLocalBusinessView(biz.id);setSelectedBusiness({...biz,views:Number(biz.views||0)+1});};
-  const publish=()=>{try{createLocalListing({...form,image:form.image||listingCategoryEmoji[form.category]||'📦'});setShowPublish(false);setForm(emptyForm);notify('Publicación enviada correctamente.');}catch(e){fail(e);}};
+  const publish=async()=>{try{
+    const id=createLocalListing({...form,image:form.image||listingCategoryEmoji[form.category]||'📦'});
+    const local=getLocalCommerceSnapshot().listings.find(item=>item.id===id);
+    if(backendConnected&&navigator.onLine&&local){
+      await upsertCloudListing({...local,metadata:{seller_username:profile.username,provider_name:profile.display_name||profile.username,distance_km:local.distance_km}});
+      const catalog=await loadCloudMarketplace();setCloudCatalog(catalog);setCloudState('cloud');
+    }
+    setShowPublish(false);setForm(emptyForm);notify(backendConnected?'Publicación guardada y sincronizada.':'Publicación guardada localmente.');
+  }catch(e){fail(e);}};
   const contactSeller=item=>{try{if(item.seller_id===profile.id)throw new Error('Esta publicación es tuya.');try{startLocalDirectConversation(item.seller_id);registerLocalListingContact(item.id);setSelected(null);setPage?.('chat');}catch(chatError){if(String(chatError.message).includes('contactos')){sendLocalContactRequest(item.seller_username);notify('Enviamos solicitud de contacto al vendedor.');}else throw chatError;}}catch(e){fail(e);}};
   const contactBusiness=biz=>{try{if(!biz.owner_id)throw new Error('Este negocio todavía no tiene propietario en MiZona.');startLocalDirectConversation(biz.owner_id);registerLocalBusinessContact(biz.id);setSelectedBusiness(null);setPage?.('chat');}catch(e){fail(e);}};
   const addToCart=item=>{
     setCart(current=>{
       const existing=current.find(x=>x.id===item.id);
       if(existing) return current.map(x=>x.id===item.id?{...x,qty:x.qty+1}:x);
-      return [...current,{...item,qty:1,provider:item.seller_username||'Proveedor',providerId:item.seller_id||item.seller_username}];
+      return [...current,{...item,qty:1,provider:item.provider||item.seller_username||'Proveedor',providerId:item.provider_business_id||item.business_id||item.seller_id||item.seller_username,businessId:item.provider_business_id||item.business_id||null}];
     });
     notify('Producto agregado al carrito.');
   };
@@ -136,41 +186,51 @@ export default function Marketplace({ setPage }){
   const removeCartItem=id=>setCart(current=>current.filter(x=>x.id!==id));
   const groupedCart=useMemo(()=>cart.reduce((acc,item)=>{const key=item.providerId||item.provider; if(!acc[key]) acc[key]={provider:item.provider,items:[],subtotal:0,delivery:item.delivery?5:0}; acc[key].items.push(item); acc[key].subtotal+=Number(item.price||0)*Number(item.qty||1); return acc;},{}),[cart]);
   const cartTotal=useMemo(()=>Object.values(groupedCart).reduce((sum,group)=>sum+group.subtotal+group.delivery,0),[groupedCart]);
-  const orderStats=useMemo(()=>orders.reduce((acc,order)=>{acc.total+=1; if(order.status==='recibido')acc.received+=1; if(order.problem)acc.problems+=1; return acc;},{total:0,received:0,problems:0}),[orders]);
-  const createRegisteredOrders=()=>{
+  const visibleOrders=useMemo(()=>{const map=new Map();for(const o of orders)map.set(o.id,o);for(const o of cloudOrders)map.set(o.id,o);return [...map.values()].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));},[orders,cloudOrders]);
+  const orderStats=useMemo(()=>visibleOrders.reduce((acc,order)=>{acc.total+=1; if(order.status==='recibido')acc.received+=1; if(order.problem)acc.problems+=1; return acc;},{total:0,received:0,problems:0}),[visibleOrders]);
+  const createRegisteredOrders=async()=>{
     const groups=Object.values(groupedCart);
     if(!groups.length){notify('Tu carrito está vacío.');return;}
     const now=new Date().toISOString();
-    const newOrders=groups.map((group,index)=>({
-      id:`MZ-${Date.now()}-${index+1}`,
-      provider:group.provider,
-      items:group.items.map(item=>({id:item.id,title:item.title,qty:item.qty,price:item.price,image:item.image,image_data:item.image_data,delivery:item.delivery})),
-      subtotal:group.subtotal,
-      delivery:group.delivery,
-      total:group.subtotal+group.delivery,
-      status:'registrado',
-      created_at:now,
-      updated_at:now,
-      deliveryMode:group.delivery?'Delivery propio del proveedor':'Recojo en tienda',
-      evidence:'Pedido registrado en MiZona',
-      problem:false,
-      rating:null
-    }));
-    setOrders(current=>[...newOrders,...current]);
-    setCart([]);
-    setShowCart(false);
-    setSelected(null);
-    setTab('orders');
-    notify(`Pedido registrado: ${newOrders.length} pedido(s), uno por proveedor.`);
+    const localOrders=[];
+    const createdCloud=[];
+    try{
+      for(let index=0;index<groups.length;index++){
+        const group=groups[index];
+        const businessId=group.items.find(item=>item.businessId||item.business_id||item.provider_business_id)?.businessId || group.items.find(item=>item.business_id)?.business_id || group.items.find(item=>item.provider_business_id)?.provider_business_id;
+        if(backendConnected&&navigator.onLine&&businessId){
+          const order=await createCloudOrder({
+            businessId, localBuyerId:profile.id, source:'marketplace',
+            orderType:group.delivery?'delivery':'pickup', customerName:profile.display_name||profile.username,
+            items:group.items.map(item=>({listing_id:item.id,product_id:item.product_id||null,name:item.title,quantity:item.qty,unit_price:item.price,metadata:{emoji:item.image,image_data:item.image_data}}))
+          });
+          createdCloud.push(order);
+        }else{
+          localOrders.push({id:`MZ-${Date.now()}-${index+1}`,provider:group.provider,items:group.items.map(item=>({id:item.id,title:item.title,qty:item.qty,price:item.price,image:item.image,image_data:item.image_data,delivery:item.delivery})),subtotal:group.subtotal,delivery:group.delivery,total:group.subtotal+group.delivery,status:'registrado',created_at:now,updated_at:now,deliveryMode:group.delivery?'Delivery propio del proveedor':'Recojo en tienda',evidence:'Pedido registrado en MiZona',problem:false,rating:null});
+        }
+      }
+      if(localOrders.length)setOrders(current=>[...localOrders,...current]);
+      if(createdCloud.length)setCloudOrders(await loadMyCloudOrders());
+      setCart([]);setShowCart(false);setSelected(null);setTab('orders');
+      notify(`Pedido registrado: ${groups.length} pedido(s). ${createdCloud.length?'Sincronizados con Supabase.':''}`);
+    }catch(error){fail(error);}
   };
   const nextOrderStatus=order=>{
     const flow=['registrado','aceptado','preparando','en_camino','entregado'];
     const index=flow.indexOf(order.status);
     return flow[Math.min(index+1, flow.length-1)] || 'aceptado';
   };
-  const updateOrderStatus=(id,status)=>setOrders(current=>current.map(order=>order.id===id?{...order,status,updated_at:new Date().toISOString()}:order));
-  const confirmReceived=(order, problem=false)=>{
-    updateOrderStatus(order.id,'recibido');
+  const updateOrderStatus=async(id,status)=>{
+    const cloud=cloudOrders.find(order=>order.id===id);
+    if(cloud&&backendConnected&&navigator.onLine){
+      await updateCloudOrderFromUi(id,status);
+      setCloudOrders(await loadMyCloudOrders());
+      return;
+    }
+    setOrders(current=>current.map(order=>order.id===id?{...order,status,updated_at:new Date().toISOString()}:order));
+  };
+  const confirmReceived=async(order, problem=false)=>{
+    await updateOrderStatus(order.id,'entregado');
     setSelectedOrder({...order,status:'recibido',problem});
     setRatingDraft({stars: problem ? 3 : 5, comment:'', problem});
     setShowRate(true);
@@ -188,7 +248,7 @@ export default function Marketplace({ setPage }){
   return <div className="page marketMock46  marketplacePage marketplaceC23">
     {tab==='home'&&<>
       <section className="mkCTopHero">
-        <div className="mkCHeroHead"><div><p className="eyebrow">Marketplace + pedidos registrados</p><h1>Productos, servicios y proveedores en tu zona</h1><p>Compra, conversa con el proveedor, registra tu pedido y confirma recibido para crear reputación real.</p></div><div className="mkHeroActions"><button className="secondary" onClick={()=>setShowCart(true)}><ShoppingCart size={18}/> Carrito ({cart.length})</button><button onClick={()=>setShowPublish(true)}><ShoppingBag size={18}/> Vender</button></div></div>
+        <div className="mkCHeroHead"><div><p className="eyebrow">Marketplace + pedidos registrados</p><h1>Productos, servicios y proveedores en tu zona</h1><p>Compra, conversa con el proveedor, registra tu pedido y confirma recibido para crear reputación real.</p><span className={`commerceCloudBadge ${cloudState}`}>{cloudState==='cloud'?'● Supabase conectado':cloudState==='loading'?'● Sincronizando…':'● Respaldo local'}</span></div><div className="mkHeroActions"><button className="secondary" onClick={()=>setShowCart(true)}><ShoppingCart size={18}/> Carrito ({cart.length})</button><button onClick={()=>setShowPublish(true)}><ShoppingBag size={18}/> Vender</button></div></div>
         <div className="mkCSearchRow"><div className="mkCSearch"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busca productos, servicios, negocios o promos..."/></div><button className="mkCLocation"><MapPin size={18}/> {profile?.zone||'Ventanilla'}</button></div>
         <div className="mkCModeTabs"><button className={marketTab==='products'?'active':''} onClick={()=>goMarketBlock('products')}><ShoppingBag size={17}/>Productos</button><button className={marketTab==='services'?'active':''} onClick={()=>goMarketBlock('services')}><BriefcaseBusiness size={17}/>Servicios</button><button className={marketTab==='community'?'active':''} onClick={()=>goMarketBlock('community')}><Store size={17}/>Comunidad</button><button className={marketTab==='promos'?'active':''} onClick={()=>goMarketBlock('promos')}><TicketPercent size={17}/>Promos</button></div>
       </section>
@@ -222,8 +282,8 @@ export default function Marketplace({ setPage }){
         <div><p className="eyebrow">Pedidos registrados</p><h1>Mis pedidos en MiZona</h1><p>Registra tus compras para dejar constancia, confirmar recibido, calificar y reportar problemas.</p></div>
         <div className="orderStats35"><span><b>{orderStats.total}</b> pedidos</span><span><b>{orderStats.received}</b> recibidos</span><span><b>{orderStats.problems}</b> con problema</span></div>
       </div>
-      {!orders.length?<div className="mkCEmptyBox"><Package size={92}/><h1>Todavía no tienes pedidos</h1><p>Cuando compres o coordines un producto desde MiZona, aparecerá aquí.</p><button onClick={()=>setTab('home')}>Descubrir productos</button></div>:<div className="orderList35">
-        {orders.map(order=><article className={`orderCard35 status-${order.status}`} key={order.id}>
+      {!visibleOrders.length?<div className="mkCEmptyBox"><Package size={92}/><h1>Todavía no tienes pedidos</h1><p>Cuando compres o coordines un producto desde MiZona, aparecerá aquí.</p><button onClick={()=>setTab('home')}>Descubrir productos</button></div>:<div className="orderList35">
+        {visibleOrders.map(order=><article className={`orderCard35 status-${order.status}`} key={order.id}>
           <div className="orderHead35"><div><span>{order.id}</span><h3>{order.provider}</h3><p>{new Date(order.created_at).toLocaleString('es-PE')} · {order.deliveryMode}</p></div><b>{order.status.replace('_',' ')}</b></div>
           <div className="orderItems35">{order.items.map(item=><div key={item.id}><span>{item.image_data?<img src={item.image_data} alt=""/>:item.image}</span><p><b>{item.title}</b><small>{item.qty} x {money(item.price)}</small></p></div>)}</div>
           <div className="orderTotals35"><span>Total</span><strong>{money(order.total)}</strong></div>

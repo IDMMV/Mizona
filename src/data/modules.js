@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog, WalletCards, Truck, Boxes } from 'lucide-react';
+import { Home, Users, MessageCircle, CloudUpload, Gift, Store, BriefcaseBusiness, Shield, GraduationCap, Car, ShoppingBag, Bot, Settings, FileText, Bell, FlaskConical, ClipboardList, CreditCard, BadgeCheck, Landmark, ClipboardCheck, ServerCog, WalletCards, Truck, Boxes, Smartphone } from 'lucide-react';
 
 export const statusLabel = {
   active: 'Activo',
@@ -46,6 +46,7 @@ export const modules = [
   { id: 'cloudCenter', label: 'Nube y Push', icon: CloudUpload, status: 'active', phase: 'Etapa 25', audience: 'Administradores, archivos y avisos', section: 'Administración y sistema' },
   { id: 'quality', label: 'Calidad y piloto', icon: ClipboardCheck, status: 'active', phase: 'Etapa 27', audience: 'Administradores y equipo de pruebas', section: 'Administración y sistema' },
   { id: 'architecture', label: 'Arquitectura', icon: Boxes, status: 'active', phase: 'Etapa 30.37', audience: 'Administradores y equipo técnico', section: 'Administración y sistema' },
+  { id: 'android', label: 'Android y APK', icon: Smartphone, status: 'active', phase: 'Etapa 30.69', audience: 'Administradores y equipo técnico', section: 'Administración y sistema' },
   { id: 'localLab', label: 'Laboratorio local', icon: FlaskConical, status: 'active', phase: 'Etapa 18', audience: 'Equipo y pruebas', section: 'Administración y sistema' },
   { id: 'blueprint', label: 'Blueprint', icon: FileText, status: 'active', phase: 'Docs', audience: 'Equipo', section: 'Administración y sistema' },
 

@@ -36,7 +36,9 @@ import CloudLaunch from './pages/CloudLaunch';
 import CloudAuthGate from './pages/CloudAuthGate';
 import PersonalFinance from './pages/PersonalFinance';
 import ArchitectureCenter from './pages/ArchitectureCenter';
+import AndroidReadiness from './pages/AndroidReadiness';
 import { canAccessModule } from './lib/permissions';
+import MobileRuntime from './components/MobileRuntime';
 
 export default function AppRoot() {
   const initialPage = (() => {
@@ -125,11 +127,12 @@ export default function AppRoot() {
     quality: <QualityCenter/>,
     admin: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <Admin/>,
     architecture: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <ArchitectureCenter setPage={setPage}/>,
+    android: backendConnected && !isAdmin ? <AccessDenied setPage={setPage}/> : <AndroidReadiness/>,
     settings: <Account/>,
     blueprint: <Blueprint/>
   };
 
   if (dataMode === 'cloud' && !authLoading && !isAuthenticated) return <CloudAuthGate/>;
   const denied = !canAccessModule(profile, page);
-  return <Shell page={denied ? 'panel' : page} setPage={setPage}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</Shell>;
+  return <><MobileRuntime/><Shell page={denied ? 'panel' : page} setPage={setPage}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</Shell></>;
 }

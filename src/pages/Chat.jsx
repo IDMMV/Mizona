@@ -42,6 +42,30 @@ const formatChatDateLabel = value => {
 };
 
 const mapsUrl = (lat, lng) => `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+const osmEmbedUrl = (lat, lng, zoom = 16) => {
+  const delta = zoom >= 16 ? 0.006 : zoom >= 14 ? 0.02 : 0.06;
+  const bbox = [Number(lng)-delta, Number(lat)-delta, Number(lng)+delta, Number(lat)+delta].join(',');
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(`${lat},${lng}`)}`;
+};
+const reverseGeocode = async (lat, lng) => {
+  const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`, { headers: { 'Accept-Language':'es' } });
+  if (!response.ok) throw new Error('No se pudo obtener la dirección.');
+  const data = await response.json();
+  return { name: data.name || data.address?.road || data.address?.suburb || 'Ubicación actual', address: data.display_name || `${lat}, ${lng}` };
+};
+const searchMapPlaces = async (query, lat, lng) => {
+  const viewbox = `${Number(lng)-0.25},${Number(lat)+0.25},${Number(lng)+0.25},${Number(lat)-0.25}`;
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=12&addressdetails=1&bounded=0&viewbox=${encodeURIComponent(viewbox)}&q=${encodeURIComponent(query)}`, { headers: { 'Accept-Language':'es' } });
+  if (!response.ok) throw new Error('No se pudo buscar lugares.');
+  return (await response.json()).map(item => ({ id:`osm-${item.osm_type}-${item.osm_id}`, name:item.name || item.display_name.split(',')[0], address:item.display_name, lat:Number(item.lat), lng:Number(item.lon), type:item.type || item.category }));
+};
+const loadNearbyPlaces = async (lat, lng) => {
+  const query = `[out:json][timeout:12];(node(around:1800,${lat},${lng})[name][amenity];node(around:1800,${lat},${lng})[name][shop];node(around:1800,${lat},${lng})[name][tourism];);out center 18;`;
+  const response = await fetch('https://overpass-api.de/api/interpreter', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body:`data=${encodeURIComponent(query)}` });
+  if (!response.ok) throw new Error('No se pudieron cargar lugares cercanos.');
+  const data = await response.json();
+  return (data.elements || []).map(item => ({ id:`overpass-${item.type}-${item.id}`, name:item.tags?.name || 'Lugar cercano', address:[item.tags?.['addr:street'],item.tags?.['addr:housenumber'],item.tags?.['addr:district'],item.tags?.['addr:city']].filter(Boolean).join(' ') || item.tags?.amenity || item.tags?.shop || item.tags?.tourism || 'Cerca de ti', lat:Number(item.lat || item.center?.lat), lng:Number(item.lon || item.center?.lon), type:item.tags?.amenity || item.tags?.shop || item.tags?.tourism })).filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lng));
+};
 
 const MZ_STRUCT_PREFIX = '[[MZCHAT:1]]';
 const newId = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -54,7 +78,7 @@ const parseStructured = body => {
 const structuredPreview = body => {
   const data = parseStructured(body);
   if (!data) return body || '';
-  const labels = { location: data.live ? 'Ubicación en tiempo real' : 'Ubicación', contact: `Contacto: ${data.name || ''}`, poll: `Encuesta: ${data.question || ''}`, poll_vote: 'Voto actualizado', event: `Evento: ${data.title || ''}`, event_rsvp: 'Respuesta a evento', order: `Pedido: ${data.item || ''}`, order_status: `Pedido ${data.status || ''}`, catalog: `Catálogo: ${data.item || ''}` };
+  const labels = { location: data.live ? 'Ubicación en tiempo real' : 'Ubicación', contact: `Contacto: ${data.name || ''}`, poll: `Encuesta: ${data.question || ''}`, poll_vote: 'Voto actualizado', event: `Evento: ${data.title || ''}`, event_rsvp: 'Respuesta a evento', order: `Pedido: ${data.item || ''}`, order_status: `Pedido ${data.status || ''}`, catalog: `Catálogo: ${data.item || ''}`, poll_close: 'Encuesta cerrada', event_cancel: 'Evento cancelado', location_stop: 'Ubicación en vivo finalizada' };
   return labels[data.type] || 'Elemento del chat';
 };
 const openWhatsAppShare = text => window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
@@ -150,7 +174,9 @@ function AttachmentPreview({ attachment, onNotice }) {
 }
 
 
-function StructuredMessage({ data, message, allMessages, currentUser, onSend, onNotice }) {
+function StructuredMessage({ data, message, allMessages, currentUser, onSend, onNotice, onStopLive }) {
+  const pollClosed = data.type === 'poll' && allMessages.some(item => { const parsed=parseStructured(item.body); return parsed?.type==='poll_close' && parsed.pollId===data.pollId; });
+  const eventCancelled = data.type === 'event' && allMessages.some(item => { const parsed=parseStructured(item.body); return parsed?.type==='event_cancel' && parsed.eventId===data.eventId; });
   const votes = allMessages.map(item => ({ item, data: parseStructured(item.body) })).filter(entry => entry.data?.type === 'poll_vote' && entry.data.pollId === data.pollId);
   const latestVoteByUser = new Map();
   votes.forEach(entry => latestVoteByUser.set(entry.data.voterId || entry.item.sender_id || entry.item.sender_username, entry.data));
@@ -162,10 +188,16 @@ function StructuredMessage({ data, message, allMessages, currentUser, onSend, on
   const lastOrderStatus = orderStatuses.at(-1)?.status || data.status || 'pendiente';
 
   if (data.type === 'location') {
-    const url = mapsUrl(data.lat, data.lng);
-    const text = `${data.live ? 'Ubicación en tiempo real' : 'Mi ubicación actual'}: ${url}`;
-    return <div className="structuredCard locationCard"><div className="structuredHead"><MapPin/><div><b>{data.live ? 'Ubicación en tiempo real' : 'Ubicación compartida'}</b><span>{data.live ? `Disponible hasta ${new Date(data.expiresAt).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}` : `Precisión aproximada: ${Math.round(data.accuracy || 0)} m`}</span></div></div><div className="mapPreview"><MapPin size={30}/><span>{Number(data.lat).toFixed(5)}, {Number(data.lng).toFixed(5)}</span></div><div className="structuredActions"><button onClick={() => window.open(url,'_blank','noopener,noreferrer')}>Abrir Maps</button><button className="secondary" onClick={() => openWhatsAppShare(text)}>WhatsApp</button><button className="secondary" onClick={() => shareText({title:'Ubicación MiZona',text,url}).then(shared => !shared && onNotice('Enlace copiado.'))}>Compartir</button></div></div>;
+    const url=mapsUrl(data.lat,data.lng);
+    const routeUrl=`https://www.google.com/maps/dir/?api=1&destination=${data.lat},${data.lng}`;
+    const text=`${data.live?'Ubicación en tiempo real':'Mi ubicación actual'}: ${url}`;
+    const stopped=allMessages.some(item=>{const parsed=parseStructured(item.body);return parsed?.type==='location_stop'&&parsed.liveId===data.liveId;});
+    const expired=data.live && Date.now()>Number(data.expiresAt||0);
+    const active=data.live&&!stopped&&!expired;
+    const own=message.sender_id===currentUser?.id||message.sender_username===currentUser?.username;
+    return <div className="structuredCard locationCard"><div className="locationMapFrame"><iframe title="Mapa de ubicación" src={osmEmbedUrl(data.lat,data.lng,16)} loading="lazy"/><span className={active?'liveMapBadge':'mapBadge'}>{active?'EN VIVO':'UBICACIÓN'}</span></div><div className="structuredHead"><MapPin/><div><b>{data.name || (data.live?'Ubicación en tiempo real':'Ubicación compartida')}</b><span>{data.address || `${Number(data.lat).toFixed(5)}, ${Number(data.lng).toFixed(5)}`}</span></div></div><small>{active?`Compartiendo hasta ${new Date(data.expiresAt).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`:stopped?'Compartición finalizada':data.live?'Ubicación caducada':`Precisión aproximada: ${Math.round(data.accuracy||0)} m`}</small><div className="structuredActions"><button onClick={()=>window.open(url,'_blank','noopener,noreferrer')}>Abrir mapa</button><button className="secondary" onClick={()=>window.open(routeUrl,'_blank','noopener,noreferrer')}>Cómo llegar</button><button className="secondary" onClick={()=>openWhatsAppShare(text)}>WhatsApp</button>{active&&own&&<button className="danger" onClick={()=>onStopLive?.(data.liveId)}>Dejar de compartir</button>}</div></div>;
   }
+  if (data.type === 'location_stop') return <div className="structuredMini"><MapPin size={14}/> Ubicación en tiempo real finalizada</div>;
   if (data.type === 'contact') {
     const digits = String(data.phone || '').replace(/\D/g,'');
     return <div className="structuredCard contactShareCard"><div className="structuredHead"><Contact/><div><b>{data.name}</b><span>{data.phone}</span></div></div>{data.note && <p>{data.note}</p>}<div className="structuredActions"><a href={`tel:${data.phone}`}>Llamar</a><button onClick={() => window.open(`https://wa.me/${digits}`,'_blank','noopener,noreferrer')}>WhatsApp</button><button className="secondary" onClick={() => navigator.clipboard?.writeText(`${data.name}\n${data.phone}`).then(() => onNotice('Contacto copiado.'))}>Copiar</button></div></div>;
@@ -173,19 +205,24 @@ function StructuredMessage({ data, message, allMessages, currentUser, onSend, on
   if (data.type === 'poll') {
     const totalVotes = latestVoteByUser.size;
     const choose = index => {
+      if (pollClosed) return onNotice?.('Esta encuesta ya está cerrada.');
       let indices = data.multiple ? [...(myVote?.optionIndices || [])] : [];
       indices = data.multiple ? (indices.includes(index) ? indices.filter(i => i !== index) : [...indices,index]) : [index];
       onSend('poll_vote',{ pollId:data.pollId, optionIndices:indices, voterId:currentUser?.id || currentUser?.username, voterName:currentUser?.display_name || currentUser?.username });
     };
-    return <div className="structuredCard pollCard"><div className="structuredHead"><BarChart3/><div><b>{data.question}</b><span>{data.multiple ? 'Varias respuestas permitidas' : 'Una respuesta'} · {totalVotes} participante(s)</span></div></div><div className="pollChoices">{data.options.map((option,index) => { const active=(myVote?.optionIndices||[]).includes(index); const pct=totalVotes ? Math.round((pollTotals[index]/totalVotes)*100) : 0; return <button key={index} className={active?'active':''} onClick={() => choose(index)}><span>{active ? <Check size={15}/> : null}{option}</span>{data.results && <em>{pollTotals[index]} · {pct}%</em>}<i style={{width:`${pct}%`}}/></button>; })}</div></div>;
+    const ownPoll = data.createdById && data.createdById === (currentUser?.id || currentUser?.username);
+    return <div className="structuredCard pollCard"><div className="structuredHead"><BarChart3/><div><b>{data.question}</b><span>{pollClosed ? 'Encuesta cerrada' : data.multiple ? 'Varias respuestas permitidas' : 'Una respuesta'} · {totalVotes} participante(s)</span></div></div><div className="pollChoices">{data.options.map((option,index) => { const active=(myVote?.optionIndices||[]).includes(index); const pct=totalVotes ? Math.round((pollTotals[index]/totalVotes)*100) : 0; return <button disabled={pollClosed} key={index} className={active?'active':''} onClick={() => choose(index)}><span>{active ? <Check size={15}/> : null}{option}</span>{data.results && <em>{pollTotals[index]} · {pct}%</em>}<i style={{width:`${pct}%`}}/></button>; })}</div>{ownPoll && !pollClosed && <div className="structuredActions"><button className="secondary" onClick={()=>onSend('poll_close',{pollId:data.pollId,closedAt:new Date().toISOString()})}>Cerrar encuesta</button></div>}</div>;
   }
+  if (data.type === 'poll_close') return <div className="structuredMini"><Check size={14}/> Encuesta cerrada</div>;
   if (data.type === 'poll_vote') return <div className="structuredMini"><Check size={14}/> Voto actualizado</div>;
   if (data.type === 'event') {
     const attending=[...latestRsvp.values()].filter(item=>item.response==='yes').length;
     const maybe=[...latestRsvp.values()].filter(item=>item.response==='maybe').length;
-    const rsvp=response=>onSend('event_rsvp',{eventId:data.eventId,response,userId:currentUser?.id || currentUser?.username,userName:currentUser?.display_name || currentUser?.username});
-    return <div className="structuredCard eventCard"><div className="structuredHead"><CalendarDays/><div><b>{data.title}</b><span>{data.date || 'Fecha por definir'} {data.time || ''}</span></div></div><p><MapPin size={14}/> {data.place || 'Lugar por definir'}</p>{data.description && <p>{data.description}</p>}<small>{attending} asistirán · {maybe} tal vez</small><div className="structuredActions"><button onClick={()=>rsvp('yes')}>Asistiré</button><button className="secondary" onClick={()=>rsvp('maybe')}>Tal vez</button><button className="secondary" onClick={()=>rsvp('no')}>No iré</button><button className="secondary" onClick={()=>downloadCalendarEvent(data)}>Calendario</button></div></div>;
+    const rsvp=response=>eventCancelled ? onNotice?.('Este evento fue cancelado.') : onSend('event_rsvp',{eventId:data.eventId,response,userId:currentUser?.id || currentUser?.username,userName:currentUser?.display_name || currentUser?.username});
+    const ownEvent=data.createdById && data.createdById === (currentUser?.id || currentUser?.username);
+    return <div className="structuredCard eventCard"><div className="structuredHead"><CalendarDays/><div><b>{data.title}</b><span>{eventCancelled ? 'EVENTO CANCELADO' : `${data.date || 'Fecha por definir'} ${data.time || ''}`}</span></div></div><p><MapPin size={14}/> {data.place || 'Lugar por definir'}</p>{data.description && <p>{data.description}</p>}<small>{attending} asistirán · {maybe} tal vez</small><div className="structuredActions">{!eventCancelled && <><button onClick={()=>rsvp('yes')}>Asistiré</button><button className="secondary" onClick={()=>rsvp('maybe')}>Tal vez</button><button className="secondary" onClick={()=>rsvp('no')}>No iré</button><button className="secondary" onClick={()=>downloadCalendarEvent(data)}>Calendario</button></>}{ownEvent && !eventCancelled && <button className="danger" onClick={()=>onSend('event_cancel',{eventId:data.eventId,cancelledAt:new Date().toISOString()})}>Cancelar evento</button>}</div></div>;
   }
+  if (data.type === 'event_cancel') return <div className="structuredMini"><CalendarDays size={14}/> Evento cancelado</div>;
   if (data.type === 'event_rsvp') return <div className="structuredMini"><CalendarDays size={14}/> Respuesta al evento: {data.response === 'yes' ? 'Asistiré' : data.response === 'maybe' ? 'Tal vez' : 'No asistiré'}</div>;
   if (data.type === 'order') {
     const total=Number(data.quantity||1)*Number(data.price||0);
@@ -356,6 +393,14 @@ export default function Chat({ setPage }) {
   const [showLocationPanel, setShowLocationPanel] = useState(false);
   const [locationReady, setLocationReady] = useState(false);
   const [locationChecking, setLocationChecking] = useState(false);
+  const [locationPosition, setLocationPosition] = useState(null);
+  const [locationAddress, setLocationAddress] = useState(null);
+  const [locationSearch, setLocationSearch] = useState('');
+  const [locationResults, setLocationResults] = useState([]);
+  const [nearbyPlaces, setNearbyPlaces] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [liveLocationActive, setLiveLocationActive] = useState(null);
   const [showPollPanel, setShowPollPanel] = useState(false);
   const [showEventPanel, setShowEventPanel] = useState(false);
   const [showContactPanel, setShowContactPanel] = useState(false);
@@ -403,8 +448,12 @@ export default function Chat({ setPage }) {
 
   const groupedMessages = useMemo(() => {
     const items = [];
+    const latestLive = new Map();
+    messages.forEach(message => { const parsed=parseStructured(message.body); if(parsed?.type==='location'&&parsed.live&&parsed.liveId) latestLive.set(parsed.liveId,message.id); });
     let lastKey = '';
     messages.forEach(message => {
+      const structured=parseStructured(message.body);
+      if(structured?.type==='location'&&structured.live&&structured.liveId&&latestLive.get(structured.liveId)!==message.id) return;
       const date = new Date(message.created_at || Date.now());
       const key = date.toDateString();
       if (key !== lastKey) {
@@ -434,19 +483,52 @@ export default function Chat({ setPage }) {
     return source.filter(item => [item.display_name, item.username, item.zone].filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
   }, [contacts, searchText, chatFilter]);
 
+  const noticeKind = /correctamente|enviad|publicad|activo|detenid|desbloqueado|bloqueado|generado|compartid|actualizado|creado|Reporte enviado/i.test(notice) ? 'success' : 'danger';
+
   const visibleResultCount = tab === 'contacts' ? filteredContacts.length : (tab === 'chats' || tab === 'groups') ? filteredConversations.length : requests.length;
 
   const updateChatTheme = patch => setChatTheme(current => ({ ...current, ...patch }));
 
+  const prepareLocation = async position => {
+    const point = { lat:position.coords.latitude, lng:position.coords.longitude, accuracy:position.coords.accuracy };
+    setLocationPosition(point);
+    setSelectedPlace(null);
+    setLocationLoading(true);
+    try {
+      const [address, nearby] = await Promise.all([
+        reverseGeocode(point.lat, point.lng).catch(() => ({ name:'Ubicación actual', address:`${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}` })),
+        loadNearbyPlaces(point.lat, point.lng).catch(() => [])
+      ]);
+      setLocationAddress(address);
+      setNearbyPlaces(nearby);
+    } finally { setLocationLoading(false); }
+    return point;
+  };
+
   const requestLocationAccess = async () => {
+    if (!selectedId) { setNotice('Selecciona una conversación antes de compartir ubicación.'); return; }
+    if (!window.isSecureContext && location.hostname !== 'localhost') { setNotice('La ubicación requiere que MiZona esté publicada con HTTPS.'); return; }
     if (!navigator.geolocation) { setNotice('Este dispositivo no permite obtener la ubicación.'); return; }
     setLocationChecking(true);
     navigator.geolocation.getCurrentPosition(
-      () => { setLocationReady(true); setLocationChecking(false); setNotice('Ubicación habilitada correctamente.'); },
+      async position => { await prepareLocation(position); setLocationReady(true); setLocationChecking(false); setNotice('Ubicación habilitada correctamente.'); },
       () => { setLocationReady(false); setLocationChecking(false); setNotice('Debes permitir la ubicación desde el navegador o los ajustes del celular.'); },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 }
+      { enableHighAccuracy:true, timeout:15000, maximumAge:5000 }
     );
   };
+
+  const refreshLocation = () => requestLocationAccess();
+
+  const runLocationSearch = async event => {
+    event?.preventDefault();
+    const q = locationSearch.trim();
+    if (!q || !locationPosition) return;
+    setLocationLoading(true);
+    try { setLocationResults(await searchMapPlaces(q, locationPosition.lat, locationPosition.lng)); }
+    catch (error) { setNotice(error.message); }
+    finally { setLocationLoading(false); }
+  };
+
   const chatThemeStyle = {
     '--chat-accent': chatTheme.accent || CHAT_THEME_DEFAULT.accent,
     '--chat-bg': chatTheme.background || CHAT_THEME_DEFAULT.background,
@@ -558,20 +640,27 @@ export default function Chat({ setPage }) {
   useEffect(() => { refreshLists(true); }, []);
 
   useEffect(() => {
-    const unsubscribe = subscribeToChat(async () => {
-      const contactList = await loadChatContacts();
-      const requestList = await loadChatRequests();
-      const conversationList = await loadConversations();
-      setContacts(contactList || []);
-      setRequests(requestList || []);
-      setConversations(conversationList || []);
-      if (selectedId) {
-        setMessages(await loadMessages(selectedId));
-        await markConversationRead(selectedId);
-      }
+    const syncChat = async () => {
+      try {
+        const [contactList, requestList, conversationList] = await Promise.all([loadChatContacts(), loadChatRequests(), loadConversations()]);
+        setContacts(contactList || []);
+        setRequests(requestList || []);
+        setConversations(conversationList || []);
+        if (selectedId) {
+          setMessages(await loadMessages(selectedId));
+          await markConversationRead(selectedId);
+        }
+      } catch (error) { setNotice(error.message || 'No se pudo sincronizar el chat.'); }
+    };
+    const unsubscribe = subscribeToChat({
+      userId:user?.id || profile?.id,
+      conversationId:selectedId,
+      onConversationChange:syncChat,
+      onMessageChange:syncChat,
+      onRequestChange:syncChat
     });
     return () => unsubscribe?.();
-  }, [selectedId]);
+  }, [selectedId, user?.id, profile?.id]);
 
   useEffect(() => {
     messageEnd.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -677,6 +766,7 @@ export default function Chat({ setPage }) {
     const files = Array.from(event.target.files || []);
     event.target.value = '';
     if (!files.length || !selectedId) return;
+    if (files.length > 20) { setNotice('Puedes seleccionar como máximo 20 archivos por envío.'); return; }
     const imageCount = files.filter(file => file.type.startsWith('image/')).length;
     if (imageCount > 20) {
       setNotice('Solo puedes enviar hasta 20 fotos por mensaje.');
@@ -772,18 +862,31 @@ export default function Chat({ setPage }) {
     else recordAudio();
   };
 
-  const sendCurrentLocation = () => {
+  const sendLocationPoint = async point => {
+    if (!point) return setNotice('No hay una ubicación disponible.');
+    await sendStructured('location',{
+      lat:point.lat, lng:point.lng, accuracy:point.accuracy || locationPosition?.accuracy || 0,
+      live:false, capturedAt:new Date().toISOString(),
+      name:point.name || locationAddress?.name || 'Ubicación compartida',
+      address:point.address || locationAddress?.address || ''
+    });
+    setShowLocationPanel(false);
+    setNotice('Ubicación enviada. El receptor podrá abrir el mapa, ver la ruta o compartirla.');
+  };
+
+  const sendCurrentLocation = async () => {
+    if (locationPosition) return sendLocationPoint({ ...locationPosition, ...locationAddress });
     if (!navigator.geolocation) return setNotice('Tu navegador no permite compartir ubicación.');
     setNotice('Obteniendo ubicación…');
-    navigator.geolocation.getCurrentPosition(
-      async position => {
-        const { latitude, longitude, accuracy } = position.coords;
-        await sendStructured('location',{ lat:latitude, lng:longitude, accuracy, live:false, capturedAt:new Date().toISOString() });
-        setNotice('Ubicación enviada. El receptor podrá abrirla en Google Maps o compartirla por WhatsApp.');
-      },
-      error => setNotice(error.code === 1 ? 'Permiso de ubicación denegado. Actívalo en el navegador o ajustes del celular.' : 'No se pudo obtener tu ubicación. Verifica GPS y conexión.'),
-      { enableHighAccuracy:true, timeout:15000, maximumAge:5000 }
-    );
+    navigator.geolocation.getCurrentPosition(async position => { const point=await prepareLocation(position); await sendLocationPoint({ ...point, ...locationAddress }); }, error => setNotice(error.code===1?'Permiso de ubicación denegado. Actívalo en el navegador o ajustes del celular.':'No se pudo obtener tu ubicación. Verifica GPS y conexión.'), { enableHighAccuracy:true, timeout:15000, maximumAge:5000 });
+  };
+
+  const stopLiveLocation = async (liveId = liveLocationActive?.liveId) => {
+    if (liveWatchRef.current != null && navigator.geolocation) navigator.geolocation.clearWatch(liveWatchRef.current);
+    liveWatchRef.current = null;
+    if (liveId) await sendStructured('location_stop',{ liveId, stoppedAt:new Date().toISOString() });
+    setLiveLocationActive(null);
+    setNotice('Ubicación en tiempo real detenida.');
   };
 
   const startLiveLocation = minutes => {
@@ -791,15 +894,17 @@ export default function Chat({ setPage }) {
     if (liveWatchRef.current != null) navigator.geolocation.clearWatch(liveWatchRef.current);
     const liveId = newId('live');
     const expiresAt = Date.now() + minutes * 60000;
+    setLiveLocationActive({ liveId, expiresAt, minutes });
     let lastSent = 0;
     liveWatchRef.current = navigator.geolocation.watchPosition(async position => {
-      const now = Date.now();
-      if (now - lastSent < 20000) return;
-      lastSent = now;
-      await sendStructured('location',{ liveId, lat:position.coords.latitude, lng:position.coords.longitude, accuracy:position.coords.accuracy, live:true, expiresAt, capturedAt:new Date().toISOString() });
-      if (Date.now() >= expiresAt) { navigator.geolocation.clearWatch(liveWatchRef.current); liveWatchRef.current=null; setNotice('La ubicación en tiempo real finalizó.'); }
-    }, error => setNotice(error.code === 1 ? 'Permiso de ubicación denegado.' : 'No fue posible actualizar la ubicación en tiempo real.'), { enableHighAccuracy:true, timeout:15000, maximumAge:5000 });
-    window.setTimeout(() => { if (liveWatchRef.current != null) { navigator.geolocation.clearWatch(liveWatchRef.current); liveWatchRef.current=null; } }, minutes * 60000);
+      const now=Date.now(); if (now-lastSent<20000) return; lastSent=now;
+      const point={lat:position.coords.latitude,lng:position.coords.longitude,accuracy:position.coords.accuracy};
+      setLocationPosition(point);
+      const address=await reverseGeocode(point.lat,point.lng).catch(()=>locationAddress || {name:'Ubicación en tiempo real',address:''});
+      await sendStructured('location',{ liveId, ...point, ...address, live:true, expiresAt, capturedAt:new Date().toISOString() });
+      if (Date.now()>=expiresAt) await stopLiveLocation(liveId);
+    }, error=>setNotice(error.code===1?'Permiso de ubicación denegado.':'No fue posible actualizar la ubicación en tiempo real.'), {enableHighAccuracy:true,timeout:15000,maximumAge:5000});
+    window.setTimeout(()=>{ if(liveWatchRef.current!=null) stopLiveLocation(liveId); }, minutes*60000);
     setShowLocationPanel(false);
     setNotice(`Ubicación en tiempo real activa durante ${minutes} minutos.`);
   };
@@ -807,20 +912,21 @@ export default function Chat({ setPage }) {
   const createPoll = async () => {
     const options = pollDraft.options.map(item => item.trim()).filter(Boolean);
     if (!pollDraft.question.trim() || options.length < 2) return setNotice('La encuesta necesita una pregunta y mínimo 2 opciones.');
-    await sendStructured('poll',{ pollId:newId('poll'), question:pollDraft.question.trim(), options, multiple:pollDraft.multiple, results:pollDraft.results, createdBy:profile?.display_name || profile?.username });
+    await sendStructured('poll',{ pollId:newId('poll'), question:pollDraft.question.trim(), options, multiple:pollDraft.multiple, results:pollDraft.results, createdBy:profile?.display_name || profile?.username, createdById:user?.id || profile?.id || profile?.username });
     setPollDraft({ question:'', options:['Sí','No'], multiple:false, results:true });
     setShowPollPanel(false); setNotice('Encuesta publicada y lista para votar.');
   };
 
   const createEvent = async () => {
     if (!eventDraft.title.trim() || !eventDraft.date) return setNotice('El evento necesita título y fecha.');
-    await sendStructured('event',{ eventId:newId('event'), ...eventDraft, title:eventDraft.title.trim(), createdBy:profile?.display_name || profile?.username });
+    await sendStructured('event',{ eventId:newId('event'), ...eventDraft, title:eventDraft.title.trim(), createdBy:profile?.display_name || profile?.username, createdById:user?.id || profile?.id || profile?.username });
     setEventDraft({ title:'', date:'', time:'', place:'', description:'' });
     setShowEventPanel(false); setNotice('Evento publicado. Los participantes pueden confirmar y agregarlo al calendario.');
   };
 
   const createContactShare = async () => {
     if (!contactDraft.name.trim() || !contactDraft.phone.trim()) return setNotice('Completa el nombre y teléfono del contacto.');
+    if (contactDraft.phone.replace(/\D/g,'').length < 7) return setNotice('Ingresa un número de teléfono válido.');
     await sendStructured('contact',{ ...contactDraft, name:contactDraft.name.trim(), phone:contactDraft.phone.trim() });
     setContactDraft({name:'',phone:'',note:''}); setShowContactPanel(false); setNotice('Contacto compartido con acciones de llamada y WhatsApp.');
   };
@@ -892,7 +998,7 @@ export default function Chat({ setPage }) {
     </div>
 
     {!backendConnected && <div className="chatLocalModeNotice"><ChatNotice kind="success">Modo local multiusuario activo. Los cambios se comparten en este navegador.</ChatNotice></div>}
-    {notice && <ChatNotice kind={notice.includes('bloqueado') || notice.includes('Reporte enviado') ? 'success' : 'danger'}>{notice}</ChatNotice>}
+    {notice && <ChatNotice kind={noticeKind}>{notice}</ChatNotice>}
 
     <div className={`chatWorkspace ${mobileConversation ? 'showConversation' : ''}`}>
       <aside className="chatDirectory">
@@ -943,7 +1049,7 @@ export default function Chat({ setPage }) {
               return <div key={message.id} className={`messageRow ${own ? 'own' : ''}`}>
                 {!own && <Avatar small name={message.sender_display_name} image={message.sender_avatar_url}/>}<div className="messageBubble">
                   {!own && <b>{message.sender_display_name}</b>}
-                  {message.body && (parseStructured(message.body) ? <StructuredMessage data={parseStructured(message.body)} message={message} allMessages={messages} currentUser={{...profile,id:user?.id}} onSend={sendStructured} onNotice={setNotice}/> : <p>{message.body}</p>)}
+                  {message.body && (parseStructured(message.body) ? <StructuredMessage data={parseStructured(message.body)} message={message} allMessages={messages} currentUser={{...profile,id:user?.id}} onSend={sendStructured} onNotice={setNotice} onStopLive={stopLiveLocation}/> : <p>{message.body}</p>)}
                   {Array.isArray(message.attachments) && message.attachments.map(attachment => <AttachmentPreview key={attachment.id} attachment={attachment} onNotice={setNotice}/>)}
                   <small>{formatMessageHour(message.created_at)}</small>
                 </div>{!own && <button className="messageReport" title="Reportar" onClick={() => report(message)}><AlertTriangle size={14}/></button>}
@@ -1034,7 +1140,7 @@ export default function Chat({ setPage }) {
           <button className={actionTab === 'files' ? 'active' : ''} onClick={()=>setActionTab('files')}><File size={17}/> Archivos</button>
         </div>
         <section className="actionBlock"><h3>{actionTab === 'summary' ? 'Resumen real' : actionTab === 'orders' ? 'Pedidos' : actionTab === 'polls' ? 'Encuestas' : actionTab === 'events' ? 'Eventos' : 'Archivos'}</h3>
-          {actionTab === 'files' ? (messages.flatMap(item => item.attachments || []).length ? messages.flatMap(item => item.attachments || []).map(file => <AttachmentPreview key={file.id} attachment={file} onNotice={setNotice}/>) : <p>No hay archivos en esta conversación.</p>) : (() => { const types = actionTab === 'summary' ? ['location','contact','poll','event','order','catalog'] : actionTab === 'orders' ? ['order'] : actionTab === 'polls' ? ['poll'] : ['event']; const items = messages.filter(item => types.includes(parseStructured(item.body)?.type)); return items.length ? items.map(item => <StructuredMessage key={item.id} data={parseStructured(item.body)} message={item} allMessages={messages} currentUser={{...profile,id:user?.id}} onSend={sendStructured} onNotice={setNotice}/>) : <p>No hay elementos en esta categoría.</p>; })()}
+          {actionTab === 'files' ? (messages.flatMap(item => item.attachments || []).length ? messages.flatMap(item => item.attachments || []).map(file => <AttachmentPreview key={file.id} attachment={file} onNotice={setNotice}/>) : <p>No hay archivos en esta conversación.</p>) : (() => { const types = actionTab === 'summary' ? ['location','contact','poll','event','order','catalog'] : actionTab === 'orders' ? ['order'] : actionTab === 'polls' ? ['poll'] : ['event']; const items = messages.filter(item => types.includes(parseStructured(item.body)?.type)); return items.length ? items.map(item => <StructuredMessage key={item.id} data={parseStructured(item.body)} message={item} allMessages={messages} currentUser={{...profile,id:user?.id}} onSend={sendStructured} onNotice={setNotice} onStopLive={stopLiveLocation}/>) : <p>No hay elementos en esta categoría.</p>; })()}
         </section>
       </div>
     </div>}
@@ -1048,14 +1154,20 @@ export default function Chat({ setPage }) {
 
     {showQuickPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event=>event.target===event.currentTarget&&setShowQuickPanel(false)}><div className="chatModal quickReplyPanel"><div className="chatModalHeader"><div><span>RESPUESTAS RÁPIDAS</span><h2>Elige una respuesta</h2><p>Se envía como mensaje normal y puede editarse después desde el chat.</p></div><button className="iconBtn" onClick={()=>setShowQuickPanel(false)}><X size={19}/></button></div>{['Gracias por escribir. Te confirmo en unos minutos.','Ya estoy llegando.','¿Puedes enviarme tu ubicación?','Pedido recibido. Estamos preparándolo.','De acuerdo, quedamos coordinados.'].map(text=><button className="quickReplyChoice" key={text} onClick={()=>{sendSpecialText(text);setShowQuickPanel(false)}}>{text}<Send size={16}/></button>)}</div></div>}
 
-    {showLocationPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event => event.target === event.currentTarget && setShowLocationPanel(false)}>
-      <div className="chatModal locationPanel">
-        <div className="chatModalHeader"><div><span>UBICACIÓN</span><h2>Compartir ubicación</h2><p>Primero debes autorizar el acceso a la ubicación del dispositivo.</p></div><button className="iconBtn" onClick={() => setShowLocationPanel(false)}><X size={19}/></button></div>
-        {!locationReady ? <div className="locationPermissionCard"><ShieldCheck/><div><b>Habilitar ubicación</b><span>MiZona solicitará permiso al navegador. Tú decides cuándo compartirla.</span></div><button type="button" onClick={requestLocationAccess} disabled={locationChecking}>{locationChecking ? 'Comprobando…' : 'Habilitar ubicación'}</button></div> : <>
-        <ChatNotice kind="success">Ubicación habilitada. Ahora elige cómo compartirla.</ChatNotice>
-        <button className="locationOption" type="button" onClick={sendCurrentLocation}><MapPin/><div><b>Enviar mi ubicación actual</b><span>Envía tu punto de este momento y permite abrir Google Maps.</span></div></button>
-        <div className="locationOption passive"><MapPin/><div><b>Compartir ubicación en tiempo real</b><span>Elige durante cuánto tiempo deseas compartirla.</span></div></div>
-        <div className="durationGrid"><button onClick={() => startLiveLocation(15)}>15 minutos</button><button onClick={() => startLiveLocation(60)}>1 hora</button><button onClick={() => startLiveLocation(480)}>8 horas</button></div></>}
+    {showLocationPanel && <div className="chatModalBackdrop themeBackdrop" onMouseDown={event=>event.target===event.currentTarget&&setShowLocationPanel(false)}>
+      <div className="chatModal locationPanel locationPicker3066">
+        <div className="chatModalHeader"><div><span>UBICACIÓN</span><h2>Enviar ubicación</h2><p>Elige tu punto actual, un lugar cercano o comparte tu recorrido en vivo.</p></div><button className="iconBtn" onClick={()=>setShowLocationPanel(false)}><X size={19}/></button></div>
+        {!locationReady ? <div className="locationPermissionCard"><ShieldCheck/><div><b>Permitir acceso a la ubicación</b><span>MiZona solo la usará cuando tú decidas compartirla.</span></div><button type="button" onClick={requestLocationAccess} disabled={locationChecking}>{locationChecking?'Comprobando…':'Habilitar ubicación'}</button></div> : <>
+          <form className="locationSearch3066" onSubmit={runLocationSearch}><Search size={19}/><input value={locationSearch} onChange={e=>setLocationSearch(e.target.value)} placeholder="Buscar lugar o dirección"/><button type="submit" disabled={locationLoading||!locationSearch.trim()}><Search size={18}/></button><button type="button" title="Actualizar mi ubicación" onClick={refreshLocation}><RefreshCw size={18}/></button></form>
+          {locationPosition && <div className="locationMap3066"><iframe title="Mapa actual" src={osmEmbedUrl(selectedPlace?.lat||locationPosition.lat,selectedPlace?.lng||locationPosition.lng,15)} loading="lazy"/><button className="recenterMap3066" type="button" onClick={()=>setSelectedPlace(null)}><MapPin size={18}/> Centrar</button></div>}
+          <button className="liveLocationOption3066" type="button"><Zap/><div><b>Ubicación en tiempo real</b><span>{liveLocationActive?`Activa hasta ${new Date(liveLocationActive.expiresAt).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`:'Comparte tus cambios de posición durante un tiempo limitado.'}</span></div></button>
+          {liveLocationActive ? <button className="stopLive3066" type="button" onClick={()=>stopLiveLocation()}>Dejar de compartir</button> : <div className="durationGrid"><button type="button" onClick={()=>startLiveLocation(15)}>15 minutos</button><button type="button" onClick={()=>startLiveLocation(60)}>1 hora</button><button type="button" onClick={()=>startLiveLocation(480)}>8 horas</button></div>}
+          <div className="locationSectionTitle3066">Lugares cercanos</div>
+          <button className="currentLocationRow3066" type="button" onClick={sendCurrentLocation}><span className="locationRoundIcon3066"><MapPin/></span><div><b>Enviar tu ubicación actual</b><span>{locationAddress?.address || 'Obteniendo dirección…'}</span><small>Margen de precisión: {Math.round(locationPosition?.accuracy||0)} metros</small></div></button>
+          {locationLoading && <div className="locationLoading3066"><Loader2 className="spin"/> Buscando lugares…</div>}
+          <div className="locationPlaces3066">{(locationSearch.trim()?locationResults:nearbyPlaces).map(place=><button type="button" key={place.id} className={selectedPlace?.id===place.id?'active':''} onClick={()=>setSelectedPlace(place)} onDoubleClick={()=>sendLocationPoint(place)}><span className="locationRoundIcon3066"><MapPin/></span><div><b>{place.name}</b><span>{place.address}</span></div><em onClick={e=>{e.stopPropagation();sendLocationPoint(place)}}>Enviar</em></button>)}</div>
+          {selectedPlace && <div className="selectedPlaceBar3066"><div><b>{selectedPlace.name}</b><span>{selectedPlace.address}</span></div><button type="button" onClick={()=>sendLocationPoint(selectedPlace)}>Enviar este lugar</button></div>}
+        </>}
       </div>
     </div>}
 

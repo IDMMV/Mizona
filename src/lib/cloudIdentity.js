@@ -1,0 +1,4 @@
+import { supabase } from './supabase';
+export async function getMyCloudProfile(){const {data:{user}}=await supabase.auth.getUser();if(!user)return null;const {data,error}=await supabase.from('mz_user_profiles').select('*').eq('user_id',user.id).maybeSingle();if(error)throw error;return data;}
+export async function saveMyCloudProfile(values){const {data:{user}}=await supabase.auth.getUser();if(!user)throw new Error('Inicia sesión');const {data,error}=await supabase.from('mz_user_profiles').upsert({user_id:user.id,...values,updated_at:new Date().toISOString()}).select().single();if(error)throw error;return data;}
+export async function getMyRoles(){const {data:{user}}=await supabase.auth.getUser();if(!user)return[];const {data,error}=await supabase.from('mz_user_roles').select('*,mz_roles(*,mz_role_permissions(*))').eq('user_id',user.id);if(error)throw error;return data||[];}

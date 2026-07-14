@@ -1,0 +1,7 @@
+create table if not exists public.mz_files(id uuid primary key default gen_random_uuid(), owner_id uuid not null references auth.users(id) on delete cascade, bucket text not null default 'mizona-files', object_path text not null unique, file_name text not null, mime_type text, size_bytes bigint, module text not null default 'general', entity_id text, visibility text not null default 'private', metadata jsonb not null default '{}'::jsonb, created_at timestamptz not null default now());
+alter table public.mz_files enable row level security;
+create policy "own private file metadata" on public.mz_files for all using(owner_id=auth.uid()) with check(owner_id=auth.uid());
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values('mizona-files','mizona-files',false,26214400,array['image/jpeg','image/png','image/webp','video/mp4','audio/webm','audio/mpeg','application/pdf','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']) on conflict(id) do update set file_size_limit=excluded.file_size_limit;
+create policy "upload own mizona files" on storage.objects for insert to authenticated with check(bucket_id='mizona-files' and (storage.foldername(name))[1]=auth.uid()::text);
+create policy "read own mizona files" on storage.objects for select to authenticated using(bucket_id='mizona-files' and (storage.foldername(name))[1]=auth.uid()::text);
+create policy "delete own mizona files" on storage.objects for delete to authenticated using(bucket_id='mizona-files' and (storage.foldername(name))[1]=auth.uid()::text);

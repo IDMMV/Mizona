@@ -1,0 +1,3 @@
+import { supabase, hasSupabase } from './supabase';
+export async function listActiveBenefits(){if(!hasSupabase)return[];const {data,error}=await supabase.from('mz_benefits').select('*,mz_benefit_partners(*)').eq('active',true).order('created_at',{ascending:false});if(error)throw error;return data||[];}
+export async function redeemBenefit(benefitId){const {data:{user}}=await supabase.auth.getUser();if(!user)throw new Error('Inicia sesión');const code=`MZ-${crypto.randomUUID().slice(0,8).toUpperCase()}`;const {data,error}=await supabase.from('mz_benefit_redemptions').upsert({benefit_id:benefitId,user_id:user.id,code},{onConflict:'benefit_id,user_id'}).select().single();if(error)throw error;return data;}

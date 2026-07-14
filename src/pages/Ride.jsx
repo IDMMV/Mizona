@@ -24,6 +24,7 @@ import {
   updateLocalDeliveryStatus,
   updateLocalRideStatus
 } from '../lib/localRide';
+import { loadRideCloudSummary, subscribeCloudRide, syncRideSnapshot } from '../lib/cloudRide';
 
 const money = value => `S/ ${Number(value || 0).toFixed(2)}`;
 const dateTime = value => value ? new Intl.DateTimeFormat('es-PE', { dateStyle:'short', timeStyle:'short' }).format(new Date(value)) : '—';
@@ -196,10 +197,13 @@ export default function Ride() {
   const [snapshot,setSnapshot]=useState(getLocalRideSnapshot);
   const [tab,setTab]=useState('request');
   const [message,setMessage]=useState('');
+  const [cloud,setCloud]=useState({status:'local',drivers:0,rides:0,deliveries:0});
   const refresh=()=>setSnapshot(getLocalRideSnapshot());
   useEffect(()=>subscribeLocalRide(refresh),[]);
   useEffect(()=>refresh(),[profile.id]);
+  useEffect(()=>{let alive=true;const load=async()=>{try{const summary=await loadRideCloudSummary();if(alive)setCloud({status:'connected',...summary});}catch{if(alive)setCloud(c=>({...c,status:'local'}));}};load();const unsub=subscribeCloudRide(load);return()=>{alive=false;unsub();};},[profile.id]);
   const notify=text=>setMessage(text);
+  const syncCloud=async()=>{try{setCloud(c=>({...c,status:'syncing'}));const result=await syncRideSnapshot(snapshot);const summary=await loadRideCloudSummary();setCloud({status:'connected',...summary});notify(`Ride sincronizado: ${result.drivers} conductor(es), ${result.rides} viaje(s) y ${result.deliveries} envío(s).`);}catch(error){setCloud(c=>({...c,status:'local'}));notify(`Error: ${error.message}`);}};
   const tabs=[
     {id:'request',label:'Pedir viaje',icon:'🚗'},
     {id:'tracking',label:'Seguimiento',icon:'📍'},
@@ -208,7 +212,7 @@ export default function Ride() {
     {id:'history',label:'Historial',icon:'🧾'}
   ];
   return <div className="page ridePage rideStage20">
-    <section className="rideHero"><div><p className="eyebrow">Etapa 20 · movilidad multiusuario local</p><h1>MiZona Ride</h1><p>Pasajeros, conductores y repartidores pueden probar el flujo completo entre pestañas del mismo navegador.</p><div className="rideTrust"><ShieldCheck size={18}/>Perfiles adultos · Conductores verificados · Código de seguridad</div></div><div className="rideHeroStats"><span><b>{snapshot.verifiedOnlineDrivers}</b>conductores disponibles</span><span><b>{snapshot.openServices}</b>servicios abiertos</span><span><b>{snapshot.completedServices}</b>completados</span><span><b>{snapshot.pendingDrivers}</b>conductores pendientes</span></div></section>
+    <section className="rideHero"><div><p className="eyebrow">Etapa 30.74 · Ride y Delivery preparados para Supabase</p><h1>MiZona Ride</h1><p>Pasajeros, conductores y repartidores conservan el modo local y pueden sincronizar sus operaciones con Supabase.</p><div className="rideCloudBar"><span className={`rideCloudState ${cloud.status}`}>{cloud.status==='connected'?'Supabase conectado':cloud.status==='syncing'?'Sincronizando…':'Respaldo local'}</span><span>{cloud.rides} viajes · {cloud.deliveries} envíos · {cloud.drivers} conductores</span><button type="button" onClick={syncCloud} disabled={cloud.status==='syncing'}>Sincronizar Ride</button></div><div className="rideTrust"><ShieldCheck size={18}/>Perfiles adultos · Conductores verificados · Código de seguridad</div></div><div className="rideHeroStats"><span><b>{snapshot.verifiedOnlineDrivers}</b>conductores disponibles</span><span><b>{snapshot.openServices}</b>servicios abiertos</span><span><b>{snapshot.completedServices}</b>completados</span><span><b>{snapshot.pendingDrivers}</b>conductores pendientes</span></div></section>
     <Tabs tabs={tabs} active={tab} setActive={setTab}/>
     <Message text={message} clear={()=>setMessage('')}/>
     {tab==='request'&&<RequestRide snapshot={snapshot} refresh={refresh} notify={notify} goTracking={()=>setTab('tracking')}/>} 

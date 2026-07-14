@@ -1,0 +1,6 @@
+import { supabase, hasSupabase } from './supabase';
+const ensure=()=>{ if(!hasSupabase) throw new Error('Supabase no está configurado'); };
+export async function listCloudCommittees(){ ensure(); const {data,error}=await supabase.from('mz_committees').select('*').order('created_at',{ascending:false}); if(error) throw error; return data||[]; }
+export async function listCommitteeMovements(committeeId){ ensure(); const {data,error}=await supabase.from('mz_committee_movements').select('*').eq('committee_id',committeeId).order('movement_date',{ascending:false}); if(error) throw error; return data||[]; }
+export async function saveCommitteeMovement(payload){ ensure(); const {data:{user}}=await supabase.auth.getUser(); if(!user) throw new Error('Inicia sesión'); const row={...payload,created_by:user.id}; const {data,error}=await supabase.from('mz_committee_movements').upsert(row).select().single(); if(error) throw error; return data; }
+export async function listCommitteeEvents(committeeId){ ensure(); const q=supabase.from('mz_committee_events').select('*').order('starts_at'); const {data,error}=committeeId?await q.eq('committee_id',committeeId):await q.eq('publish_home',true); if(error) throw error; return data||[]; }

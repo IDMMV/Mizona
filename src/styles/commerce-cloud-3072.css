@@ -1,0 +1,19 @@
+/* 30.72 — Estado visual de sincronización Marketplace + Business */
+.commerceCloudBadge,
+.commerceSyncButton{
+  display:inline-flex;align-items:center;gap:7px;width:max-content;
+  min-height:34px;padding:7px 11px;border-radius:999px;
+  border:1px solid #d7e2ee;background:#fff;color:#52657b;
+  font-size:12px;font-weight:850;box-shadow:0 4px 14px rgba(15,23,42,.05)
+}
+.commerceCloudBadge.cloud,.commerceSyncButton.cloud{background:#e9f8f1;color:#087451;border-color:#bfe7d7}
+.commerceCloudBadge.loading,.commerceSyncButton.loading{background:#eef4ff;color:#2457a7;border-color:#cfe0ff}
+.commerceCloudBadge.fallback,.commerceCloudBadge.local,.commerceSyncButton.fallback,.commerceSyncButton.local{background:#fff7e6;color:#8b5a00;border-color:#f2daa2}
+.commerceSyncButton{cursor:pointer}
+.commerceSyncButton:disabled{opacity:.6;cursor:not-allowed}
+.businessRoleStrip{flex-wrap:wrap}
+.businessRoleStrip .commerceSyncButton{margin-left:auto}
+@media(max-width:760px){
+  .commerceCloudBadge{margin-top:8px}
+  .businessRoleStrip .commerceSyncButton{width:100%;justify-content:center;margin-left:0}
+}

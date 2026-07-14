@@ -1,0 +1,20 @@
+MiZona Enterprise V8 – Etapa 30.66
+
+Nueva fase: ubicación tipo WhatsApp dentro de MiZona Chat.
+
+Incluye:
+- Solicitud previa de permiso de ubicación.
+- Mapa interactivo con OpenStreetMap.
+- Búsqueda de lugares y direcciones.
+- Carga de lugares cercanos.
+- Envío de ubicación actual con dirección y precisión.
+- Selección y envío de un lugar buscado o cercano.
+- Ubicación en tiempo real por 15 minutos, 1 hora u 8 horas.
+- Botón para detener la ubicación en vivo.
+- Tarjeta de ubicación con mapa, dirección, Abrir mapa, Cómo llegar y WhatsApp.
+- Agrupación de actualizaciones en vivo para evitar tarjetas repetidas.
+
+Requisitos:
+- Publicar mediante HTTPS.
+- Permitir ubicación en el navegador o celular.
+- La búsqueda de lugares requiere conexión a internet.

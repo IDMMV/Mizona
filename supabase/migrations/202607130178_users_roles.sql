@@ -1,0 +1,11 @@
+create table if not exists public.mz_user_profiles(user_id uuid primary key references auth.users(id) on delete cascade, display_name text, avatar_url text, phrase text, phone text, zone_id text, account_status text not null default 'active', metadata jsonb not null default '{}'::jsonb, created_at timestamptz not null default now(), updated_at timestamptz not null default now());
+create table if not exists public.mz_roles(id uuid primary key default gen_random_uuid(), code text unique not null, name text not null, description text, is_system boolean not null default false);
+create table if not exists public.mz_role_permissions(role_id uuid not null references public.mz_roles(id) on delete cascade, module text not null, can_view boolean not null default false, can_create boolean not null default false, can_edit boolean not null default false, can_delete boolean not null default false, primary key(role_id,module));
+create table if not exists public.mz_user_roles(user_id uuid not null references auth.users(id) on delete cascade, role_id uuid not null references public.mz_roles(id) on delete cascade, scope_type text not null default 'global', scope_id text not null default '*', assigned_at timestamptz not null default now(), assigned_by uuid references auth.users(id), primary key(user_id,role_id,scope_type,scope_id));
+alter table public.mz_user_profiles enable row level security; alter table public.mz_roles enable row level security; alter table public.mz_role_permissions enable row level security; alter table public.mz_user_roles enable row level security;
+create policy "profile public read" on public.mz_user_profiles for select using(true);
+create policy "own profile write" on public.mz_user_profiles for all using(user_id=auth.uid()) with check(user_id=auth.uid());
+create policy "roles authenticated read" on public.mz_roles for select to authenticated using(true);
+create policy "permissions authenticated read" on public.mz_role_permissions for select to authenticated using(true);
+create policy "own roles read" on public.mz_user_roles for select using(user_id=auth.uid());
+insert into public.mz_roles(code,name,is_system) values ('admin','Administrador',true),('resident','Residente',true),('business_owner','Propietario de negocio',true),('committee_member','Miembro de comité',true) on conflict(code) do nothing;

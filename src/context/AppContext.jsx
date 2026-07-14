@@ -215,6 +215,11 @@ export function AppProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    if (!cloudActive) return undefined;
+    return startAutomaticCloudSync({ intervalMs: 45000 });
+  }, [cloudActive]);
+
+  useEffect(() => {
     const onOnline = () => setOnline(true);
     const onOffline = () => setOnline(false);
     window.addEventListener('online', onOnline);

@@ -1,0 +1,2 @@
+@media(max-width:980px){.page,.content{content-visibility:auto;contain-intrinsic-size:900px}.card,.panelCard{contain:layout paint}.sidebar{will-change:transform}.chatMessages{overscroll-behavior:contain}}
+img[loading="lazy"]{content-visibility:auto} @media(prefers-reduced-data:reduce){video[autoplay]{display:none}}
