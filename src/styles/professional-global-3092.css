@@ -1,0 +1,85 @@
+/* ETAPA 30.92 — contraste profesional uniforme en todas las páginas excepto Chat */
+:root{
+  --mz92-bg:#f4f7fb;--mz92-card:#fff;--mz92-soft:#f8fafc;--mz92-line:#dbe4ef;
+  --mz92-text:#10213d;--mz92-sub:#60718a;--mz92-blue:#1267d8;--mz92-blue2:#0d58ba;
+  --mz92-navy:#08264a;--mz92-success:#188754;--mz92-warning:#d98200;--mz92-danger:#dc3d4b;
+}
+.app:not(.page-chat),.app:not(.page-chat) .content,.app:not(.page-chat) .page,.app:not(.page-chat) .pageStack{background:var(--mz92-bg)!important;color:var(--mz92-text)!important}
+.app:not(.page-chat) h1,.app:not(.page-chat) h2,.app:not(.page-chat) h3,.app:not(.page-chat) h4,.app:not(.page-chat) h5,.app:not(.page-chat) h6,.app:not(.page-chat) b,.app:not(.page-chat) strong{color:var(--mz92-text)!important}
+.app:not(.page-chat) p,.app:not(.page-chat) small,.app:not(.page-chat) label,.app:not(.page-chat) .muted{color:var(--mz92-sub)!important}
+
+/* Neutraliza superficies oscuras heredadas */
+.app:not(.page-chat) :is(.hero,.pageHero,.marketHero,.mkCTopHero,.mkCBanner,.businessHero,.campusHero,.rideHero,.benefitsHero,.committeeHero,.financeHero,.smartHero,.panelHero,.sectionHero){
+  background:var(--mz92-card)!important;color:var(--mz92-text)!important;border:1px solid var(--mz92-line)!important;box-shadow:0 5px 18px rgba(33,65,105,.06)!important
+}
+.app:not(.page-chat) :is(.hero,.pageHero,.marketHero,.mkCTopHero,.mkCBanner,.businessHero,.campusHero,.rideHero,.benefitsHero,.committeeHero,.financeHero,.smartHero,.panelHero,.sectionHero) :is(h1,h2,h3,h4,b,strong){color:var(--mz92-text)!important}
+.app:not(.page-chat) :is(.hero,.pageHero,.marketHero,.mkCTopHero,.mkCBanner,.businessHero,.campusHero,.rideHero,.benefitsHero,.committeeHero,.financeHero,.smartHero,.panelHero,.sectionHero) :is(p,small,span:not(.badge):not(.chip)){color:var(--mz92-sub)!important}
+
+/* Marketplace exacto */
+.app.page-marketplace .marketplaceC23{color:var(--mz92-text)!important}
+.app.page-marketplace .mkCTopHero{padding:22px!important;border-radius:22px!important}
+.app.page-marketplace .mkCHeroHead h1{color:var(--mz92-text)!important}
+.app.page-marketplace .mkCHeroHead p{color:var(--mz92-sub)!important}
+.app.page-marketplace .mkCHeroHead>button{background:#169c66!important;color:#fff!important;border:1px solid #169c66!important;box-shadow:none!important}
+.app.page-marketplace .mkCSearch{background:#fff!important;border:1px solid var(--mz92-line)!important;color:var(--mz92-sub)!important}
+.app.page-marketplace .mkCLocation{background:var(--mz92-blue)!important;color:#fff!important;border:1px solid var(--mz92-blue)!important}
+.app.page-marketplace .mkCLocation *{color:#fff!important}
+.app.page-marketplace .mkCModeTabs{background:#fff!important;border:1px solid var(--mz92-line)!important;border-radius:14px!important;padding:0!important;gap:0!important}
+.app.page-marketplace .mkCModeTabs button{background:#fff!important;color:var(--mz92-sub)!important;border:0!important;border-right:1px solid var(--mz92-line)!important;border-radius:0!important;box-shadow:none!important}
+.app.page-marketplace .mkCModeTabs button:first-child{border-radius:13px 0 0 13px!important}
+.app.page-marketplace .mkCModeTabs button.active{background:var(--mz92-blue)!important;color:#fff!important}
+.app.page-marketplace .mkCModeTabs button.active *{color:#fff!important}
+.app.page-marketplace .mkCBanner{margin:18px 0!important;border-radius:22px!important}
+.app.page-marketplace .mkCBanner h2{color:var(--mz92-text)!important}
+.app.page-marketplace .mkCBanner p{color:var(--mz92-sub)!important}
+.app.page-marketplace .mkCBanner button{background:var(--mz92-blue)!important;color:#fff!important;border:1px solid var(--mz92-blue)!important;box-shadow:none!important}
+.app.page-marketplace .mkCBannerGift{background:#eaf2ff!important;color:var(--mz92-navy)!important;border:0!important}
+.app.page-marketplace .mkCCategoryChips,.app.page-marketplace .mkCBottomNav{background:#fff!important;border:1px solid var(--mz92-line)!important;box-shadow:none!important}
+.app.page-marketplace .mkCCategoryChips{padding:12px!important;border-radius:16px!important}
+.app.page-marketplace .mkCCategoryChips button{background:#fff!important;color:var(--mz92-text)!important;border:1px solid #e5ebf3!important;box-shadow:none!important}
+.app.page-marketplace .mkCCategoryChips button.active{background:#eaf2ff!important;color:var(--mz92-blue)!important;border-color:#bfd4f4!important}
+.app.page-marketplace .mkCBottomNav button.active{background:#eef4ff!important;color:var(--mz92-blue)!important}
+
+/* Todas las tarjetas */
+.app:not(.page-chat) :is(.card,.panel,.sectionCard,.contentCard,.dashboardCard,.metricCard,.moduleCard,.formCard,.tableWrap,.settingsCard,.mkCProductCard,.mkCBusinessCard,.mkCPromoCard,.businessCard,.committeeCard,.campusCard,.benefitCard,.rideCard,.financeCard){
+  background:#fff!important;color:var(--mz92-text)!important;border:1px solid var(--mz92-line)!important;box-shadow:0 4px 14px rgba(33,65,105,.05)!important
+}
+.app:not(.page-chat) :is(.card,.panel,.sectionCard,.contentCard,.dashboardCard,.metricCard,.moduleCard,.formCard,.tableWrap,.settingsCard,.mkCProductCard,.mkCBusinessCard,.mkCPromoCard,.businessCard,.committeeCard,.campusCard,.benefitCard,.rideCard,.financeCard) :is(h1,h2,h3,h4,b,strong){color:var(--mz92-text)!important}
+.app:not(.page-chat) :is(.card,.panel,.sectionCard,.contentCard,.dashboardCard,.metricCard,.moduleCard,.formCard,.tableWrap,.settingsCard,.mkCProductCard,.mkCBusinessCard,.mkCPromoCard,.businessCard,.committeeCard,.campusCard,.benefitCard,.rideCard,.financeCard) :is(p,small,span:not(.badge):not(.chip):not(.status)){color:var(--mz92-sub)!important}
+
+/* Botones planos coherentes */
+.app:not(.page-chat) button,.app:not(.page-chat) .btn,.app:not(.page-chat) .button{box-shadow:none!important}
+.app:not(.page-chat) :is(button.primary,.primary,.btnPrimary,button[type=submit]){background:var(--mz92-blue)!important;color:#fff!important;border-color:var(--mz92-blue)!important}
+.app:not(.page-chat) :is(button.primary,.primary,.btnPrimary,button[type=submit]) *{color:#fff!important}
+.app:not(.page-chat) :is(button.secondary,.secondary,.btnSecondary,button.ghost,.ghost){background:#fff!important;color:var(--mz92-text)!important;border:1px solid var(--mz92-line)!important}
+
+/* Formularios y tablas */
+.app:not(.page-chat) :is(input,textarea,select){background:#fff!important;color:var(--mz92-text)!important;border:1px solid var(--mz92-line)!important;box-shadow:none!important}
+.app:not(.page-chat) :is(input,textarea)::placeholder{color:#93a1b5!important}
+.app:not(.page-chat) table{background:#fff!important;color:var(--mz92-text)!important}
+.app:not(.page-chat) thead,.app:not(.page-chat) th{background:#f4f7fb!important;color:#50627b!important;border-color:var(--mz92-line)!important}
+.app:not(.page-chat) td{color:var(--mz92-text)!important;border-color:var(--mz92-line)!important}
+.app:not(.page-chat) tbody tr:hover{background:#f8fafc!important}
+
+/* Tabs/chips */
+.app:not(.page-chat) :is(.tabs,.tabBar,.segmented){background:#fff!important;border:1px solid var(--mz92-line)!important}
+.app:not(.page-chat) :is(.tab,.tabs button,.tabBar button){background:#fff!important;color:var(--mz92-sub)!important;border-color:var(--mz92-line)!important}
+.app:not(.page-chat) :is(.tab.active,.tabs button.active,.tabBar button.active){background:#eaf2ff!important;color:var(--mz92-blue)!important;border-color:#bcd3f3!important}
+
+/* Modales */
+.app:not(.page-chat) :is(.modal,.dialog,.drawer,.popover,.dropdownMenu){background:#fff!important;color:var(--mz92-text)!important;border:1px solid var(--mz92-line)!important;box-shadow:0 18px 50px rgba(15,35,65,.16)!important}
+
+/* Estados: verde solo en estado */
+.app:not(.page-chat) :is(.statusSuccess,.badge.success,.chip.success,.status.active,.status.completed){background:#eaf8f1!important;color:var(--mz92-success)!important;border-color:#bde7cf!important}
+.app:not(.page-chat) :is(.statusWarning,.badge.warning){background:#fff6e7!important;color:var(--mz92-warning)!important;border-color:#f1d5a4!important}
+.app:not(.page-chat) :is(.statusDanger,.badge.danger){background:#fff0f1!important;color:var(--mz92-danger)!important;border-color:#f3c1c7!important}
+
+/* Evita texto azul marino sobre fondos azules residuales */
+.app:not(.page-chat) [style*="background"]:not(.sidebar):not(.navItem):not(.chatRealPage){text-shadow:none!important}
+.app:not(.page-chat) .sidebar h1,.app:not(.page-chat) .sidebar h2,.app:not(.page-chat) .sidebar h3,.app:not(.page-chat) .sidebar b,.app:not(.page-chat) .sidebar strong{color:#fff!important}
+
+@media(max-width:900px){
+  .app.page-marketplace .mkCSearchRow{grid-template-columns:1fr!important}
+  .app.page-marketplace .mkCLocation{min-height:46px!important;justify-content:center!important}
+  .app:not(.page-chat) :is(.hero,.pageHero,.marketHero,.mkCTopHero,.mkCBanner,.businessHero,.campusHero,.rideHero,.benefitsHero,.committeeHero,.financeHero,.smartHero){border-radius:18px!important}
+}

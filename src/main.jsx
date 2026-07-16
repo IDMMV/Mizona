@@ -1,14 +1,17 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-/* Estructura y layout (sin decisiones de color propias) */
 import './styles/app.css';
+import './styles/theme-dark-mockup.css';
 import './styles/unified-design-3052.css';
 import './styles/web-global-3053.css';
 import './styles/design-system-3054.css';
+import './styles/color-unification-3058.css';
 import './styles/precision-layout-3059.css';
 import './styles/qa-final-3060.css';
+import './styles/palette-unified-3061.css';
 import './styles/chat-desktop-web-3063.css';
 import './styles/chat-finetune-3064.css';
+import './styles/chat-contrast-fix-3065.css';
 import './styles/location-picker-3066.css';
 import './styles/android-readiness-3068.css';
 import './styles/mobile-performance-3082.css';
@@ -16,9 +19,11 @@ import './styles/android-center-3069.css';
 import './styles/commerce-cloud-3072.css';
 import './styles/business-operations-3073.css';
 import './styles/ride-cloud-3074.css';
+import './styles/light-unified-3088.css';
+import './styles/global-clean-3091.css';
+import './styles/professional-global-3092.css';
+import './styles/chat-amber-dark-3089.css';
 import './styles/chat-electrica-3090.css';
-/* Único archivo de color: siempre se importa al final */
-import './styles/theme-mizona.css';
 import { APP_VERSION } from './version.js';
 
 const rootElement = document.getElementById('root');
