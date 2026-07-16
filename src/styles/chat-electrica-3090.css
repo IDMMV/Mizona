@@ -1,0 +1,527 @@
+/* =========================================================
+   ETAPA 30.90 — MiZona Chat Dark Gold Corregido
+   Corrige visualmente el chat para que se parezca al formato
+   mostrado en la vista previa aprobada por el usuario.
+   ========================================================= */
+
+.chatRealPage{
+  --chat-3090-bg:#090f18;
+  --chat-3090-panel:#121a26;
+  --chat-3090-panel-2:#161f2d;
+  --chat-3090-panel-3:#1a2433;
+  --chat-3090-border:#243042;
+  --chat-3090-text:#f8fafc;
+  --chat-3090-sub:#97a3b6;
+  --chat-3090-accent:#f2b318;
+  --chat-3090-accent-2:#ffca36;
+  --chat-3090-accent-soft:rgba(242,179,24,.14);
+  --chat-3090-blue:#3b82f6;
+  --chat-3090-green:#22c55e;
+  --chat-3090-danger:#ef4444;
+  padding:0!important;
+  gap:10px!important;
+  color:var(--chat-3090-text)!important;
+  background:transparent!important;
+}
+
+body.mizona-chat-app .content,
+body.mizona-chat-fullscreen .content,
+body.mizona-chat-immersive .content{
+  background:#0a1019!important;
+}
+
+.chatRealPage .chatPageHeader,
+.chatRealPage .chatSafetyGrid{
+  display:none!important;
+}
+
+.chatRealPage .chatNotice,
+.chatRealPage .chatLocalModeNotice{
+  margin:0 10px!important;
+}
+.chatRealPage .chatNotice{
+  background:#101826!important;
+  color:var(--chat-3090-text)!important;
+  border:1px solid var(--chat-3090-border)!important;
+}
+.chatRealPage .chatNotice.success{color:#d7ffe4!important;border-color:rgba(34,197,94,.25)!important;background:rgba(34,197,94,.10)!important}
+.chatRealPage .chatNotice.danger{color:#ffe0e0!important;border-color:rgba(239,68,68,.25)!important;background:rgba(239,68,68,.10)!important}
+
+.chatRealPage .chatWorkspace{
+  grid-template-columns:300px minmax(0,1fr)!important;
+  min-height:calc(100vh - 110px)!important;
+  height:calc(100vh - 110px)!important;
+  background:var(--chat-3090-bg)!important;
+  border:1px solid var(--chat-3090-border)!important;
+  border-radius:20px!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+
+.chatRealPage .chatDirectory,
+.chatRealPage .chatDirectoryTop,
+.chatRealPage .conversationList,
+.chatRealPage .contactListReal,
+.chatRealPage .requestListReal,
+.chatRealPage .chatConversation,
+.chatRealPage .conversationHeader,
+.chatRealPage .messageComposer,
+.chatRealPage .retentionBanner,
+.chatRealPage .emptyConversation,
+.chatRealPage .noConversationSelected{
+  background:var(--chat-3090-bg)!important;
+  color:var(--chat-3090-text)!important;
+}
+
+.chatRealPage .chatDirectory{
+  background:var(--chat-3090-panel)!important;
+  border-right:1px solid var(--chat-3090-border)!important;
+}
+
+.chatRealPage .chatDirectoryTop{
+  background:linear-gradient(180deg,#151d2a 0%, #121a26 100%)!important;
+  border-bottom:1px solid var(--chat-3090-border)!important;
+}
+
+.chatRealPage .chatDirectoryHeaderBar{
+  padding:16px 16px 10px!important;
+  align-items:flex-start!important;
+}
+.chatRealPage .chatDirectoryHeaderBar b,
+.chatRealPage .chatDirectoryHeaderBar strong,
+.chatRealPage .chatDirectoryHeaderBar h2,
+.chatRealPage .chatDirectoryHeaderBar h3{
+  color:#fff!important;
+  font-size:1.15rem!important;
+}
+.chatRealPage .chatDirectoryHeaderBar span{
+  color:var(--chat-3090-sub)!important;
+}
+
+.chatRealPage .chatDirectoryHeaderActions{
+  gap:8px!important;
+}
+.chatRealPage .chatSettingsBtn,
+.chatRealPage .chatCreateBtn,
+.chatRealPage .chatExitBtn,
+.chatRealPage .chatBack,
+.chatRealPage .chatViewListBtn,
+.chatRealPage .chatFullscreenToggle,
+.chatRealPage .conversationHeader .iconBtn,
+.chatRealPage .messageComposer .iconBtn,
+.chatRealPage .chatModal .iconBtn{
+  background:#1b2533!important;
+  color:#dbe2ea!important;
+  border:1px solid var(--chat-3090-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatSettingsBtn:hover,
+.chatRealPage .chatCreateBtn:hover,
+.chatRealPage .chatExitBtn:hover,
+.chatRealPage .chatBack:hover,
+.chatRealPage .chatViewListBtn:hover,
+.chatRealPage .chatFullscreenToggle:hover,
+.chatRealPage .conversationHeader .iconBtn:hover,
+.chatRealPage .messageComposer .iconBtn:hover,
+.chatRealPage .chatModal .iconBtn:hover{
+  color:var(--chat-3090-accent)!important;
+  border-color:rgba(242,179,24,.45)!important;
+  background:#202b3a!important;
+}
+
+.chatRealPage .chatExitBtn{background:#242c39!important}
+
+.chatRealPage .chatSearchBar,
+.chatRealPage .locationSearch3066,
+.chatRealPage .exactUserSearch{
+  background:var(--chat-3090-panel-2)!important;
+  border:1px solid var(--chat-3090-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatSearchBar{
+  margin:0 14px 12px!important;
+  border-radius:14px!important;
+  padding:8px 10px!important;
+}
+.chatRealPage .chatSearchBar svg,
+.chatRealPage .locationSearch3066 svg,
+.chatRealPage .exactUserSearch svg{color:#9cabbe!important}
+.chatRealPage .chatSearchBar input,
+.chatRealPage .locationSearch3066 input,
+.chatRealPage .exactUserSearch input,
+.chatRealPage .messageComposer>input:not([type=file]),
+.chatRealPage .messageComposer textarea,
+.chatRealPage .chatModal input,
+.chatRealPage .chatModal textarea,
+.chatRealPage .chatModal select{
+  background:transparent!important;
+  color:#f8fafc!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatSearchBar input::placeholder,
+.chatRealPage .locationSearch3066 input::placeholder,
+.chatRealPage .exactUserSearch input::placeholder,
+.chatRealPage .messageComposer>input:not([type=file])::placeholder,
+.chatRealPage .messageComposer textarea::placeholder,
+.chatRealPage .chatModal input::placeholder,
+.chatRealPage .chatModal textarea::placeholder{color:#748399!important}
+
+.chatRealPage .chatFilterPanel,
+.chatRealPage .chatFilterSummary{
+  background:transparent!important;
+  color:var(--chat-3090-sub)!important;
+  border:0!important;
+}
+.chatRealPage .chatFilterPanel button,
+.chatRealPage .chatFilterSummary button{
+  background:#1a2331!important;
+  border:1px solid var(--chat-3090-border)!important;
+  color:var(--chat-3090-sub)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatFilterPanel button.active{
+  background:var(--chat-3090-accent-soft)!important;
+  color:var(--chat-3090-accent-2)!important;
+  border-color:rgba(242,179,24,.45)!important;
+}
+
+.chatRealPage .chatTabs{
+  grid-template-columns:repeat(4,1fr)!important;
+  background:#121a26!important;
+  border-bottom:1px solid var(--chat-3090-border)!important;
+  padding:10px 12px 12px!important;
+  gap:8px!important;
+}
+.chatRealPage .chatTabs button{
+  background:#1a2331!important;
+  color:var(--chat-3090-sub)!important;
+  border:1px solid var(--chat-3090-border)!important;
+  box-shadow:none!important;
+  border-radius:12px!important;
+  min-height:40px!important;
+}
+.chatRealPage .chatTabs button:hover,
+.chatRealPage .chatTabs button.active{
+  background:rgba(242,179,24,.12)!important;
+  color:#ffd166!important;
+  border-color:rgba(242,179,24,.35)!important;
+}
+.chatRealPage .chatTabs button i{
+  background:var(--chat-3090-danger)!important;
+  color:#fff!important;
+}
+
+.chatRealPage .conversationList,
+.chatRealPage .contactListReal,
+.chatRealPage .requestListReal{
+  padding:8px 0!important;
+  background:#121a26!important;
+}
+.chatRealPage .conversationList>button,
+.chatRealPage .contactListReal article,
+.chatRealPage .requestListReal article{
+  width:calc(100% - 16px)!important;
+  margin:0 8px 8px!important;
+  border-radius:14px!important;
+  border:1px solid transparent!important;
+  background:#141d2a!important;
+  color:var(--chat-3090-text)!important;
+  padding:12px!important;
+}
+.chatRealPage .conversationList>button:hover,
+.chatRealPage .contactListReal article:hover,
+.chatRealPage .requestListReal article:hover{
+  background:#182230!important;
+}
+.chatRealPage .conversationList>button.active{
+  background:linear-gradient(90deg,rgba(242,179,24,.18) 0%, rgba(242,179,24,.06) 100%)!important;
+  border-color:rgba(242,179,24,.38)!important;
+}
+.chatRealPage .conversationList>button b,
+.chatRealPage .contactListReal article b,
+.chatRealPage .requestListReal article b{color:#fff!important;font-weight:800!important}
+.chatRealPage .conversationList>button small,
+.chatRealPage .contactListReal article small,
+.chatRealPage .contactListReal article span,
+.chatRealPage .requestListReal article small,
+.chatRealPage .requestListReal article span,
+.chatRealPage .conversationList>button em{color:var(--chat-3090-sub)!important}
+.chatRealPage .conversationList>button>em i{
+  background:var(--chat-3090-accent)!important;
+  color:#241700!important;
+}
+
+.chatRealPage .chatAvatar{
+  background:linear-gradient(145deg,#3b82f6,#60a5fa)!important;
+  color:#f8fafc!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .conversationList>button.active .chatAvatar,
+.chatRealPage .conversationHeader .chatAvatar{
+  background:linear-gradient(145deg,#ffd35c,#f2b318)!important;
+  color:#241700!important;
+}
+
+.chatRealPage .conversationHeader{
+  background:linear-gradient(180deg,#121a26 0%, #111925 100%)!important;
+  border-bottom:1px solid var(--chat-3090-border)!important;
+  height:72px!important;
+  padding:12px 14px!important;
+}
+.chatRealPage .conversationHeader>div:nth-child(3)>b{color:#fff!important;font-size:1.05rem!important}
+.chatRealPage .conversationHeader>div:nth-child(3)>span{color:#59d27d!important}
+
+.chatRealPage .retentionBanner{
+  background:#101826!important;
+  color:var(--chat-3090-sub)!important;
+  border-bottom:1px solid var(--chat-3090-border)!important;
+}
+
+.chatRealPage .messageStream{
+  background-color:#0a1019!important;
+  background-image:radial-gradient(circle at 15% 15%, rgba(242,179,24,.04), transparent 0 22%), radial-gradient(circle at 85% 0%, rgba(59,130,246,.06), transparent 0 24%)!important;
+  padding:18px!important;
+  gap:12px!important;
+}
+.chatRealPage .chatDateSeparator,
+.chatRealPage .dateSeparator{color:#77859a!important}
+.chatRealPage .chatDateSeparator::before,
+.chatRealPage .chatDateSeparator::after,
+.chatRealPage .dateSeparator::before,
+.chatRealPage .dateSeparator::after{background:rgba(119,133,154,.20)!important}
+
+.chatRealPage .messageBubble{
+  background:#1a2331!important;
+  color:#f8fafc!important;
+  border:1px solid #273447!important;
+  border-radius:16px 16px 16px 5px!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageBubble>b{color:#8fc0ff!important}
+.chatRealPage .messageBubble>small{color:#8ea0b5!important}
+.chatRealPage .messageRow.own .messageBubble{
+  background:linear-gradient(135deg,#f7c438 0%, #f2b318 100%)!important;
+  color:#251700!important;
+  border:1px solid rgba(255,210,102,.65)!important;
+  border-radius:16px 16px 5px 16px!important;
+}
+.chatRealPage .messageRow.own .messageBubble>b,
+.chatRealPage .messageRow.own .messageBubble p,
+.chatRealPage .messageRow.own .messageBubble span,
+.chatRealPage .messageRow.own .messageBubble a,
+.chatRealPage .messageRow.own .messageBubble small{color:#251700!important}
+.chatRealPage .messageReport{color:#8ea0b5!important}
+
+.chatRealPage .attachmentCard,
+.chatRealPage .structuredCard,
+.chatRealPage .locationMessageCard,
+.chatRealPage .contactMessageCard,
+.chatRealPage .pollMessageCard,
+.chatRealPage .eventMessageCard,
+.chatRealPage .orderMessageCard,
+.chatRealPage .catalogMessageCard,
+.chatRealPage .fileAttachmentCard,
+.chatRealPage .documentAttachmentCard,
+.chatRealPage .audioAttachmentCard{
+  background:#121b28!important;
+  border:1px solid #2b394d!important;
+  color:#f8fafc!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageRow.own .attachmentCard,
+.chatRealPage .messageRow.own .structuredCard,
+.chatRealPage .messageRow.own .locationMessageCard,
+.chatRealPage .messageRow.own .contactMessageCard,
+.chatRealPage .messageRow.own .pollMessageCard,
+.chatRealPage .messageRow.own .eventMessageCard,
+.chatRealPage .messageRow.own .orderMessageCard,
+.chatRealPage .messageRow.own .catalogMessageCard,
+.chatRealPage .messageRow.own .fileAttachmentCard,
+.chatRealPage .messageRow.own .documentAttachmentCard,
+.chatRealPage .messageRow.own .audioAttachmentCard{
+  background:rgba(255,255,255,.18)!important;
+  border:1px solid rgba(37,23,0,.16)!important;
+  color:#241700!important;
+}
+.chatRealPage .structuredHead b,
+.chatRealPage .attachmentCard b{color:inherit!important}
+.chatRealPage .structuredHead span,
+.chatRealPage .attachmentCard small,
+.chatRealPage .structuredCard small,
+.chatRealPage .structuredCard p{color:inherit!important;opacity:.92}
+.chatRealPage .structuredActions,
+.chatRealPage .formActions{gap:8px!important}
+.chatRealPage .structuredActions button,
+.chatRealPage .structuredActions a,
+.chatRealPage .formActions button,
+.chatRealPage .chatModal button:not(.iconBtn):not(.themeColorDot):not(.themeWallpaper),
+.chatRealPage .foundContactCard>button,
+.chatRealPage .chatDirectoryEmpty button,
+.chatRealPage .noConversationSelected button,
+.chatRealPage .currentLocationRow3066,
+.chatRealPage .selectedPlaceBar3066 button,
+.chatRealPage .durationGrid button{
+  background:#1d2736!important;
+  color:#f8fafc!important;
+  border:1px solid var(--chat-3090-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .structuredActions button:first-child,
+.chatRealPage .formActions button:not(.secondary):last-child,
+.chatRealPage .chatModal .formActions button:not(.secondary):last-child,
+.chatRealPage .selectedPlaceBar3066 button,
+.chatRealPage .currentLocationRow3066.active,
+.chatRealPage .durationGrid button:hover{
+  background:var(--chat-3090-accent)!important;
+  color:#241700!important;
+  border-color:rgba(242,179,24,.6)!important;
+}
+.chatRealPage .structuredActions .secondary,
+.chatRealPage .formActions .secondary,
+.chatRealPage .chatModal button.secondary{background:#1d2736!important;color:#dbe2ea!important}
+.chatRealPage .structuredActions .danger,
+.chatRealPage .chatModal button.danger{background:rgba(239,68,68,.12)!important;color:#ffdada!important;border-color:rgba(239,68,68,.30)!important}
+
+.chatRealPage .messageComposer{
+  grid-template-columns:auto minmax(0,1fr) auto auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  background:#121a26!important;
+  border-top:1px solid var(--chat-3090-border)!important;
+  padding:12px!important;
+}
+.chatRealPage .messageComposer>input:not([type=file]),
+.chatRealPage .messageComposer textarea{
+  background:#161f2d!important;
+  border:1px solid var(--chat-3090-border)!important;
+  border-radius:18px!important;
+  min-height:46px!important;
+  padding:0 16px!important;
+}
+.chatRealPage .messageComposer>button,
+.chatRealPage .messageComposer .iconBtn{
+  width:44px!important;
+  height:44px!important;
+  border-radius:14px!important;
+}
+.chatRealPage .messageComposer .sendBtnChat40,
+.chatRealPage .messageComposer>button:last-child{
+  background:var(--chat-3090-accent)!important;
+  color:#241700!important;
+  border:1px solid rgba(242,179,24,.75)!important;
+  border-radius:50%!important;
+}
+.chatRealPage .messageComposer .sendBtnChat40:hover,
+.chatRealPage .messageComposer>button:last-child:hover{background:#ffca36!important}
+
+.chatRealPage .emptyConversation,
+.chatRealPage .noConversationSelected{
+  background:#0a1019!important;
+}
+.chatRealPage .emptyConversation h3,
+.chatRealPage .noConversationSelected h2{color:#fff!important}
+.chatRealPage .emptyConversation p,
+.chatRealPage .noConversationSelected p{color:var(--chat-3090-sub)!important}
+
+.chatRealPage .chatModalBackdrop{
+  background:rgba(5,10,17,.76)!important;
+}
+.chatRealPage .chatModal,
+.chatRealPage .themePanel,
+.chatRealPage .chatSettingsPanel,
+.chatRealPage .pollPanel,
+.chatRealPage .eventPanel,
+.chatRealPage .locationPanel,
+.chatRealPage .quickReplyPanel,
+.chatRealPage .compactActionForm{
+  background:#111925!important;
+  color:#f8fafc!important;
+  border:1px solid var(--chat-3090-border)!important;
+  border-radius:22px!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatModalHeader{
+  align-items:flex-start!important;
+}
+.chatRealPage .chatModalHeader span{color:#f2b318!important}
+.chatRealPage .chatModalHeader h2,
+.chatRealPage .chatModal h3,
+.chatRealPage .chatModal b,
+.chatRealPage .settingsBlock h3{color:#fff!important}
+.chatRealPage .chatModal p,
+.chatRealPage .chatModal label,
+.chatRealPage .chatModal small,
+.chatRealPage .settingsBlock span,
+.chatRealPage .settingsProfileCard label{color:var(--chat-3090-sub)!important}
+.chatRealPage .chatModal input,
+.chatRealPage .chatModal textarea,
+.chatRealPage .chatModal select,
+.chatRealPage .themeWallpaper,
+.chatRealPage .themeWallpaper.upload,
+.chatRealPage .settingsBlock button,
+.chatRealPage .settingsProfileCard,
+.chatRealPage .themeSection,
+.chatRealPage .locationPermissionCard,
+.chatRealPage .liveLocationOption3066,
+.chatRealPage .selectedPlaceBar3066,
+.chatRealPage .currentLocationRow3066,
+.chatRealPage .locationPlaces3066 button,
+.chatRealPage .pollOptionRow input{
+  background:#161f2d!important;
+  border:1px solid var(--chat-3090-border)!important;
+  color:#f8fafc!important;
+  box-shadow:none!important;
+}
+.chatRealPage .themeWallpaper span{background:rgba(10,16,25,.88)!important;color:#fff!important}
+.chatRealPage .themeColorDot{border:2px solid #1e2837!important;box-shadow:none!important}
+.chatRealPage .themeColorDot.active{outline:2px solid #ffd166!important;outline-offset:2px!important}
+.chatRealPage .settingsAvatar{background:#161f2d!important;border:1px solid var(--chat-3090-border)!important}
+.chatRealPage .chevRight{transform:rotate(180deg)!important}
+
+.chatRealPage .locationMap3066,
+.chatRealPage .locationMapFrame{border:1px solid var(--chat-3090-border)!important;border-radius:16px!important;overflow:hidden!important}
+.chatRealPage .locationSectionTitle3066{color:#dce4ee!important}
+.chatRealPage .locationRoundIcon3066,
+.chatRealPage .recenterMap3066,
+.chatRealPage .mapBadge,
+.chatRealPage .liveMapBadge{
+  background:#1b2533!important;
+  color:#f8fafc!important;
+  border:1px solid var(--chat-3090-border)!important;
+}
+.chatRealPage .liveMapBadge{background:rgba(34,197,94,.15)!important;color:#8af0af!important;border-color:rgba(34,197,94,.35)!important}
+.chatRealPage .stopLive3066{background:rgba(239,68,68,.12)!important;color:#ffdada!important;border-color:rgba(239,68,68,.30)!important}
+
+.chatRealPage .orderStatus.pendiente{background:rgba(242,179,24,.18)!important;color:#ffd166!important}
+.chatRealPage .orderStatus.confirmado,
+.chatRealPage .orderStatus.preparando,
+.chatRealPage .orderStatus.entregado{background:rgba(34,197,94,.16)!important;color:#8af0af!important}
+
+@media (max-width:980px){
+  .chatRealPage .chatWorkspace{
+    grid-template-columns:1fr!important;
+    height:calc(100dvh - 84px)!important;
+    min-height:calc(100dvh - 84px)!important;
+    border-radius:0!important;
+  }
+  .chatRealPage.mobileChatListMode .chatConversation{display:none!important}
+}
+
+@media (max-width:760px){
+  .chatRealPage{
+    gap:6px!important;
+  }
+  .chatRealPage .chatNotice,
+  .chatRealPage .chatLocalModeNotice{margin:0 0!important}
+  .chatRealPage .chatWorkspace{
+    height:calc(100dvh - 72px)!important;
+    min-height:calc(100dvh - 72px)!important;
+  }
+  .chatRealPage .messageStream{padding:14px!important}
+  .chatRealPage .messageComposer{padding:10px!important;gap:8px!important}
+  .chatRealPage .chatDirectoryHeaderActions{flex-wrap:wrap!important;justify-content:flex-end!important}
+  .chatRealPage .chatTabs{grid-template-columns:repeat(2,1fr)!important}
+}

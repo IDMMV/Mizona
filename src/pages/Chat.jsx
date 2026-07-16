@@ -111,22 +111,22 @@ const formatBytes = value => {
 const initials = value => String(value || 'U').split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
 
 const CHAT_THEME_DEFAULT = {
-  accent: '#25d366',
-  background: '#efeae2',
-  wallpaper: 'radial-gradient(circle at 25% 20%, rgba(37,211,102,.10), transparent 0 32%), radial-gradient(circle at 80% 0%, rgba(14,165,233,.10), transparent 0 26%), linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.88))',
-  surface: '#ffffff',
-  header: '#ffffff',
-  composer: '#ffffff',
-  text: '#111b21',
-  subtext: '#667781'
+  accent: '#f2b318',
+  background: '#08111b',
+  wallpaper: 'radial-gradient(circle at 20% 18%, rgba(242,179,24,.08), transparent 0 26%), radial-gradient(circle at 82% 0%, rgba(59,130,246,.10), transparent 0 24%), linear-gradient(180deg, rgba(8,17,27,.98), rgba(8,17,27,.98))',
+  surface: '#111925',
+  header: '#111925',
+  composer: '#111925',
+  text: '#f8fafc',
+  subtext: '#94a3b8'
 };
 
-const CHAT_ACCENTS = ['#25d366', '#0ea5e9', '#8b5cf6', '#ef4444', '#f59e0b'];
+const CHAT_ACCENTS = ['#f2b318', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444'];
 const CHAT_WALLPAPERS = [
-  { id: 'soft', label: 'Suave', value: CHAT_THEME_DEFAULT.wallpaper },
-  { id: 'mint', label: 'Menta', value: 'radial-gradient(circle at 20% 20%, rgba(45,212,191,.14), transparent 0 30%), radial-gradient(circle at 80% 0%, rgba(16,185,129,.12), transparent 0 26%), linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.92))' },
-  { id: 'sky', label: 'Cielo', value: 'radial-gradient(circle at 20% 20%, rgba(59,130,246,.15), transparent 0 30%), radial-gradient(circle at 80% 0%, rgba(125,211,252,.18), transparent 0 26%), linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.92))' },
-  { id: 'sand', label: 'Arena', value: 'radial-gradient(circle at 20% 20%, rgba(245,158,11,.12), transparent 0 28%), radial-gradient(circle at 80% 0%, rgba(234,179,8,.10), transparent 0 24%), linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.92))' }
+  { id: 'carbon', label: 'Carbón', value: CHAT_THEME_DEFAULT.wallpaper },
+  { id: 'navy', label: 'Navy', value: 'radial-gradient(circle at 15% 15%, rgba(59,130,246,.10), transparent 0 28%), radial-gradient(circle at 82% 0%, rgba(148,163,184,.08), transparent 0 22%), linear-gradient(180deg, rgba(8,17,27,.98), rgba(8,17,27,.98))' },
+  { id: 'amber', label: 'Ámbar', value: 'radial-gradient(circle at 20% 18%, rgba(242,179,24,.10), transparent 0 28%), radial-gradient(circle at 80% 0%, rgba(249,115,22,.08), transparent 0 24%), linear-gradient(180deg, rgba(10,18,28,.98), rgba(10,18,28,.98))' },
+  { id: 'graphite', label: 'Grafito', value: 'radial-gradient(circle at 18% 22%, rgba(71,85,105,.12), transparent 0 26%), radial-gradient(circle at 78% 0%, rgba(30,41,59,.18), transparent 0 28%), linear-gradient(180deg, rgba(9,14,23,.99), rgba(9,14,23,.99))' }
 ];
 
 function Avatar({ name, image, small = false }) {
