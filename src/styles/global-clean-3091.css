@@ -1,0 +1,375 @@
+/* =========================================================
+   ETAPA 30.91 — Diseño global limpio y uniforme
+   Blanco + gris claro + azul. Sin verde dominante.
+   El chat mantiene su tema oscuro específico 30.90.
+   ========================================================= */
+
+:root{
+  --mz91-bg:#f5f7fb;
+  --mz91-page:#ffffff;
+  --mz91-card:#ffffff;
+  --mz91-soft:#f8fafc;
+  --mz91-soft-blue:#eef4ff;
+  --mz91-border:#dfe6ef;
+  --mz91-border-strong:#cfd9e6;
+  --mz91-text:#10213d;
+  --mz91-sub:#62728a;
+  --mz91-muted:#8b98aa;
+  --mz91-blue:#1769e0;
+  --mz91-blue-hover:#0f5dcc;
+  --mz91-blue-soft:#eaf2ff;
+  --mz91-navy:#08264a;
+  --mz91-navy-2:#0b315f;
+  --mz91-violet:#6f56d9;
+  --mz91-amber:#f59e0b;
+  --mz91-red:#ef4444;
+  --mz91-cyan:#2aa8c7;
+  --mz91-success:#1d9b5f;
+  --mz91-radius:16px;
+  --mz91-shadow:0 5px 18px rgba(33,65,105,.06);
+}
+
+html,body,#root{background:var(--mz91-bg)!important;color:var(--mz91-text)!important}
+body{font-family:Inter,"Segoe UI",Arial,sans-serif!important}
+
+.app:not(.page-chat),
+.app:not(.page-chat) main,
+.app:not(.page-chat) .content,
+.app:not(.page-chat) .page{
+  background:var(--mz91-bg)!important;
+  color:var(--mz91-text)!important;
+}
+
+/* Sidebar profesional azul marino */
+.app:not(.page-chat) .sidebar{
+  background:linear-gradient(180deg,var(--mz91-navy) 0%, #071e3b 100%)!important;
+  color:#fff!important;
+  border-right:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .brand,
+.app:not(.page-chat) .phaseBox,
+.app:not(.page-chat) .sidebarMode{
+  color:#fff!important;
+}
+.app:not(.page-chat) .brand .logo{
+  background:#1477e6!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .brand b{color:#fff!important}
+.app:not(.page-chat) .brand span,
+.app:not(.page-chat) .sidebarMode small,
+.app:not(.page-chat) .phaseBox span{color:#c7d5e8!important}
+.app:not(.page-chat) .sidebarMode{
+  background:rgba(255,255,255,.08)!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .sidebarMode svg{color:#d6e6ff!important}
+.app:not(.page-chat) .navSectionLabel{color:#b9c8dc!important}
+.app:not(.page-chat) .navItem{
+  background:transparent!important;
+  color:#d7e2f1!important;
+  border:1px solid transparent!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .navItem svg{color:#b8d1f4!important}
+.app:not(.page-chat) .navItem:hover{
+  background:rgba(255,255,255,.07)!important;
+  color:#fff!important;
+}
+.app:not(.page-chat) .navItem.active{
+  background:rgba(75,135,214,.28)!important;
+  border-color:rgba(151,190,241,.18)!important;
+  color:#fff!important;
+}
+.app:not(.page-chat) .navItem.active svg{color:#6fb0ff!important}
+.app:not(.page-chat) .navBadge{background:var(--mz91-red)!important;color:#fff!important}
+.app:not(.page-chat) .sidebarLogoutFinal{
+  background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .phaseBox .bar{background:rgba(255,255,255,.12)!important}
+.app:not(.page-chat) .phaseBox .bar i{background:#6faeff!important}
+
+/* Barra superior clara */
+.app:not(.page-chat) .topbar{
+  background:#fff!important;
+  border-bottom:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .topbar .iconBtn,
+.app:not(.page-chat) .zoneBtn,
+.app:not(.page-chat) .profileBtn,
+.app:not(.page-chat) .runtimeBadge{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .sidebarMasterToggle{
+  background:var(--mz91-navy)!important;
+  color:#fff!important;
+  border-color:var(--mz91-navy)!important;
+}
+.app:not(.page-chat) .searchBox{
+  background:#fff!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .searchBox input{background:transparent!important;color:var(--mz91-text)!important}
+.app:not(.page-chat) .searchBox input::placeholder{color:#91a0b5!important}
+.app:not(.page-chat) .runtimeBadge.local{color:#c56a00!important;background:#fffaf3!important;border-color:#f5d6aa!important}
+.app:not(.page-chat) .runtimeBadge.cloud{color:var(--mz91-blue)!important;background:var(--mz91-soft-blue)!important}
+
+/* Tipografía */
+.app:not(.page-chat) h1,
+.app:not(.page-chat) h2,
+.app:not(.page-chat) h3,
+.app:not(.page-chat) h4,
+.app:not(.page-chat) b,
+.app:not(.page-chat) strong{color:var(--mz91-text)!important}
+.app:not(.page-chat) p,
+.app:not(.page-chat) small,
+.app:not(.page-chat) .muted{color:var(--mz91-sub)!important}
+
+/* Tarjetas y superficies generales */
+.app:not(.page-chat) .card,
+.app:not(.page-chat) .panel,
+.app:not(.page-chat) .sectionCard,
+.app:not(.page-chat) .contentCard,
+.app:not(.page-chat) .dashboardCard,
+.app:not(.page-chat) .metricCard,
+.app:not(.page-chat) .moduleCard,
+.app:not(.page-chat) .formCard,
+.app:not(.page-chat) .tableWrap,
+.app:not(.page-chat) .settingsCard,
+.app:not(.page-chat) .smartModules,
+.app:not(.page-chat) .smartOverview>.card,
+.app:not(.page-chat) article{
+  background:var(--mz91-card)!important;
+  color:var(--mz91-text)!important;
+  border-color:var(--mz91-border)!important;
+  box-shadow:var(--mz91-shadow)!important;
+}
+.app:not(.page-chat) .cardHead{border-color:var(--mz91-border)!important}
+.app:not(.page-chat) .cardHead h3{color:var(--mz91-text)!important}
+
+/* Panel principal */
+.app:not(.page-chat) .smartHero{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:var(--mz91-shadow)!important;
+}
+.app:not(.page-chat) .smartHero::before,
+.app:not(.page-chat) .smartHero::after{display:none!important}
+.app:not(.page-chat) .smartHero .eyebrow{color:#557298!important}
+.app:not(.page-chat) .smartHero h1{color:var(--mz91-text)!important}
+.app:not(.page-chat) .smartHero>div:first-child>p:last-of-type{color:var(--mz91-sub)!important}
+.app:not(.page-chat) .smartHeroActions button{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border-strong)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .smartHeroActions button:first-child{
+  background:var(--mz91-blue)!important;
+  color:#fff!important;
+  border-color:var(--mz91-blue)!important;
+}
+.app:not(.page-chat) .smartHeroActions button:hover{border-color:#9db9df!important;background:var(--mz91-soft-blue)!important}
+.app:not(.page-chat) .smartHeroActions button:first-child:hover{background:var(--mz91-blue-hover)!important}
+
+.app:not(.page-chat) .smartMetricGrid>span{
+  background:#fff!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .smartMetricGrid>span b{color:var(--mz91-blue)!important}
+.app:not(.page-chat) .smartMetricGrid>span small{color:var(--mz91-text)!important}
+.app:not(.page-chat) .smartMetricGrid>span em{color:var(--mz91-sub)!important}
+
+/* Radar: sin bloques verdes */
+.app:not(.page-chat) .radarList{gap:0!important}
+.app:not(.page-chat) .radarList button{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+  border-radius:12px!important;
+  margin-bottom:8px!important;
+}
+.app:not(.page-chat) .radarList button:hover{
+  background:var(--mz91-soft)!important;
+  border-color:#b8c9df!important;
+}
+.app:not(.page-chat) .radarList button i{
+  background:var(--mz91-soft-blue)!important;
+  color:var(--mz91-blue)!important;
+  border:0!important;
+}
+.app:not(.page-chat) .radarList button span b{color:var(--mz91-text)!important}
+.app:not(.page-chat) .radarList button span small{color:var(--mz91-sub)!important}
+.app:not(.page-chat) .radarList button>em{color:var(--mz91-blue)!important;font-weight:700!important}
+
+/* Acciones rápidas: tarjetas blancas, acentos solo en íconos */
+.app:not(.page-chat) .quickActionGrid button{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .quickActionGrid button:hover{
+  background:var(--mz91-soft)!important;
+  border-color:#b8c9df!important;
+  transform:none!important;
+}
+.app:not(.page-chat) .quickActionGrid button i{
+  background:var(--mz91-soft-blue)!important;
+  color:var(--mz91-blue)!important;
+  border:0!important;
+}
+.app:not(.page-chat) .quickActionGrid button:nth-child(2) i{background:#f1edff!important;color:var(--mz91-violet)!important}
+.app:not(.page-chat) .quickActionGrid button:nth-child(3) i{background:#fff4df!important;color:var(--mz91-amber)!important}
+.app:not(.page-chat) .quickActionGrid button:nth-child(4) i{background:#f0ecff!important;color:#7353d6!important}
+.app:not(.page-chat) .quickActionGrid button:nth-child(5) i{background:#eef4ff!important;color:#246fde!important}
+.app:not(.page-chat) .quickActionGrid button:nth-child(6) i{background:#fff0f0!important;color:#e24b4b!important}
+.app:not(.page-chat) .quickActionGrid button:nth-child(7) i{background:#fff4df!important;color:#ed8e00!important}
+.app:not(.page-chat) .quickActionGrid button:nth-child(8) i{background:#eaf8fb!important;color:var(--mz91-cyan)!important}
+.app:not(.page-chat) .quickActionGrid button b{color:var(--mz91-text)!important}
+.app:not(.page-chat) .quickActionGrid button small{color:var(--mz91-sub)!important}
+
+/* Módulos activos */
+.app:not(.page-chat) .moduleStatusGrid article{
+  background:#fff!important;
+  border:1px solid var(--mz91-border)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) .moduleStatusGrid article:hover{background:var(--mz91-soft)!important;border-color:#b9c9dc!important}
+.app:not(.page-chat) .moduleStatusGrid article b{color:var(--mz91-text)!important}
+.app:not(.page-chat) .moduleStatusGrid article span{color:var(--mz91-sub)!important}
+.app:not(.page-chat) .sectionHeader>button{
+  background:var(--mz91-blue)!important;
+  color:#fff!important;
+  border:1px solid var(--mz91-blue)!important;
+  box-shadow:none!important;
+}
+
+/* Botones globales planos */
+.app:not(.page-chat) button,
+.app:not(.page-chat) .btn,
+.app:not(.page-chat) .button{
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+.app:not(.page-chat) button.primary,
+.app:not(.page-chat) .primary,
+.app:not(.page-chat) .btnPrimary,
+.app:not(.page-chat) button[type="submit"]{
+  background:var(--mz91-blue)!important;
+  color:#fff!important;
+  border-color:var(--mz91-blue)!important;
+}
+.app:not(.page-chat) button.secondary,
+.app:not(.page-chat) .secondary,
+.app:not(.page-chat) .btnSecondary,
+.app:not(.page-chat) button.ghost{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border-strong)!important;
+}
+
+/* Formularios, pestañas y tablas */
+.app:not(.page-chat) input,
+.app:not(.page-chat) textarea,
+.app:not(.page-chat) select{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border:1px solid var(--mz91-border-strong)!important;
+  box-shadow:none!important;
+}
+.app:not(.page-chat) input:focus,
+.app:not(.page-chat) textarea:focus,
+.app:not(.page-chat) select:focus{
+  border-color:#6da0e7!important;
+  box-shadow:0 0 0 3px rgba(23,105,224,.10)!important;
+}
+.app:not(.page-chat) .tabs,
+.app:not(.page-chat) .tabBar,
+.app:not(.page-chat) .segmented{
+  background:var(--mz91-soft)!important;
+  border-color:var(--mz91-border)!important;
+}
+.app:not(.page-chat) .tab,
+.app:not(.page-chat) .tabs button,
+.app:not(.page-chat) .tabBar button{background:transparent!important;color:var(--mz91-sub)!important}
+.app:not(.page-chat) .tab.active,
+.app:not(.page-chat) .tabs button.active,
+.app:not(.page-chat) .tabBar button.active{
+  background:#fff!important;
+  color:var(--mz91-blue)!important;
+  border-color:var(--mz91-border)!important;
+}
+.app:not(.page-chat) table{background:#fff!important;color:var(--mz91-text)!important}
+.app:not(.page-chat) thead,
+.app:not(.page-chat) th{background:var(--mz91-soft)!important;color:#53647b!important;border-color:var(--mz91-border)!important}
+.app:not(.page-chat) td{border-color:var(--mz91-border)!important;color:var(--mz91-text)!important}
+.app:not(.page-chat) tbody tr:hover{background:#f8fbff!important}
+
+/* Badges: verdes solo para éxito */
+.app:not(.page-chat) .badge,
+.app:not(.page-chat) .chip,
+.app:not(.page-chat) .pill,
+.app:not(.page-chat) .statusPill{
+  background:var(--mz91-soft-blue)!important;
+  color:var(--mz91-blue)!important;
+  border-color:#d7e5f9!important;
+}
+.app:not(.page-chat) .badge.success,
+.app:not(.page-chat) .chip.success,
+.app:not(.page-chat) .statusPill.active,
+.app:not(.page-chat) .statusSuccess{
+  background:#edf9f3!important;
+  color:var(--mz91-success)!important;
+  border-color:#cdebdc!important;
+}
+
+/* Modales */
+.app:not(.page-chat) .modalBackdrop,
+.app:not(.page-chat) .dialogBackdrop{background:rgba(15,34,60,.34)!important}
+.app:not(.page-chat) .modal,
+.app:not(.page-chat) .dialog,
+.app:not(.page-chat) .drawer,
+.app:not(.page-chat) .popover,
+.app:not(.page-chat) .dropdownMenu{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+  border-color:var(--mz91-border)!important;
+  box-shadow:0 18px 50px rgba(40,67,101,.15)!important;
+}
+
+/* Evitar fondos verdes residuales en cualquier módulo fuera del chat */
+.app:not(.page-chat) [style*="#00C875"],
+.app:not(.page-chat) [style*="#10b981"],
+.app:not(.page-chat) [style*="#14b8a6"]{
+  background:#fff!important;
+  color:var(--mz91-text)!important;
+}
+
+@media(max-width:980px){
+  .app:not(.page-chat) .content{padding:14px!important}
+  .app:not(.page-chat) .smartHero{padding:20px!important}
+  .app:not(.page-chat) .smartOverview{grid-template-columns:1fr!important}
+  .app:not(.page-chat) .quickActionGrid{grid-template-columns:repeat(2,1fr)!important}
+  .app:not(.page-chat) .mobileBottomNav{
+    background:#fff!important;
+    border-top:1px solid var(--mz91-border)!important;
+    box-shadow:none!important;
+  }
+  .app:not(.page-chat) .mobileBottomNav button{color:var(--mz91-sub)!important;background:transparent!important}
+  .app:not(.page-chat) .mobileBottomNav button.active{color:var(--mz91-blue)!important;background:var(--mz91-soft-blue)!important}
+}

@@ -1,3 +1,3 @@
 // Fuente única de la versión de MiZona.
-export const APP_VERSION = '30.90';
-export const APP_STAGE_LABEL = 'MiZona Chat Dark Gold Corregido';
+export const APP_VERSION = '30.91';
+export const APP_STAGE_LABEL = 'Diseño global limpio y uniforme';
