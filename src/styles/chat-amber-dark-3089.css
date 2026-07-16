@@ -1,0 +1,351 @@
+/* =========================================================
+   ETAPA 30.89 — MiZona Chat Dark Amber
+   El resto de MiZona conserva la apariencia clara 30.88.
+   Esta capa se limita exclusivamente a .chatRealPage.
+   ========================================================= */
+
+.chatRealPage{
+  --chat-accent:#F5A900!important;
+  --chat-accent-hover:#E79B00!important;
+  --chat-accent-soft:rgba(245,169,0,.15)!important;
+  --chat-bg:#09111C!important;
+  --chat-surface:#0D1724!important;
+  --chat-surface-2:#121D2A!important;
+  --chat-surface-3:#182431!important;
+  --chat-header:#0D1724!important;
+  --chat-composer:#0D1724!important;
+  --chat-text:#F7F9FC!important;
+  --chat-subtext:#93A3B5!important;
+  --chat-border:#263343!important;
+  --chat-online:#2DD36F!important;
+  --chat-wallpaper:
+    radial-gradient(circle at 80% 8%,rgba(20,62,94,.18),transparent 32%),
+    radial-gradient(circle at 15% 85%,rgba(245,169,0,.04),transparent 30%)!important;
+  background:#07101A!important;
+  color:var(--chat-text)!important;
+}
+
+body.mizona-chat-app,
+body.mizona-chat-fullscreen,
+body.mizona-chat-immersive{
+  background:#07101A!important;
+}
+body.mizona-chat-app .content,
+body.mizona-chat-fullscreen .content,
+body.mizona-chat-immersive .content{
+  background:#07101A!important;
+}
+
+.chatRealPage .chatWorkspace{
+  background:#07101A!important;
+  border:1px solid var(--chat-border)!important;
+  box-shadow:0 18px 50px rgba(1,8,16,.28)!important;
+  overflow:hidden!important;
+}
+
+.chatRealPage .chatDirectory,
+.chatRealPage .chatDirectoryTop,
+.chatRealPage .conversationList,
+.chatRealPage .contactListReal,
+.chatRealPage .requestListReal{
+  background:var(--chat-surface)!important;
+  color:var(--chat-text)!important;
+}
+.chatRealPage .chatDirectory{
+  border-right:1px solid var(--chat-border)!important;
+}
+.chatRealPage .chatDirectoryTop{
+  border-bottom:1px solid var(--chat-border)!important;
+}
+.chatRealPage .chatDirectoryHeaderBar b,
+.chatRealPage .chatDirectoryHeaderBar strong{
+  color:var(--chat-text)!important;
+}
+.chatRealPage .chatDirectoryHeaderBar span{
+  color:var(--chat-subtext)!important;
+}
+
+.chatRealPage .chatSearchBar{
+  background:var(--chat-surface-2)!important;
+  border:1px solid var(--chat-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatSearchBar svg{color:#A6B3C2!important}
+.chatRealPage .chatSearchBar input{
+  background:transparent!important;
+  color:var(--chat-text)!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatSearchBar input::placeholder{color:#718196!important}
+
+.chatRealPage .chatTabs button{
+  background:var(--chat-surface-2)!important;
+  color:var(--chat-subtext)!important;
+  border:1px solid var(--chat-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatTabs button:hover{
+  background:var(--chat-surface-3)!important;
+  color:var(--chat-text)!important;
+}
+.chatRealPage .chatTabs button.active{
+  background:var(--chat-accent-soft)!important;
+  color:#FFD36D!important;
+  border-color:rgba(245,169,0,.45)!important;
+}
+
+.chatRealPage .conversationList>button,
+.chatRealPage .contactListReal article,
+.chatRealPage .requestListReal article{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(147,163,181,.11)!important;
+  color:var(--chat-text)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .conversationList>button:hover,
+.chatRealPage .contactListReal article:hover,
+.chatRealPage .requestListReal article:hover{
+  background:var(--chat-surface-2)!important;
+}
+.chatRealPage .conversationList>button.active{
+  background:linear-gradient(90deg,rgba(245,169,0,.20),rgba(245,169,0,.07))!important;
+  border-left:4px solid var(--chat-accent)!important;
+}
+.chatRealPage .conversationList>button b,
+.chatRealPage .contactListReal article b,
+.chatRealPage .requestListReal article b{
+  color:var(--chat-text)!important;
+}
+.chatRealPage .conversationList>button small,
+.chatRealPage .contactListReal article span,
+.chatRealPage .requestListReal article span{
+  color:var(--chat-subtext)!important;
+}
+.chatRealPage .conversationList>button>em{
+  color:#A8B5C4!important;
+}
+.chatRealPage .conversationList>button>em i{
+  background:var(--chat-accent)!important;
+  color:#251700!important;
+}
+
+.chatRealPage .chatAvatar{
+  background:linear-gradient(145deg,#3C75D8,#5A8EF0)!important;
+  color:#F8FBFF!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .conversationList>button.active .chatAvatar,
+.chatRealPage .conversationHeader .chatAvatar{
+  background:linear-gradient(145deg,#FFC229,#F5A900)!important;
+  color:#241700!important;
+}
+
+.chatRealPage .chatConversation{
+  background:#09111C!important;
+  color:var(--chat-text)!important;
+}
+.chatRealPage .conversationHeader{
+  background:rgba(13,23,36,.98)!important;
+  color:var(--chat-text)!important;
+  border-bottom:1px solid var(--chat-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .conversationHeader>div:nth-child(3)>b{
+  color:var(--chat-text)!important;
+}
+.chatRealPage .conversationHeader>div:nth-child(3)>span{
+  color:#42D77D!important;
+}
+.chatRealPage .chatBack,
+.chatRealPage .conversationHeader .iconBtn,
+.chatRealPage .chatViewListBtn,
+.chatRealPage .chatFullscreenToggle{
+  background:var(--chat-surface-2)!important;
+  color:#DDE6EF!important;
+  border:1px solid var(--chat-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .chatBack:hover,
+.chatRealPage .conversationHeader .iconBtn:hover,
+.chatRealPage .chatViewListBtn:hover,
+.chatRealPage .chatFullscreenToggle:hover{
+  color:var(--chat-accent)!important;
+  border-color:rgba(245,169,0,.44)!important;
+  background:#172331!important;
+}
+.chatRealPage .chatViewListBtn.secondary{color:#FFD36D!important}
+.chatRealPage .retentionBanner{
+  background:#101C29!important;
+  border-bottom:1px solid var(--chat-border)!important;
+  color:#A9B6C5!important;
+}
+
+.chatRealPage .messageStream{
+  background-color:var(--chat-bg)!important;
+  background-image:var(--chat-wallpaper)!important;
+  color:var(--chat-text)!important;
+}
+.chatRealPage .chatDateSeparator,
+.chatRealPage .dateSeparator{
+  color:#8796A8!important;
+}
+.chatRealPage .chatDateSeparator::before,
+.chatRealPage .chatDateSeparator::after,
+.chatRealPage .dateSeparator::before,
+.chatRealPage .dateSeparator::after{
+  background:rgba(147,163,181,.18)!important;
+}
+.chatRealPage .messageBubble{
+  background:#1A2532!important;
+  color:#F4F7FA!important;
+  border:1px solid #2A3746!important;
+  border-radius:16px 16px 16px 4px!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageRow.own .messageBubble{
+  background:linear-gradient(135deg,#F7B614,#EEA300)!important;
+  color:#241700!important;
+  border:1px solid #F7BD32!important;
+  border-radius:16px 16px 4px 16px!important;
+}
+.chatRealPage .messageBubble>b{
+  color:#68A3FF!important;
+}
+.chatRealPage .messageRow.own .messageBubble>b{
+  color:#241700!important;
+}
+.chatRealPage .messageBubble p,
+.chatRealPage .messageBubble span,
+.chatRealPage .messageBubble a{
+  color:inherit!important;
+}
+.chatRealPage .messageBubble>small{
+  color:#91A0B1!important;
+}
+.chatRealPage .messageRow.own .messageBubble>small{
+  color:rgba(36,23,0,.68)!important;
+}
+
+.chatRealPage .imageAttachmentCard img{
+  border:1px solid #354253!important;
+  box-shadow:none!important;
+}
+.chatRealPage .imageAttachmentCard small{color:#98A7B8!important}
+.chatRealPage .imageAttachmentPlaceholder{
+  background:#141F2C!important;
+  color:#94A4B6!important;
+  border-color:#354253!important;
+}
+.chatRealPage .fileAttachmentCard,
+.chatRealPage .documentAttachmentCard,
+.chatRealPage .audioAttachmentCard,
+.chatRealPage .locationMessageCard,
+.chatRealPage .contactMessageCard,
+.chatRealPage .pollMessageCard,
+.chatRealPage .eventMessageCard,
+.chatRealPage .orderMessageCard,
+.chatRealPage .catalogMessageCard{
+  background:#111C29!important;
+  border:1px solid #304052!important;
+  color:#F4F7FA!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageRow.own .fileAttachmentCard,
+.chatRealPage .messageRow.own .documentAttachmentCard,
+.chatRealPage .messageRow.own .audioAttachmentCard,
+.chatRealPage .messageRow.own .locationMessageCard,
+.chatRealPage .messageRow.own .contactMessageCard,
+.chatRealPage .messageRow.own .pollMessageCard,
+.chatRealPage .messageRow.own .eventMessageCard,
+.chatRealPage .messageRow.own .orderMessageCard,
+.chatRealPage .messageRow.own .catalogMessageCard{
+  background:rgba(255,255,255,.18)!important;
+  border-color:rgba(36,23,0,.20)!important;
+  color:#241700!important;
+}
+
+.chatRealPage .messageComposer{
+  background:rgba(13,23,36,.98)!important;
+  border-top:1px solid var(--chat-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageComposer .iconBtn{
+  background:#151F2C!important;
+  border:1px solid var(--chat-border)!important;
+  color:#CDD7E2!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageComposer .iconBtn:hover{
+  color:var(--chat-accent)!important;
+  border-color:rgba(245,169,0,.42)!important;
+}
+.chatRealPage .messageComposer>input:not([type=file]),
+.chatRealPage .messageComposer textarea{
+  background:#151F2C!important;
+  color:#F4F7FA!important;
+  border:1px solid var(--chat-border)!important;
+  box-shadow:none!important;
+}
+.chatRealPage .messageComposer>input:not([type=file])::placeholder,
+.chatRealPage .messageComposer textarea::placeholder{
+  color:#708094!important;
+}
+.chatRealPage .messageComposer>input:not([type=file]):focus,
+.chatRealPage .messageComposer textarea:focus{
+  border-color:rgba(245,169,0,.55)!important;
+  box-shadow:0 0 0 3px rgba(245,169,0,.10)!important;
+}
+.chatRealPage .messageComposer>button:last-child{
+  background:linear-gradient(145deg,#FFC229,#F5A900)!important;
+  color:#241700!important;
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:999px!important;
+}
+.chatRealPage .messageComposer>button:last-child:hover{
+  background:var(--chat-accent-hover)!important;
+}
+
+.chatRealPage .chatModalBackdrop{background:rgba(2,8,15,.76)!important}
+.chatRealPage .chatModal,
+.chatRealPage .themePanel,
+.chatRealPage .chatSettingsPanel{
+  background:#111C29!important;
+  color:#F4F7FA!important;
+  border:1px solid #304052!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.45)!important;
+}
+.chatRealPage .chatModal input,
+.chatRealPage .chatModal textarea,
+.chatRealPage .chatModal select,
+.chatRealPage .themePanel input,
+.chatRealPage .themePanel textarea,
+.chatRealPage .themePanel select{
+  background:#172331!important;
+  color:#F4F7FA!important;
+  border-color:#334254!important;
+}
+.chatRealPage .themeWallpaper,
+.chatRealPage .themeWallpaper.upload{
+  background:#172331!important;
+  color:#D7E0E9!important;
+  border-color:#334254!important;
+}
+.chatRealPage .themeWallpaper span{background:rgba(9,17,28,.88)!important;color:#F4F7FA!important}
+.chatRealPage .themeColorDot{border-color:#101B28!important;box-shadow:0 0 0 1px #405064!important}
+.chatRealPage .themeColorDot.active{box-shadow:0 0 0 2px var(--chat-accent)!important}
+
+@media(max-width:760px){
+  .chatRealPage.mobileChatListMode,
+  .chatRealPage.mobileChatFullscreen{
+    background:#07101A!important;
+  }
+  .chatRealPage.mobileChatListMode .chatDirectory,
+  .chatRealPage.mobileChatFullscreen .chatConversation{
+    background:#09111C!important;
+  }
+  .chatRealPage .messageStream{padding-bottom:16px!important}
+}
