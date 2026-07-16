@@ -1,0 +1,72 @@
+/* Etapa 30.91 · Cobertura total del tema oscuro Nova en todos los módulos
+   (Negocios, Marketplace, CampusHugo, Business Suite, Ride, IA, Comunidad, Beneficios, Cuenta)
+   Estas secciones tenían fondos claros hardcodeados que quedaban fuera del alcance
+   de nova-redesign-3086.css. Este archivo las adapta al mismo lenguaje visual oscuro. */
+
+[class*="Card"]:not(.communityCardMeta),
+[class*="Visual"],
+[class*="Modal"],
+.detailModal,.formModal,.businessModal,.marketModal,.courseModal,.lessonModal,.communityModal,.publishModal{
+  background:linear-gradient(180deg,rgba(16,28,44,.98),rgba(12,23,38,.98))!important;
+  border-color:var(--nova-line)!important;
+  color:var(--nova-text)!important;
+  box-shadow:var(--nova-shadow)!important;
+}
+
+[class*="Visual"]{
+  background:linear-gradient(135deg,#101c2c,#152338)!important;
+}
+
+[class*="Card"] p,[class*="Card"] span,[class*="Card"] small,[class*="Card"] li,
+[class*="Modal"] p,[class*="Modal"] span,[class*="Modal"] small,
+[class*="Visual"] span{
+  color:var(--nova-text-2);
+}
+[class*="Card"] h3,[class*="Modal"] h2,[class*="Modal"] h3{color:var(--nova-text)!important}
+
+[class*="Hero"]:not(.smartHero){color:#fff!important}
+[class*="Hero"] p{color:#e7edfb!important}
+[class*="Hero"] span,[class*="HeroStats"] span,[class*="heroStats"] span{
+  background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.16)!important;color:#fff!important;
+}
+
+[class*="Notice"],[class*="Alert"],[class*="Message"],[class$="Warning"],.termsCheck,.securityCode,.policyCheck,.miniOffer,.modalOffer{
+  background:rgba(255,255,255,.05)!important;
+  border-color:var(--nova-line-strong)!important;
+  color:var(--nova-text-2)!important;
+}
+[class*="Notice"] div,[class*="Message"] div,[class*="Alert"] div{color:var(--nova-text)!important}
+
+[class*="Empty"],[class*="Loading"],.miniEmpty,.soon{
+  background:rgba(255,255,255,.03)!important;
+  border-color:var(--nova-line-strong)!important;
+  color:var(--nova-text-3)!important;
+}
+
+.communitySearch,.businessSearch,.marketControls select,.communityToolbar select,.campusControls select,
+.categoryRail button,.sortSelect,.qty button,.paymentMethods button,.tabs button,.iconBtn,.zoneBtn,.ghost{
+  background:var(--nova-panel-2)!important;
+  border-color:var(--nova-line-strong)!important;
+  color:var(--nova-text)!important;
+}
+.categoryRail button.active,.paymentMethods button.active,.tabs button.active,.posFilters .chips button.active{
+  background:rgba(91,124,250,.22)!important;border-color:rgba(91,124,250,.4)!important;color:#fff!important;
+}
+
+.communityStat,.businessKpis>span,.adminKpis span,.rideHistoryStats span,.stats span,.timelineItem,
+.sessionSummary,.savedList button,.reportButtons button,.helpButtons button,.assignedDriver,.orderFlow>div,
+.topProducts span,.customerList>div,.driverCard,.teacherCard,.certificateCard,.learningCard{
+  background:var(--nova-panel)!important;
+  border-color:var(--nova-line)!important;
+  color:var(--nova-text)!important;
+}
+
+table,.inventoryTable>div,.campaignRow,.adminTable>div,.moduleMini>div{background:transparent!important;color:var(--nova-text)!important;border-color:var(--nova-line)!important}
+.campaignHead,.inventoryHead{background:var(--nova-panel-2)!important;color:var(--nova-text-3)!important}
+
+.installPhone{box-shadow:0 25px 45px rgba(0,0,0,.45)!important}
+.fatalError{background:var(--nova-bg)!important;color:var(--nova-text)!important}
+
+@media(max-width:900px){
+  .businessSuiteHero,.rideHero,.aiHero,.campusHero,.marketHero,.businessHero,.benefitsHero,.communityHeroReal{padding:22px!important}
+}

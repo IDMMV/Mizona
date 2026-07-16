@@ -20,9 +20,10 @@ import './styles/commerce-cloud-3072.css';
 import './styles/business-operations-3073.css';
 import './styles/ride-cloud-3074.css';
 import './styles/light-unified-3088.css';
-import './styles/global-clean-3091.css';
 import './styles/chat-amber-dark-3089.css';
 import './styles/chat-electrica-3090.css';
+import './styles/nova-redesign-3086.css';
+import './styles/nova-cobertura-total-30-91.css';
 import { APP_VERSION } from './version.js';
 
 const rootElement = document.getElementById('root');

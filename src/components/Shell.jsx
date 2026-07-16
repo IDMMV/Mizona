@@ -41,7 +41,7 @@ export default function Shell({ page, setPage, children }) {
     localStorage.setItem('mizona-sidebar-collapsed', next ? '1' : '0');
   };
 
-  return <div className={`app page-${page} theme-blue mode-light ${open ? 'menuOpen' : ''} ${collapsed ? 'sidebarCollapsed' : ''}`}>
+  return <div className={`app page-${page} theme-${uiColor || 'green'} mode-${uiMode || 'dark'} ${open ? 'menuOpen' : ''} ${collapsed ? 'sidebarCollapsed' : ''}`}>
     {open && <button className="sidebarBackdrop" aria-label="Cerrar menú" onClick={() => setOpen(false)}/>}
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="brand">
