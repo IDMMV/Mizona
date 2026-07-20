@@ -25,7 +25,7 @@ export default function Admin(){
  const [campaignState,setCampaignState]=useState(campaigns);
  const [chatReports,setChatReports]=useState([]);
  const [chatReportMessage,setChatReportMessage]=useState('');
- const [localStats,setLocalStats]=useState(getLocalStats);
+const [localStats,setLocalStats]=useState(getLocalStats());
  const [auditLogs,setAuditLogs]=useState(listLocalAuditLogs);
  const [syncQueue,setSyncQueue]=useState(listLocalSyncQueue);
  const [maintenanceMessage,setMaintenanceMessage]=useState('');
