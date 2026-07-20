@@ -10,14 +10,14 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
-    "@vitejs/plugin-react": "latest",
-    "lucide-react": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "vite": "latest",
-    "framer-motion": "^12.23.12"
+    "@vitejs/plugin-react": "5.1.2",
+    "lucide-react": "0.468.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "vite": "7.3.1",
+    "framer-motion": "12.42.2"
   },
   "engines": {
-    "node": "24.x"
+    "node": "20.x"
   }
 }

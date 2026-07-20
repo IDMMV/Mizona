@@ -1,7 +1,7 @@
 {
   "version": 2,
   "framework": "vite",
-  "installCommand": "bash scripts/vercel-install.sh",
-  "buildCommand": "npx vite build",
+  "installCommand": "npm ci --no-audit --no-fund",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist"
 }
