@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { Loader2, Plus, Power, PowerOff, Trash2 } from 'lucide-react';
+
 const db = supabase.schema('estudiantes');
+
 const TIPOS = [
   { value: 'universidad', label: 'Universidad' },
   { value: 'instituto', label: 'Instituto' },
@@ -29,15 +32,13 @@ export default function AdminInstituciones() {
       setError('No se pudo cargar la lista de instituciones.');
       console.error(error);
     } else {
-      setInstituciones(data);
+      setInstituciones(data || []);
       setError('');
     }
     setCargando(false);
   }
 
   function normalizarDominio(valor) {
-    // Acepta que escriban "upn.edu.pe" o "@upn.edu.pe" o incluso
-    // un correo completo "alguien@upn.edu.pe" — se queda solo con el dominio.
     let d = valor.trim().toLowerCase();
     if (d.includes('@')) d = d.split('@').pop();
     return d.replace(/^@/, '');
@@ -46,14 +47,14 @@ export default function AdminInstituciones() {
   async function agregarInstitucion(e) {
     e.preventDefault();
     setError('');
-
     const dominio = normalizarDominio(form.dominio_correo);
+
     if (!form.nombre.trim()) {
       setError('Falta el nombre de la institución.');
       return;
     }
     if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(dominio)) {
-      setError('El dominio no parece válido. Ejemplo correcto: upn.edu.pe');
+      setError('El dominio no parece válido. Ejemplo: upn.edu.pe');
       return;
     }
 
@@ -62,6 +63,7 @@ export default function AdminInstituciones() {
       nombre: form.nombre.trim(),
       dominio_correo: dominio,
       tipo: form.tipo,
+      activa: true,
     });
 
     if (error) {
@@ -86,36 +88,30 @@ export default function AdminInstituciones() {
 
     if (error) {
       setError('No se pudo actualizar el estado.');
-      console.error(error);
     } else {
-      setInstituciones((prev) =>
-        prev.map((i) => (i.id === institucion.id ? { ...i, activa: !i.activa } : i))
+      setInstituciones(prev =>
+        prev.map(i => i.id === institucion.id ? { ...i, activa: !i.activa } : i)
       );
     }
   }
 
   async function eliminarInstitucion(institucion) {
-    const confirmado = window.confirm(
-      `¿Eliminar "${institucion.nombre}"? Los estudiantes ya registrados con ese dominio no se verán afectados, pero nadie más podrá registrarse con ese correo.`
-    );
-    if (!confirmado) return;
+    if (!window.confirm(`¿Eliminar "${institucion.nombre}"?`)) return;
 
     const { error } = await db.from('instituciones').delete().eq('id', institucion.id);
     if (error) {
-      setError('No se pudo eliminar. Puede que ya tenga estudiantes registrados vinculados.');
-      console.error(error);
+      setError('No se pudo eliminar.');
     } else {
-      setInstituciones((prev) => prev.filter((i) => i.id !== institucion.id));
+      setInstituciones(prev => prev.filter(i => i.id !== institucion.id));
     }
   }
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900">Instituciones — MiZona Estudiantes</h2>
+        <h2 className="text-xl font-semibold">Instituciones — MiZona Estudiantes</h2>
         <p className="text-sm text-gray-500 mt-1">
-          Solo los correos con estos dominios pueden registrarse. Desactivar una institución
-          bloquea nuevos registros sin borrar a los estudiantes ya inscritos.
+          Gestiona los dominios permitidos para registro de estudiantes.
         </p>
       </div>
 
@@ -123,88 +119,53 @@ export default function AdminInstituciones() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
             type="text"
-            placeholder="Nombre (ej: Universidad Privada del Norte)"
+            placeholder="Nombre completo"
             value={form.nombre}
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="border border-gray-300 rounded-md px-3 py-2"
+            required
           />
           <input
             type="text"
             placeholder="Dominio (ej: upn.edu.pe)"
             value={form.dominio_correo}
             onChange={(e) => setForm({ ...form, dominio_correo: e.target.value })}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="border border-gray-300 rounded-md px-3 py-2"
+            required
           />
         </div>
+
         <div className="flex items-center gap-3">
           <select
             value={form.tipo}
             onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="border border-gray-300 rounded-md px-3 py-2"
           >
-            {TIPOS.map((t) => (
+            {TIPOS.map(t => (
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
           </select>
+
           <button
             type="submit"
             disabled={guardando}
-            className="flex items-center gap-2 bg-gray-900 text-white rounded-md px-4 py-2 text-sm disabled:opacity-50"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2 disabled:opacity-50"
           >
             {guardando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-            Agregar institución
+            Agregar
           </button>
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>
 
       <div className="space-y-2">
         {cargando ? (
-          <div className="flex items-center gap-2 text-gray-500 text-sm">
-            <Loader2 className="w-4 h-4 animate-spin" /> Cargando instituciones...
+          <div className="flex items-center gap-2 text-gray-500">
+            <Loader2 className="w-4 h-4 animate-spin" /> Cargando...
           </div>
         ) : instituciones.length === 0 ? (
-          <p className="text-sm text-gray-500">Todavía no agregaste ninguna institución.</p>
+          <p className="text-gray-500">No hay instituciones registradas aún.</p>
         ) : (
-          instituciones.map((inst) => (
-            <div
-              key={inst.id}
-              className="flex items-center justify-between border border-gray-200 rounded-md px-4 py-3"
-            >
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {inst.nombre}{' '}
-                  <span className="text-xs text-gray-400 font-normal">({TIPOS.find(t => t.value === inst.tipo)?.label})</span>
-                </p>
-                <p className="text-xs text-gray-500">@{inst.dominio_correo}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${
-                    inst.activa ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                  }`}
-                >
-                  {inst.activa ? 'Activa' : 'Desactivada'}
-                </span>
-                <button
-                  onClick={() => alternarActiva(inst)}
-                  title={inst.activa ? 'Desactivar' : 'Activar'}
-                  className="p-1.5 rounded-md hover:bg-gray-100"
-                >
-                  {inst.activa ? <PowerOff className="w-4 h-4 text-gray-600" /> : <Power className="w-4 h-4 text-gray-600" />}
-                </button>
-                <button
-                  onClick={() => eliminarInstitucion(inst)}
-                  title="Eliminar"
-                  className="p-1.5 rounded-md hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4 text-red-500" />
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-}
+          instituciones.map(inst => (
+            <div key={inst.id} className="flex justify-between items-center border rounded-lg p-4
