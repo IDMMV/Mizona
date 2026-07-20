@@ -1,20 +1,6 @@
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { Plus, Trash2, Power, PowerOff, Loader2 } from 'lucide-react';
-
-// Usa el mismo proyecto de Supabase que ya tiene MiZona.
-// Ajusta estas dos líneas a como ya las tenés configuradas en tu app
-// (probablemente ya existen en un archivo supabaseClient.js — reusalo
-// en vez de crear un cliente nuevo acá).
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
-// Todas las consultas a tablas del módulo de estudiantes deben
-// especificar el esquema, porque por defecto Supabase apunta a "public".
+import { supabase } from '../lib/supabase';
 const db = supabase.schema('estudiantes');
-
 const TIPOS = [
   { value: 'universidad', label: 'Universidad' },
   { value: 'instituto', label: 'Instituto' },
