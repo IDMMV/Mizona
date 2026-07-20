@@ -73,7 +73,24 @@ export default function Admin(){
  };
  const runCleanup=async()=>{const result=await cleanupExpiredLocalData();setMaintenanceMessage(`Limpieza terminada: ${result.removedMessages} mensajes y ${result.removedFiles} archivos vencidos eliminados.`);setLocalStats(getLocalStats());};
  const resetLocal=()=>{if(!window.confirm('¿Restablecer todos los datos locales de demostración de este dispositivo?'))return;resetLocalData();setMaintenanceMessage('Datos locales restablecidos.');};
- const tabs=[{id:'modules',label:'Módulos',icon:'🧩'},{id:'permissions',label:'Permisos',icon:'🔐'},{id:'appearance',label:'Apariencia',icon:'🎨'},{id:'benefits',label:'Beneficios',icon:'🎁'},{id:'places',label:'Negocios',icon:'🏪'},{id:'market',label:'Marketplace',icon:'🛒'},{id:'campus',label:'CampusHugo',icon:'🎓'},{id:'businessSuite',label:'MiZona Business',icon:'🧾'},{id:'rideAdmin',label:'MiZona Ride',icon:'🚗'},{id:'aiAdmin',label:'IA MiZona',icon:'✨'},{id:'chatReports',label:'Moderación local',icon:'💬'},{id:'contingency',label:'Contingencia',icon:'📦'},{id:'audit',label:'Auditoría',icon:'🧾'},{id:'security',label:'Seguridad',icon:'🛡️'},{id:'storage',label:'Storage',icon:'🧹'},{id:'instituciones',label:'Instituciones',icon:'🎓'}];
+const tabs = [
+  { id: 'modules', label: 'Módulos', icon: '🧩' },
+  { id: 'permissions', label: 'Permisos', icon: '🔐' },
+  { id: 'appearance', label: 'Apariencia', icon: '🎨' },
+  { id: 'benefits', label: 'Beneficios', icon: '🎁' },
+  { id: 'places', label: 'Negocios', icon: '🏪' },
+  { id: 'market', label: 'Marketplace', icon: '🛒' },
+  { id: 'campus', label: 'CampusHugo', icon: '🎓' },
+  { id: 'businessSuite', label: 'MiZona Business', icon: '🧾' },
+  { id: 'rideAdmin', label: 'MiZona Ride', icon: '🚗' },
+  { id: 'aiAdmin', label: 'IA MiZona', icon: '✨' },
+  { id: 'chatReports', label: 'Moderación local', icon: '💬' },
+  { id: 'contingency', label: 'Contingencia', icon: '📦' },
+  { id: 'audit', label: 'Auditoría', icon: '🧾' },
+  { id: 'security', label: 'Seguridad', icon: '🛡️' },
+  { id: 'storage', label: 'Storage', icon: '🧹' },
+  { id: 'instituciones', label: 'Instituciones', icon: '🎓' }
+];
  return <div className="page"><h1>Centro de Control Enterprise</h1><p className="muted">Controla módulos, permisos, comunidades, chat, beneficios, storage y evolución de MiZona.</p><div className={`connectionBadge ${backendConnected ? 'connected' : ''}`}>{backendConnected ? `Backend conectado · ${profile.role}` : `Modo local operativo · ${profile.role}`}</div><div className="stats"><span>🟢 Activos: {counts.active||0}</span><span>🟡 Beta: {counts.beta||0}</span><span>🔴 Mant.: {counts.maintenance||0}</span><span>⚪ Próx.: {counts.soon||0}</span></div><Tabs tabs={tabs} active={tab} setActive={setTab}/>
  {tab==='modules'&&<div className="grid2"><Card title="Control de módulos" icon="🧩"><div className="adminTable">{moduleConfig.map((m)=><div key={m.id}><b>{m.label}</b><span>{m.audience}</span><StatusPill status={m.status}/><button onClick={()=>updateModuleStatus(m.id,cycle(m.status))}>Cambiar</button></div>)}</div><button className="ghost" onClick={resetModules}>Restablecer estados</button></Card><Card title="Políticas activas" icon="🛡"><ul className="list"><li>No chat entre colegios.</li><li>Aula Chat solo con alumnos validados.</li><li>Chats y archivos vencen en 7 días.</li><li>Usuario único y nombres no vulgares.</li><li>Adultos no buscan escolares.</li><li>Beneficios requieren fecha de vigencia y responsable.</li></ul></Card></div>}
 
