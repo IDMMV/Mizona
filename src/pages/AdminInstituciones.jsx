@@ -29,7 +29,7 @@ export default function AdminInstituciones() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      setError('No se pudo cargar la lista de instituciones.');
+      setError('No se pudo cargar la lista.');
       console.error(error);
     } else {
       setInstituciones(data || []);
@@ -54,7 +54,7 @@ export default function AdminInstituciones() {
       return;
     }
     if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(dominio)) {
-      setError('El dominio no parece válido. Ejemplo: upn.edu.pe');
+      setError('Dominio inválido. Ejemplo: upn.edu.pe');
       return;
     }
 
@@ -67,42 +67,33 @@ export default function AdminInstituciones() {
     });
 
     if (error) {
-      if (error.code === '23505') {
-        setError('Ese dominio ya está registrado.');
-      } else {
-        setError('No se pudo guardar. Intenta de nuevo.');
-        console.error(error);
-      }
+      setError(error.code === '23505' ? 'Ese dominio ya existe.' : 'Error al guardar.');
     } else {
       setForm({ nombre: '', dominio_correo: '', tipo: 'universidad' });
-      await cargarInstituciones();
+      cargarInstituciones();
     }
     setGuardando(false);
   }
 
-  async function alternarActiva(institucion) {
+  async function alternarActiva(inst) {
     const { error } = await db
       .from('instituciones')
-      .update({ activa: !institucion.activa })
-      .eq('id', institucion.id);
+      .update({ activa: !inst.activa })
+      .eq('id', inst.id);
 
-    if (error) {
-      setError('No se pudo actualizar el estado.');
-    } else {
+    if (!error) {
       setInstituciones(prev =>
-        prev.map(i => i.id === institucion.id ? { ...i, activa: !i.activa } : i)
+        prev.map(i => i.id === inst.id ? { ...i, activa: !i.activa } : i)
       );
     }
   }
 
-  async function eliminarInstitucion(institucion) {
-    if (!window.confirm(`¿Eliminar "${institucion.nombre}"?`)) return;
+  async function eliminarInstitucion(inst) {
+    if (!window.confirm(`¿Eliminar ${inst.nombre}?`)) return;
 
-    const { error } = await db.from('instituciones').delete().eq('id', institucion.id);
-    if (error) {
-      setError('No se pudo eliminar.');
-    } else {
-      setInstituciones(prev => prev.filter(i => i.id !== institucion.id));
+    const { error } = await db.from('instituciones').delete().eq('id', inst.id);
+    if (!error) {
+      setInstituciones(prev => prev.filter(i => i.id !== inst.id));
     }
   }
 
@@ -110,46 +101,42 @@ export default function AdminInstituciones() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <div>
         <h2 className="text-xl font-semibold">Instituciones — MiZona Estudiantes</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Gestiona los dominios permitidos para registro de estudiantes.
-        </p>
+        <p className="text-sm text-gray-500">Gestiona dominios permitidos para registro.</p>
       </div>
 
-      <form onSubmit={agregarInstitucion} className="bg-gray-50 rounded-lg p-4 space-y-3">
+      <form onSubmit={agregarInstitucion} className="bg-gray-50 p-4 rounded-lg space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
             type="text"
-            placeholder="Nombre completo"
+            placeholder="Nombre de la institución"
             value={form.nombre}
-            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            className="border border-gray-300 rounded-md px-3 py-2"
+            onChange={e => setForm({ ...form, nombre: e.target.value })}
+            className="border border-gray-300 rounded px-3 py-2"
             required
           />
           <input
             type="text"
             placeholder="Dominio (ej: upn.edu.pe)"
             value={form.dominio_correo}
-            onChange={(e) => setForm({ ...form, dominio_correo: e.target.value })}
-            className="border border-gray-300 rounded-md px-3 py-2"
+            onChange={e => setForm({ ...form, dominio_correo: e.target.value })}
+            className="border border-gray-300 rounded px-3 py-2"
             required
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex gap-3">
           <select
             value={form.tipo}
-            onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-            className="border border-gray-300 rounded-md px-3 py-2"
+            onChange={e => setForm({ ...form, tipo: e.target.value })}
+            className="border border-gray-300 rounded px-3 py-2"
           >
-            {TIPOS.map(t => (
-              <option key={t.value} value={t.value}>{t.label}</option>
-            ))}
+            {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
 
           <button
             type="submit"
             disabled={guardando}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2 disabled:opacity-50"
+            className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 disabled:opacity-50"
           >
             {guardando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
             Agregar
@@ -159,13 +146,35 @@ export default function AdminInstituciones() {
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {cargando ? (
           <div className="flex items-center gap-2 text-gray-500">
-            <Loader2 className="w-4 h-4 animate-spin" /> Cargando...
+            <Loader2 className="animate-spin" /> Cargando...
           </div>
         ) : instituciones.length === 0 ? (
-          <p className="text-gray-500">No hay instituciones registradas aún.</p>
+          <p className="text-gray-500">No hay instituciones aún.</p>
         ) : (
           instituciones.map(inst => (
-            <div key={inst.id} className="flex justify-between items-center border rounded-lg p-4
+            <div key={inst.id} className="flex justify-between items-center border rounded-lg p-4 bg-white">
+              <div>
+                <p className="font-medium">{inst.nombre}</p>
+                <p className="text-sm text-gray-500">@{inst.dominio_correo}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`px-3 py-1 rounded-full text-xs ${inst.activa ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                  {inst.activa ? 'Activa' : 'Inactiva'}
+                </span>
+                <button onClick={() => alternarActiva(inst)} className="p-2 hover:bg-gray-100 rounded">
+                  {inst.activa ? <PowerOff size={18} /> : <Power size={18} />}
+                </button>
+                <button onClick={() => eliminarInstitucion(inst)} className="p-2 text-red-600 hover:bg-red-50 rounded">
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
