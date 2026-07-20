@@ -1,0 +1,33 @@
+.animated-page {
+  min-height: 100%;
+  width: 100%;
+}
+
+.animated-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+  overflow: hidden;
+  transition: color .25s cubic-bezier(.4,0,.2,1), background-color .25s cubic-bezier(.4,0,.2,1), border-color .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1);
+}
+
+.animated-card.is-clickable { cursor: pointer; }
+.animated-card:hover { box-shadow: 0 12px 24px -8px rgb(15 23 42 / 0.14); }
+
+.animated-tab {
+  transition: color .25s cubic-bezier(.4,0,.2,1), background-color .25s cubic-bezier(.4,0,.2,1), border-color .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1);
+}
+
+.card, .btn, .tab-pill {
+  transition: color .25s cubic-bezier(.4,0,.2,1), background-color .25s cubic-bezier(.4,0,.2,1), border-color .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1);
+}
+
+.card:not(.motion-card):hover, .btn:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-card, .animated-tab, .card, .btn, .tab-pill { transition-duration: .01ms !important; }
+  .card:hover, .btn:hover { transform: none !important; }
+}

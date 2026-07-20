@@ -40,6 +40,7 @@ import AndroidReadiness from './pages/AndroidReadiness';
 import ReleaseQA from './pages/ReleaseQA';
 import { canAccessModule } from './lib/permissions';
 import MobileRuntime from './components/MobileRuntime';
+import AnimatedPage from './components/AnimatedPage';
 
 export default function AppRoot() {
   const initialPage = (() => {
@@ -136,5 +137,5 @@ export default function AppRoot() {
 
   if (dataMode === 'cloud' && !authLoading && !isAuthenticated) return <CloudAuthGate/>;
   const denied = !canAccessModule(profile, page);
-  return <><MobileRuntime/><Shell page={denied ? 'panel' : page} setPage={setPage}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</Shell></>;
+  return <><MobileRuntime/><Shell page={denied ? 'panel' : page} setPage={setPage}><AnimatedPage pageKey={denied ? 'access-denied' : page}>{denied ? <AccessDenied setPage={setPage}/> : (pages[page] || pages.panel)}</AnimatedPage></Shell></>;
 }

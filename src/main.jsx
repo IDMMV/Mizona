@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/app.css';
+import './styles/animations.css';
 import './styles/theme-dark-mockup.css';
 import './styles/unified-design-3052.css';
 import './styles/web-global-3053.css';
@@ -96,16 +97,19 @@ async function startMizona() {
 
     await resetLegacyMizonaCache();
 
-    const [{ default: ErrorBoundary }, { AppProvider }, { default: AppRoot }] = await Promise.all([
+    const [{ default: ErrorBoundary }, { AppProvider }, { default: ThemeProvider }, { default: AppRoot }] = await Promise.all([
       import('./components/ErrorBoundary.jsx'),
       import('./context/AppContext.jsx'),
+      import('./components/ThemeProvider.jsx'),
       import('./AppRoot.jsx')
     ]);
 
     createRoot(rootElement).render(
       <ErrorBoundary>
         <AppProvider>
-          <AppRoot />
+          <ThemeProvider>
+            <AppRoot />
+          </ThemeProvider>
         </AppProvider>
       </ErrorBoundary>
     );
