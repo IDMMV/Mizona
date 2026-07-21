@@ -18,6 +18,7 @@
     "framer-motion": "12.42.2"
   },
   "engines": {
-    "node": "20.x"
-  }
+    "node": "24.x"
+  },
+  "packageManager": "npm@11.4.2"
 }
