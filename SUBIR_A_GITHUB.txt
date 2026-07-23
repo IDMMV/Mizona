@@ -1,0 +1,7 @@
+IMPORTANTE:
+1. Abre este ZIP.
+2. Sube TODOS los archivos que aparecen directamente dentro del ZIP a la RAIZ de tu repositorio.
+3. package.json, package-lock.json y vercel.json deben quedar al mismo nivel que index.html.
+4. Elimina cualquier package.json antiguo con "node": "20.x".
+5. En Vercel, Root Directory debe apuntar a la carpeta donde está este package.json.
+6. Haz Redeploy sin cache.

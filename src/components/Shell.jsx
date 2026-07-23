@@ -12,7 +12,7 @@ export default function Shell({ page, setPage, children }) {
 
   const canLogout = isAuthenticated || (profile?.id && profile.id !== 'local-guest') || profile?.username === 'JOSE1985';
 
-  const visibleModules = useMemo(() => moduleConfig.filter(module => {
+  const visibleModules = useMemo(() => (Array.isArray(moduleConfig) ? moduleConfig : []).filter(module => {
     if (module.visible === false) return false;
     return canAccessModule(profile, module.id);
   }), [moduleConfig, profile]);
@@ -80,11 +80,11 @@ export default function Shell({ page, setPage, children }) {
         <button className="iconBtn sidebarMasterToggle" onClick={toggleSidebar} title={collapsed ? 'Mostrar menú lateral' : 'Ocultar menú lateral'}><Menu size={20}/></button>
         <div className="searchBox"><Search size={18}/><input placeholder="¿Qué necesitas hoy? colegio, chat, ofertas, servicios..."/></div>
         <span className={`runtimeBadge ${backendConnected ? 'cloud' : 'local'} ${online ? '' : 'offline'}`}>{online ? <Wifi size={15}/> : <CloudOff size={15}/>} {backendConnected ? 'Nube' : dataMode === 'local' ? 'Local' : 'Contingencia'}</span>
-        <button className="zoneBtn">📍 {profile.zone}</button>
+        <button className="zoneBtn">📍 {profile?.zone || 'Sin zona'}</button>
         <button className="iconBtn" onClick={() => setPage('notifications')} aria-label="Abrir notificaciones"><Bell size={18}/>{unreadNotifications > 0 && <em>{unreadNotifications > 99 ? '99+' : unreadNotifications}</em>}</button>
         <button className="profileBtn profileBtnPhoto38" onClick={() => setPage('settings')}>
-          <span className="topProfileAvatar38">{profile.avatarUrl ? <img src={profile.avatarUrl} alt="perfil"/> : <Camera size={15}/>}</span>
-          <span>{authLoading ? 'Verificando...' : profile.displayName}</span>
+          <span className="topProfileAvatar38">{profile?.avatarUrl ? <img src={profile.avatarUrl} alt="perfil"/> : <Camera size={15}/>}</span>
+          <span>{authLoading ? 'Verificando...' : profile?.displayName || 'Invitado'}</span>
           <span className={`sessionDot ${dataMode === 'local' || backendConnected ? 'online' : ''}`} title={dataMode === 'local' ? 'Perfil local activo' : backendConnected ? 'Sesión conectada' : 'Sin conexión'}/>
         </button>
       </header>
