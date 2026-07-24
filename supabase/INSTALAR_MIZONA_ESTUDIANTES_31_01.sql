@@ -1,3 +1,50 @@
+-- MiZona Estudiantes 31.01 · instalación limpia y repetible
+-- Conserva auth.users. Elimina solamente objetos mz_* creados por intentos anteriores.
+
+begin;
+
+-- Evitar error si la tabla todavía no pertenece a Realtime.
+do $$
+begin
+  if exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'mz_notifications'
+  ) then
+    execute 'alter publication supabase_realtime drop table public.mz_notifications';
+  end if;
+exception when others then
+  null;
+end $$;
+
+drop trigger if exists on_auth_user_created_mz on auth.users;
+drop function if exists public.mz_create_profile_for_new_user() cascade;
+drop function if exists public.mz_is_admin() cascade;
+drop function if exists public.mz_touch_updated_at() cascade;
+
+drop table if exists public.mz_reports cascade;
+drop table if exists public.mz_push_subscriptions cascade;
+drop table if exists public.mz_notification_preferences cascade;
+drop table if exists public.mz_notifications cascade;
+drop table if exists public.mz_help_responses cascade;
+drop table if exists public.mz_help_requests cascade;
+drop table if exists public.mz_reactions cascade;
+drop table if exists public.mz_comments cascade;
+drop table if exists public.mz_posts cascade;
+drop table if exists public.mz_community_members cascade;
+drop table if exists public.mz_communities cascade;
+drop table if exists public.mz_institution_members cascade;
+drop table if exists public.mz_institutions cascade;
+drop table if exists public.mz_user_profiles cascade;
+
+drop type if exists public.mz_institution_type cascade;
+drop type if exists public.mz_verification_status cascade;
+drop type if exists public.mz_education_level cascade;
+
+commit;
+
 -- MiZona Estudiantes 31.00
 create extension if not exists pgcrypto;
 

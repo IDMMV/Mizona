@@ -39,7 +39,12 @@ export function AppProvider({ children }) {
     const currentUser = activeUser || (await supabase.auth.getUser()).data.user;
     if (!currentUser) { setProfile(normalizeProfile(null)); return null; }
     const { data, error } = await supabase.from('mz_user_profiles').select('*').eq('user_id', currentUser.id).maybeSingle();
-    if (error) throw error;
+    if (error) {
+      setBackendMessage(error.message);
+      const fallback = normalizeProfile(null, currentUser);
+      setProfile(fallback);
+      return fallback;
+    }
     const next = normalizeProfile(data, currentUser);
     setProfile(next);
     return next;
@@ -114,7 +119,19 @@ export function AppProvider({ children }) {
     return data;
   }, []);
 
-  const signOut = useCallback(async () => { if (supabase) await supabase.auth.signOut(); }, []);
+  const signOut = useCallback(async () => {
+    // Limpiar la interfaz inmediatamente, incluso si la llamada remota falla.
+    setUser(null);
+    setProfile(normalizeProfile(null));
+    setNotifications([]);
+    setBackendMessage('');
+    if (!supabase) return;
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    if (error) {
+      // La sesión visual ya quedó cerrada; conservar el error solo como diagnóstico.
+      console.warn('No se pudo cerrar la sesión remota:', error.message);
+    }
+  }, []);
   const resetPassword = useCallback(async email => {
     if (!supabase) throw new Error('Supabase no está configurado.');
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/#settings` });
