@@ -10,7 +10,7 @@ export default function Panel({ setPage }) {
   const { moduleConfig, profile, unreadNotifications, backendConnected, online, syncQueueCount } = useApp();
   const student = isStudentProfile(profile);
 
-  const visibleModules = moduleConfig.filter(m => canAccessModule(profile, m.id));
+  const visibleModules = (Array.isArray(moduleConfig) ? moduleConfig : []).filter(m => canAccessModule(profile, m.id));
   const quicks = [
     ['chat', '💬', 'Abrir chat', 'Mensajes y soporte'],
     ['committees', '📋', 'Revisar comité', 'Cuotas, pagos y comunicados'],

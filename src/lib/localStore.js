@@ -140,19 +140,50 @@ function getChannel() {
   }
 }
 
+function normalizeLocalState(value) {
+  const seeded = seedState();
+  const source = value && typeof value === 'object' ? value : {};
+  const arrayKeys = ['directory', 'contactPairs', 'requests', 'conversations', 'blocks', 'reports', 'notifications', 'syncQueue', 'auditLogs'];
+  const normalized = { ...seeded, ...source, version: 14, mode: 'local' };
+
+  arrayKeys.forEach(key => {
+    normalized[key] = Array.isArray(source[key]) ? source[key] : clone(seeded[key]);
+  });
+
+  normalized.messages = source.messages && typeof source.messages === 'object' && !Array.isArray(source.messages)
+    ? source.messages
+    : clone(seeded.messages);
+  normalized.preferencesByUser = source.preferencesByUser && typeof source.preferencesByUser === 'object' && !Array.isArray(source.preferencesByUser)
+    ? source.preferencesByUser
+    : clone(seeded.preferencesByUser);
+
+  if (!normalized.directory.length) normalized.directory = clone(seeded.directory);
+  return normalized;
+}
+
 export function readLocalState() {
   try {
     const raw = localStorage.getItem(STATE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed?.version === 14) return parsed;
+      if (parsed?.version === 14) {
+        const normalized = normalizeLocalState(parsed);
+        // Repara automáticamente datos incompletos guardados por versiones anteriores.
+        if (JSON.stringify(normalized) !== JSON.stringify(parsed)) {
+          localStorage.setItem(STATE_KEY, JSON.stringify(normalized));
+        }
+        return clone(normalized);
+      }
     }
     const legacyRaw = localStorage.getItem(LEGACY_STATE_KEY);
-    const migrated = legacyRaw ? migrateLegacyState(JSON.parse(legacyRaw)) : seedState();
+    const migrated = normalizeLocalState(legacyRaw ? migrateLegacyState(JSON.parse(legacyRaw)) : seedState());
     localStorage.setItem(STATE_KEY, JSON.stringify(migrated));
     return clone(migrated);
-  } catch {
-    return seedState();
+  } catch (error) {
+    console.warn('MiZona reparó el almacenamiento local dañado.', error);
+    const repaired = normalizeLocalState(seedState());
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(repaired)); } catch {}
+    return repaired;
   }
 }
 
