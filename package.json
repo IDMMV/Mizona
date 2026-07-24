@@ -1,12 +1,14 @@
 {
   "name": "mizona-enterprise-v8-v30-92-contraste-profesional-global",
-  "version": "8.30.96",
+  "version": "8.31.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "preflight": "node scripts/preflight.mjs",
+    "verify": "npm run preflight && npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

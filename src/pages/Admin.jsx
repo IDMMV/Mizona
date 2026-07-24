@@ -10,6 +10,7 @@ import { getLocalBenefitsSnapshot, reviewLocalOpportunity, reviewLocalOpportunit
 import { getLocalCommerceSnapshot, reviewLocalBusiness, reviewLocalBusinessClaim, reviewLocalBusinessReport, reviewLocalListing, reviewLocalListingReport, subscribeLocalCommerce } from '../lib/localCommerce';
 import { getLocalCampusSnapshot, reviewLocalCourse, reviewLocalCourseReport, subscribeLocalCampus } from '../lib/localCampus';
 import { getLocalRideSnapshot, reviewLocalDriver, reviewLocalRideReport, subscribeLocalRide } from '../lib/localRide';
+import { asArray } from '../lib/runtimeSafety';
 
 const campaigns=[
  {id:1,title:'Combo familiar de pollo',owner:'Pollería El Buen Sabor',type:'Oferta',status:'active',views:1260,actions:184},
@@ -33,7 +34,7 @@ const [localStats,setLocalStats]=useState(getLocalStats());
  const [commerceSnapshot,setCommerceSnapshot]=useState(getLocalCommerceSnapshot);
  const [campusSnapshot,setCampusSnapshot]=useState(getLocalCampusSnapshot);
  const [rideSnapshot,setRideSnapshot]=useState(getLocalRideSnapshot);
- const counts=useMemo(()=>moduleConfig.reduce((a,m)=>({...a,[m.status]:(a[m.status]||0)+1}),{}),[moduleConfig]);
+ const counts=useMemo(()=>asArray(moduleConfig).reduce((a,m)=>({...a,[m.status]:(a[m.status]||0)+1}),{}),[moduleConfig]);
  const cycle=s=>s==='active'?'beta':s==='beta'?'maintenance':s==='maintenance'?'soon':'active';
  const toggleCampaign=id=>setCampaignState(arr=>arr.map(x=>x.id===id?{...x,status:x.status==='active'?'maintenance':'active'}:x));
  const moderateOpportunity=(id,status,verified=null)=>{try{reviewLocalOpportunity(id,status,verified);setBenefitSnapshot(getLocalBenefitsSnapshot());}catch(error){setMaintenanceMessage(error.message);}};

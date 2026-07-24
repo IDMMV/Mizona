@@ -55,7 +55,7 @@ function showBootError(error, title = 'MiZona no pudo iniciar') {
         <pre style="white-space:pre-wrap;text-align:left;background:#0f172a;color:#e2e8f0;border-radius:16px;padding:14px;max-height:260px;overflow:auto">${escapeHtml(message + (stack ? '\n\n' + stack : ''))}</pre>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
           <button onclick="location.reload()" style="border:0;background:#0f766e;color:white;border-radius:16px;padding:12px 18px;font-weight:900">Volver a cargar</button>
-          <button onclick="localStorage.clear();sessionStorage.clear();location.href='/?v=304800&t='+Date.now()" style="border:1px solid #dbe9e3;background:white;color:#0f2534;border-radius:16px;padding:12px 18px;font-weight:900">Limpiar datos y abrir</button>
+          <button onclick="location.href='/?v=3100&t='+Date.now()" style="border:1px solid #dbe9e3;background:white;color:#0f2534;border-radius:16px;padding:12px 18px;font-weight:900">Abrir versión limpia</button>
         </div>
       </div>
     </div>

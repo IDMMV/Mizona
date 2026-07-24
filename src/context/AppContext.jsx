@@ -1,316 +1,165 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { modules } from '../data/modules';
 import { hasSupabase, normalizeUsername, supabase } from '../lib/supabase';
-import {
-  createLocalProfile,
-  deleteLocalNotification,
-  findLocalProfileExact,
-  getActiveLocalProfile,
-  listLocalNotifications,
-  listLocalProfiles,
-  listLocalSyncQueue,
-  markAllLocalNotificationsRead,
-  markLocalNotification,
-  subscribeLocalData,
-  switchLocalProfile,
-  updateActiveLocalProfile,
-  verifyLocalProfilePassword
-} from '../lib/localStore';
 
 const AppContext = createContext(null);
-const MODULES_KEY = 'mizona-module-config';
-const MODE_KEY = 'mizona-data-mode';
-const UI_COLOR_KEY = 'mizona-ui-color';
-const UI_MODE_KEY = 'mizona-ui-mode';
-
 const safeArray = value => Array.isArray(value) ? value : [];
 
-function normalizeProfile(row) {
+function normalizeProfile(row, user = null) {
   const source = row || {};
   return {
-    id: source.id || source.user_id || 'local-guest',
-    userId: source.user_id || source.id || null,
-    username: source.username || 'INVITADO',
-    displayName: source.display_name || source.displayName || source.username || 'Invitado',
-    display_name: source.display_name || source.displayName || source.username || 'Invitado',
-    avatarUrl: source.avatar_url || source.avatarUrl || null,
-    avatar_url: source.avatar_url || source.avatarUrl || null,
-    accountType: source.account_type || source.accountType || 'adult',
-    account_type: source.account_type || source.accountType || 'adult',
-    role: source.role || 'user',
-    zone: source.zone || 'Sin zona definida',
-    schoolId: source.school_id || source.schoolId || null,
-    schoolRole: source.school_role || source.schoolRole || null,
+    id: source.user_id || user?.id || null,
+    userId: source.user_id || user?.id || null,
+    username: source.username || user?.user_metadata?.username || user?.email?.split('@')[0] || '',
+    displayName: source.display_name || user?.user_metadata?.display_name || user?.email || 'Estudiante',
+    display_name: source.display_name || user?.user_metadata?.display_name || user?.email || 'Estudiante',
+    avatarUrl: source.avatar_url || null,
+    avatar_url: source.avatar_url || null,
+    role: source.role || 'student',
+    educationLevel: source.education_level || 'university',
+    verificationStatus: source.verification_status || 'pending',
+    zone: source.city || source.zone || '',
+    bio: source.bio || '',
     status: source.status || 'active'
   };
 }
 
-function loadModules() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(MODULES_KEY) || 'null');
-    if (!Array.isArray(saved)) return modules;
-    return modules.map(base => ({ ...base, ...(saved.find(item => item?.id === base.id) || {}) }));
-  } catch {
-    return modules;
-  }
-}
-
 export function AppProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
-  const [uiColor, setUiColorState] = useState(() => localStorage.getItem(UI_COLOR_KEY) || 'blue');
-  const [uiMode, setUiModeState] = useState(() => localStorage.getItem(UI_MODE_KEY) || 'light');
-  const [dataMode, setDataModeState] = useState(() => localStorage.getItem(MODE_KEY) || 'local');
-  const [moduleConfig, setModuleConfig] = useState(loadModules);
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(() => normalizeProfile(getActiveLocalProfile()));
-  const [notifications, setNotifications] = useState(() => safeArray(listLocalNotifications()));
-  const [localProfiles, setLocalProfiles] = useState(() => safeArray(listLocalProfiles()));
-  const [syncQueueCount, setSyncQueueCount] = useState(() => safeArray(listLocalSyncQueue()).length);
-  const [authLoading, setAuthLoading] = useState(Boolean(hasSupabase));
-  const [backendConnected, setBackendConnected] = useState(false);
+  const [profile, setProfile] = useState(() => normalizeProfile(null));
+  const [notifications, setNotifications] = useState([]);
+  const [authLoading, setAuthLoading] = useState(true);
   const [backendMessage, setBackendMessage] = useState('');
   const [online, setOnline] = useState(() => navigator.onLine);
+  const [theme, setTheme] = useState('light');
+  const [uiColor, setUiColor] = useState('blue');
 
-  const refreshLocalIndicators = useCallback(() => {
-    setProfile(normalizeProfile(getActiveLocalProfile()));
-    setNotifications(safeArray(listLocalNotifications()));
-    setLocalProfiles(safeArray(listLocalProfiles()));
-    setSyncQueueCount(safeArray(listLocalSyncQueue()).length);
+  const refreshProfile = useCallback(async activeUser => {
+    if (!supabase) return null;
+    const currentUser = activeUser || (await supabase.auth.getUser()).data.user;
+    if (!currentUser) { setProfile(normalizeProfile(null)); return null; }
+    const { data, error } = await supabase.from('mz_user_profiles').select('*').eq('user_id', currentUser.id).maybeSingle();
+    if (error) throw error;
+    const next = normalizeProfile(data, currentUser);
+    setProfile(next);
+    return next;
   }, []);
 
-  const refreshProfile = useCallback(async () => {
-    if (!hasSupabase || !supabase || dataMode !== 'cloud') {
-      refreshLocalIndicators();
-      return normalizeProfile(getActiveLocalProfile());
-    }
-    const { data: authData } = await supabase.auth.getUser();
-    const cloudUser = authData?.user || null;
-    setUser(cloudUser);
-    if (!cloudUser) {
-      setBackendConnected(false);
-      return null;
-    }
-    const { data, error } = await supabase.from('mz_user_profiles').select('*').eq('user_id', cloudUser.id).maybeSingle();
+  const refreshNotifications = useCallback(async activeUser => {
+    if (!supabase) return [];
+    const currentUser = activeUser || (await supabase.auth.getUser()).data.user;
+    if (!currentUser) { setNotifications([]); return []; }
+    const { data, error } = await supabase.from('mz_notifications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(100);
     if (error) throw error;
-    const next = normalizeProfile(data || { id: cloudUser.id, user_id: cloudUser.id, username: cloudUser.email?.split('@')[0], display_name: cloudUser.email });
-    setProfile(next);
-    setBackendConnected(true);
-    return next;
-  }, [dataMode, refreshLocalIndicators]);
-
-  const refreshModules = useCallback(() => setModuleConfig(loadModules()), []);
+    setNotifications(safeArray(data));
+    return safeArray(data);
+  }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark' || uiMode === 'dark');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.dataset.theme = uiColor;
-  }, [theme, uiMode, uiColor]);
+  }, [theme, uiColor]);
 
   useEffect(() => {
     const updateOnline = () => setOnline(navigator.onLine);
     window.addEventListener('online', updateOnline);
     window.addEventListener('offline', updateOnline);
-    const unsubscribe = subscribeLocalData(refreshLocalIndicators);
-    return () => {
-      window.removeEventListener('online', updateOnline);
-      window.removeEventListener('offline', updateOnline);
-      unsubscribe?.();
-    };
-  }, [refreshLocalIndicators]);
+    return () => { window.removeEventListener('online', updateOnline); window.removeEventListener('offline', updateOnline); };
+  }, []);
 
   useEffect(() => {
-    let active = true;
-    if (!hasSupabase || !supabase || dataMode !== 'cloud') {
-      setBackendConnected(false);
-      setAuthLoading(false);
-      refreshLocalIndicators();
-      return undefined;
-    }
+    let mounted = true;
+    if (!hasSupabase || !supabase) { setBackendMessage('Faltan VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.'); setAuthLoading(false); return; }
     supabase.auth.getSession().then(async ({ data }) => {
-      if (!active) return;
-      setUser(data?.session?.user || null);
-      try { await refreshProfile(); } catch (error) { setBackendMessage(error.message); }
-      if (active) setAuthLoading(false);
+      if (!mounted) return;
+      const activeUser = data.session?.user || null;
+      setUser(activeUser);
+      if (activeUser) await Promise.all([refreshProfile(activeUser), refreshNotifications(activeUser)]).catch(error => setBackendMessage(error.message));
+      setAuthLoading(false);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-      void refreshProfile().finally(() => setAuthLoading(false));
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const activeUser = session?.user || null;
+      setUser(activeUser);
+      if (activeUser) await Promise.all([refreshProfile(activeUser), refreshNotifications(activeUser)]).catch(error => setBackendMessage(error.message));
+      else { setProfile(normalizeProfile(null)); setNotifications([]); }
+      setAuthLoading(false);
     });
-    return () => {
-      active = false;
-      listener?.subscription?.unsubscribe?.();
-    };
-  }, [dataMode, refreshLocalIndicators, refreshProfile]);
+    return () => { mounted = false; authListener.subscription.unsubscribe(); };
+  }, [refreshNotifications, refreshProfile]);
 
-  const setDataMode = useCallback(mode => {
-    const next = mode === 'cloud' ? 'cloud' : 'local';
-    localStorage.setItem(MODE_KEY, next);
-    setDataModeState(next);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme(current => {
-      const next = current === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', next);
-      return next;
-    });
-  }, []);
-
-  const setUiColor = useCallback(value => {
-    localStorage.setItem(UI_COLOR_KEY, value);
-    setUiColorState(value);
-  }, []);
-
-  const setUiMode = useCallback(value => {
-    localStorage.setItem(UI_MODE_KEY, value);
-    setUiModeState(value);
-  }, []);
-
-  const updateModuleStatus = useCallback((id, status) => {
-    setModuleConfig(current => {
-      const next = safeArray(current).map(item => item.id === id ? { ...item, status } : item);
-      localStorage.setItem(MODULES_KEY, JSON.stringify(next.map(({ icon, ...item }) => item)));
-      return next;
-    });
-  }, []);
-
-  const resetModules = useCallback(() => {
-    localStorage.removeItem(MODULES_KEY);
-    setModuleConfig(modules);
-  }, []);
-
-  const activateLocalProfile = useCallback(profileId => {
-    switchLocalProfile(profileId);
-    refreshLocalIndicators();
-  }, [refreshLocalIndicators]);
-
-  const addLocalProfile = useCallback(values => {
-    const created = createLocalProfile(values);
-    refreshLocalIndicators();
-    return created;
-  }, [refreshLocalIndicators]);
-
-  const removeLocalProfile = useCallback(profileId => {
-    const result = deleteLocalProfile(profileId);
-    refreshLocalIndicators();
-    return result;
-  }, [refreshLocalIndicators]);
+  useEffect(() => {
+    if (!supabase || !user) return;
+    const channel = supabase.channel(`notifications:${user.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mz_notifications', filter: `user_id=eq.${user.id}` }, () => void refreshNotifications(user))
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [refreshNotifications, user]);
 
   const signIn = useCallback(async ({ identifier, password }) => {
-    if (dataMode === 'cloud' && hasSupabase && supabase) {
-      const email = String(identifier || '').includes('@') ? identifier : `${normalizeUsername(identifier)}@mizona.local`;
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      setUser(data.user);
-      await refreshProfile();
-      return data;
-    }
-    const row = findLocalProfileExact(identifier);
-    if (!row) throw new Error('No existe un usuario local con esos datos.');
-    verifyLocalProfilePassword(row.username, password);
-    switchLocalProfile(row.id);
-    refreshLocalIndicators();
-    return { local: true, user: row };
-  }, [dataMode, refreshLocalIndicators, refreshProfile]);
+    if (!supabase) throw new Error('Supabase no está configurado.');
+    const email = String(identifier || '').trim();
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  }, []);
 
   const signUp = useCallback(async values => {
-    if (dataMode === 'cloud' && hasSupabase && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: { data: { display_name: values.displayName, username: normalizeUsername(values.username) } }
-      });
-      if (error) throw error;
-      return data;
-    }
-    const created = createLocalProfile(values);
-    refreshLocalIndicators();
-    return { local: true, user: created };
-  }, [dataMode, refreshLocalIndicators]);
+    if (!supabase) throw new Error('Supabase no está configurado.');
+    const { data, error } = await supabase.auth.signUp({
+      email: values.email,
+      password: values.password,
+      options: { data: { display_name: values.displayName, username: normalizeUsername(values.username), education_level: values.educationLevel || 'university' } }
+    });
+    if (error) throw error;
+    return data;
+  }, []);
 
-  const signOut = useCallback(async () => {
-    if (dataMode === 'cloud' && hasSupabase && supabase) await supabase.auth.signOut();
-    setUser(null);
-    setBackendConnected(false);
-    refreshLocalIndicators();
-  }, [dataMode, refreshLocalIndicators]);
-
+  const signOut = useCallback(async () => { if (supabase) await supabase.auth.signOut(); }, []);
   const resetPassword = useCallback(async email => {
-    if (!hasSupabase || !supabase) throw new Error('Supabase no está configurado.');
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+    if (!supabase) throw new Error('Supabase no está configurado.');
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/#settings` });
     if (error) throw error;
   }, []);
-
-  const updatePassword = useCallback(async password => {
-    if (!hasSupabase || !supabase) throw new Error('Supabase no está configurado.');
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) throw error;
-  }, []);
-
+  const updatePassword = useCallback(async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; }, []);
   const saveProfile = useCallback(async values => {
-    if (dataMode === 'cloud' && hasSupabase && supabase && user) {
-      const { error } = await supabase.from('mz_user_profiles').upsert({
-        user_id: user.id,
-        display_name: values.displayName,
-        username: normalizeUsername(values.username),
-        zone: values.zone,
-        updated_at: new Date().toISOString()
-      });
-      if (error) throw error;
-      await refreshProfile();
-      return { persisted: true };
-    }
-    updateActiveLocalProfile(values);
-    refreshLocalIndicators();
-    return { persisted: false };
-  }, [dataMode, refreshLocalIndicators, refreshProfile, user]);
+    if (!user) throw new Error('Inicia sesión.');
+    const payload = { user_id: user.id, display_name: values.displayName, username: normalizeUsername(values.username), city: values.zone || null, bio: values.bio || null, education_level: values.educationLevel || profile.educationLevel, updated_at: new Date().toISOString() };
+    const { error } = await supabase.from('mz_user_profiles').upsert(payload);
+    if (error) throw error;
+    await refreshProfile(user);
+    return { persisted: true };
+  }, [profile.educationLevel, refreshProfile, user]);
 
-  const markNotification = useCallback((id, read = true) => {
-    markLocalNotification(id, read);
-    refreshLocalIndicators();
-  }, [refreshLocalIndicators]);
+  const markNotification = useCallback(async (id, read = true) => {
+    const { error } = await supabase.from('mz_notifications').update({ read_at: read ? new Date().toISOString() : null }).eq('id', id).eq('user_id', user.id);
+    if (error) throw error;
+    await refreshNotifications(user);
+  }, [refreshNotifications, user]);
+  const markAllNotificationsRead = useCallback(async () => {
+    const { error } = await supabase.from('mz_notifications').update({ read_at: new Date().toISOString() }).eq('user_id', user.id).is('read_at', null);
+    if (error) throw error;
+    await refreshNotifications(user);
+  }, [refreshNotifications, user]);
+  const deleteNotification = useCallback(async id => {
+    const { error } = await supabase.from('mz_notifications').delete().eq('id', id).eq('user_id', user.id);
+    if (error) throw error;
+    await refreshNotifications(user);
+  }, [refreshNotifications, user]);
 
-  const markAllNotificationsRead = useCallback(() => {
-    markAllLocalNotificationsRead();
-    refreshLocalIndicators();
-  }, [refreshLocalIndicators]);
-
-  const deleteNotification = useCallback(id => {
-    deleteLocalNotification(id);
-    refreshLocalIndicators();
-  }, [refreshLocalIndicators]);
-
-  const clearBackendMessage = useCallback(() => setBackendMessage(''), []);
-  const isAuthenticated = dataMode === 'local' ? Boolean(profile?.id && profile.id !== 'local-guest') : Boolean(user);
-  const isAdmin = ['admin', 'super_admin'].includes(profile?.role);
-  const unreadNotifications = safeArray(notifications).filter(item => !item.read && !item.read_at).length;
-
+  const toggleTheme = useCallback(() => setTheme(value => value === 'dark' ? 'light' : 'dark'), []);
   const value = useMemo(() => ({
-    theme, toggleTheme, user, setUser,
-    profile, isAuthenticated, isAdmin, authLoading,
-    backendConfigured: hasSupabase, backendConnected, backendMessage, clearBackendMessage,
-    dataMode, setDataMode, online, syncQueueCount,
-    moduleConfig: safeArray(moduleConfig), updateModuleStatus, resetModules, refreshModules,
-    notifications: safeArray(notifications), unreadNotifications,
+    theme, toggleTheme, uiColor, uiMode: theme, setUiColor, setUiMode: setTheme,
+    user, setUser, profile, isAuthenticated: Boolean(user), isAdmin: ['admin', 'super_admin', 'moderator'].includes(profile.role), authLoading,
+    backendConfigured: hasSupabase, backendConnected: Boolean(hasSupabase && user), backendMessage, clearBackendMessage: () => setBackendMessage(''),
+    dataMode: 'cloud', setDataMode: () => {}, online, syncQueueCount: 0,
+    moduleConfig: modules, updateModuleStatus: () => {}, resetModules: () => {}, refreshModules: () => {},
+    notifications, unreadNotifications: notifications.filter(item => !item.read_at).length,
     markNotification, markAllNotificationsRead, deleteNotification,
-    localProfiles: safeArray(localProfiles), activateLocalProfile, addLocalProfile, removeLocalProfile,
-    refreshLocalIndicators, refreshProfile,
-    signIn, signUp, signOut, resetPassword, updatePassword, saveProfile,
-    uiColor, uiMode, setUiColor, setUiMode
-  }), [
-    theme, toggleTheme, user, profile, isAuthenticated, isAdmin, authLoading,
-    backendConnected, backendMessage, clearBackendMessage, dataMode, setDataMode, online,
-    syncQueueCount, moduleConfig, updateModuleStatus, resetModules, refreshModules,
-    notifications, unreadNotifications, markNotification, markAllNotificationsRead,
-    deleteNotification, localProfiles, activateLocalProfile, addLocalProfile, removeLocalProfile,
-    refreshLocalIndicators, refreshProfile, signIn, signUp, signOut, resetPassword,
-    updatePassword, saveProfile, uiColor, uiMode, setUiColor, setUiMode
-  ]);
+    localProfiles: [], activateLocalProfile: () => {}, addLocalProfile: () => {}, removeLocalProfile: () => {}, refreshLocalIndicators: () => {},
+    refreshProfile, refreshNotifications, signIn, signUp, signOut, resetPassword, updatePassword, saveProfile
+  }), [theme, uiColor, user, profile, authLoading, backendMessage, online, notifications, markNotification, markAllNotificationsRead, deleteNotification, refreshProfile, refreshNotifications, signIn, signUp, signOut, resetPassword, updatePassword, saveProfile]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
-export function useApp() {
-  const context = useContext(AppContext);
-  if (!context) throw new Error('useApp debe utilizarse dentro de AppProvider.');
-  return context;
-}
+export function useApp() { const context = useContext(AppContext); if (!context) throw new Error('useApp debe utilizarse dentro de AppProvider.'); return context; }
